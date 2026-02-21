@@ -10,7 +10,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Networking
-  networking.hostname = "dell-latitude-E7270-H836QF2";
+  networking.hostName = "dell-latitude-E7270-H836QF2";
   networking.networkmanager.enable = true;
 
   # Firmware
