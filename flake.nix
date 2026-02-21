@@ -1,42 +1,34 @@
 {
-  description = "NixOS configuration of ntduckk";
+  nixConfig = {};
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    broadcom-bt-firmware.url = "github:winterheart/broadcom-bt-firmware";
-    broadcom-bt-firmware.flake = false;
+    # IGNORE THIS FOR NOW
+    # broadcom-bt-firmware.url = "github:winterheart/broadcom-bt-firmware";
+    # broadcom-bt-firmware.flake = false;
   };
 
-  outputs = { self, nixpkgs, broadcom-bt-firmware, ... }:
-  let
-    system = "x86_64-linux";
-  in {
-    nixosConfigurations.nixos =
-      nixpkgs.lib.nixosSystem {
-        inherit system;
+  outputs = inputs @ {
+    self,
+    nixpkgs,
+    # broadcom-bt-firmware,
+    ...
+  }: {
+    nixosConfigurations = {
+      dell-latitude-E7270-H836QF2 = let
+        system = "x86_64-linux";
+        username = "admin";
+      in
+        nixpkgs.lib.nixosSystem {
+          inherit system;
 
-        modules = [
-          # Your normal configuration.nix
-          ./configuration.nix
+          specialArgs = { inherit username; };
 
-          # Firmware + Bluetooth module
-          ({ pkgs, ... }: {
-
-            nixpkgs.config.allowUnfree = true;
-
-            hardware.bluetooth.enable = true;
-            hardware.bluetooth.powerOnBoot = true;
-
-            hardware.firmware = [
-              (pkgs.runCommand "bcm43142-firmware" {} ''
-                mkdir -p $out/lib/firmware/brcm
-                cp ${broadcom-bt-firmware}/brcm/BCM43142A0-105b-e065.hcd \
-                   $out/lib/firmware/brcm/
-              '')
-            ];
-          })
-        ];
-      };
-  };
+          modules = [
+            ./targets/dell-latitude-E7270-H836QF2  # /default.nix
+          ];
+        };
+    }
+  }
 }
