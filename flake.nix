@@ -29,6 +29,6 @@
             ./targets/dell-latitude-E7270-H836QF2  # /default.nix
           ];
         };
-    }
-  }
+    };
+  };
 }
