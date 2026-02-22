@@ -19,11 +19,11 @@
         system = "x86_64-linux";
         hostname = "dell-latitude-E7270-H836QF2";
         username = "ayin";
+
+        specialArgs = { inherit system hostname username; };
       in
         nixpkgs.lib.nixosSystem {
           inherit system;
-
-          specialArgs = { inherit system hostname username; };
 
           modules = [
             ./targets/${hostname}  # default.nix
