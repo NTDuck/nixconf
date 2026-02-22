@@ -59,8 +59,8 @@
 
   # Packages
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.permittedInsecurePackages = with config.boot.kernelPackages; [
-    broadcom-sta.name
+  nixpkgs.config.permittedInsecurePackages = [
+    config.boot.kernelPackages.broadcom_sta.name
   ];
 
   boot.kernelModules = [ "wl" ];
