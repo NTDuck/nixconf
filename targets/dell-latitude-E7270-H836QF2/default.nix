@@ -13,13 +13,6 @@
   networking.hostName = "dell-latitude-E7270-H836QF2";
   networking.networkmanager.enable = true;
 
-  # Firmware
-  hardware.firmware = with pkgs; [
-    linux-firmware
-  ];
-
-  hardware.enableRedistributableFirmware = true;
-
   # Localization
   time.timeZone = "Asia/Ho_Chi_Minh";
 
@@ -56,35 +49,35 @@
     dates = lib.mkDefault "weekly";
     options = lib.mkDefault "--delete-older-than 7d";
   };
+  
+  # Firmware
+  hardware.firmware = with pkgs; [
+    linux-firmware
+  ];
+
+  hardware.enableRedistributableFirmware = true;
 
   # Packages
   nixpkgs.config.allowUnfree = true;
-
-  environment.systemPackages = with pkgs; [
-    git
-    gh
-    alacritty
-    powertop
-    brightnessctl
-    pamixer
-    fastfetch
-  ];
 
   boot.kernelModules = [ "wl" ];
   boot.extraModulePackages = with config.boot.kernelPackages; [
     broadcom_sta
   ];
 
+  environment.systemPackages = with pkgs; [
+    git
+    powertop
+    brightnessctl
+    pamixer
+    fastfetch
+  ];
+
   programs.neovim.enable = true;
   programs.neovim.defaultEditor = true;
 
-  # programs.git.enable = true;
-  # programs.gh.enable = true;
-
-  # programs.fastfetch.enable = true;
-
-  # Window Manager
-  programs.niri.enable = true;
+  # # Window Manager
+  # programs.niri.enable = true;
 
   # Audio
   services.pipewire.enable = true;
