@@ -19,7 +19,7 @@
 
   # Packages
   programs.git.enable = true;
-  programs.git.aliases.nccommit = "commit -a --allow-empty-message -m ''";  # https://trunk.io/blog/git-commit-messages-are-useless
+  programs.git.settings.aliases.nccommit = "commit -a --allow-empty-message -m ''";  # https://trunk.io/blog/git-commit-messages-are-useless
 
   programs.alacritty.enable = true;
 
