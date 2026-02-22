@@ -89,7 +89,7 @@
   # Greeter
   services.greetd.enable = true;
   services.greetd.settings.default_session.user = username;
-  services.greetd.settings.default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd $HOME/.wayland-session";
+  services.greetd.settings.default_session.command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd ${pkgs.niri}/bin/niri";
 
   services.xserver.enable = false;
 
