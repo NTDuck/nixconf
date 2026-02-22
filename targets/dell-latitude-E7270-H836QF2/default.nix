@@ -5,6 +5,10 @@
     ./hardware.nix
   ];
 
+  security.sudo.extraConfig = ''
+    Defaults timestamp_timeout=-1
+  '';
+
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -35,7 +39,7 @@
     isNormalUser = true;
     description = username;
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
+    packages = [];
   };
 
   nix.settings.trusted-users = [ username ];
@@ -64,8 +68,8 @@
   ];
 
   boot.kernelModules = [ "wl" ];
-  boot.extraModulePackages = with config.boot.kernelPackages; [
-    broadcom_sta
+  boot.extraModulePackages = [
+    config.boot.kernelPackages.broadcom_sta
   ];
 
   environment.systemPackages = with pkgs; [
@@ -79,8 +83,15 @@
   programs.neovim.enable = true;
   programs.neovim.defaultEditor = true;
 
-  # # Window Manager
-  # programs.niri.enable = true;
+  # Window Manager
+  programs.niri.enable = true;
+
+  # Greeter
+  services.greetd.enable = true;
+  services.greetd.settings.default_session.user = username;
+  services.greetd.settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd $HOME/.wayland-session";
+
+  services.xserver.enable = false;
 
   # Audio
   services.pipewire.enable = true;
