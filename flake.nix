@@ -4,29 +4,37 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    # IGNORE THIS FOR NOW
-    # broadcom-bt-firmware.url = "github:winterheart/broadcom-bt-firmware";
-    # broadcom-bt-firmware.flake = false;
+    home-manager.url = "github:nix-community/home-manager/";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs @ {
     self,
     nixpkgs,
-    # broadcom-bt-firmware,
+    home-manager,
     ...
   }: {
     nixosConfigurations = {
       dell-latitude-E7270-H836QF2 = let
         system = "x86_64-linux";
-        username = "admin";
+        hostname = "dell-latitude-E7270-H836QF2";
+        username = "ayin";
       in
         nixpkgs.lib.nixosSystem {
           inherit system;
 
-          specialArgs = { inherit username; };
+          specialArgs = { inherit system hostname username; };
 
           modules = [
-            ./targets/dell-latitude-E7270-H836QF2  # /default.nix
+            ./targets/${hostname}  # default.nix
+
+            home-manager.nixosModules.home-manager {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              
+              home-manager.extraSpecialArgs = inputs // specialArgs;
+              home-manager.users.${username} = import ./users/${username};  # default.nix
+            }
           ];
         };
     };

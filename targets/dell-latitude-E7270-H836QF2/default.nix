@@ -58,6 +58,8 @@
   };
 
   # Packages
+  nixpkgs.config.allowUnfree = true;
+
   environment.systemPackages = with pkgs; [
     git
     gh
@@ -66,6 +68,11 @@
     brightnessctl
     pamixer
     fastfetch
+  ];
+
+  boot.kernelModules = [ "wl" ];
+  boot.extraModulePackages = with config.boot.kernelPackages; [
+    broadcom_sta
   ];
 
   programs.neovim.enable = true;
