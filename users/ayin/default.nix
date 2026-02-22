@@ -5,6 +5,6 @@
     ../common  # default.nix
   ];
 
-  programs.git.userName = "NTDuck";
-  programs.git.userEmail = "nguyentuduck@gmail.com";
+  programs.git.settings.user.name = "NTDuck";
+  programs.git.settings.user.email = "nguyentuduck@gmail.com";
 }
