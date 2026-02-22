@@ -23,7 +23,7 @@
         specialArgs = { inherit system hostname username; };
       in
         nixpkgs.lib.nixosSystem {
-          inherit system;
+          inherit specialArgs;
 
           modules = [
             ./targets/${hostname}  # default.nix
