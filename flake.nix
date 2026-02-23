@@ -6,12 +6,15 @@
 
     home-manager.url = "github:nix-community/home-manager/";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    niri.url = "github:sodiboo/niri-flake";
   };
 
   outputs = inputs @ {
     self,
     nixpkgs,
     home-manager,
+    niri,
     ...
   }: {
     nixosConfigurations = {
@@ -35,8 +38,16 @@
               home-manager.extraSpecialArgs = inputs // specialArgs;
               home-manager.users.${username} = import ./users/${username};  # default.nix
             }
+
+            niri.nixosModules.niri {
+              nixpkgs.overlays = [
+                niri.overlays.niri
+              ];
+            }
           ];
         };
     };
   };
 }
+
+# 528491

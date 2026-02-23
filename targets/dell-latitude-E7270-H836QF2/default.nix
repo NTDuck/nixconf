@@ -78,6 +78,12 @@
     brightnessctl
     pamixer
     fastfetch
+
+    waybar
+    fuzzel
+    swaybg
+    mako
+    wl-clipboard
   ];
 
   programs.neovim.enable = true;
