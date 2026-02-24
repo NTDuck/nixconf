@@ -26,21 +26,17 @@
   programs.gh.settings.git_protocol = "https";
 
   programs.niri.settings = {
-    # Start essential programs on login
     spawn-at-startup = [
-      { argv = [ "${pkgs.waybar}/bin/waybar" ]; }
+      # { argv = [ "${pkgs.waybar}/bin/waybar" ]; }
       { argv = [ "${pkgs.mako}/bin/mako" ]; }
       # { argv = [ "${pkgs.swaybg}/bin/swaybg" "-c" "#000000" ]; }
     ];
 
-    # Keybindings
     binds = {
-      # Alacritty is already enabled in your common config!
       "Mod+Return".action.spawn = "alacritty";
       "Mod+D".action.spawn = "fuzzel";
       "Mod+Shift+E".action.quit.skip-confirmation = true;
       
-      # Window management
       "Mod+Q".action.close-window = [];
       "Mod+Left".action.focus-column-left = [];
       "Mod+Right".action.focus-column-right = [];
@@ -57,4 +53,7 @@
   };
 
   programs.firefox.enable = true;
+
+  programs.yazi.enable = true;
+  programs.yazi.enableBashIntegration = true;
 }

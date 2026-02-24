@@ -13,6 +13,9 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Swap
+  zramSwap.enable = true;
+
   # Networking
   networking.hostName = "dell-latitude-E7270-H836QF2";
   networking.networkmanager.enable = true;
@@ -79,11 +82,12 @@
     pamixer
     fastfetch
 
-    waybar
+    # waybar
     fuzzel
     swaybg
     mako
     wl-clipboard
+    noctalia-shell
   ];
 
   programs.neovim.enable = true;
