@@ -17,6 +17,10 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  home.packages = [
+    pkgs.nixfmt
+  ];
+
   # Packages
   programs.git.enable = true;
   programs.git.settings.aliases.nccommit = "commit -a --allow-empty-message -m ''";  # https://trunk.io/blog/git-commit-messages-are-useless
