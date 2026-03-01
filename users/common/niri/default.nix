@@ -48,7 +48,6 @@
       };
 
       input = {
-        keyboard.xkb.layout = "de";
         touchpad = {
           click-method = "button-areas";
           dwt = true;
