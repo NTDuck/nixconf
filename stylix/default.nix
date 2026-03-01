@@ -4,7 +4,7 @@
   stylix.enable = true;
 
   stylix.polarity = "dark";
-  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/dimmed-monokai.yaml";
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/monokai.yaml";
   # stylix.image = "...";
 
   stylix.fonts = {
