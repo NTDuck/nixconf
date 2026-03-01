@@ -18,11 +18,11 @@
   outputs = inputs @ { self, nixpkgs, home-manager, stylix, nix-cachyos-kernel, niri, ... }:
   let mkHost = specialArgs @ { system, hostname, username }:
     nixpkgs.lib.nixosSystem {
-      inherit specialArgs;
+      inherit system;
+      specialArgs = inputs // { inherit hostname username; };
 
       modules = [
         ./targets/${hostname}  # default.nix
-        ./stylix  # default.nix
         ./kernel  # default.nix
 
         home-manager.nixosModules.home-manager {
@@ -35,6 +35,7 @@
         }
 
         stylix.nixosModules.stylix
+        ./stylix  # default.nix
       ];
     };
 
