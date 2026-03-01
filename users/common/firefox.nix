@@ -63,9 +63,9 @@
 
           # (Optional additions if you want a clean new tab page)
           # Disable highlights like recent history and bookmarks
-          # "browser.newtabpage.activity-stream.feeds.section.highlights" = false;
-          # "browser.newtabpage.activity-stream.section.highlights.includeVisited" = false;
-          # "browser.newtabpage.activity-stream.section.highlights.includeBookmarks" = false;
+          "browser.newtabpage.activity-stream.feeds.section.highlights" = false;
+          "browser.newtabpage.activity-stream.section.highlights.includeVisited" = false;
+          "browser.newtabpage.activity-stream.section.highlights.includeBookmarks" = false;
         };
 
         # search = {
@@ -127,6 +127,7 @@
     };
   };
 
-  # stylix.targets.firefox.profileNames = [ username ];
-  # stylix.enableReleaseChecks = lib.mkDefault false;
+  lib.mkIf config.stylix.enable {
+    stylix.targets.firefox.profileNames = [ username ];
+  }
 }
