@@ -36,12 +36,6 @@
           home-manager.extraSpecialArgs = inputs // specialArgs;
           home-manager.users.${username} = import ./users/${username};  # default.nix
         }
-
-        niri.nixosModules.niri {
-          nixpkgs.overlays = [
-            niri.overlays.niri
-          ];
-        }
       ];
     }
   };
