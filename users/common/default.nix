@@ -11,6 +11,7 @@
     ./ghostty.nix
     ./git.nix
     ./neovim.nix
+    ./tofi.nix
     ./yazi.nix
     # ./waybar.nix
   ];
@@ -20,9 +21,9 @@
 
   # Packages
   home.packages = [
+    pkgs.base16-schemes  # stylix
     pkgs.nixfmt
     pkgs.pulseaudio  # pactl
-    pkgs.walker
   ];
 
   # This value determines the Home Manager release that your
