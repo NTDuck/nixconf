@@ -25,9 +25,6 @@
         ./stylix  # default.nix
         ./kernel  # default.nix
 
-        home-manager.nixosModules.default
-        stylix.nixosModules.stylix
-
         home-manager.nixosModules.home-manager {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
@@ -36,6 +33,8 @@
           home-manager.extraSpecialArgs = inputs // specialArgs;
           home-manager.users.${username} = import ./users/${username};  # default.nix
         }
+
+        stylix.nixosModules.stylix
       ];
     }
   };
