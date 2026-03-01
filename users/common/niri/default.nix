@@ -5,23 +5,13 @@
     niri.homeModules.niri
   ];
 
-  # programs.niri.settings.modifier = "Super";
-
   programs.niri = {
     enable = true;
     package = pkgs.niri;
+
     settings = {
-      workspaces = {
-        "browser" = {};
-        "vesktop" = {};
-      };
-
       prefer-no-csd = true;
-
-      hotkey-overlay = {
-        # skip-at-startup = true;
-        skip-at-startup = false;
-      };
+      hotkey-overlay.skip-at-startup = true;
 
       layout = {
         background-color = "#00000000";

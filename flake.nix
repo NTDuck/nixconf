@@ -23,7 +23,7 @@
 
       modules = [
         ./targets/${hostname}  # default.nix
-        # ./kernel  # default.nix
+        ./kernel  # default.nix
 
         home-manager.nixosModules.home-manager {
           home-manager.useGlobalPkgs = true;

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, username, ... }:
+{ pkgs, username, ... }:
 
 {
   imports = [
@@ -21,6 +21,8 @@
   # Packages
   home.packages = [
     pkgs.nixfmt
+    pkgs.pulseaudio  # pactl
+    pkgs.walker
   ];
 
   # This value determines the Home Manager release that your
