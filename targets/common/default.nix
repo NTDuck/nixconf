@@ -5,6 +5,9 @@
     ./greetd.nix
   ];
 
+  # :sob:
+  nixpkgs.config.allowInsecure = true;
+
   # Bootloader
   boot.loader = {
     systemd-boot.enable = true;
