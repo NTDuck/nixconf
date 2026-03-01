@@ -2,7 +2,7 @@
 
 {
   nixpkgs.overlays = [
-    nix-cachyos-kernel.overlays.default
+    nix-cachyos-kernel.overlays.pinned
   ];
 
   boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
