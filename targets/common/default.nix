@@ -97,6 +97,10 @@
   # security.sudo.extraConfig = ''
   #   Defaults timestamp_timeout=-1
   # '';
+  environment.pathsToLink = [
+    "/share/applications"
+    "/share/xdg-desktop-portal"
+  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
