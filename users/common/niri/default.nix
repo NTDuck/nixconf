@@ -113,7 +113,7 @@
     "super+Return".action = spawn "${pkgs.ghostty}/bin/ghostty";
     "super+d".action = spawn "${pkgs.walker}/bin/walker";
     #"super+Control+Return".action = spawn apps.appLauncher;
-    "super+E".action = spawn apps.fileManager;
+    # "super+E".action = spawn apps.fileManager;
 
     "super+f".action = fullscreen-window;
     "super+t".action = toggle-window-floating;
