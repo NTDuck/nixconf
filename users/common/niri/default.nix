@@ -1,4 +1,4 @@
-{ niri, ... }:
+{ config, pkgs, niri, ... }:
 
 {
   imports = [
