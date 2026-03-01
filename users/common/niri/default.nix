@@ -5,7 +5,7 @@
     niri.homeModules.niri
   ];
 
-  programs.niri.settings.modifier = "Super";
+  # programs.niri.settings.modifier = "Super";
 
   programs.niri = {
     enable = true;
