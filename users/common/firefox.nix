@@ -127,7 +127,9 @@
     };
   };
 
-  lib.mkIf config.stylix.enable {
-    stylix.targets.firefox.profileNames = [ username ];
-  }
+  # lib.mkIf config.stylix.enable {
+    # stylix.targets.firefox.profileNames = [ username ];
+  # }
+
+  stylix.targets.firefox.profileNames = [ username ];
 }
