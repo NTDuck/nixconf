@@ -59,6 +59,8 @@
         hostname = "dell-latitude-E7270-H836QF2";
         username = "ayin";
       };
+
+      default = dell-latitude-E7270-H836QF2;
     };
   };
 }
