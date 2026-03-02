@@ -100,7 +100,7 @@
     "super+q".action = close-window;
     "super+b".action = spawn "${pkgs.firefox}/bin/firefox";
     "super+Return".action = spawn "${pkgs.ghostty}/bin/ghostty";
-    "super+d".action = spawn "${pkgs.tofi}/bin/tofi-drun --drun-launch=true";
+    "super+d".action = spawn "${pkgs.tofi}/bin/tofi-drun" [ "--drun-launch" "true" ];
     #"super+Control+Return".action = spawn apps.appLauncher;
     # "super+E".action = spawn apps.fileManager;
 
