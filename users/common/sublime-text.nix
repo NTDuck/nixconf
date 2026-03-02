@@ -1,5 +1,7 @@
 { ... }:
 
 {
-  programs.sublime.enable = true;
+  home.packages = with pkgs; [
+    sublime4
+  ];
 }
