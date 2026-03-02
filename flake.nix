@@ -53,7 +53,7 @@
     };
 
   in {
-    nixosConfigurations = {
+    nixosConfigurations = rec {
       dell-latitude-E7270-H836QF2 = mkHost {
         system = "x86_64-linux";
         hostname = "dell-latitude-E7270-H836QF2";
