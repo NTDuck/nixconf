@@ -1,11 +1,11 @@
 { pkgs, ... }:
 
 {
-  nixpkgs.config.permittedInsecurePackages = [
-    "openssl-1.1.1w"
-  ];
+  # nixpkgs.config.permittedInsecurePackages = [
+  #   "openssl-1.1.1w"
+  # ];
 
-  home.packages = [
-    pkgs.sublime4
-  ];
+  # home.packages = [
+  #   pkgs.sublime4
+  # ];
 }
