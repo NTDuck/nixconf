@@ -23,6 +23,7 @@
   home.packages = [
     pkgs.base16-schemes  # stylix
     pkgs.nixfmt
+    pkgs.brightnessctl
     pkgs.pulseaudio  # pactl
   ];
 
