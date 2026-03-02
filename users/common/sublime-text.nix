@@ -1,7 +1,7 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
-  home.packages = with pkgs; [
-    sublime4
+  home.packages = [
+    pkgs.sublime4
   ];
 }
