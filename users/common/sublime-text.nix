@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  programs.sublime.enable = true;
+}

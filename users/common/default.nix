@@ -11,6 +11,7 @@
     ./ghostty.nix
     ./git.nix
     ./neovim.nix
+    ./sublime-text.nix
     ./tofi.nix
     ./yazi.nix
     # ./waybar.nix
