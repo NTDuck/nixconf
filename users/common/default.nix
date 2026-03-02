@@ -10,7 +10,7 @@
     ./firefox.nix
     ./ghostty.nix
     ./git.nix
-    ./neovim.nix
+    ./helix.nix
     ./sublime-text.nix
     ./tofi.nix
     ./yazi.nix
