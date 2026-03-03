@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   systemd.services.pocketbase = {
