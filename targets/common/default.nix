@@ -3,7 +3,6 @@
 {
   imports = [
     ./greetd.nix
-    ./pocketbase.nix
   ];
 
   # Bootloader
