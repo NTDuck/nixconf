@@ -91,8 +91,8 @@
     # "super+Control+Return".action = spawn ["qs" "ipc" "call" "globalIPC" "toggleLauncher"];
     # # Quickshell Keybinds End
 
-    "xf86audioraisevolume".action = spawn "${pkgs.pulseaudio}/bin/pactl" [ "set-sink-volume" "@DEFAULT_SINK@" "+5%" ];
-    "xf86audiolowervolume".action = spawn "${pkgs.pulseaudio}/bin/pactl" [ "set-sink-volume" "@DEFAULT_SINK@" "-5%" ];
+    # "xf86audioraisevolume".action = spawn "${pkgs.pulseaudio}/bin/pactl" [ "set-sink-volume" "@DEFAULT_SINK@" "+5%" ];
+    # "xf86audiolowervolume".action = spawn "${pkgs.pulseaudio}/bin/pactl" [ "set-sink-volume" "@DEFAULT_SINK@" "-5%" ];
 
     # "control+super+xf86audioraisevolume".action = spawn "brightness" "up";
     # "control+super+xf86audiolowervolume".action = spawn "brightness" "down";
@@ -100,7 +100,7 @@
     "super+q".action = close-window;
     "super+b".action = spawn "${pkgs.firefox}/bin/firefox";
     "super+Return".action = spawn "${pkgs.ghostty}/bin/ghostty";
-    "super+d".action = spawn "${pkgs.tofi}/bin/tofi-drun" [ "--drun-launch" "true" ];
+    # "super+d".action = spawn "${pkgs.tofi}/bin/tofi-drun" [ "--drun-launch" "true" ];
     #"super+Control+Return".action = spawn apps.appLauncher;
     # "super+E".action = spawn apps.fileManager;
 

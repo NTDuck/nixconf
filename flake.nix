@@ -26,7 +26,7 @@
     niri.url = "github:sodiboo/niri-flake";
   };
 
-  outputs = inputs @ { self, nixpkgs, home-manager, stylix, nix-cachyos-kernel, niri, ... }:
+  outputs = inputs @ { self, nixpkgs, home-manager, stylix, nix-cachyos-kernel, noctalia, niri, ... }:
   let mkHost = specialArgs @ { system, hostname, username }:
     nixpkgs.lib.nixosSystem {
       inherit system;
