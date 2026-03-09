@@ -1,4 +1,4 @@
-{ pkgs, noctalia, username ... }:
+{ pkgs, noctalia, username, ... }:
 
 {
   home-manager.users.${username} = {
