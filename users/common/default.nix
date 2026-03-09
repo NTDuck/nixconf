@@ -6,7 +6,6 @@
     ./shell
 
     ./cliphist.nix
-    ./zed.nix
     ./fastfetch.nix
     ./firefox.nix
     ./ghostty.nix
@@ -15,7 +14,7 @@
     ./sublime-text.nix
     ./tofi.nix
     ./yazi.nix
-    # ./waybar.nix
+    ./zed.nix
   ];
 
   home.username = username;
