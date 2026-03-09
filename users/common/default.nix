@@ -6,6 +6,7 @@
     ./shell
 
     ./cliphist.nix
+    ./zed.nix
     ./fastfetch.nix
     ./firefox.nix
     ./ghostty.nix
