@@ -1,7 +1,7 @@
-{ config, pkgs, noctalia, noctalia-qs, username, ... }:
+{ pkgs, noctalia, noctalia-qs, username, ... }:
 
 {
-  home-manager.users.${username} = {
+  home-manager.users.${username} = { config, ... }: {
     imports = [
       noctalia.homeModules.default
     ];
