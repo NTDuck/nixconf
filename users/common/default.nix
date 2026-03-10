@@ -14,7 +14,7 @@
     ./sublime-text.nix
     ./tofi.nix
     ./yazi.nix
-    ./zed.nix
+    ./zed-editor.nix
   ];
 
   home.username = username;
