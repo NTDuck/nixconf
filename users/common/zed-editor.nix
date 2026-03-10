@@ -1,6 +1,8 @@
 { lib, pkgs, ... }:
 
 {
+  # also install nil, nixd
+
   programs.zed-editor = {
     enable = true;
 
