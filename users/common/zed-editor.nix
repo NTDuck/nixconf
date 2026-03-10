@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   programs.zed-editor = {
@@ -22,13 +22,13 @@
       session.trust_all_worktrees = true;
       base_keymap = "VSCode";
 
-      theme = {
+      theme = lib.mkForce {
         mode = "system";
         light = "Catppuccin Latte (Blur)";
         dark = "Catppuccin Espresso (Blur)";
       };
 
-      icon_theme = "Catppuccin Latte";
+      icon_theme = lib.mkForce "Catppuccin Latte";
     };
   };
 }
