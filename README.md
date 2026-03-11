@@ -12,3 +12,9 @@ $ nix shell nixpkgs#git --extra-experimental-features "nix-command flakes"
 $ git clone https://github.com/NTDuck/nixos-cfg && cd nixos-cfg
 $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 ```
+
+## Wallpapers
+- [./wallpapers/funeral-of-the-dead-butterflies-background.png](https://limbuscompany.wiki.gg/wiki/Solemn_Lament_Gregor)
+- [./wallpapers/funeral-of-the-dead-butterflies-hokma.png](https://reactor.cc/post/3910571)
+- [./wallpapers/funeral-of-the-dead-butterflies.png](https://x.com/MaskV_/status/1675409368651816960)
+- [./wallpapers/lobotomy-ego-solemn-lament-yi-sang.jpg](https://www.pinterest.com/pin/16888567439645056/)
