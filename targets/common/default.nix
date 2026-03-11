@@ -1,7 +1,9 @@
-{ config, lib, pkgs, system, username, hostname, ... }:
+{ config, lib, pkgs, username, hostname, ... }:
 
 {
   imports = [
+    ./cachyos-kernel.nix
+    ./catppuccin.nix
     ./greetd.nix
   ];
 

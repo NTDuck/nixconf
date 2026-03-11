@@ -3,16 +3,17 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs
 
     home-manager.url = "github:nix-community/home-manager/";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    stylix.url = "github:nix-community/stylix";
-    stylix.inputs.nixpkgs.follows = "nixpkgs";
+    # Kernel
+    cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel";
 
-    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel";
+    # Compositor
+    niri.url = "github:sodiboo/niri-flake";
 
+    # Shell
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -24,12 +25,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # remember to install https://kamadorueda.com/alejandra/
+    # Soothing pastel theme for the high-spirited!
+    catppuccin.url = "github:catppuccin/nix";
 
-    niri.url = "github:sodiboo/niri-flake";
+    # TODO install https://kamadorueda.com/alejandra/
+    # TODO use stable channels for nixosSystem & unstable channels for everything else
   };
 
-  outputs = inputs @ { self, nixpkgs, home-manager, stylix, nix-cachyos-kernel, noctalia, niri, ... }:
+  outputs = inputs @ { self, nixpkgs, home-manager, ... }:
   let mkHost = specialArgs @ { system, hostname, username }:
     nixpkgs.lib.nixosSystem {
       inherit system;
@@ -37,7 +40,6 @@
 
       modules = [
         ./targets/${hostname}  # default.nix
-        ./kernel  # default.nix
 
         home-manager.nixosModules.home-manager {
           home-manager.useGlobalPkgs = true;
@@ -47,11 +49,6 @@
           home-manager.extraSpecialArgs = inputs // specialArgs;
           home-manager.users.${username} = import ./users/${username};  # default.nix
         }
-
-        stylix.nixosModules.stylix
-        ./stylix  # default.nix
-
-        ./noctalia  # default.nix
       ];
     };
 
