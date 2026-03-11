@@ -8,13 +8,12 @@
     ./cliphist.nix
     ./fastfetch.nix
     ./firefox.nix
-    ./ghostty.nix
     ./git.nix
     ./helix.nix
-    ./sublime-text.nix
     ./tofi.nix
+    ./wezterm.nix
     ./yazi.nix
-    ./zed.nix
+    ./zed-editor.nix
   ];
 
   home.username = username;
@@ -24,8 +23,6 @@
   home.packages = [
     pkgs.base16-schemes  # stylix
     pkgs.nixfmt
-    pkgs.brightnessctl
-    pkgs.pulseaudio  # pactl
   ];
 
   # This value determines the Home Manager release that your

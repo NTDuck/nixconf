@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
+{ config, pkgs, lib, username, ... }:
 
 {
   programs.zsh = {
@@ -25,4 +20,7 @@
       fi
     '';
   };
+
+  users.users.${username}.shell = pkgs.zsh;
+  users.defaultUserShell = pkgs.zsh;
 }
