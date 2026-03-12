@@ -36,7 +36,7 @@
   let mkHost = specialArgs @ { system, hostname, username }:
     nixpkgs.lib.nixosSystem {
       inherit system;
-      specialArgs = inputs // { inherit hostname username; };
+      specialArgs = { inherit inputs hostname username; };
 
       modules = [
         ./targets/${hostname}  # default.nix
