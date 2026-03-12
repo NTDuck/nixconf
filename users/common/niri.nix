@@ -14,26 +14,26 @@ in {
     package = pkgs.niri;
 
     settings = {
-      binds = with config.lib.niri.actions; {
-        "super+q".action = close-window;
-        "super+b".action = spawn "${pkgs.firefox}/bin/firefox";
-        "super+Return".action = spawn "${pkgs.ghostty}/bin/ghostty";
+      binds = {
+        "super+q".action = config.lib.niri.actions.close-window;
+        "super+b".action = config.lib.niri.actions.spawn "${pkgs.firefox}/bin/firefox";
+        "super+Return".action = config.lib.niri.actions.spawn "${pkgs.wezterm}/bin/wezterm";
 
-        "super+f".action = fullscreen-window;
-        "super+t".action = toggle-window-floating;
+        "super+f".action = config.lib.niri.actions.fullscreen-window;
+        "super+t".action = config.lib.niri.actions.toggle-window-floating;
 
         # "control+shift+1".action = screenshot;
         # "control+shift+2".action = screenshot-window { write-to-disk = true; };
 
-        "super+Left".action = focus-column-left;
-        "super+Right".action = focus-column-right;
-        "super+Down".action = focus-workspace-down;
-        "super+Up".action = focus-workspace-up;
+        "super+Left".action = config.lib.niri.actions.focus-column-left;
+        "super+Right".action = config.lib.niri.actions.focus-column-right;
+        "super+Down".action = config.lib.niri.actions.focus-workspace-down;
+        "super+Up".action = config.lib.niri.actions.focus-workspace-up;
 
-        "super+Shift+Left".action = move-column-left;
-        "super+Shift+Right".action = move-column-right;
-        "super+Shift+Down".action = move-column-to-workspace-down;
-        "super+Shift+Up".action = move-column-to-workspace-up;
+        "super+Shift+Left".action = config.lib.niri.actions.move-column-left;
+        "super+Shift+Right".action = config.lib.niri.actions.move-column-right;
+        "super+Shift+Down".action = config.lib.niri.actions.move-column-to-workspace-down;
+        "super+Shift+Up".action = config.lib.niri.actions.move-column-to-workspace-up;
       };
 
       hotkey-overlay = {
@@ -45,8 +45,8 @@ in {
 
       input = {
         focus-follows-mouse.enable = true;
-        repeat-delay = 200  # ms
-        repeat-rate = 25  # per second
+        repeat-delay = 200;  # ms
+        repeat-rate = 25;  # per second
 
         mouse = {
           enable = true;
@@ -86,7 +86,7 @@ in {
       cursor = {
         hide-when-typing = true;
         size = 16;
-      }
+      };
 
       layout = {
         focus-ring = {
@@ -114,19 +114,19 @@ in {
         hot-corners.enable = true;
       };
 
-      environment = {
-        CLUTTER_BACKEND = "wayland";
-        GDK_BACKEND = "wayland,x11";
-        MOZ_ENABLE_WAYLAND = "1";
-        NIXOS_OZONE_WL = "1";
-        QT_QPA_PLATFORM = "wayland";
-        QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-        ELECTRON_OZONE_PLATFORM_HINT = "auto";
+      # environment = {
+      #   CLUTTER_BACKEND = "wayland";
+      #   GDK_BACKEND = "wayland,x11";
+      #   MOZ_ENABLE_WAYLAND = "1";
+      #   NIXOS_OZONE_WL = "1";
+      #   QT_QPA_PLATFORM = "wayland";
+      #   QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+      #   ELECTRON_OZONE_PLATFORM_HINT = "auto";
 
-        XDG_SESSION_TYPE = "wayland";
-        XDG_CURRENT_DESKTOP = "niri";
-        DISPLAY = ":0";
-      };
+      #   XDG_SESSION_TYPE = "wayland";
+      #   XDG_CURRENT_DESKTOP = "niri";
+      #   DISPLAY = ":0";
+      # };
     };
   };
 }
