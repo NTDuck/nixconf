@@ -2,28 +2,26 @@
 
 {
   imports = [
-    ./niri  # default.nix
-    ./shell
+    ./shell  # default.nix
 
+    ./catppuccin.nix
     ./cliphist.nix
     ./fastfetch.nix
     ./firefox.nix
+    ./gh.nix
     ./git.nix
     ./helix.nix
-    ./tofi.nix
+    ./niri.nix
+    ./noctalia.nix
     ./wezterm.nix
     ./yazi.nix
     ./zed-editor.nix
+
+    # TODO add image & video viewers
   ];
 
   home.username = username;
   home.homeDirectory = "/home/${username}";
-
-  # Packages
-  home.packages = [
-    pkgs.base16-schemes  # stylix
-    pkgs.nixfmt
-  ];
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage

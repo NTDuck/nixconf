@@ -1,4 +1,4 @@
-{ config, pkgs, lib, username, ... }:
+{ pkg, username, ... }:
 
 {
   programs.zsh = {
@@ -23,4 +23,8 @@
 
   users.users.${username}.shell = pkgs.zsh;
   users.defaultUserShell = pkgs.zsh;
+
+  catppuccin.zsh-syntax-highlighting = {
+    enable = true;
+  };
 }

@@ -8,9 +8,10 @@
 
   catppuccin = {
     enable = true;
-    enableReleaseCheck = true;
 
     accent = "mauve";
     flavor = "mocha";
+
+    enableReleaseCheck = true;
   };
 }

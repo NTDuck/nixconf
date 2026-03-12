@@ -1,4 +1,4 @@
-{ lib, pkgs, username, ... }:
+{ pkgs, username, ... }:
 
 {
   programs.firefox = {
@@ -127,9 +127,8 @@
     };
   };
 
-  # lib.mkIf config.stylix.enable {
-    # stylix.targets.firefox.profileNames = [ username ];
-  # }
-
-  stylix.targets.firefox.profileNames = [ username ];
+  catppuccin.firefox = {
+    enable = true;
+    force = true;
+  };
 }

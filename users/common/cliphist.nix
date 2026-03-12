@@ -1,6 +1,8 @@
 { ... }:
 
 {
-  services.cliphist.enable = true;
-  services.cliphist.allowImages = true;
+  services.cliphist = {
+    enable = true;
+    allowImages = true;
+  };
 }
