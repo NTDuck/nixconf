@@ -1,6 +1,10 @@
 { config, pkgs, inputs, ... }:
 
-{
+let
+  accent = config.catppuccin.accent;
+  flavor = config.catppuccin.flavor;
+  palette = inputs.catppuccin.lib.palette.${flavor};
+in {
   imports = [
     inputs.niri.homeModules.niri
   ];
@@ -10,33 +14,6 @@
     package = pkgs.niri;
 
     settings = {
-      prefer-no-csd = true;
-      hotkey-overlay.skip-at-startup = true;
-
-      layout = {
-        background-color = "#00000000";
-
-        focus-ring = {
-          enable = true;
-          width = 3;
-          active = {
-            color = "#A8AEFF";
-          };
-          inactive = {
-            color = "#505050";
-          };
-        };
-
-        gaps = 6;
-
-        struts = {
-          left = 20;
-          right = 20;
-          top = 20;
-          bottom = 20;
-        };
-      };
-
       binds = with config.lib.niri.actions; {
         "super+q".action = close-window;
         "super+b".action = spawn "${pkgs.firefox}/bin/firefox";
@@ -59,37 +36,82 @@
         "super+Shift+Up".action = move-column-to-workspace-up;
       };
 
+      hotkey-overlay = {
+        hide-not-bound = true;
+        skip-at-startup = true;
+      };
+
+      prefer-no-csd = true;
+
       input = {
+        focus-follows-mouse.enable = true;
+        repeat-delay = 200  # ms
+        repeat-rate = 25  # per second
+
+        mouse = {
+          enable = true;
+          middle-emulation = true;
+        };
+
         touchpad = {
+          enable = true;
+
+          accel-profile = "adaptive";
           click-method = "button-areas";
+          disabled-on-external-mouse = true;
           dwt = true;
           dwtp = true;
+          middle-emulation = true;
           natural-scroll = true;
           scroll-method = "two-finger";
           tap = true;
           tap-button-map = "left-right-middle";
-          middle-emulation = true;
-          accel-profile = "adaptive";
         };
-        focus-follows-mouse.enable = true;
+
         warp-mouse-to-focus.enable = false;
       };
 
-      outputs = {
-        "DP-1" = {
-          mode = {
-            width = 2560;
-            height = 1440;
-            refresh = 359.97900;
-          };
-          scale = 1.0;
-          position = { x = 0; y = 0; };
+      # outputs = {
+      #   "DP-1" = {
+      #     mode = {
+      #       width = 2560;
+      #       height = 1440;
+      #       refresh = 359.97900;
+      #     };
+      #     scale = 1.0;
+      #     position = { x = 0; y = 0; };
+      #   };
+      # };
+
+      cursor = {
+        hide-when-typing = true;
+        size = 16;
+      }
+
+      layout = {
+        focus-ring = {
+          enable = true;
+
+          width = 2;
+          active = "#${palette.${accent}.hex}";
+          inactive = "#${palette.surface1.hex}";
+          urgent = "#${palette.red.hex}";
+        };
+
+        background-color = "#00000000";  # transparent
+
+        gaps = 8;
+
+        struts = {
+          bottom = 8;
+          left = 8;
+          right = 8;
+          top = 8;
         };
       };
 
-      cursor = {
-        size = 20;
-        theme = "Adwaita";
+      gestures = {
+        hot-corners.enable = true;
       };
 
       environment = {

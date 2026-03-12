@@ -5,6 +5,7 @@
     ./cachyos-kernel.nix
     ./catppuccin.nix
     ./greetd.nix
+    ./niri.nix
   ];
 
   # Bootloader
@@ -70,7 +71,7 @@
 
   # Packages
   nixpkgs.config.allowUnfree = lib.mkDefault true;
-  
+
   environment.systemPackages = [
     pkgs.git
   ];
