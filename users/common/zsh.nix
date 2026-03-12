@@ -1,4 +1,4 @@
-{ pkgs, username, ... }:
+{ ... }:
 
 {
   programs.zsh = {
@@ -14,15 +14,12 @@
       plugins = [ "git" "sudo" ];
     };
 
-    initContent = ''
+    initExtra = ''
       if [[ $- == *i* ]]; then
         fastfetch
       fi
     '';
   };
-
-  users.users.${username}.shell = pkgs.zsh;
-  users.defaultUserShell = pkgs.zsh;
 
   catppuccin.zsh-syntax-highlighting = {
     enable = true;

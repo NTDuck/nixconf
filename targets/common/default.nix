@@ -6,6 +6,7 @@
     ./catppuccin.nix
     ./greetd.nix
     ./niri.nix
+    ./zsh.nix
   ];
 
   # Bootloader
