@@ -2,8 +2,6 @@
 
 {
   imports = [
-    ./shell  # default.nix
-
     ./catppuccin.nix
     ./cliphist.nix
     ./fastfetch.nix
@@ -16,6 +14,7 @@
     ./wezterm.nix
     ./yazi.nix
     ./zed-editor.nix
+    ./zsh.nix
 
     # TODO add image & video viewers
   ];

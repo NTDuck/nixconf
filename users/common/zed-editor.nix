@@ -27,7 +27,7 @@
     pkgs.nixd
   ];
 
-  environment.shellAliases = {
+  programs.zsh.shellAliases = {
     zed = "zeditor";
   };
 
