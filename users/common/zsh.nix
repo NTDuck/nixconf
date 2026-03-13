@@ -14,7 +14,7 @@
       plugins = [ "git" "sudo" ];
     };
 
-    initExtra = ''
+    initContent = ''
       if [[ $- == *i* ]]; then
         fastfetch
       fi

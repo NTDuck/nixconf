@@ -3,7 +3,6 @@
 let
   accent = config.catppuccin.accent;
   flavor = config.catppuccin.flavor;
-  palette = inputs.catppuccin.lib.palette.${flavor};
 in {
   imports = [
     inputs.niri.homeModules.niri
@@ -45,8 +44,8 @@ in {
 
       input = {
         focus-follows-mouse.enable = true;
-        repeat-delay = 200;  # ms
-        repeat-rate = 25;  # per second
+        # repeat-delay = 200;  # ms
+        # repeat-rate = 25;  # per second
 
         mouse = {
           enable = true;
@@ -89,13 +88,21 @@ in {
       };
 
       layout = {
+        # focus-ring = {
+        #   enable = true;
+
+        #   width = 2;
+        #   active = "#${palette.${accent}.hex}";
+        #   inactive = "#${palette.surface1.hex}";
+        #   urgent = "#${palette.red.hex}";
+        # };
+
         focus-ring = {
           enable = true;
 
           width = 2;
-          active = "#${palette.${accent}.hex}";
-          inactive = "#${palette.surface1.hex}";
-          urgent = "#${palette.red.hex}";
+          active.color = "#cba6f7";  # "mocha" "mauve"
+          inactive.color = "#45475a";  # "mocha" "surface1"
         };
 
         background-color = "#00000000";  # transparent
