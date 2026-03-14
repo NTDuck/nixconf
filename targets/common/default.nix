@@ -1,4 +1,11 @@
-{ config, lib, pkgs, username, hostname, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  hostname,
+  ...
+}:
 
 {
   imports = [
@@ -88,18 +95,26 @@
   users.users.${username} = {
     isNormalUser = true;
     description = username;
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = [];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
+    packages = [ ];
   };
 
   nix.settings.trusted-users = [ username ];
 
   # Misc
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
-  # security.sudo.extraConfig = ''
-  #   Defaults timestamp_timeout=-1
-  # '';
+  security.sudo.extraConfig = ''
+    Defaults timestamp_timeout=-1
+    Defaults timestamp_type=tty
+  '';
+
   environment.pathsToLink = [
     "/share/applications"
     "/share/xdg-desktop-portal"
