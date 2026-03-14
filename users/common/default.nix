@@ -11,6 +11,7 @@
     ./helix.nix
     ./niri.nix
     ./noctalia.nix
+    ./vesktop.nix
     ./wezterm.nix
     ./yazi.nix
     ./zed-editor.nix
