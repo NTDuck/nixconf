@@ -104,6 +104,9 @@
 
   nix.settings.trusted-users = [ username ];
 
+  # Access tokens
+  # nix.settings.access-tokens = [ (import ../../secrets/common/github-pat-classic.nix) ];
+
   # Misc
   nix.settings.experimental-features = [
     "nix-command"
