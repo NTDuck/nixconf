@@ -10,6 +10,7 @@
   imports = [
     ./cachyos-kernel.nix
     ./catppuccin.nix
+    ./dev.nix
     ./greetd.nix
     ./niri.nix
     ./zeroclaw.nix

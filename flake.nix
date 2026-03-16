@@ -28,8 +28,6 @@
     # Soothing pastel theme for the high-spirited!
     catppuccin.url = "github:catppuccin/nix";
 
-    zeroclaw.url = "github:zeroclaw-labs/zeroclaw";
-
     # TODO install https://kamadorueda.com/alejandra/
     # TODO use stable channels for nixosSystem & unstable channels for everything else
   };
