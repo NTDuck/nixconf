@@ -1,5 +1,4 @@
 {
-  config,
   lib,
   pkgs,
   username,
@@ -13,6 +12,7 @@
     ./catppuccin.nix
     ./greetd.nix
     ./niri.nix
+    ./zeroclaw.nix
     ./zsh.nix
   ];
 

@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, inputs, ... }:
 
 {
   imports = [
@@ -96,14 +96,49 @@
       ];
 
       binds = {
-        "Mod+L".action = config.lib.niri.actions.spawn "noctalia-shell" ["ipc" "call" "lockScreen" "lock"];
-        "Mod+D".action = config.lib.niri.actions.spawn "noctalia-shell" ["ipc" "call" "launcher" "toggle"];
+        "Mod+L".action = config.lib.niri.actions.spawn "noctalia-shell" [
+          "ipc"
+          "call"
+          "lockScreen"
+          "lock"
+        ];
+        "Mod+D".action = config.lib.niri.actions.spawn "noctalia-shell" [
+          "ipc"
+          "call"
+          "launcher"
+          "toggle"
+        ];
 
-        "XF86AudioLowerVolume".action = config.lib.niri.actions.spawn "noctalia-shell" ["ipc" "call" "volume" "decrease"];
-        "XF86AudioRaiseVolume".action = config.lib.niri.actions.spawn "noctalia-shell" ["ipc" "call" "volume" "increase"];
-        "XF86MonBrightnessDown".action = config.lib.niri.actions.spawn "noctalia-shell" ["ipc" "call" "brightness" "decrease"];
-        "XF86MonBrightnessUp". action = config.lib.niri.actions.spawn "noctalia-shell" ["ipc" "call" "brightness" "increase"];
-        "XF86AudioMute".action = config.lib.niri.actions.spawn "noctalia-shell" ["ipc" "call" "volume" "muteOutput"];
+        "XF86AudioLowerVolume".action = config.lib.niri.actions.spawn "noctalia-shell" [
+          "ipc"
+          "call"
+          "volume"
+          "decrease"
+        ];
+        "XF86AudioRaiseVolume".action = config.lib.niri.actions.spawn "noctalia-shell" [
+          "ipc"
+          "call"
+          "volume"
+          "increase"
+        ];
+        "XF86MonBrightnessDown".action = config.lib.niri.actions.spawn "noctalia-shell" [
+          "ipc"
+          "call"
+          "brightness"
+          "decrease"
+        ];
+        "XF86MonBrightnessUp".action = config.lib.niri.actions.spawn "noctalia-shell" [
+          "ipc"
+          "call"
+          "brightness"
+          "increase"
+        ];
+        "XF86AudioMute".action = config.lib.niri.actions.spawn "noctalia-shell" [
+          "ipc"
+          "call"
+          "volume"
+          "muteOutput"
+        ];
       };
     };
   };

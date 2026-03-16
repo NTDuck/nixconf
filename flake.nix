@@ -1,5 +1,5 @@
 {
-  nixConfig = {};
+  nixConfig = { };
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -28,41 +28,64 @@
     # Soothing pastel theme for the high-spirited!
     catppuccin.url = "github:catppuccin/nix";
 
+    zeroclaw.url = "github:zeroclaw-labs/zeroclaw";
+
     # TODO install https://kamadorueda.com/alejandra/
     # TODO use stable channels for nixosSystem & unstable channels for everything else
   };
 
-  outputs = inputs @ { self, nixpkgs, home-manager, ... }:
-  let mkHost = specialArgs @ { system, hostname, username }:
-    nixpkgs.lib.nixosSystem {
-      inherit system;
-      specialArgs = { inherit inputs hostname username; };
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      home-manager,
+      ...
+    }:
+    let
+      mkHost =
+        {
+          system,
+          hostname,
+          username,
+        }:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = {
+            inherit
+              inputs
+              system
+              hostname
+              username
+              ;
+          };
 
-      modules = [
-        ./targets/${hostname}  # default.nix
+          modules = [
+            ./targets/${hostname} # default.nix
 
-        home-manager.nixosModules.home-manager {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.backupFileExtension = "backup";
-          
-          home-manager.extraSpecialArgs = { inherit inputs hostname username; };
-          home-manager.users.${username} = import ./users/${username};  # default.nix
-        }
-      ];
-    };
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "backup";
 
-  in {
-    nixosConfigurations = rec {
-      default = dell-latitude-E7270-H836QF2;
+              home-manager.extraSpecialArgs = { inherit inputs hostname username; };
+              home-manager.users.${username} = import ./users/${username}; # default.nix
+            }
+          ];
+        };
 
-      dell-latitude-E7270-H836QF2 = mkHost {
-        system = "x86_64-linux";
-        hostname = "dell-latitude-E7270-H836QF2";
-        username = "ayin";
+    in
+    {
+      nixosConfigurations = rec {
+        default = dell-latitude-E7270-H836QF2;
+
+        dell-latitude-E7270-H836QF2 = mkHost {
+          system = "x86_64-linux";
+          hostname = "dell-latitude-E7270-H836QF2";
+          username = "ayin";
+        };
       };
     };
-  };
 }
 
 # 528491
