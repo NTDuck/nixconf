@@ -13,6 +13,6 @@
         pkgs.fcitx5-gtk
         pkgs.kdePackages.fcitx5-qt
       ];
-    }
+    };
   };
 }
