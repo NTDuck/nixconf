@@ -1,9 +1,15 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 let
   accent = config.catppuccin.accent;
   flavor = config.catppuccin.flavor;
-in {
+in
+{
   imports = [
     inputs.niri.homeModules.niri
   ];
@@ -13,6 +19,16 @@ in {
     package = pkgs.niri;
 
     settings = {
+      spawn-at-startup = [
+        {
+          argv = [
+            "fcitx5"
+            "-d"
+            "-r"
+          ];
+        }
+      ];
+
       binds = {
         "super+q".action = config.lib.niri.actions.close-window;
         "super+b".action = config.lib.niri.actions.spawn "${pkgs.firefox}/bin/firefox";
@@ -101,11 +117,11 @@ in {
           enable = true;
 
           width = 2;
-          active.color = "#cba6f7";  # "mocha" "mauve"
-          inactive.color = "#45475a";  # "mocha" "surface1"
+          active.color = "#cba6f7"; # "mocha" "mauve"
+          inactive.color = "#45475a"; # "mocha" "surface1"
         };
 
-        background-color = "#00000000";  # transparent
+        background-color = "#00000000"; # transparent
 
         gaps = 8;
 

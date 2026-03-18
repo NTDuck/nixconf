@@ -11,8 +11,8 @@
     ./cachyos-kernel.nix
     ./catppuccin.nix
     ./dev.nix
+    ./fcitx5.nix
     ./greetd.nix
-    ./niri.nix
     ./zeroclaw.nix
     ./zsh.nix
   ];
