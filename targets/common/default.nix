@@ -76,6 +76,7 @@
     pkgs.linux-firmware
   ];
 
+  hardware.graphics.enable = true;
   hardware.enableRedistributableFirmware = lib.mkDefault true;
 
   # Packages
