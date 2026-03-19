@@ -1,4 +1,4 @@
-{ pkgs, username, ... }:
+{ username, ... }:
 
 {
   imports = [
@@ -6,9 +6,11 @@
     ./cliphist.nix
     ./fastfetch.nix
     ./firefox.nix
+    # ./foot.nix
     ./gh.nix
     ./git.nix
     ./helix.nix
+    # ./i3.nix
     ./niri.nix
     ./noctalia.nix
     ./vesktop.nix
