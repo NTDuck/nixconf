@@ -3,6 +3,7 @@
 {
   programs.foot = {
     enable = true;
+    server.enable = true;
 
     # https://man.archlinux.org/man/foot.ini.5.en
     # https://codeberg.org/dnkl/foot/src/branch/master/foot.ini
@@ -10,7 +11,7 @@
       main = {
         gamma-correct-blending = "no";
         # font = "Fira Code:size=11";
-        # term = "xterm-256color";
+        term = "xterm-256color";
       };
 
       mouse = {
@@ -19,6 +20,4 @@
       };
     };
   };
-
-  catppuccin.foot.enable = true;
 }

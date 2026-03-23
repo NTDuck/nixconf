@@ -40,6 +40,4 @@
   programs.zsh.shellAliases = {
     zed = "zeditor";
   };
-
-  catppuccin.zed.enable = false;
 }

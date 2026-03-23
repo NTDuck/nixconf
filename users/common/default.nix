@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ./catppuccin.nix
     ./cliphist.nix
     ./fastfetch.nix
     ./firefox.nix
@@ -10,13 +9,12 @@
     ./gh.nix
     ./git.nix
     ./helix.nix
-    ./i3.nix
+    ./river.nix
     ./vesktop.nix
+    ./yambar.nix
     ./yazi.nix
     ./zed-editor.nix
     ./zsh.nix
-
-    # TODO add image & video viewers
   ];
 
   home.username = username;

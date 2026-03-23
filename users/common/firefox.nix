@@ -128,9 +128,4 @@
       };
     };
   };
-
-  catppuccin.firefox = {
-    enable = true;
-    force = true;
-  };
 }

@@ -10,23 +10,8 @@
     # Kernel
     cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel";
 
-    # Compositor
-    niri.url = "github:sodiboo/niri-flake";
-
-    # Shell
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.noctalia-qs.follows = "noctalia-qs";
-    };
-
-    noctalia-qs = {
-      url = "github:noctalia-dev/noctalia-qs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Soothing pastel theme for the high-spirited!
-    catppuccin.url = "github:catppuccin/nix";
+    # # Soothing pastel theme for the high-spirited!
+    # catppuccin.url = "github:catppuccin/nix";
 
     # TODO install https://kamadorueda.com/alejandra/
     # TODO use stable channels for nixosSystem & unstable channels for everything else
