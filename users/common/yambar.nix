@@ -17,8 +17,8 @@
               time-format = "%H:%M";
               date-format = "%m-%d";
               content = [
-                { string = { text = "{time}"; margin = 5; } }
-                { string = { text = "{date}"; margin = 5; } }
+                { string = { text = "{time}"; margin = 5; }; }
+                { string = { text = "{date}"; margin = 5; }; }
               ];
             };
           }
