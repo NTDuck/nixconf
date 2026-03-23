@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  wayland.windowManager.river-classic = {
+  wayland.windowManager.river = {
     enable = true;
 
     # settings = {
