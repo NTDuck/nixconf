@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./bemenu.nix
     ./cliphist.nix
     ./fastfetch.nix
     ./firefox.nix

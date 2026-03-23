@@ -16,6 +16,7 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 - Font
 - Theme
 - Image & Video viewers
+- Bemenu settings
 
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
