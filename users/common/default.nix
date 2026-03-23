@@ -6,15 +6,12 @@
     ./cliphist.nix
     ./fastfetch.nix
     ./firefox.nix
-    # ./foot.nix
+    ./foot.nix
     ./gh.nix
     ./git.nix
     ./helix.nix
-    # ./i3.nix
-    ./niri.nix
-    ./noctalia.nix
+    ./i3.nix
     ./vesktop.nix
-    ./wezterm.nix
     ./yazi.nix
     ./zed-editor.nix
     ./zsh.nix
