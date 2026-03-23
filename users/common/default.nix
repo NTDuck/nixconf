@@ -12,7 +12,7 @@
     ./helix.nix
     ./river.nix
     ./vesktop.nix
-    ./yambar.nix
+    ./waybar.nix
     ./yazi.nix
     ./zed-editor.nix
     ./zsh.nix

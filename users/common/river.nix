@@ -4,14 +4,14 @@
   wayland.windowManager.river = {
     enable = true;
 
-    # settings = {
-    #   map.normal = {
-    #     "Super Return" = "spawn footclient";
-    #     "Super W" = "spawn firefox";
-    #     "Super Q" = "close";
-    #     "Super Shift E" = "exit";
-    #   };
-    # };
+    settings = {
+      map.normal = {
+        "Super Return" = "spawn footclient";
+        "Super W" = "spawn firefox";
+        "Super Q" = "close";
+        "Super Shift E" = "exit";
+      };
+    };
 
     # extraConfig = ''
     #   rivertile -view-padding 4 -outer-padding 4 &
@@ -21,11 +21,9 @@
     # '';
 
     extraConfig = ''
-      # 1. Start the layout generator! (This fixes the overlapping windows)
-      ${pkgs.river-classic}/bin/rivertile -view-padding 4 -outer-padding 4 -main-ratio 0.5 &
+      rivertile -view-padding 4 -outer-padding 4 -main-ratio 0.5 &
 
-      # 2. Start the bar
-      ${pkgs.yambar}/bin/yambar &
+      waybar &
 
       # 3. Basic i3-like Keybindings
       riverctl map normal Super Return spawn footclient

@@ -17,6 +17,10 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 - Theme
 - Image & Video viewers
 - Bemenu settings
+- Cloud for lock screen
+- Brightnessctl & audio mappings
+- Make bamboo not show gui when switching language input
+- Wallpaper
 
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix

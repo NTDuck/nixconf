@@ -12,7 +12,6 @@
     ./dev-pkgs.nix
     ./fcitx5.nix
     ./greetd.nix
-    ./river.nix
     ./zeroclaw.nix
     ./zsh.nix
   ];
