@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  wayland.windowManager.river = {
+  wayland.windowManager.river-classic = {
     enable = true;
 
     # settings = {
@@ -32,7 +32,7 @@
       riverctl map normal Super W spawn firefox
       riverctl map normal Super Q close
       riverctl map normal Super Shift E exit
-      
+
       # 4. The Launcher (bemenu)
       riverctl map normal Super Space spawn '${pkgs.bemenu}/bin/bemenu-run -b -p "Run:"'
 
