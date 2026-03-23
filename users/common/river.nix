@@ -22,7 +22,7 @@
 
     extraConfig = ''
       # 1. Start the layout generator! (This fixes the overlapping windows)
-      ${pkgs.river}/bin/rivertile -view-padding 4 -outer-padding 4 -main-ratio 0.5 &
+      ${pkgs.river-classic}/bin/rivertile -view-padding 4 -outer-padding 4 -main-ratio 0.5 &
 
       # 2. Start the bar
       ${pkgs.yambar}/bin/yambar &
