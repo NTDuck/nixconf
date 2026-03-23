@@ -30,27 +30,27 @@
       };
     };
     
-    # Absolute minimal CSS to keep it looking clean and saving resources
-    # style = ''
-    #   * {
-    #     font-family: monospace;
-    #     font-size: 13px;
-    #     color: #ffffff;
-    #   }
-    #   window#waybar {
-    #     background-color: #111111;
-    #   }
-    #   #clock, #battery {
-    #     padding: 10px 0;
-    #   }
-    #   #tags button {
-    #     color: #555555;
-    #     padding: 5px 0;
-    #   }
-    #   #tags button.focused {
-    #     color: #ffffff;
-    #     font-weight: bold;
-    #   }
-    # '';
+    # https://github.com/completely-normal-dude/completely-normal-dotfiles/blob/old-nordic-dotfiles/waybar/style.css
+    style = ''
+      * {
+        font-family: monospace;
+        font-size: 13px;
+        color: #ffffff;
+      }
+      window#waybar {
+        background-color: #111111;
+      }
+      #clock, #battery {
+        padding: 10px 0;
+      }
+      #tags button {
+        color: #555555;
+        padding: 5px 0;
+      }
+      #tags button.focused {
+        color: #ffffff;
+        font-weight: bold;
+      }
+    '';
   };
 }
