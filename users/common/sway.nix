@@ -6,15 +6,20 @@
 
     wrapperFeatures.gtk = true;
 
-    config = {
+    config = rec {
       modifier = "Mod4";
-      terminal = "footclient";
+      terminal = "${pkgs.foot}/bin/footclient";
+      launcher = "${pkgs.bemenu}/bin/bemenu-run";
 
       startup = [
         { command = "${pkgs.fcitx5}/bin/fcitx5 -d -r"; }
       ];
 
       keybindings = {
+        "${modifier}+Return" = "exec ${terminal}";
+        "${modifier}+Shift+q" = "kill";
+        "${modifier}+d" = "exec ${launcher}";
+                
         "XF86MonBrightnessDown" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
         "XF86MonBrightnessUp" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set +5%";
 
