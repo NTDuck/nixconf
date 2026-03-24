@@ -12,6 +12,8 @@
       terminal = "${pkgs.foot}/bin/footclient";
       menu = "${pkgs.bemenu}/bin/bemenu-run";
 
+      bars = [ ];
+
       startup = [
         { command = "${pkgs.fcitx5}/bin/fcitx5 -d -r"; }
         { command = "${pkgs.autotiling-rs}/bin/autotling-rs"; }
