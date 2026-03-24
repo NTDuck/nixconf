@@ -36,7 +36,7 @@ in
 
     Service = {
       # We pipe the script directly into wayout
-      ExecStart = "${pkgs.bash}/bin/bash -c '${status-script}/bin/wayout-status | ${pkgs.wayout}/bin/wayout --edge left --width 32 --feed-line --font \"JetBrainsMono Nerd Font 10\"'";
+      ExecStart = "${pkgs.bash}/bin/bash -c '${wayout-script}/bin/wayout-script | ${pkgs.wayout}/bin/wayout --edge left --width 32 --feed-line --font \"JetBrainsMono Nerd Font 10\"'";
       Restart = "always";
     };
 
