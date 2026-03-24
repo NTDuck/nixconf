@@ -9,7 +9,7 @@
     config = rec {
       modifier = "Mod4";
       terminal = "${pkgs.foot}/bin/footclient";
-      launcher = "${pkgs.bemenu}/bin/bemenu-run";
+      menu = "${pkgs.bemenu}/bin/bemenu-run";
 
       startup = [
         { command = "${pkgs.fcitx5}/bin/fcitx5 -d -r"; }
@@ -18,7 +18,7 @@
       keybindings = {
         "${modifier}+Return" = "exec ${terminal}";
         "${modifier}+Shift+q" = "kill";
-        "${modifier}+d" = "exec ${launcher}";
+        "${modifier}+d" = "exec ${menu}";
                 
         "XF86MonBrightnessDown" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
         "XF86MonBrightnessUp" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set +5%";
