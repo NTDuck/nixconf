@@ -10,7 +10,7 @@
     ./gh.nix
     ./git.nix
     ./helix.nix
-    ./river.nix
+    ./sway.nix
     ./vesktop.nix
     ./waybar.nix
     ./yazi.nix

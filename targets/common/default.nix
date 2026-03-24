@@ -12,6 +12,7 @@
     ./dev-pkgs.nix
     ./fcitx5.nix
     ./greetd.nix
+    ./sway.nix
     ./zeroclaw.nix
     ./zsh.nix
   ];

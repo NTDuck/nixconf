@@ -5,7 +5,7 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember  --asterisks  --container-padding 2 --no-xsession-wrapper --cmd river";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember  --asterisks  --container-padding 2 --no-xsession-wrapper --cmd sway"; # References `sway` therefore not clean
         user = "greeter";
       };
     };
