@@ -21,12 +21,12 @@
         "Super F" = "toggle-fullscreen";
 
         # Hardware
-        "None XF86AudioRaiseVolume" = "spawn 'pamixer -i 5'";
-        "None XF86AudioLowerVolume" = "spawn 'pamixer -d 5'";
-        "None XF86AudioMute" = "spawn 'pamixer --toggle-mute'";
+        "None XF86AudioRaiseVolume" = "spawn pamixer -i 5";
+        "None XF86AudioLowerVolume" = "spawn pamixer -d 5";
+        "None XF86AudioMute" = "spawn pamixer --toggle-mute";
 
-        "None XF86MonBrightnessUp" = "spawn 'brightnessctl set +5%";
-        "None XF86MonBrightnessDown" = "spawn 'brightnessctl set 5%-";
+        "None XF86MonBrightnessUp" = "spawn brightnessctl set +5%";
+        "None XF86MonBrightnessDown" = "spawn brightnessctl set 5%-";
 
         # Workspaces
         "Super 1" = "set-focused-tags 1";
