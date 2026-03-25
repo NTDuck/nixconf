@@ -1,4 +1,9 @@
-{ pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   imports = [
@@ -8,9 +13,9 @@
   stylix = {
     enable = true;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/atelier-dune.yaml";
-    
+
     image = ../../assets/wallpapers/lobotomy-ego-solemn-lament-yi-sang.jpg;
-    
+
     polarity = "dark";
 
     fonts = {
@@ -22,7 +27,7 @@
       serif = config.stylix.fonts.monospace;
       sansSerif = config.stylix.fonts.monospace;
       emoji = config.stylix.fonts.monospace;
-      
+
       sizes.terminal = 11;
     };
   };
