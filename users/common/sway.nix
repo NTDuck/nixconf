@@ -14,25 +14,25 @@
       terminal = "${pkgs.foot}/bin/footclient";
       menu = "${pkgs.bemenu}/bin/bemenu-run";
 
-      bars = [
-        {
-          position = "top";
-          colors = lib.mkForce {
-            background = "#00000000"; # 00 is the alpha channel for full transparency
-            statusline = "#ffffff";
-          };
-          # statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-top.toml";
+      # bars = [
+      #   {
+      #     position = "top";
+      #     colors = lib.mkForce {
+      #       background = "#00000000"; # 00 is the alpha channel for full transparency
+      #       statusline = "#ffffff";
+      #     };
+      #     # statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-top.toml";
 
-          # fonts = {
-          #   names = [ "DejaVu Sans" "FontAwesome 5 Free" ];
-          #   size = 10.0;
-          # };
-        }
-      ];
+      #     # fonts = {
+      #     #   names = [ "DejaVu Sans" "FontAwesome 5 Free" ];
+      #     #   size = 10.0;
+      #     # };
+      #   }
+      # ];
 
       startup = [
         {
-          command = "sleep 4 && ${pkgs.fcitx5}/bin/fcitx5 -d -r";
+          command = "sleep 8 && ${pkgs.fcitx5}/bin/fcitx5 -d -r";
           always = true;
         }
         {
