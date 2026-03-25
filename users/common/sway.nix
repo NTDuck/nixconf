@@ -18,7 +18,7 @@
         {
           position = "top";
           statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-top.toml";
-          
+
           # fonts = {
           #   names = [ "DejaVu Sans" "FontAwesome 5 Free" ];
           #   size = 10.0;
@@ -93,6 +93,12 @@
           dwt = "enabled";
         };
       };
+
+      output = {
+        "*" = {
+          bg = "${./assets/wallpapers/lobotomy-ego-solemn-lament-yi-sang.jpg} fill";
+        };
+      };
     };
   };
 
@@ -104,7 +110,10 @@
           { block = "cpu"; }
           { block = "memory"; }
           { block = "battery"; }
-          { block = "time"; format = " $timestamp.datetime(f:'%a %d/%m %R') "; }
+          {
+            block = "time";
+            format = " $timestamp.datetime(f:'%a %d/%m %R') ";
+          }
         ];
         settings = {
           theme = {
