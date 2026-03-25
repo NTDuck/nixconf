@@ -9,8 +9,8 @@
       addons = [ pkgs.fcitx5-bamboo ];
 
       waylandFrontend = true;
-      ignoreUserConfig = true;  # ignore `~/.config/fcitx5`
-      
+      ignoreUserConfig = true; # ignore `~/.config/fcitx5`
+
       settings = {
         globalOptions = {
           "Hotkey/TriggerKeys" = {
@@ -28,7 +28,7 @@
           "Groups/0/Items/1".Name = "bamboo";
           GroupOrder."0" = "Default";
         };
-      }
+      };
     };
   };
 
