@@ -38,6 +38,6 @@
   ];
 
   programs.zsh.shellAliases = {
-    zed = "zeditor";
+    zed = "env WAYLAND_DISPLAY= zeditor";
   };
 }

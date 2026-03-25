@@ -17,7 +17,11 @@
       bars = [
         {
           position = "top";
-          statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-top.toml";
+          colors = lib.mkForce {
+            background = "#00000000"; # 00 is the alpha channel for full transparency
+            statusline = "#ffffff";
+          };
+          # statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-top.toml";
 
           # fonts = {
           #   names = [ "DejaVu Sans" "FontAwesome 5 Free" ];
@@ -33,6 +37,10 @@
         }
         {
           command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
+          always = true;
+        }
+        {
+          command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP";
           always = true;
         }
       ];
@@ -94,34 +102,38 @@
         };
       };
 
-      output = {
-        "*" = {
-          bg = "${../../assets/wallpapers/lobotomy-ego-solemn-lament-yi-sang.jpg} fill";
-        };
+      window = {
+        titlebar = false;
       };
+
+      # output = {
+      #   "*" = {
+      #     bg = "${../../assets/wallpapers/lobotomy-ego-solemn-lament-yi-sang.jpg} fill";
+      #   };
+      # };
     };
   };
 
-  programs.i3status-rust = {
-    enable = true;
-    bars = {
-      top = {
-        blocks = [
-          { block = "cpu"; }
-          { block = "memory"; }
-          { block = "battery"; }
-          {
-            block = "time";
-            format = " $timestamp.datetime(f:'%a %d/%m %R') ";
-          }
-        ];
-        settings = {
-          theme = {
-            theme = "solarized-dark";
-          };
-        };
-        icons = "awesome5";
-      };
-    };
-  };
+  # programs.i3status-rust = {
+  #   enable = true;
+  #   bars = {
+  #     top = {
+  #       blocks = [
+  #         { block = "cpu"; }
+  #         { block = "memory"; }
+  #         { block = "battery"; }
+  #         {
+  #           block = "time";
+  #           format = " $timestamp.datetime(f:'%a %d/%m %R') ";
+  #         }
+  #       ];
+  #       settings = {
+  #         theme = {
+  #           theme = "solarized-dark";
+  #         };
+  #       };
+  #       icons = "awesome5";
+  #     };
+  #   };
+  # };
 }

@@ -1,11 +1,11 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   services.greetd = {
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember  --asterisks  --container-padding 2 --no-xsession-wrapper --cmd sway"; # References `sway` therefore not clean
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember  --asterisks  --container-padding 2 --no-xsession-wrapper --cmd sway --theme 'border=${config.lib.stylix.colors.base0D};text=${config.lib.stylix.colors.base05};prompt=${config.lib.stylix.colors.base0A};time=${config.lib.stylix.colors.base08};action=${config.lib.stylix.colors.base0D};button=${config.lib.stylix.colors.base09};container=${config.lib.stylix.colors.base00};input=${config.lib.stylix.colors.base05}'"; # References `sway` therefore not clean
         user = "greeter";
       };
     };

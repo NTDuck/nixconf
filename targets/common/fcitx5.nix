@@ -12,6 +12,10 @@
       ignoreUserConfig = true; # ignore `~/.config/fcitx5`
 
       settings = {
+        addons = {
+          classicui.globalSection.ShowInputMethodInformation = "False";
+          bamboo.InputMode = "1";
+        };
         globalOptions = {
           "Hotkey/TriggerKeys" = {
             "0" = "Control+Shift_L";

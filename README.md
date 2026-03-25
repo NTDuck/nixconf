@@ -10,18 +10,24 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 - Terminal: foot
 - Shell: zsh + starship/powerlevel10k
 
-- Consider [undervolting], tlp
-- Add support for HDMI
+- Add support for HDMI (work?)
 - Change rule of Nix language server e.g. { a, b, c, ... } does not need newlining
-- Font
-- Theme
-- Image & Video viewers
-- Bemenu settings
 - Cloud for lock screen
-- Make bamboo not show gui when switching language input
-- Wallpaper
 
 - nixos system stable + pkgs unstable
+- change bemenu to match
+- zed flickering
+- Make bamboo not show gui when switching language input
+- status bar to ddefault
+- foot transparent
+- gnome keyring persist, intuition: pw
+- tuigreet font
+- disable window title
+- disable underlining
+- make kernel work
+- warp equivalent
+- powerlevel10k for zsh
+- android studio
 
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix

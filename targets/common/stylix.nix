@@ -14,7 +14,7 @@
     enable = true;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/atelier-dune.yaml";
 
-    image = ../../assets/wallpapers/lobotomy-ego-solemn-lament-yi-sang.jpg;
+    image = ../../assets/wallpapers/funeral-of-the-dead-butterflies.png;
 
     polarity = "dark";
 
