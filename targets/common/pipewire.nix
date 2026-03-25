@@ -10,5 +10,5 @@
     pulse.enable = true;
   };
 
-  services.pulseaudio.enable = lib.mkDefault false;
+  services.pulseaudio.enable = false;
 }
