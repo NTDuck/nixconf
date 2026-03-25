@@ -5,7 +5,7 @@
     enable = true;
 
     systemd.enable = true;
-    xwayland.enable = true;
+    xwayland = true;
 
     wrapperFeatures.gtk = true;
 
