@@ -3,7 +3,9 @@
 {
   wayland.windowManager.sway = {
     enable = true;
+
     systemd.enable = true;
+    xwayland.enable = true;
 
     wrapperFeatures.gtk = true;
 
@@ -12,11 +14,27 @@
       terminal = "${pkgs.foot}/bin/footclient";
       menu = "${pkgs.bemenu}/bin/bemenu-run";
 
-      bars = [ ];
+      bars = [
+        {
+          position = "top";
+          statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-top.toml";
+          
+          # fonts = {
+          #   names = [ "DejaVu Sans" "FontAwesome 5 Free" ];
+          #   size = 10.0;
+          # };
+        }
+      ];
 
       startup = [
-        { command = "${pkgs.fcitx5}/bin/fcitx5 -d -r"; }
-        { command = "${pkgs.autotiling-rs}/bin/autotling-rs"; }
+        {
+          command = "${pkgs.fcitx5}/bin/fcitx5 -d -r";
+          always = true;
+        }
+        {
+          command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
+          always = true;
+        }
       ];
 
       keybindings = {
@@ -74,6 +92,26 @@
           natural_scroll = "enabled";
           dwt = "enabled";
         };
+      };
+    };
+  };
+
+  programs.i3status-rust = {
+    enable = true;
+    bars = {
+      top = {
+        blocks = [
+          { block = "cpu"; }
+          { block = "memory"; }
+          { block = "battery"; }
+          { block = "time"; format = " $timestamp.datetime(f:'%a %d/%m %R') "; }
+        ];
+        settings = {
+          theme = {
+            theme = "solarized-dark";
+          };
+        };
+        icons = "awesome5";
       };
     };
   };

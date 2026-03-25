@@ -12,7 +12,6 @@
     ./helix.nix
     ./sway.nix
     ./vesktop.nix
-    ./wayout.nix
     ./yazi.nix
     ./zed-editor.nix
     ./zsh.nix

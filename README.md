@@ -6,7 +6,7 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 ```
 
 ## TODOs
-- Compositor: River
+- Compositor: Sway
 - Terminal: foot
 - Shell: zsh + starship/powerlevel10k
 
