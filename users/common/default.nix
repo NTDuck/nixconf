@@ -11,6 +11,9 @@
     ./gh.nix
     ./git.nix
     ./helix.nix
+    ./imv.nix
+    ./kanshi.nix
+    ./mpv.nix
     ./sway.nix
     ./vesktop.nix
     ./yazi.nix

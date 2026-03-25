@@ -7,11 +7,11 @@
     home-manager.url = "github:nix-community/home-manager/";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    stylix.url = "github:nix-community/stylix";
+    stylix.inputs.nixpkgs.follows = "nixpkgs";
+
     # Kernel
     cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel";
-
-    # # Soothing pastel theme for the high-spirited!
-    # catppuccin.url = "github:catppuccin/nix";
 
     # TODO install https://kamadorueda.com/alejandra/
     # TODO use stable channels for nixosSystem & unstable channels for everything else

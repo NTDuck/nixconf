@@ -28,7 +28,7 @@
 
       startup = [
         {
-          command = "${pkgs.fcitx5}/bin/fcitx5 -d -r";
+          command = "sleep 4 && ${pkgs.fcitx5}/bin/fcitx5 -d -r";
           always = true;
         }
         {
@@ -96,7 +96,7 @@
 
       output = {
         "*" = {
-          bg = "${./assets/wallpapers/lobotomy-ego-solemn-lament-yi-sang.jpg} fill";
+          bg = "${../../assets/wallpapers/lobotomy-ego-solemn-lament-yi-sang.jpg} fill";
         };
       };
     };

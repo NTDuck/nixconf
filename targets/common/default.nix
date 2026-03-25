@@ -8,10 +8,13 @@
 
 {
   imports = [
+    ./battery.nix
     ./cachyos-kernel.nix
     ./dev-pkgs.nix
     ./fcitx5.nix
     ./greetd.nix
+    ./pipewire.nix
+    ./stylix.nix
     ./sway.nix
     ./zeroclaw.nix
     ./zsh.nix
@@ -56,18 +59,6 @@
     options = "--delete-older-than 4d";
   };
 
-  # Audio
-  services.pipewire = {
-    enable = true;
-    alsa = {
-      enable = true;
-      support32Bit = true;
-    };
-    pulse.enable = true;
-  };
-
-  services.pulseaudio.enable = lib.mkDefault false;
-
   # Printing
   services.printing.enable = true;
 
@@ -85,13 +76,6 @@
   environment.systemPackages = [
     pkgs.git
   ];
-
-  # Battery
-  services.tlp.enable = true;
-  services.thermald.enable = true;
-  services.fstrim.enable = true;
-
-  services.power-profiles-daemon.enable = false;
 
   # Users
   users.users.${username} = {

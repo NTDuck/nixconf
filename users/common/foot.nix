@@ -10,7 +10,7 @@
     settings = {
       main = {
         gamma-correct-blending = "no";
-        font = "monospace:size=11";
+        font = "Intel One Mono:size=11";
         term = "xterm-256color";
       };
 

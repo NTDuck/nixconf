@@ -21,6 +21,8 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 - Make bamboo not show gui when switching language input
 - Wallpaper
 
+- nixos system stable + pkgs unstable
+
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
 ```
