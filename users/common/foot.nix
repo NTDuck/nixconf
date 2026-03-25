@@ -10,7 +10,7 @@
     settings = {
       main = {
         gamma-correct-blending = "no";
-        # font = "Fira Code:size=11";
+        font = "monospace:size=11";
         term = "xterm-256color";
       };
 

@@ -6,6 +6,7 @@
     ./cliphist.nix
     ./fastfetch.nix
     ./firefox.nix
+    ./fonts.nix
     ./foot.nix
     ./gh.nix
     ./git.nix
