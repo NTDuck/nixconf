@@ -14,7 +14,7 @@
       settings = {
         addons = {
           classicui.globalSection.ShowInputMethodInformation = "False";
-          bamboo.InputMode = "1";
+          bamboo.globalSection.InputMode = "1";
         };
         globalOptions = {
           "Hotkey/TriggerKeys" = {
@@ -41,6 +41,4 @@
     QT_IM_MODULE = "fcitx";
     GTK_IM_MODULE = "fcitx";
   };
-
-  security.pam.services.greetd.enableGnomeKeyring = true;
 }
