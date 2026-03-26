@@ -5,6 +5,14 @@ $ git clone https://github.com/NTDuck/nixos-cfg && cd nixos-cfg
 $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 ```
 
+## Overview
+- Compositor: Sway
+- Bar: swaybar + i3status-rust
+- Terminal: foot
+- Launcher: bemenu
+- Fonts: ...
+- Theme: ...
+
 ## TODOs
 - Compositor: Sway
 - Terminal: foot
@@ -16,17 +24,26 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 
 - nixos system stable + pkgs unstable
 - change bemenu to match
-- zed flickering
 - Make bamboo not show gui when switching language input
 - status bar to ddefault
 - foot transparent
 - gnome keyring persist, intuition: pw
-- tuigreet font
 - disable underlining
 - make kernel work
 - warp equivalent
 - powerlevel10k for zsh
 - android studio
+- make fastfetch stop "bleeding"
+
+- add gaps & borders
+- make the status bar 
+- use i3status-rust backend
+- use a nicer tuigreet theme
+- bemenu
+- change wallpaper to match
+- change bar to: [left] ws, current window title [middle] time (HH:mm) [right] volume% + icon to show mute or not, brightness%, cpu+ram(+gpu if possible) usage, battery; also make current 
+
+* curr bar: [left] ws [middle] [right] network bat sto ? ram ? datetime
 
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
@@ -37,3 +54,4 @@ $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7
 - [./assets/wallpapers/funeral-of-the-dead-butterflies-hokma.png](https://reactor.cc/post/3910571)
 - [./assets/wallpapers/funeral-of-the-dead-butterflies.png](https://x.com/MaskV_/status/1675409368651816960)
 - [./assets/wallpapers/lobotomy-ego-solemn-lament-yi-sang.jpg](https://www.pinterest.com/pin/16888567439645056/)
+- [./assets/wallpapers/girls-last-tour-library.jpg](https://x.com/LeoLeonardK10/status/1465607483372699656)
