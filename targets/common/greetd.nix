@@ -1,11 +1,19 @@
 { config, pkgs, ... }:
 
+let
+  colors = config.lib.stylix.colors.withHashtag;
+in
 {
   services.greetd = {
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember  --asterisks  --container-padding 2 --no-xsession-wrapper --cmd sway --theme 'border=${config.lib.stylix.colors.base0D};text=${config.lib.stylix.colors.base05};prompt=${config.lib.stylix.colors.base0A};time=${config.lib.stylix.colors.base08};action=${config.lib.stylix.colors.base0D};button=${config.lib.stylix.colors.base09};container=${config.lib.stylix.colors.base00};input=${config.lib.stylix.colors.base05}'"; # References `sway` therefore not clean
+        command = ''
+          ${pkgs.tuigreet}/bin/tuigreet \
+          --time --remember \
+          --container-padding 2 --no-xsession-wrapper --cmd sway \
+          --theme "container=${colors.base00};border=${colors.base0D};text=${colors.base05};prompt=${colors.base0E};time=${colors.base0C};action=${colors.base0B};button=${colors.base0A};input=${colors.base05}'
+        ''; # References `sway` therefore not clean
         user = "greeter";
       };
     };
@@ -28,4 +36,5 @@
   # };
 
   services.xserver.enable = false;
+  console.earlySetup = true;
 }

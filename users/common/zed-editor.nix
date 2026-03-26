@@ -3,6 +3,7 @@
 {
   programs.zed-editor = {
     enable = true;
+
     # https://github.com/zed-industries/zed/issues/32792
     package = pkgs.symlinkJoin {
       name = "zed-xwayland";

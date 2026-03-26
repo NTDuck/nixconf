@@ -22,7 +22,6 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 - foot transparent
 - gnome keyring persist, intuition: pw
 - tuigreet font
-- disable window title
 - disable underlining
 - make kernel work
 - warp equivalent
