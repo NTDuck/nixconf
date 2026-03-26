@@ -23,9 +23,7 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 - Cloud for lock screen
 
 - nixos system stable + pkgs unstable
-- change bemenu to match
 - Make bamboo not show gui when switching language input
-- status bar to ddefault
 - foot transparent
 - gnome keyring persist, intuition: pw
 - disable underlining
@@ -33,14 +31,14 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 - warp equivalent
 - powerlevel10k for zsh
 - android studio
-- make fastfetch stop "bleeding"
+- make fastfetch stop "bleeding" consistent output idk
+- zen browser
 
 - add gaps & borders
 - make the status bar 
 - use i3status-rust backend
 - use a nicer tuigreet theme
 - bemenu
-- change wallpaper to match
 - change bar to: [left] ws, current window title [middle] time (HH:mm) [right] volume% + icon to show mute or not, brightness%, cpu+ram(+gpu if possible) usage, battery; also make current 
 
 * curr bar: [left] ws [middle] [right] network bat sto ? ram ? datetime

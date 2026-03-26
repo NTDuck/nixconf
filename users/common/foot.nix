@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 
 {
   programs.foot = {
@@ -9,9 +9,13 @@
     # https://codeberg.org/dnkl/foot/src/branch/master/foot.ini
     settings = {
       main = {
+        pad = "15x15";
         gamma-correct-blending = "no";
-        # font = "Intel One Mono:size=11";
         term = "xterm-256color";
+      };
+
+      colors = {
+        alpha = lib.mkForce "0.8";
       };
 
       mouse = {

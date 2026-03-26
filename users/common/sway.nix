@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   wayland.windowManager.sway = {
@@ -11,24 +11,22 @@
 
     config = rec {
       modifier = "Mod4";
-      terminal = "${pkgs.foot}/bin/footclient";
-      menu = "${pkgs.bemenu}/bin/bemenu-run";
 
-      # bars = [
-      #   {
-      #     position = "top";
-      #     colors = lib.mkForce {
-      #       background = "#00000000"; # 00 is the alpha channel for full transparency
-      #       statusline = "#ffffff";
-      #     };
-      #     # statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-top.toml";
+      # terminal = "${pkgs.foot}/bin/footclient";
+      # menu = "${pkgs.bemenu}/bin/bemenu-run";
+      terminal = "footclient";
+      menu = "bemenu-run";
 
-      #     # fonts = {
-      #     #   names = [ "DejaVu Sans" "FontAwesome 5 Free" ];
-      #     #   size = 10.0;
-      #     # };
-      #   }
-      # ];
+      bars = [
+        {
+          position = "top";
+          colors = lib.mkForce {
+            background = "#00000080";
+            statusline = "#ffffff";
+          };
+          statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-top.toml";
+        }
+      ];
 
       startup = [
         {
@@ -102,38 +100,38 @@
         };
       };
 
-      window = {
-        titlebar = false;
+      gaps = {
+        inner = 5;
+        outer = 5;
+        smartGaps = true;
       };
 
-      # output = {
-      #   "*" = {
-      #     bg = "${../../assets/wallpapers/lobotomy-ego-solemn-lament-yi-sang.jpg} fill";
-      #   };
-      # };
+      window = {
+        titlebar = false;
+        border = 2;
+      };
     };
   };
 
-  # programs.i3status-rust = {
-  #   enable = true;
-  #   bars = {
-  #     top = {
-  #       blocks = [
-  #         { block = "cpu"; }
-  #         { block = "memory"; }
-  #         { block = "battery"; }
-  #         {
-  #           block = "time";
-  #           format = " $timestamp.datetime(f:'%a %d/%m %R') ";
-  #         }
-  #       ];
-  #       settings = {
-  #         theme = {
-  #           theme = "solarized-dark";
-  #         };
-  #       };
-  #       icons = "awesome5";
-  #     };
-  #   };
-  # };
+  programs.i3status-rust = {
+    enable = true;
+    bars = {
+      top = {
+        blocks = [
+          { block = "time"; format = " $timestamp.datetime(f:'%H:%M') "; }
+          { block = "sound"; }
+          { block = "backlight"; }
+          { block = "cpu"; format = " $icon $barchart $utilization "; }
+          { block = "memory"; format = " $icon $mem_used_percents "; }
+          { block = "battery"; format = " $icon $percentage "; }
+        ];
+        # settings = {
+        #   theme = {
+        #     theme = "solarized-dark";
+        #   };
+        # };
+        icons = "awesome5";
+      };
+    };
+  };
 }
