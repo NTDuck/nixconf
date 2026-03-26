@@ -3,9 +3,19 @@
 {
   programs.zed-editor = {
     enable = true;
+    # https://github.com/zed-industries/zed/issues/32792
+    package = pkgs.symlinkJoin {
+      name = "zed-xwayland";
+      paths = [ pkgs.zed-editor ];
+      buildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/zeditor \
+          --unset WAYLAND_DISPLAY
+      '';
+    };
 
     extensions = [
-      "catppuccin-blur"
+      # "catppuccin-blur"
       "catppuccin-icons"
 
       "nix"
@@ -38,6 +48,6 @@
   ];
 
   programs.zsh.shellAliases = {
-    zed = "env WAYLAND_DISPLAY= zeditor";
+    zed = "zeditor";
   };
 }

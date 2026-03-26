@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   inputs,
   ...
@@ -20,23 +19,28 @@
 
     fonts = {
       sansSerif = {
-        package = pkgs.ibm-plex;
-        name = "IBM Plex Sans";
+        package = pkgs.inter;
+        name = "Inter";
       };
       serif = {
-        package = pkgs.ibm-plex;
-        name = "IBM Plex Serif";
+        package = pkgs.lora;
+        name = "Lora";
       };
       monospace = {
-        package = pkgs.ibm-plex;
-        name = "IBM Plex Mono";
+        package = pkgs.jetbrains-mono;
+        name = "JetBrains Mono";
       };
       emoji = {
-        package = pkgs.twitter-color-emoji;
-        name = "Twitter Color Emoji";
+        package = pkgs.noto-fonts-emoji;
+        name = "Noto Color Emoji";
       };
 
-      sizes.terminal = 11;
+      sizes = {
+        applications = 11;
+        terminal = 11;
+        desktop = 10;
+        popups = 10;
+      };
     };
   };
 }
