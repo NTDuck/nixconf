@@ -19,14 +19,22 @@
     polarity = "dark";
 
     fonts = {
-      monospace = {
-        package = pkgs.intel-one-mono;
-        name = "Intel One Mono";
+      sansSerif = {
+        package = pkgs.ibm-plex;
+        name = "IBM Plex Sans";
       };
-
-      serif = config.stylix.fonts.monospace;
-      sansSerif = config.stylix.fonts.monospace;
-      emoji = config.stylix.fonts.monospace;
+      serif = {
+        package = pkgs.ibm-plex;
+        name = "IBM Plex Serif";
+      };
+      monospace = {
+        package = pkgs.ibm-plex;
+        name = "IBM Plex Mono";
+      };
+      emoji = {
+        package = pkgs.twitter-color-emoji;
+        name = "Twitter Color Emoji";
+      };
 
       sizes.terminal = 11;
     };
