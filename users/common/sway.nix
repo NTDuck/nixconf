@@ -18,10 +18,7 @@
       menu = "bemenu-run";
 
       bars = [
-        {
-          position = "top";
-          statusCommand = "${pkgs.yambar}/bin/yambar";
-        }
+        { command = "${pkgs.waybar}/bin/waybar"; }
       ];
 
       startup = [
@@ -109,99 +106,136 @@
     };
   };
 
-  programs.yambar = {
+programs.waybar = {
     enable = true;
+    
     settings = {
-      bar = {
-        height = 30;
-        location = "top";
+      mainBar = {
+        layer = "top";
+        position = "top";
 
-        left = [
-          {
-            i3 = {
-              content = {
-                "" = {
-                  map = {
-                    default = { string = { text = " {name} "; }; };
-                    conditions = {
-                      "state == focused" = { string = { text = " [{name}] "; }; };
-                    };
-                  };
-                };
-                "current" = {
-                  string = { text = "  {title}"; };
-                };
-              };
-            };
-          }
-        ];
+        modules-left = [ "custom/space" "battery" "sway/workspaces" ];
+        modules-center = [ "custom/space" "cpu" "custom/runner" "memory" ];
+        modules-right = [ "pulseaudio" "sway/language" "clock" "custom/space" ];
 
-        center = [
-          {
-            clock = {
-              time_format = "%H:%M";
-              content = [
-                { string = { text = "{time}"; }; }
-              ];
-            };
-          }
-        ];
+        "custom/space" = {
+          format = " ";
+          tooltip = false;
+        };
 
-        right = [
-          {
-            alsa = {
-              card = "default";
-              content = [
-                {
-                  map = {
-                    conditions = {
-                      "muted" = { string = { text = " {percent}%   "; }; };
-                      "~muted" = { string = { text = " {percent}%   "; }; };
-                    };
-                  };
-                }
-              ];
-            };
-          }
-          {
-            backlight = {
-              name = "intel_backlight";
-              content = [
-                { string = { text = "Blt {percent}%   "; }; }
-              ];
-            };
-          }
-          {
-            cpu = {
-              content = [
-                { string = { text = "CPU {cpu}%   "; }; }
-              ];
-            };
-          }
-          {
-            mem = {
-              content = [
-                { string = { text = "RAM {used_percent}%   "; }; }
-              ];
-            };
-          }
-          {
-            battery = {
-              name = "BAT0";
-              content = [
-                {
-                  map = {
-                    default = { string = { text = "Bat {capacity}% "; }; };
-                    conditions = {
-                      "state == charging" = { string = { text = "Chg {capacity}% "; }; };
-                    };
-                  };
-                }
-              ];
-            };
-          }
-        ];
+        "custom/runner" = {
+          format = "";
+          on-click = "bemenu-run"; # Adapted from wofi
+        };
+
+        "sway/workspaces" = {
+          disable-scroll = true;
+          format = "{name}";
+        };
+
+        "clock" = {
+          format = "{:%B %d %I:%M %p} |  ";
+        };
+
+        "pulseaudio" = {
+          format = "{icon} {volume:2}%";
+          format-bluetooth = "{icon}  {volume}%";
+          format-muted = "{icon} MUTE";
+          format-icons = {
+            headphones = "";
+            default = [ "" "" ];
+          };
+          scroll-step = 5;
+          # on-click = "pamixer -t";
+          # on-click-right = "pavucontrol";
+        };
+
+        "sway/language" = {
+          format = "  {short}";
+          on-click = "swaymsg input type:keyboard xkb_switch_layout next";
+        };
+
+        "memory" = {
+          interval = 1;
+          format = "  {}%";
+          on-click = "footclient -e btop"; # Adapted from gnome-system-monitor
+        };
+
+        "cpu" = {
+          interval = 1;
+          format = " {usage:2}%";
+          on-click = "footclient -e btop"; # Adapted from gnome-system-monitor
+        };
+
+        "battery" = {
+          states = {
+            good = 95;
+            warning = 30;
+            critical = 15;
+          };
+          format = "{icon}  | {capacity}%";
+          format-icons = [ "" "" "" "" "" ];
+        };
       };
     };
+
+    # The CSS style config 
+    style = ''
+      * {
+        font-size: 18px;
+        /* Stylix automatically handles the font-family */
+      }
+
+      window#waybar {
+        background: transparent;
+      }
+
+      /* Using Stylix dynamic base colors instead of hardcoded hex codes */
+      #workspaces,
+      #clock,
+      #pulseaudio,
+      #memory,
+      #cpu,
+      #battery,
+      #network,
+      #language,
+      #custom-runner {
+        background: @base00;
+        color: @base05;
+        border-radius: 15px;
+        margin-top: 7px;
+        margin-left: 7px;
+        margin-right: 7px;
+        padding: 3px 10px;
+      }
+
+      #custom-runner {
+        padding-left: 10px;
+        padding-right: 12px;
+      }
+
+      #workspaces button {
+        padding: 0 5px;
+        color: @base04;
+      }
+
+      #workspaces button.focused {
+        color: @base0D; /* Stylix accent color */
+      }
+
+      #workspaces button:hover,
+      #pulseaudio:hover,
+      #cpu:hover,
+      #memory:hover,
+      #battery:hover,
+      #clock:hover,
+      #language:hover {
+        background: @base02; /* Stylix hover color */
+      }
+    '';
   };
+
+  home.packages = [
+    pkgs.btop
+  ];
 }
