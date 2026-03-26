@@ -42,5 +42,10 @@
         popups = 10;
       };
     };
+
+    opacity = {
+      desktop = 0.8;
+      terminal = 0.8;
+    };
   };
 }

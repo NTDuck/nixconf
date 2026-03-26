@@ -14,9 +14,9 @@
         term = "xterm-256color";
       };
 
-      colors = {
-        alpha = lib.mkForce "0.8";
-      };
+      # colors = {
+      #   alpha = lib.mkForce "0.8";
+      # };
 
       mouse = {
         hide-when-typing = "yes";

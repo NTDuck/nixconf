@@ -20,11 +20,7 @@
       bars = [
         {
           position = "top";
-          colors = lib.mkForce {
-            background = "#00000080";
-            statusline = "#ffffff";
-          };
-          statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-top.toml";
+          statusCommand = "${pkgs.yambar}/bin/yambar";
         }
       ];
 
@@ -101,9 +97,9 @@
       };
 
       gaps = {
-        inner = 5;
-        outer = 5;
-        smartGaps = true;
+        inner = 4;
+        outer = 0;
+        # smartGaps = true;
       };
 
       window = {
@@ -113,24 +109,98 @@
     };
   };
 
-  programs.i3status-rust = {
+  programs.yambar = {
     enable = true;
-    bars = {
-      top = {
-        blocks = [
-          { block = "time"; format = " $timestamp.datetime(f:'%H:%M') "; }
-          { block = "sound"; }
-          { block = "backlight"; }
-          { block = "cpu"; format = " $icon $barchart $utilization "; }
-          { block = "memory"; format = " $icon $mem_used_percents "; }
-          { block = "battery"; format = " $icon $percentage "; }
+    settings = {
+      bar = {
+        height = 30;
+        location = "top";
+
+        left = [
+          {
+            i3 = {
+              content = {
+                "" = {
+                  map = {
+                    default = { string = { text = " {name} "; }; };
+                    conditions = {
+                      "state == focused" = { string = { text = " [{name}] "; }; };
+                    };
+                  };
+                };
+                "current" = {
+                  string = { text = "  {title}"; };
+                };
+              };
+            };
+          }
         ];
-        # settings = {
-        #   theme = {
-        #     theme = "solarized-dark";
-        #   };
-        # };
-        icons = "awesome5";
+
+        center = [
+          {
+            clock = {
+              time_format = "%H:%M";
+              content = [
+                { string = { text = "{time}"; }; }
+              ];
+            };
+          }
+        ];
+
+        right = [
+          {
+            alsa = {
+              card = "default";
+              content = [
+                {
+                  map = {
+                    conditions = {
+                      "muted" = { string = { text = " {percent}%   "; }; };
+                      "~muted" = { string = { text = " {percent}%   "; }; };
+                    };
+                  };
+                }
+              ];
+            };
+          }
+          {
+            backlight = {
+              name = "intel_backlight";
+              content = [
+                { string = { text = "Blt {percent}%   "; }; }
+              ];
+            };
+          }
+          {
+            cpu = {
+              content = [
+                { string = { text = "CPU {cpu}%   "; }; }
+              ];
+            };
+          }
+          {
+            mem = {
+              content = [
+                { string = { text = "RAM {used_percent}%   "; }; }
+              ];
+            };
+          }
+          {
+            battery = {
+              name = "BAT0";
+              content = [
+                {
+                  map = {
+                    default = { string = { text = "Bat {capacity}% "; }; };
+                    conditions = {
+                      "state == charging" = { string = { text = "Chg {capacity}% "; }; };
+                    };
+                  };
+                }
+              ];
+            };
+          }
+        ];
       };
     };
   };
