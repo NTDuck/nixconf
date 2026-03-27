@@ -132,5 +132,5 @@
     };
   };
 
-  config.stylix.targets.firefox.profileNames = [ "${username}" ];
+  # config.stylix.targets.firefox.profileNames = [ "${username}" ];
 }
