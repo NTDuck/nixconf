@@ -3,16 +3,16 @@
 {
   programs.waybar = {
     enable = true;
-    package = pkgs.unstable.waybar;
-
     settings = {
       mainBar = {
         layer = "top";
         position = "left";
 
+        # The margins for the main background bar itself
         margin-top = 4;
         margin-bottom = 4;
         margin-left = 4;
+        margin-right = 4;
 
         modules-left = [
           "sway/workspaces"
@@ -30,47 +30,25 @@
 
         "sway/workspaces" = {
           disable-scroll = true;
-          format = "{icon}{name} ";
-          format-icons = {
-            focused = "*";
-            default = " ";
-          };
+          format = "{name}"; 
         };
 
         "pulseaudio" = {
-          format = "{icon} {volume:02d}%";
-          format-muted = "󰝟 {volume:02d}%";
-          format-icons = {
-            default = [
-              ""
-              ""
-              ""
-            ];
-          };
+          format = "VOL\n{volume:03d}%";
+          format-muted = "MUT\n{volume:03d}%";
           on-click = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
           tooltip = false;
         };
 
         "backlight" = {
-          format = "{icon} {percent:02d}%";
-          format-icons = [
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-            ""
-          ];
+          format = "LGT\n{percent:03d}%";
           tooltip = false;
         };
 
         "network" = {
-          format-wifi = "󰤨";
-          format-ethernet = "󰈀";
-          format-disconnected = "󰤭";
+          format-wifi = "WIF\n{signalStrength:03d}%";
+          format-ethernet = "ETH\n100%";
+          format-disconnected = "NET\nOFF";
           tooltip-format = "{ifname} via {gwaddr}";
           tooltip-format-wifi = "{essid} ({signalStrength}%)";
           tooltip-format-ethernet = "{ipaddr}/{cidr}";
@@ -82,33 +60,26 @@
             warning = 20;
             critical = 10;
           };
-          format = "{icon} {capacity:02d}%";
-          format-charging = " {capacity:02d}%";
-          format-plugged = " {capacity:02d}%";
-          format-icons = [
-            ""
-            ""
-            ""
-            ""
-            ""
-          ];
+          format = "BAT\n{capacity:03d}%";
+          format-charging = "CHR\n{capacity:03d}%";
+          format-plugged = "PLG\n{capacity:03d}%";
           tooltip-format = "{power} W, {timeTo}";
         };
 
         "cpu" = {
-          format = " {usage:02d}%";
+          format = "CPU\n{usage:03d}%";
           interval = 10;
           tooltip = false;
         };
 
         "memory" = {
-          format = " {percentage:02d}%";
+          format = "RAM\n{percentage:03d}%";
           interval = 10;
           tooltip = false;
         };
 
         "clock" = {
-          format = "{:%H\n%M}";
+          format = "CLK\n{:%H:%M}";
           tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
         };
       };
@@ -120,10 +91,13 @@
         min-height: 0;
       }
 
+      /* The main bar behind the islands */
       window#waybar {
-        background: transparent;
+        background: @base00;
+        border-radius: 4px; /* Slightly round the main bar's outer corners */
       }
 
+      /* The isolated islands */
       #pulseaudio,
       #backlight,
       #network,
@@ -131,19 +105,17 @@
       #memory,
       #battery,
       #clock {
-        background: @base00;
+        background: @base02;
         color: @base05;
-        border-radius: 8px;
-        margin-top: 2px;
-        margin-bottom: 2px;
-        padding: 4px 2px;
-        min-width: 20px;
+        border-radius: 2px; /* 2px rounded corners as requested */
+        margin: 4px; /* Creates the gap between the islands and the outer bar */
+        padding: 6px 0px; /* Vertical padding to space the stacked text */
+        min-width: 40px; /* Gives enough width for 000% to fit */
       }
 
       #workspaces {
         background: transparent;
-        margin-top: 2px;
-        margin-bottom: 2px;
+        margin: 4px;
       }
 
       #pulseaudio:hover,
@@ -153,17 +125,17 @@
       #memory:hover,
       #battery:hover,
       #clock:hover {
-        background: @base02;
+        background: @base03;
         color: @base0D;
         transition: 0.2s;
       }
 
       window#waybar #workspaces button {
-        padding: 1px 2px;
-        margin-bottom: 2px;
+        padding: 4px 0px;
+        margin-bottom: 4px;
         color: @base04;
-        background: @base00;
-        border-radius: 4px;
+        background: @base02;
+        border-radius: 2px;
         
         border: none;
         border-bottom: 2px solid transparent;
@@ -172,7 +144,7 @@
 
       window#waybar #workspaces button.focused {
         color: @base0D;
-        background: @base02;
+        background: @base03;
 
         border: none;
         border-bottom: 2px solid transparent;
@@ -184,7 +156,7 @@
       }
 
       window#waybar #workspaces button:hover {
-        background: @base02;
+        background: @base03;
         color: @base05;
         border-bottom: 2px solid transparent;
       }
