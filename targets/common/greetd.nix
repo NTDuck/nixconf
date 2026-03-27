@@ -12,10 +12,10 @@ in
         command = ''
           ${pkgs.tuigreet}/bin/tuigreet \
           --cmd sway --no-xsession-wrapper \
-          --asterisks --asterisks-char '•' \
+          --asterisks --asterisks-char '*' \
           --time --time-format '%Y-%m-%d %H:%M:%S' \
           --remember \
-          --container-padding 1 \
+          --container-padding 2 \
           --theme "container=${color-background};border=${color-foreground};text=${color-foreground};prompt=${color-foreground};time=${color-foreground};action=${color-foreground};button=${color-foreground};input=${color-foreground}"
         ''; # References `sway` therefore not clean
         user = "greeter";
