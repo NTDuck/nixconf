@@ -7,16 +7,15 @@
       mainBar = {
         layer = "top";
         position = "left";
-        # Removed "width = 26;" so the bar automatically scales to fit your content
-        margin-top = 4;
-        margin-bottom = 4;
-        margin-left = 4;
+
+        margin-top = 2;
+        margin-bottom = 2;
+        margin-left = 2;
 
         modules-left = [
           "sway/workspaces"
         ];
         modules-center = [ ];
-
         modules-right = [
           "pulseaudio"
           "backlight"
@@ -78,8 +77,8 @@
 
         "battery" = {
           states = {
-            warning = 30;
-            critical = 15;
+            warning = 20;
+            critical = 10;
           };
           format = "{icon} {capacity}%";
           format-charging = " {capacity}%";
@@ -171,9 +170,12 @@
       #workspaces button.focused {
         color: @base0D;
         background: @base02;
-        box-shadow: none;
+
+        box-shadow: none !important;
+        text-shadow: none !important;
+
         border: none;
-        border-bottom: none; /* Prevents waybar's default white bottom border */
+        border-bottom: none;
         text-decoration: none;
         font-weight: 900;
       }
