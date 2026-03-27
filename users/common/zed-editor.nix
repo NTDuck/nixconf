@@ -33,8 +33,8 @@
       session.trust_all_worktrees = true;
       base_keymap = "VSCode";
 
-      buffer_font_size = 11;
-      ui_font_size = 11;
+      buffer_font_size = lib.mkForce 11;
+      ui_font_size = lib.mkForce 11;
 
       icon_theme = lib.mkForce "Catppuccin Latte";
     };
