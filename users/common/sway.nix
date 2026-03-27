@@ -92,6 +92,10 @@
           natural_scroll = "enabled";
           dwt = "enabled";
         };
+        "type:keyboard" = {
+          repeat_delay = "200";
+          repeat_rate = "50";
+        };
       };
 
       gaps = {

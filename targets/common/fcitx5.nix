@@ -13,8 +13,14 @@
 
       settings = {
         addons = {
-          classicui.globalSection.ShowInputMethodInformation = "False";
-          bamboo.globalSection.InputMode = "1";
+          classicui.globalSection = {
+            ShowInputMethodInformation = "False";
+            EnableInputMethodInformation = "False";
+          };
+          bamboo.globalSection = {
+            InputMode = "1";
+            Underline = "False";
+          };
         };
         globalOptions = {
           "Hotkey/TriggerKeys" = {

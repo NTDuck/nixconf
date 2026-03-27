@@ -24,20 +24,18 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 
 - nixos system stable + pkgs unstable
 - Make bamboo not show gui when switching language input
-- foot transparent
-- gnome keyring persist, intuition: pw
 - disable underlining
+- gnome keyring persist, intuition: pw
 - make kernel work
 - warp equivalent
-- powerlevel10k for zsh
 - android studio
 - make fastfetch stop "bleeding" consistent output idk
 - zen browser
+- make keyboard faster
 
 - add gaps & borders
 - make the status bar 
 - use i3status-rust backend
-- use a nicer tuigreet theme
 - bemenu
 - change bar to: [left] ws, current window title [middle] time (HH:mm) [right] volume% + icon to show mute or not, brightness%, cpu+ram(+gpu if possible) usage, battery; also make current 
 

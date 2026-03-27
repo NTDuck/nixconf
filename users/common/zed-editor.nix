@@ -33,11 +33,8 @@
       session.trust_all_worktrees = true;
       base_keymap = "VSCode";
 
-      # theme = {
-      #   mode = "system";
-      #   light = "Catppuccin Latte (Blur)";
-      #   dark = "Catppuccin Expresso (Blur)";
-      # };
+      buffer_font_size = 11;
+      ui_font_size = 11;
 
       icon_theme = lib.mkForce "Catppuccin Latte";
     };

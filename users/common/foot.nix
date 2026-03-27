@@ -9,14 +9,10 @@
     # https://codeberg.org/dnkl/foot/src/branch/master/foot.ini
     settings = {
       main = {
-        pad = "15x15";
+        pad = "14x8";
         gamma-correct-blending = "no";
         term = "xterm-256color";
       };
-
-      # colors = {
-      #   alpha = lib.mkForce "0.8";
-      # };
 
       mouse = {
         hide-when-typing = "yes";

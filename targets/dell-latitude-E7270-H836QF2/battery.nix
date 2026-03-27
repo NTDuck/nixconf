@@ -8,4 +8,6 @@
     uncoreOffset = -50;
     analogioOffset = -50;
   };
+
+  boot.kernelParams = [ "msr.allow_writes=on" ]; # Allow writing to CPU registers
 }
