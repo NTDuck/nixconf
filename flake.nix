@@ -2,16 +2,17 @@
   nixConfig = { };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    home-manager.url = "github:nix-community/home-manager/";
+    home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    stylix.url = "github:nix-community/stylix";
+    stylix.url = "github:nix-community/stylix/release-25.11";
     stylix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Kernel
-    cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel";
+    cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
     # TODO install https://kamadorueda.com/alejandra/
     # TODO use stable channels for nixosSystem & unstable channels for everything else
@@ -43,6 +44,15 @@
           };
 
           modules = [
+            ({ config, ... }: {
+              nixpkgs.overlays = [
+                (final: prev: import nixpkgs-unstable {
+                  inherit system;
+                  config.allowUnfree = true;
+                })
+              ];
+            })
+            
             ./targets/${hostname} # default.nix
 
             home-manager.nixosModules.home-manager
