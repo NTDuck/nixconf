@@ -8,30 +8,17 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
-    # initContent = ''
-    #   bindkey -M emacs '^[e' expand-cmd-path
-    #   bindkey -M viins '^[e' expand-cmd-path
-    #   bindkey -M vicmd '^[e' expand-cmd-path
-    #   sudo-command-line() {
-    #       [[ -z $BUFFER ]] && zle up-history
-    #       if [[ $BUFFER == sudo\ * ]]; then
-    #           LBUFFER="''${LBUFFER#sudo }"
-    #       elif [[ $BUFFER == $EDITOR\ * ]]; then
-    #           LBUFFER="sudoedit ''${LBUFFER#$EDITOR }"
-    #       elif [[ $BUFFER == sudoedit\ * ]]; then
-    #           LBUFFER="$EDITOR ''${LBUFFER#sudoedit }"
-    #       else
-    #           LBUFFER="sudo $LBUFFER"
-    #       fi
-    #   }
-    #   zle -N sudo-command-line
-    #   # Binds 'ESC ESC' to add sudo
-    #   bindkey "\e\e" sudo-command-line
-    # '';
-  };
+    plugins = [
+      {
+        name = "powerlevel10k";
+        src = pkgs.zsh-powerlevel10k;
+        file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+      }
+    ];
 
-  programs.starship = {
-    enable = true;
-    enableZshIntegration = true;
+    initContent = ''
+      # Source the p10k config file if it exists
+      [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+    '';
   };
 }

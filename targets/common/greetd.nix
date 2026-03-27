@@ -8,18 +8,14 @@ in
     enable = true;
     settings = {
       default_session = {
-        # command = ''
-        #   ${pkgs.tuigreet}/bin/tuigreet \
-        #   --cmd sway \
-        #   --time --remember \
-        #   --container-padding 2 --no-xsession-wrapper \
-        #   --theme "container=${colors.base00};border=${colors.base0D};text=${colors.base05};prompt=${colors.base0E};time=${colors.base0C};action=${colors.base0B};button=${colors.base0A};input=${colors.base05}"
-        # ''; # References `sway` therefore not clean
         command = ''
           ${pkgs.tuigreet}/bin/tuigreet \
-          --cmd sway \
-          --time --remember \
-          --container-padding 2 --no-xsession-wrapper \
+          --cmd sway --no-xsession-wrapper \
+          --asterisks --asterisks-char '•' \
+          --time --time-format '%Y-%m-%d %H:%M:%S' \
+          --remember --remember-session --remember-user-session \
+          --container-padding 0 --window-padding 0 --prompt-padding 0 \
+          --theme "container=${colors.base00};border=${colors.base05};text=${colors.base05};prompt=${colors.base05};time=${colors.base05};action=${colors.base05};button=${colors.base05};input=${colors.base05}"
         ''; # References `sway` therefore not clean
         user = "greeter";
       };
@@ -44,4 +40,9 @@ in
 
   services.xserver.enable = false;
   console.earlySetup = true;
+
+  console = {
+    font = "ter-v28n";
+    packages = [ pkgs.terminus_font ];
+  };
 }

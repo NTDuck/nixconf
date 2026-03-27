@@ -12,9 +12,9 @@
     config = rec {
       modifier = "Mod4";
 
-      # terminal = "${pkgs.foot}/bin/footclient";
+      terminal = "${pkgs.foot}/bin/footclient";
+      # terminal = "footclient";
       # menu = "${pkgs.bemenu}/bin/bemenu-run";
-      terminal = "footclient";
       menu = "bemenu-run";
 
       bars = [
@@ -76,6 +76,7 @@
         "${modifier}+e" = "layout toggle split";
 
         "${modifier}+q" = "kill";
+        "${modifier}+Shift+E" = "exit";
 
         "XF86MonBrightnessDown" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
         "XF86MonBrightnessUp" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set +5%";
@@ -182,15 +183,13 @@
     # The CSS style config 
     style = ''
       * {
-        font-size: 18px;
-        /* Stylix automatically handles the font-family */
+        font-size: 11px;
       }
 
       window#waybar {
         background: transparent;
       }
 
-      /* Using Stylix dynamic base colors instead of hardcoded hex codes */
       #workspaces,
       #clock,
       #pulseaudio,

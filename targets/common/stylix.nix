@@ -27,8 +27,8 @@
         name = "Lora";
       };
       monospace = {
-        package = pkgs.jetbrains-mono;
-        name = "JetBrains Mono";
+        package = pkgs.nerd-fonts.jetbrains-mono;
+        name = "JetBrainsMono Nerd Font";
       };
       emoji = {
         package = pkgs.noto-fonts-color-emoji;
@@ -47,5 +47,7 @@
       desktop = 0.9;
       terminal = 0.9;
     };
+
+    targets.console.enable = false;
   };
 }
