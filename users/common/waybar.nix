@@ -132,15 +132,17 @@
         background: @base00;
         color: @base05;
         border-radius: 8px;
-        margin-top: 4px;
-        margin-bottom: 4px;
-        padding: 8px 4px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        padding: 4px 2px;
+        text-align: center;
+        min-width: 20px;
       }
 
       #workspaces {
         background: transparent;
-        margin-top: 4px;
-        margin-bottom: 4px;
+        margin-top: 2px;
+        margin-bottom: 2px;
       }
 
       #pulseaudio:hover,
@@ -155,26 +157,30 @@
         transition: 0.2s;
       }
 
-      #workspaces button {
-        padding: 2px 4px;
-        margin-bottom: 4px;
+      window#waybar #workspaces button {
+        padding: 1px 2px;
+        margin-bottom: 2px;
         color: @base04;
         background: @base00;
-        border-radius: 8px;
-        box-shadow: none;
+        border-radius: 4px;
+        
         border: none;
         border-bottom: none;
+        box-shadow: none;
+        background-image: none;
+        outline: none;
       }
 
-      #workspaces button.focused {
+      window#waybar #workspaces button.focused {
         color: @base0D;
         background: @base02;
 
-        box-shadow: none;
-        text-shadow: none;
-
         border: none;
         border-bottom: none;
+        box-shadow: none;
+        background-image: none;
+        outline: none;
+        
         text-decoration: none;
         font-weight: 900;
       }
