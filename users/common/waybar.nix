@@ -109,8 +109,8 @@
         background: alpha(@base02, 0.85);
         color: @base05;
         border-radius: 2px;
-        margin: 4px;outer bar */
-        padding: 6px 0px;text */
+        margin: 4px;
+        padding: 6px 0px;
         // min-width: 40px;
       }
 
