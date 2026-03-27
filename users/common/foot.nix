@@ -9,7 +9,7 @@
     # https://codeberg.org/dnkl/foot/src/branch/master/foot.ini
     settings = {
       main = {
-        pad = "14x8";
+        pad = "14x10";
         gamma-correct-blending = "no";
         term = "xterm-256color";
       };

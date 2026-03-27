@@ -5,6 +5,7 @@
     ./bemenu.nix
     ./cliphist.nix
     ./fastfetch.nix
+    ./firefox.nix
     ./foot.nix
     ./gh.nix
     ./git.nix
@@ -16,7 +17,6 @@
     ./vesktop.nix
     ./yazi.nix
     ./zed-editor.nix
-    ./zen-browser.nix
     ./zsh.nix
   ];
 

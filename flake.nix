@@ -13,9 +13,6 @@
     # Kernel
     cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel";
 
-    # Browser
-    zen-browser.url = "github:0xc000022070/zen-browser-flake";
-
     # TODO install https://kamadorueda.com/alejandra/
     # TODO use stable channels for nixosSystem & unstable channels for everything else
   };

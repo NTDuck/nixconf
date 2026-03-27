@@ -1,7 +1,8 @@
 { config, pkgs, ... }:
 
 let
-  colors = config.lib.stylix.colors.withHashtag;
+  color-foreground = config.lib.stylix.colors.withHashtag.base05;
+  color-background = config.lib.stylix.colors.withHashtag.base00;
 in
 {
   services.greetd = {
@@ -14,8 +15,8 @@ in
           --asterisks --asterisks-char '•' \
           --time --time-format '%Y-%m-%d %H:%M:%S' \
           --remember \
-          --container-padding 0 --window-padding 0 --prompt-padding 0 \
-          --theme "container=${colors.base00};border=${colors.base05};text=${colors.base05};prompt=${colors.base05};time=${colors.base05};action=${colors.base05};button=${colors.base05};input=${colors.base05}"
+          --container-padding 2 \
+          --theme "container=${color-background};border=${color-foreground};text=${color-foreground};prompt=${color-foreground};time=${color-foreground};action=${color-foreground};button=${color-foreground};input=${color-foreground}"
         ''; # References `sway` therefore not clean
         user = "greeter";
       };
