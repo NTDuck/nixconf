@@ -2,6 +2,8 @@
 
 {
   imports = [
+    ./zsh.nix  # default.nix
+
     ./bemenu.nix
     ./cliphist.nix
     ./fastfetch.nix
@@ -18,7 +20,6 @@
     ./waybar.nix
     ./yazi.nix
     ./zed-editor.nix
-    ./zsh.nix
   ];
 
   home.username = username;
