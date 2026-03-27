@@ -3,7 +3,7 @@
 {
   programs.tofi = {
     enable = true;
-    packgage = pkgs.unstable.tofi;
+    package = pkgs.unstable.tofi;
 
     settings = {
       width = "50%";
