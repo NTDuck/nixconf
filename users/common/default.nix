@@ -15,6 +15,7 @@
     ./mpv.nix
     ./sway.nix
     ./vesktop.nix
+    ./waybar.nix
     ./yazi.nix
     ./zed-editor.nix
     ./zsh.nix

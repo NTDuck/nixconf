@@ -15,10 +15,7 @@
         file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
       }
     ];
-
-    initContent = ''
-      # Source the p10k config file if it exists
-      [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-    '';
+    
+    promptInit = "source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
   };
 }

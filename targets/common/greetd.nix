@@ -15,7 +15,7 @@ in
           --asterisks --asterisks-char '•' \
           --time --time-format '%Y-%m-%d %H:%M:%S' \
           --remember \
-          --container-padding 2 \
+          --container-padding 1 \
           --theme "container=${color-background};border=${color-foreground};text=${color-foreground};prompt=${color-foreground};time=${color-foreground};action=${color-foreground};button=${color-foreground};input=${color-foreground}"
         ''; # References `sway` therefore not clean
         user = "greeter";
