@@ -1,4 +1,7 @@
-{ pkgs, username, ... }:
+{
+  username,
+  ...
+}:
 
 {
   programs.firefox = {
@@ -128,4 +131,6 @@
       };
     };
   };
+
+  config.stylix.targets.firefox.profileNames = [ "${username}" ];
 }

@@ -36,8 +36,8 @@
         };
 
         "pulseaudio" = {
-          format = "{icon} {volume:02}%";
-          format-muted = "󰝟 {volume:02}%";
+          format = "{icon} {volume:02d}%";
+          format-muted = "󰝟 {volume:02d}%";
           format-icons = {
             default = [
               ""
@@ -50,7 +50,7 @@
         };
 
         "backlight" = {
-          format = "{icon} {percent:02}%";
+          format = "{icon} {percent:02d}%";
           format-icons = [
             ""
             ""
@@ -80,9 +80,9 @@
             warning = 20;
             critical = 10;
           };
-          format = "{icon} {capacity:02}%";
-          format-charging = " {capacity:02}%";
-          format-plugged = " {capacity:02}%";
+          format = "{icon} {capacity:02d}%";
+          format-charging = " {capacity:02d}%";
+          format-plugged = " {capacity:02d}%";
           format-icons = [
             ""
             ""
@@ -94,13 +94,13 @@
         };
 
         "cpu" = {
-          format = " {usage:02}%";
+          format = " {usage:02d}%";
           interval = 10;
           tooltip = false;
         };
 
         "memory" = {
-          format = " {percentage:02}%";
+          format = " {percentage:02d}%";
           interval = 10;
           tooltip = false;
         };
