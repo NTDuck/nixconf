@@ -135,7 +135,6 @@
         margin-top: 2px;
         margin-bottom: 2px;
         padding: 4px 2px;
-        text-align: center;
         min-width: 20px;
       }
 
@@ -157,6 +156,8 @@
         transition: 0.2s;
       }
 
+      /* By adding window#waybar at the front, this rule becomes more 
+         specific than Stylix's default rules, forcing it to apply. */
       window#waybar #workspaces button {
         padding: 1px 2px;
         margin-bottom: 2px;
@@ -164,30 +165,30 @@
         background: @base00;
         border-radius: 4px;
         
+        /* Override Stylix borders */
         border: none;
-        border-bottom: none;
+        border-bottom: 2px solid transparent;
         box-shadow: none;
-        background-image: none;
-        outline: none;
       }
 
       window#waybar #workspaces button.focused {
         color: @base0D;
         background: @base02;
 
+        /* Make Stylix's injected bottom border transparent */
         border: none;
-        border-bottom: none;
-        box-shadow: none;
-        background-image: none;
-        outline: none;
+        border-bottom: 2px solid transparent;
         
+        box-shadow: none;
+        text-shadow: none;
         text-decoration: none;
         font-weight: 900;
       }
 
-      #workspaces button:hover {
+      window#waybar #workspaces button:hover {
         background: @base02;
         color: @base05;
+        border-bottom: 2px solid transparent;
       }
     '';
   };
