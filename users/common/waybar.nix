@@ -7,7 +7,7 @@
       mainBar = {
         layer = "top";
         position = "left";
-        width = 26;
+        # Removed "width = 26;" so the bar automatically scales to fit your content
         margin-top = 4;
         margin-bottom = 4;
         margin-left = 4;
@@ -15,7 +15,6 @@
         modules-left = [
           "sway/workspaces"
         ];
-
         modules-center = [ ];
 
         modules-right = [
@@ -38,8 +37,8 @@
         };
 
         "pulseaudio" = {
-          format = "{volume}%{icon}";
-          format-muted = "{volume}%󰝟";
+          format = "{icon} {volume}%";
+          format-muted = "󰝟 {volume}%";
           format-icons = {
             default = [
               ""
@@ -52,7 +51,7 @@
         };
 
         "backlight" = {
-          format = "{percent}%{icon}";
+          format = "{icon} {percent}%";
           format-icons = [
             ""
             ""
@@ -82,9 +81,9 @@
             warning = 30;
             critical = 15;
           };
-          format = "{capacity}%\n{icon}";
-          format-charging = "{capacity}%\n";
-          format-plugged = "{capacity}%\n";
+          format = "{icon} {capacity}%";
+          format-charging = " {capacity}%";
+          format-plugged = " {capacity}%";
           format-icons = [
             ""
             ""
@@ -96,13 +95,13 @@
         };
 
         "cpu" = {
-          format = "{usage}%";
+          format = " {usage}%";
           interval = 10;
           tooltip = false;
         };
 
         "memory" = {
-          format = "{percentage}%";
+          format = " {percentage}%";
           interval = 10;
           tooltip = false;
         };
@@ -124,7 +123,6 @@
         background: transparent;
       }
 
-      #workspaces,
       #pulseaudio,
       #backlight,
       #network,
@@ -134,13 +132,18 @@
       #clock {
         background: @base00;
         color: @base05;
-        border-radius: 50%;
+        border-radius: 8px;
         margin-top: 4px;
         margin-bottom: 4px;
-        padding: 8px 0px;
+        padding: 8px 4px; /* Added slight horizontal padding for newly widened items */
       }
 
-      #workspaces:hover,
+      #workspaces {
+        background: transparent; /* Removed background so workspaces are isolated */
+        margin-top: 4px;
+        margin-bottom: 4px;
+      }
+
       #pulseaudio:hover,
       #backlight:hover,
       #network:hover,
@@ -153,42 +156,31 @@
         transition: 0.2s;
       }
 
+      /* Workspace isolated islands */
       #workspaces button {
-        padding: 4px 0px;
+        padding: 2px 4px; /* Shrunk padding from 4 to 2 */
+        margin-bottom: 4px; /* Creates the gap between islands */
         color: @base04;
-        background: transparent;
-        border-radius: 0;
+        background: @base00; /* Island background color */
+        border-radius: 8px; /* Rounding for the individual islands */
         box-shadow: none;
+        border: none;
+        border-bottom: none; /* Emphasize no underline */
       }
 
       #workspaces button.focused {
         color: @base0D;
-        background: transparent;
+        background: @base02;
         box-shadow: none;
+        border: none;
+        border-bottom: none; /* Prevents waybar's default white bottom border */
+        text-decoration: none;
         font-weight: 900;
       }
 
       #workspaces button:hover {
-        background: transparent;
+        background: @base02;
         color: @base05;
-      }
-
-      #pulseaudio,
-      #backlight,
-      #network,
-      #cpu,
-      #memory,
-      #battery {
-        padding: 8px 0px;
-      }
-
-      #pulseaudio:hover,
-      #backlight:hover,
-      #network:hover,
-      #cpu:hover,
-      #memory:hover,
-      #battery:hover {
-        color: @base0D;
       }
     '';
   };
