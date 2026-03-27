@@ -22,7 +22,7 @@ let
   };
 in
 {
-  # environment.systemPackages = [
-  #   zeroclaw
-  # ];
+  environment.systemPackages = [
+    zeroclaw
+  ];
 }
