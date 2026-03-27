@@ -5,8 +5,8 @@
     enable = true;
 
     settings = {
-      # width = "50%";
-      # height = "50%";
+      width = "50%";
+      height = "50%";
 
       text-cursor-style = "block";
       text-cursor = true;
