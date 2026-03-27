@@ -1,8 +1,13 @@
-{ pkgs, username, ... }:
+{
+  pkgs, 
+  username,
+  ...
+}:
 
 {
   programs.firefox = {
     enable = true;
+    package = pkgs.unstable.firefox;
 
     profiles = {
       ${username} = {
@@ -18,6 +23,24 @@
         # ];
 
         settings = {
+          # --- Battery & Performance Tuning ---
+          # 1. Force hardware video acceleration (Crucial for YouTube/Video battery life)
+          "media.ffmpeg.vaapi.enabled" = true;
+          "media.hardware-video-decoding.force-enabled" = true;
+
+          # 2. Force WebRender (GPU acceleration for drawing the browser)
+          "gfx.webrender.all" = true;
+          "layers.acceleration.force-enabled" = true;
+
+          # 3. Reduce background tab resource usage
+          "dom.suspend_inactive.enabled" = true;
+          "browser.tabs.unloadOnLowMemory" = true;
+
+          # 4. Disable heavy telemetry and data reporting
+          "datareporting.healthreport.uploadEnabled" = false;
+          "toolkit.telemetry.enabled" = false;
+          "toolkit.telemetry.server" = "data:,";
+
           # Show previous session on startup (2 = restore session)
           "browser.startup.page" = 2;
 
@@ -129,8 +152,5 @@
     };
   };
 
-  catppuccin.firefox = {
-    enable = true;
-    force = true;
-  };
+  stylix.targets.firefox.profileNames = [ "${username}" ];
 }

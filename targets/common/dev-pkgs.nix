@@ -2,6 +2,6 @@
 
 {
   environment.systemPackages = [
-    pkgs.python3
+    pkgs.unstable.python3
   ];
 }

@@ -1,5 +1,8 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
-  programs.vesktop.enable = true;
+  programs.vesktop = {
+    enable = true;
+    package = pkgs.unstable.vesktop;
+  };
 }

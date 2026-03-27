@@ -1,11 +1,22 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   programs.zed-editor = {
     enable = true;
 
+    # https://github.com/zed-industries/zed/issues/32792
+    package = pkgs.symlinkJoin {
+      name = "zed-xwayland";
+      paths = [ pkgs.unstable.zed-editor ];
+      buildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/zeditor \
+          --unset WAYLAND_DISPLAY
+      '';
+    };
+
     extensions = [
-      "catppuccin-blur"
+      # "catppuccin-blur"
       "catppuccin-icons"
 
       "nix"
@@ -22,24 +33,19 @@
       session.trust_all_worktrees = true;
       base_keymap = "VSCode";
 
-      theme = {
-        mode = "system";
-        light = "Catppuccin Latte (Blur)";
-        dark = "Catppuccin Expresso (Blur)";
-      };
+      buffer_font_size = lib.mkForce 11;
+      ui_font_size = lib.mkForce 11;
 
-      icon_theme = "Catppuccin Latte";
+      icon_theme = lib.mkForce "Catppuccin Latte";
     };
   };
 
   home.packages = [
-    pkgs.nil
-    pkgs.nixd
+    pkgs.unstable.nil
+    pkgs.unstable.nixd
   ];
 
   programs.zsh.shellAliases = {
     zed = "zeditor";
   };
-
-  catppuccin.zed.enable = false;
 }

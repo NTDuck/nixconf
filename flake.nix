@@ -1,32 +1,27 @@
 {
-  nixConfig = { };
+  nixConfig = {
+    extra-substituters = [
+      "https://attic.xuyh0120.win/lantian"
+      "https://cache.garnix.io"
+    ];
+    extra-trusted-public-keys = [
+      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
+      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
+    ];
+  };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    home-manager.url = "github:nix-community/home-manager/";
+    home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    stylix.url = "github:nix-community/stylix/release-25.11";
+    stylix.inputs.nixpkgs.follows = "nixpkgs";
+
     # Kernel
-    cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel";
-
-    # Compositor
-    niri.url = "github:sodiboo/niri-flake";
-
-    # Shell
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.noctalia-qs.follows = "noctalia-qs";
-    };
-
-    noctalia-qs = {
-      url = "github:noctalia-dev/noctalia-qs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Soothing pastel theme for the high-spirited!
-    catppuccin.url = "github:catppuccin/nix";
+    cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
     # TODO install https://kamadorueda.com/alejandra/
     # TODO use stable channels for nixosSystem & unstable channels for everything else
@@ -36,6 +31,7 @@
     inputs@{
       self,
       nixpkgs,
+      nixpkgs-unstable,
       home-manager,
       ...
     }:
@@ -58,6 +54,17 @@
           };
 
           modules = [
+            ({ config, ... }: {
+              nixpkgs.overlays = [
+                (final: prev: {
+                  unstable = import nixpkgs-unstable {
+                    inherit system;
+                    config.allowUnfree = true;
+                  };
+                })
+              ];
+            })
+
             ./targets/${hostname} # default.nix
 
             home-manager.nixosModules.home-manager
@@ -66,7 +73,7 @@
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
 
-              home-manager.extraSpecialArgs = { inherit inputs hostname username; };
+              home-manager.extraSpecialArgs = { inherit inputs system hostname username; };
               home-manager.users.${username} = import ./users/${username}; # default.nix
             }
           ];

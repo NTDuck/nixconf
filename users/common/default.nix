@@ -1,23 +1,25 @@
-{ pkgs, username, ... }:
+{ username, ... }:
 
 {
   imports = [
-    ./catppuccin.nix
+    ./zsh # default.nix
+
     ./cliphist.nix
     ./fastfetch.nix
     ./firefox.nix
+    ./foot.nix
     ./gh.nix
     ./git.nix
     ./helix.nix
-    ./niri.nix
-    ./noctalia.nix
+    ./imv.nix
+    ./kanshi.nix
+    ./mpv.nix
+    ./sway.nix
+    ./tofi.nix
     ./vesktop.nix
-    ./wezterm.nix
+    ./waybar.nix
     ./yazi.nix
     ./zed-editor.nix
-    ./zsh.nix
-
-    # TODO add image & video viewers
   ];
 
   home.username = username;
