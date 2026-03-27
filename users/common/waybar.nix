@@ -170,8 +170,8 @@
         color: @base0D;
         background: @base02;
 
-        box-shadow: none !important;
-        text-shadow: none !important;
+        box-shadow: none;
+        text-shadow: none;
 
         border: none;
         border-bottom: none;

@@ -9,15 +9,19 @@
       height = "50%";
 
       text-cursor-style = "block";
-
-      prompt-text = "$ ";
-
-      border-width = 2;
-      # padding-left = "20%";
-      # padding-right = "20%";
-
       text-cursor = true;
       matching-algorithm = "fuzzy";
+
+      prompt-text = "$";
+      prompt-padding = 10;
+
+      border-width = 2;
+      outline-width = 0;
+
+      padding-top = 20;
+      padding-bottom = 20;
+      padding-left = 20;
+      padding-right = 20;
     };
   };
 }
