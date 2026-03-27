@@ -22,6 +22,7 @@
     inputs@{
       self,
       nixpkgs,
+      nixpkgs-unstable
       home-manager,
       ...
     }:
@@ -52,7 +53,7 @@
                 })
               ];
             })
-            
+
             ./targets/${hostname} # default.nix
 
             home-manager.nixosModules.home-manager
