@@ -13,7 +13,7 @@
       modifier = "Mod4";
 
       terminal = "${pkgs.foot}/bin/footclient";
-      menu = "${pkgs.bemenu}/bin/bemenu-run";
+      menu = "${pkgs.tofi}/bin/tofi-drun --drun-launch=true";
 
       bars = [
         { command = "${pkgs.waybar}/bin/waybar"; }

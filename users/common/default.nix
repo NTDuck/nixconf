@@ -2,9 +2,8 @@
 
 {
   imports = [
-    ./zsh  # default.nix
+    ./zsh # default.nix
 
-    ./bemenu.nix
     ./cliphist.nix
     ./fastfetch.nix
     ./firefox.nix
@@ -16,6 +15,7 @@
     ./kanshi.nix
     ./mpv.nix
     ./sway.nix
+    ./tofi.nix
     ./vesktop.nix
     ./waybar.nix
     ./yazi.nix
