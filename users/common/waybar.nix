@@ -8,11 +8,9 @@
         layer = "top";
         position = "left";
 
-        # The margins for the main background bar itself
         margin-top = 4;
         margin-bottom = 4;
         margin-left = 4;
-        margin-right = 4;
 
         modules-left = [
           "sway/workspaces"
@@ -30,7 +28,11 @@
 
         "sway/workspaces" = {
           disable-scroll = true;
-          format = "{name}"; 
+          format = "{icon}{name} ";
+          format-icons = {
+            focused = "*";
+            default = " ";
+          };
         };
 
         "pulseaudio" = {
@@ -79,25 +81,24 @@
         };
 
         "clock" = {
-          format = "CLK\n{:%H:%M}";
-          tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+          format = "{:%d\n%m\n──\n%H\n%M}";
+          # tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+          tooltip = false;
         };
       };
     };
 
     style = ''
       * {
-        font-size: 11px;
+        font-size: 10px;
         min-height: 0;
       }
 
-      /* The main bar behind the islands */
       window#waybar {
-        background: @base00;
-        border-radius: 4px; /* Slightly round the main bar's outer corners */
+        background: alpha(@base00, 0.85);
+        border-radius: 4px;
       }
 
-      /* The isolated islands */
       #pulseaudio,
       #backlight,
       #network,
@@ -105,12 +106,12 @@
       #memory,
       #battery,
       #clock {
-        background: @base02;
+        background: alpha(@base02, 0.85);
         color: @base05;
-        border-radius: 2px; /* 2px rounded corners as requested */
-        margin: 4px; /* Creates the gap between the islands and the outer bar */
-        padding: 6px 0px; /* Vertical padding to space the stacked text */
-        min-width: 40px; /* Gives enough width for 000% to fit */
+        border-radius: 2px;
+        margin: 4px;outer bar */
+        padding: 6px 0px;text */
+        // min-width: 40px;
       }
 
       #workspaces {
@@ -125,7 +126,7 @@
       #memory:hover,
       #battery:hover,
       #clock:hover {
-        background: @base03;
+        background: alpha(@base03, 0.85);
         color: @base0D;
         transition: 0.2s;
       }
@@ -134,7 +135,7 @@
         padding: 4px 0px;
         margin-bottom: 4px;
         color: @base04;
-        background: @base02;
+        background: alpha(@base02, 0.85);
         border-radius: 2px;
         
         border: none;
@@ -144,7 +145,7 @@
 
       window#waybar #workspaces button.focused {
         color: @base0D;
-        background: @base03;
+        background: alpha(@base03, 0.85);
 
         border: none;
         border-bottom: 2px solid transparent;
@@ -156,7 +157,7 @@
       }
 
       window#waybar #workspaces button:hover {
-        background: @base03;
+        background: alpha(@base03, 0.85);
         color: @base05;
         border-bottom: 2px solid transparent;
       }
