@@ -1,8 +1,10 @@
-{ lib, ... }:
+{ pkgs, lib, ... }:
 
 {
   programs.foot = {
     enable = true;
+    package = pkgs.unstable.foot;
+
     server.enable = true;
 
     # https://man.archlinux.org/man/foot.ini.5.en

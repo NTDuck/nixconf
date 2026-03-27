@@ -1,10 +1,13 @@
 { pkgs, ... }:
 
 {
-  services.kanshi.enable = true;
+  services.kanshi = {
+    enable = true;
+    package = pkgs.unstable.kanshi;
+  };
 
   home.packages = [
-    pkgs.wlr-randr
-    pkgs.wdisplays
+    pkgs.unstable.wlr-randr
+    pkgs.unstable.wdisplays
   ];
 }

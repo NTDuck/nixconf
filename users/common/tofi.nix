@@ -1,8 +1,9 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   programs.tofi = {
     enable = true;
+    packgage = pkgs.unstable.tofi;
 
     settings = {
       width = "50%";

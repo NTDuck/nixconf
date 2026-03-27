@@ -3,6 +3,7 @@
 {
   wayland.windowManager.sway = {
     enable = true;
+    package = pkgs.sway;
 
     systemd.enable = true;
     xwayland = true;
@@ -12,11 +13,11 @@
     config = rec {
       modifier = "Mod4";
 
-      terminal = "${pkgs.foot}/bin/footclient";
-      menu = "${pkgs.tofi}/bin/tofi-drun --drun-launch=true";
+      terminal = "${pkgs.unstable.foot}/bin/footclient";
+      menu = "${pkgs.unstable.tofi}/bin/tofi-drun --drun-launch=true";
 
       bars = [
-        { command = "${pkgs.waybar}/bin/waybar"; }
+        { command = "${pkgs.unstable.waybar}/bin/waybar"; }
       ];
 
       startup = [
@@ -34,7 +35,7 @@
           always = true;
         }
         {
-          command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
+          command = "${pkgs.unstable.autotiling-rs}/bin/autotiling-rs";
           always = true;
         }
       ];

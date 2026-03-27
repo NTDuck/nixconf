@@ -1,4 +1,5 @@
 {
+  pkgs, 
   username,
   ...
 }:
@@ -6,6 +7,7 @@
 {
   programs.firefox = {
     enable = true;
+    package = pkgs.unstable.firefox;
 
     profiles = {
       ${username} = {

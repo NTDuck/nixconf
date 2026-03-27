@@ -6,7 +6,7 @@
     type = "fcitx5";
 
     fcitx5 = {
-      addons = [ pkgs.fcitx5-bamboo ];
+      addons = [ pkgs.unstable.fcitx5-bamboo ];
 
       waylandFrontend = true;
       ignoreUserConfig = true; # ignore `~/.config/fcitx5`

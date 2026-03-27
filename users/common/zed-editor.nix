@@ -7,7 +7,7 @@
     # https://github.com/zed-industries/zed/issues/32792
     package = pkgs.symlinkJoin {
       name = "zed-xwayland";
-      paths = [ pkgs.zed-editor ];
+      paths = [ pkgs.unstable.zed-editor ];
       buildInputs = [ pkgs.makeWrapper ];
       postBuild = ''
         wrapProgram $out/bin/zeditor \

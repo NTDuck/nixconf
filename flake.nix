@@ -47,9 +47,11 @@
           modules = [
             ({ config, ... }: {
               nixpkgs.overlays = [
-                (final: prev: import nixpkgs-unstable {
-                  inherit system;
-                  config.allowUnfree = true;
+                (final: prev: {
+                  unstable = import nixpkgs-unstable {
+                    inherit system;
+                    config.allowUnfree = true;
+                  };
                 })
               ];
             })
