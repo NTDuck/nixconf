@@ -28,16 +28,16 @@
 
         "sway/workspaces" = {
           disable-scroll = true;
-          format = "{icon}{name}";
+          format = "{icon}{name} ";
           format-icons = {
             focused = "*";
-            default = "";
+            default = " ";
           };
         };
 
         "pulseaudio" = {
-          format = "{icon} {volume}%";
-          format-muted = "󰝟 {volume}%";
+          format = "{icon} {volume:02}%";
+          format-muted = "󰝟 {volume:02}%";
           format-icons = {
             default = [
               ""
@@ -50,7 +50,7 @@
         };
 
         "backlight" = {
-          format = "{icon} {percent}%";
+          format = "{icon} {percent:02}%";
           format-icons = [
             ""
             ""
@@ -80,9 +80,9 @@
             warning = 20;
             critical = 10;
           };
-          format = "{icon} {capacity}%";
-          format-charging = " {capacity}%";
-          format-plugged = " {capacity}%";
+          format = "{icon} {capacity:02}%";
+          format-charging = " {capacity:02}%";
+          format-plugged = " {capacity:02}%";
           format-icons = [
             ""
             ""
@@ -94,13 +94,13 @@
         };
 
         "cpu" = {
-          format = " {usage}%";
+          format = " {usage:02}%";
           interval = 10;
           tooltip = false;
         };
 
         "memory" = {
-          format = " {percentage}%";
+          format = " {percentage:02}%";
           interval = 10;
           tooltip = false;
         };
@@ -134,11 +134,11 @@
         border-radius: 8px;
         margin-top: 4px;
         margin-bottom: 4px;
-        padding: 8px 4px; /* Added slight horizontal padding for newly widened items */
+        padding: 8px 4px;
       }
 
       #workspaces {
-        background: transparent; /* Removed background so workspaces are isolated */
+        background: transparent;
         margin-top: 4px;
         margin-bottom: 4px;
       }
@@ -155,16 +155,15 @@
         transition: 0.2s;
       }
 
-      /* Workspace isolated islands */
       #workspaces button {
-        padding: 2px 4px; /* Shrunk padding from 4 to 2 */
-        margin-bottom: 4px; /* Creates the gap between islands */
+        padding: 2px 4px;
+        margin-bottom: 4px;
         color: @base04;
-        background: @base00; /* Island background color */
-        border-radius: 8px; /* Rounding for the individual islands */
+        background: @base00;
+        border-radius: 8px;
         box-shadow: none;
         border: none;
-        border-bottom: none; /* Emphasize no underline */
+        border-bottom: none;
       }
 
       #workspaces button.focused {
