@@ -41,8 +41,8 @@
   };
 
   home.packages = [
-    pkgs.nil
-    pkgs.nixd
+    pkgs.unstable.nil
+    pkgs.unstable.nixd
   ];
 
   programs.zsh.shellAliases = {

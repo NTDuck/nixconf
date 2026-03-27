@@ -22,19 +22,13 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 - Change rule of Nix language server e.g. { a, b, c, ... } does not need newlining
 - Cloud for lock screen
 
-- nixos system stable + pkgs unstable
-- Make bamboo not show gui when switching language input
-- disable underlining
+- Make bamboo not show gui when switching language input - disable underlining
 - gnome keyring persist, intuition: pw
 - make kernel work
 - warp equivalent
 - android studio
 - make fastfetch stop "bleeding" consistent output idk
-- zen browser
-- make keyboard faster
-
-- bemenu
-- change bar to: [left] ws, current window title [middle] time (HH:mm) [right] volume% + icon to show mute or not, brightness%, cpu+ram(+gpu if possible) usage, battery; also make current 
+- bluetooth?
 
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
