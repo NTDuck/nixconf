@@ -38,18 +38,32 @@
         };
 
         "pulseaudio" = {
-          format = "{volume}%\n{icon}";
-          format-muted = "0%\n󰝟";
+          format = "{volume}%{icon}";
+          format-muted = "{volume}%󰝟";
           format-icons = {
-            default = [ "" "" "" ];
+            default = [
+              ""
+              ""
+              ""
+            ];
           };
           on-click = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
           tooltip = false;
         };
 
         "backlight" = {
-          format = "{percent}%\n{icon}";
-          format-icons = [ "" "" "" "" "" "" "" "" "" ];
+          format = "{percent}%{icon}";
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
           tooltip = false;
         };
 
@@ -64,22 +78,31 @@
         };
 
         "battery" = {
-          states = { warning = 30; critical = 15; };
+          states = {
+            warning = 30;
+            critical = 15;
+          };
           format = "{capacity}%\n{icon}";
           format-charging = "{capacity}%\n";
           format-plugged = "{capacity}%\n";
-          format-icons = [ "" "" "" "" "" ];
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
           tooltip-format = "{power} W, {timeTo}";
         };
 
         "cpu" = {
-          format = "{usage}%\n";
+          format = "{usage}%";
           interval = 10;
           tooltip = false;
         };
 
         "memory" = {
-          format = "{percentage}%\n";
+          format = "{percentage}%";
           interval = 10;
           tooltip = false;
         };
@@ -111,12 +134,19 @@
       #clock {
         background: @base00;
         color: @base05;
-        border-radius: 8px; /* Tighter rounding for a thinner bar */
+        border-radius: 50%;
         margin-top: 4px;
         margin-bottom: 4px;
         padding: 8px 0px;
       }
 
+      #workspaces:hover,
+      #pulseaudio:hover,
+      #backlight:hover,
+      #network:hover,
+      #cpu:hover,
+      #memory:hover,
+      #battery:hover,
       #clock:hover {
         background: @base02;
         color: @base0D;
@@ -128,13 +158,13 @@
         color: @base04;
         background: transparent;
         border-radius: 0;
-        box-shadow: none; /* Removed the square lines */
+        box-shadow: none;
       }
 
       #workspaces button.focused {
         color: @base0D;
         background: transparent;
-        box-shadow: none; /* Removed the square lines */
+        box-shadow: none;
         font-weight: 900;
       }
 
