@@ -22,7 +22,7 @@
     inputs@{
       self,
       nixpkgs,
-      nixpkgs-unstable
+      nixpkgs-unstable,
       home-manager,
       ...
     }:
