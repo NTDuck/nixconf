@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./zsh.nix  # default.nix
+    ./zsh  # default.nix
 
     ./bemenu.nix
     ./cliphist.nix
