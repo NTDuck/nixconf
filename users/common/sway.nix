@@ -1,4 +1,4 @@
-{  pkgs, ... }:
+{ pkgs, ... }:
 
 {
   wayland.windowManager.sway = {
@@ -13,9 +13,7 @@
       modifier = "Mod4";
 
       terminal = "${pkgs.foot}/bin/footclient";
-      # terminal = "footclient";
-      # menu = "${pkgs.bemenu}/bin/bemenu-run";
-      menu = "bemenu-run";
+      menu = "${pkgs.bemenu}/bin/bemenu-run";
 
       bars = [
         { command = "${pkgs.waybar}/bin/waybar"; }
@@ -23,15 +21,20 @@
 
       startup = [
         {
-          command = "sleep 8 && ${pkgs.fcitx5}/bin/fcitx5 -d -r";
+          # command = ''
+          #   systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+          #   dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+          #   systemctl --user restart fcitx5-daemon
+          # '';
+          command = ''
+            ${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && \
+            ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && \
+            ${pkgs.systemd}/bin/systemctl --user restart fcitx5-daemon
+          '';
           always = true;
         }
         {
           command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
-          always = true;
-        }
-        {
-          command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP";
           always = true;
         }
       ];

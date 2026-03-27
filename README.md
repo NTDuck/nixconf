@@ -33,13 +33,8 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 - zen browser
 - make keyboard faster
 
-- add gaps & borders
-- make the status bar 
-- use i3status-rust backend
 - bemenu
 - change bar to: [left] ws, current window title [middle] time (HH:mm) [right] volume% + icon to show mute or not, brightness%, cpu+ram(+gpu if possible) usage, battery; also make current 
-
-* curr bar: [left] ws [middle] [right] network bat sto ? ram ? datetime
 
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
