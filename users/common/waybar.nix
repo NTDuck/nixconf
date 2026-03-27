@@ -156,8 +156,6 @@
         transition: 0.2s;
       }
 
-      /* By adding window#waybar at the front, this rule becomes more 
-         specific than Stylix's default rules, forcing it to apply. */
       window#waybar #workspaces button {
         padding: 1px 2px;
         margin-bottom: 2px;
@@ -165,7 +163,6 @@
         background: @base00;
         border-radius: 4px;
         
-        /* Override Stylix borders */
         border: none;
         border-bottom: 2px solid transparent;
         box-shadow: none;
@@ -175,7 +172,6 @@
         color: @base0D;
         background: @base02;
 
-        /* Make Stylix's injected bottom border transparent */
         border: none;
         border-bottom: 2px solid transparent;
         
