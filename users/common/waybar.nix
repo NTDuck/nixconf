@@ -3,216 +3,190 @@
 {
   programs.waybar = {
     enable = true;
+    package = pkgs.unstable.waybar;
+
     settings = {
       mainBar = {
         layer = "top";
         position = "left";
-        width = 44;
-        margin-top = 0;
-        margin-bottom = 0;
-        margin-left = 0;
-        margin-right = 0;
-        spacing = 0;
+
+        margin-top = 4;
+        margin-bottom = 4;
+        margin-left = 4;
 
         modules-left = [
-          "custom/power"
           "sway/workspaces"
-          "mpris"
         ];
-
-        modules-center = [
-          "clock"
-        ];
-
+        modules-center = [ ];
         modules-right = [
           "pulseaudio"
           "backlight"
           "network"
           "battery"
+          "cpu"
+          "memory"
+          "clock"
         ];
-
-        "custom/power" = {
-          format = " 󰤆 ";
-          on-click = "swaynag -t warning -m 'Do you want to exit Sway?' -B 'Yes' 'swaymsg exit'";
-          tooltip = false;
-        };
-
-        "clock" = {
-          format = "{:%d\n%m\n──\n%H\n%M}";
-          tooltip = false;
-        };
 
         "sway/workspaces" = {
           disable-scroll = true;
-          format = "{name}";
-          tooltip = false;
-        };
-
-        "mpris" = {
-          format = "{artist}-{title}";
-          format-playing = "󰏤 {artist}-{title}";
-          format-paused = "󰐊 {artist}-{title}";
-          rotate = 90;
-          max-length = 20;
-          min-length = 10;
-          on-click = "${pkgs.playerctl}/bin/playerctl play-pause";
-          on-scroll-up = "${pkgs.playerctl}/bin/playerctl previous";
-          on-scroll-down = "${pkgs.playerctl}/bin/playerctl next";
-          tooltip = false;
-        };
-
-        "battery" = {
-          states = {
-            good = 60;
-            warning = 30;
-            critical = 15;
+          format = "{icon}{name} ";
+          format-icons = {
+            focused = "*";
+            default = " ";
           };
-          format = "{icon}";
-          format-alt = " {icon}\n{capacity}";
-          format-plugged = "󰂄";
-          format-icons = [ "󰂎" "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
-          tooltip = false;
         };
 
-        "network" = {
-          format-wifi = " {icon}";
-          format-ethernet = "󰈀";
-          format-icons = [ "󰤯 " "󰤟 " "󰤢 " "󰤨 " ];
-          format-disconnected = "󰪎";
-          on-click = "${pkgs.kitty}/bin/kitty -e nmtui";
-          interval = 3;
+        "pulseaudio" = {
+          format = "{icon} {volume:02d}%";
+          format-muted = "󰝟 {volume:02d}%";
+          format-icons = {
+            default = [
+              ""
+              ""
+              ""
+            ];
+          };
+          on-click = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
           tooltip = false;
         };
 
         "backlight" = {
-          format-alt = "{icon}";
-          format = " {icon}\n{percent}";
-          format-icons = [ "" "" "" "" "" "" "" "" "" "" "" "" "" "" ];
+          format = "{icon} {percent:02d}%";
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
           tooltip = false;
         };
 
-        "pulseaudio" = {
-          format = "{icon}";
-          format-alt = " {icon}\n{volume}";
-          format-icons = [ "" "󰪞" "󰪟" "󰪠" "󰪡" "󰪢" "󰪣" "󰪤" "󰪥" ];
-          format-muted = "";
-          on-click = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
+        "network" = {
+          format-wifi = "󰤨";
+          format-ethernet = "󰈀";
+          format-disconnected = "󰤭";
+          tooltip-format = "{ifname} via {gwaddr}";
+          tooltip-format-wifi = "{essid} ({signalStrength}%)";
+          tooltip-format-ethernet = "{ipaddr}/{cidr}";
+          tooltip-format-disconnected = "Disconnected";
+        };
+
+        "battery" = {
+          states = {
+            warning = 20;
+            critical = 10;
+          };
+          format = "{icon} {capacity:02d}%";
+          format-charging = " {capacity:02d}%";
+          format-plugged = " {capacity:02d}%";
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
+          tooltip-format = "{power} W, {timeTo}";
+        };
+
+        "cpu" = {
+          format = " {usage:02d}%";
+          interval = 10;
           tooltip = false;
+        };
+
+        "memory" = {
+          format = " {percentage:02d}%";
+          interval = 10;
+          tooltip = false;
+        };
+
+        "clock" = {
+          format = "{:%H\n%M}";
+          tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
         };
       };
     };
 
     style = ''
       * {
-        background-color: transparent;
-        font-family: "JetBrainsMono Nerd Font", monospace;
-        font-size: 16px;
-        font-weight: bold;
-        border: none;
-        box-shadow: none;
-        text-shadow: none;
+        font-size: 11px;
+        min-height: 0;
       }
 
       window#waybar {
-        background-color: alpha(@base00, 0.7);
-        padding: 0;
-        margin: 0;
-        border: 0px solid @base05;
-        border-radius: 0px;
+        background: transparent;
       }
 
-      .module {
-        padding: 8px 4px;
-        background-color: alpha(@base05, 0.07);
-        border: 0px;
-        border-radius: 6px;
-        margin: 4px 6px;
-      }
-
-      #clock,
       #pulseaudio,
       #backlight,
+      #network,
+      #cpu,
+      #memory,
       #battery,
-      #custom-power,
-      #mpris,
-      #network {
+      #clock {
+        background: @base00;
         color: @base05;
-      }
-
-      #pulseaudio.muted {
-        color: @base00;
-        background-color: @base05;
-      }
-
-      #battery {
-        margin: 4px 6px 10px 6px;
-      }
-
-      #custom-power {
-        margin: 10px 6px 4px 6px;
+        border-radius: 8px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        padding: 4px 2px;
+        min-width: 20px;
       }
 
       #workspaces {
-        background: @base05;
-        border-radius: 0px;
-        padding: 0;
-        margin: 0;
-        font-weight: normal;
-        font-style: normal;
-        opacity: 1;
-        font-size: 1px;
+        background: transparent;
+        margin-top: 2px;
+        margin-bottom: 2px;
       }
 
-      #workspaces button {
-        padding: 1px 1px;
-        margin: 1px 1px;
-        border-radius: 6px;
+      #pulseaudio:hover,
+      #backlight:hover,
+      #network:hover,
+      #cpu:hover,
+      #memory:hover,
+      #battery:hover,
+      #clock:hover {
+        background: @base02;
+        color: @base0D;
+        transition: 0.2s;
+      }
+
+      window#waybar #workspaces button {
+        padding: 1px 2px;
+        margin-bottom: 2px;
+        color: @base04;
+        background: @base00;
+        border-radius: 4px;
+        
+        border: none;
+        border-bottom: 2px solid transparent;
+        box-shadow: none;
+      }
+
+      window#waybar #workspaces button.focused {
+        color: @base0D;
+        background: @base02;
+
+        border: none;
+        border-bottom: 2px solid transparent;
+        
+        box-shadow: none;
+        text-shadow: none;
+        text-decoration: none;
+        font-weight: 900;
+      }
+
+      window#waybar #workspaces button:hover {
+        background: @base02;
         color: @base05;
-        background-color: @base00;
-        transition: all 0.3s ease-in-out;
-        font-size: 1px;
-        opacity: 0.5;
-      }
-
-      #workspaces button:hover {
-        background-color: @base00;
-        border-radius: 6px;
-        min-height: 40px;
-      }
-
-      #workspaces button.focused {
-        padding: 1px 1px;
-        margin: 1px 1px;
-        border-radius: 6px;
-        background-color: @base00;
-        transition: all 0.3s ease-in-out;
-        opacity: 1;
-      }
-
-      #battery.charging,
-      #battery.good:not(.charging),
-      #battery.warning:not(.charging),
-      #battery.critical:not(.charging) {
-        border: 0;
-      }
-
-      #battery.good:not(.charging) {
-        color: @base05;
-      }
-
-      #battery.warning:not(.charging) {
-        color: @base09; /* Fallback orange/yellow */
-      }
-
-      #battery.critical:not(.charging) {
-        color: @base08; /* Fallback red */
-        animation: blink 0.6s linear infinite alternate;
-      }
-
-      @keyframes blink {
-        to {
-          color: @base05;
-        }
+        border-bottom: 2px solid transparent;
       }
     '';
   };
