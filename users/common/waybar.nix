@@ -36,20 +36,21 @@
         };
 
         "pulseaudio" = {
-          format = "VOL\n{volume:03d}%";
-          format-muted = "MUT\n{volume:03d}%";
+          # Pango markup strictly enforces monospace at the rendering level
+          format = "<span font_family='monospace'>VOL\n{volume:03d}%</span>";
+          format-muted = "<span font_family='monospace'>MUT\n{volume:03d}%</span>";
           tooltip = false;
         };
 
         "backlight" = {
-          format = "LGT\n{percent:03d}%";
+          format = "<span font_family='monospace'>LGT\n{percent:03d}%</span>";
           tooltip = false;
         };
 
         "network" = {
-          format-wifi = "WIF\n{signalStrength:03d}%";
-          format-ethernet = "ETH\n100%";
-          format-disconnected = "NET\nOFF";
+          format-wifi = "<span font_family='monospace'>WIF\n{signalStrength:03d}%</span>";
+          format-ethernet = "<span font_family='monospace'>ETH\n100%</span>";
+          format-disconnected = "<span font_family='monospace'>NET\nOFF</span>";
           tooltip = false;
         };
 
@@ -58,26 +59,26 @@
             warning = 20;
             critical = 10;
           };
-          format = "BAT\n{capacity:03d}%";
-          format-charging = "CHR\n{capacity:03d}%";
-          format-plugged = "PLG\n{capacity:03d}%";
+          format = "<span font_family='monospace'>BAT\n{capacity:03d}%</span>";
+          format-charging = "<span font_family='monospace'>CHR\n{capacity:03d}%</span>";
+          format-plugged = "<span font_family='monospace'>PLG\n{capacity:03d}%</span>";
           tooltip = false;
         };
 
         "cpu" = {
-          format = "CPU\n{usage:03d}%";
+          format = "<span font_family='monospace'>CPU\n{usage:03d}%</span>";
           interval = 10;
           tooltip = false;
         };
 
         "memory" = {
-          format = "RAM\n{percentage:03d}%";
+          format = "<span font_family='monospace'>RAM\n{percentage:03d}%</span>";
           interval = 10;
           tooltip = false;
         };
 
         "clock" = {
-          format = "{:%d\n%m\n──\n%H\n%M}";
+          format = "<span font_family='monospace'>{:%d\n%m\n──\n%H\n%M}</span>";
           tooltip = false;
         };
       };
@@ -86,7 +87,6 @@
     style = ''
       * {
         font-size: 10px;
-        /* Forcing the font directly ensures VOL and MUT are pixel-perfect matches */
         font-family: "JetBrainsMono Nerd Font", monospace;
         min-height: 0;
       }
@@ -109,9 +109,7 @@
         margin: 4px;
         padding: 6px 2px;
 
-        /* The Goldilocks size:
-           Small enough to keep the islands tight, large enough to
-           prevent GTK from word-wrapping the % sign. */
+        /* These bounds are now permanently locked because the text width cannot fluctuate */
         min-width: 40px;
         min-height: 36px;
       }
