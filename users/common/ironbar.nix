@@ -10,6 +10,7 @@
     
     config = {
       position = "left";
+      
       margin = {
         top = 4;
         bottom = 4;
