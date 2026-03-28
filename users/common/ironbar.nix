@@ -21,7 +21,7 @@
       start = [
         {
           type = "workspaces";
-          sort = "alphanumeric";
+          # sort = "alphanumeric";
         }
       ];
 
