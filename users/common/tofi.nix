@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   programs.tofi = {
@@ -18,6 +18,10 @@
 
       border-width = 2;
       outline-width = 0;
+
+      selection-background = lib.mkForce "#00000000";
+      default-result-background = lib.mkForce "#00000000";
+      alternate-result-background = lib.mkForce "#00000000";
 
       padding-top = 20;
       padding-bottom = 20;

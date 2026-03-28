@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   programs.waybar = {
@@ -38,7 +38,6 @@
         "pulseaudio" = {
           format = "VOL\n{volume:03d}%";
           format-muted = "MUT\n{volume:03d}%";
-          on-click = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
           tooltip = false;
         };
 
@@ -54,7 +53,7 @@
           tooltip-format = "{ifname} via {gwaddr}";
           tooltip-format-wifi = "{essid} ({signalStrength}%)";
           tooltip-format-ethernet = "{ipaddr}/{cidr}";
-          tooltip-format-disconnected = "Disconnected";
+          tooltip-format-disconnected = "disconnected";
         };
 
         "battery" = {
@@ -112,7 +111,6 @@
         border-radius: 2px;
         margin: 4px;
         padding: 6px 0px;
-        min-width: 36px; /* {num_chars} * 0.6 * {font_size} */
       }
 
       #workspaces {
