@@ -50,10 +50,11 @@
           format-wifi = "WIF\n{signalStrength:03d}%";
           format-ethernet = "ETH\n100%";
           format-disconnected = "NET\nOFF";
-          tooltip-format = "{ifname} via {gwaddr}";
-          tooltip-format-wifi = "{essid} ({signalStrength}%)";
-          tooltip-format-ethernet = "{ipaddr}/{cidr}";
-          tooltip-format-disconnected = "disconnected";
+          # tooltip-format = "{ifname} via {gwaddr}";
+          # tooltip-format-wifi = "{essid} ({signalStrength}%)";
+          # tooltip-format-ethernet = "{ipaddr}/{cidr}";
+          # tooltip-format-disconnected = "disconnected";
+          tooltip = false;
         };
 
         "battery" = {
@@ -64,7 +65,8 @@
           format = "BAT\n{capacity:03d}%";
           format-charging = "CHR\n{capacity:03d}%";
           format-plugged = "PLG\n{capacity:03d}%";
-          tooltip-format = "{power} W, {timeTo}";
+          # tooltip-format = "{power} W, {timeTo}";
+          tooltip = false;
         };
 
         "cpu" = {
@@ -111,6 +113,8 @@
         border-radius: 2px;
         margin: 4px;
         padding: 6px 0px;
+
+        width: 32px;
       }
 
       #workspaces {
