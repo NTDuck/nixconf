@@ -36,7 +36,6 @@
       self,
       nixpkgs,
       nixpkgs-unstable,
-      home-manager,
       ...
     }:
     let
@@ -73,7 +72,7 @@
 
             ./targets/${hostname} # default.nix
 
-            home-manager.nixosModules.home-manager
+            inputs.home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
