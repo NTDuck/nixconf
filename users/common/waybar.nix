@@ -174,52 +174,59 @@
         min-height: 0;
       }
 
+      /* Main background bar */
       window#waybar {
         background: alpha(@base00, 0.85);
         border-radius: 4px;
       }
 
-      /* Apply the island background to the group containers */
-      #group-audio,
-      #group-light,
-      #group-net,
-      #group-bat,
-      #group-cpu,
-      #group-ram,
+      /*
+       * ISOLATED ISLANDS
+       * Notice the dots (.) instead of hashes (#) for the groups!
+       */
+      .group-audio,
+      .group-light,
+      .group-net,
+      .group-bat,
+      .group-cpu,
+      .group-ram,
       #clock {
         background: alpha(@base02, 0.85);
         color: @base05;
         border-radius: 2px;
         margin: 4px;
-        padding: 6px 0px;
+        padding: 6px 2px;
       }
 
-      /* Inner modules spacing (the gap between 'VOL' and '100%') */
+      /* Hover states for the islands */
+      .group-audio:hover,
+      .group-light:hover,
+      .group-net:hover,
+      .group-bat:hover,
+      .group-cpu:hover,
+      .group-ram:hover,
+      #clock:hover {
+        background: alpha(@base03, 0.85);
+        color: @base0D;
+        transition: 0.2s;
+      }
+
+      /* Ensure the inner text lines don't have overlapping backgrounds */
       #pulseaudio,
       #backlight,
       #network,
       #cpu,
       #memory,
       #battery {
-        padding: 0px 4px; /* Slight horizontal padding so text doesn't hit the very edge */
+        background: transparent;
+        margin: 0px;
+        padding: 0px;
       }
 
+      /* --- WORKSPACES --- */
       #workspaces {
         background: transparent;
         margin: 4px;
-      }
-
-      /* Hover states target the groups */
-      #group-audio:hover,
-      #group-light:hover,
-      #group-net:hover,
-      #group-bat:hover,
-      #group-cpu:hover,
-      #group-ram:hover,
-      #clock:hover {
-        background: alpha(@base03, 0.85);
-        color: @base0D;
-        transition: 0.2s;
       }
 
       window#waybar #workspaces button {
