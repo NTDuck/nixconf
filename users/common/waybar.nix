@@ -114,7 +114,8 @@
         margin: 4px;
         padding: 6px 0px;
 
-        width: 32px;
+        min-width: 32px;
+        max-width: 32px;
       }
 
       #workspaces {
