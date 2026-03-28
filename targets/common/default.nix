@@ -9,7 +9,9 @@
 {
   imports = [
     ./battery.nix
+    ./bluetooth.nix
     ./cachyos-kernel.nix
+    ./cloudflare-warp.nix
     ./dev-pkgs.nix
     ./fcitx5.nix
     ./greetd.nix
@@ -59,9 +61,6 @@
     options = "--delete-older-than 4d";
   };
 
-  # Printing
-  services.printing.enable = true;
-
   # Firmware
   hardware.firmware = [
     pkgs.linux-firmware
@@ -73,9 +72,9 @@
   # Packages
   nixpkgs.config.allowUnfree = lib.mkDefault true;
 
-  environment.systemPackages = [
-    pkgs.git
-  ];
+  # environment.systemPackages = [
+  #   pkgs.git
+  # ];
 
   # Users
   users.users.${username} = {
