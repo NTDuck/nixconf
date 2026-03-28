@@ -112,7 +112,7 @@
         border-radius: 2px;
         margin: 4px;
         padding: 6px 0px;
-        /* min-width: 40px; */
+        min-width: 36px; /* {num_chars} * 0.6 * {font_size} */
       }
 
       #workspaces {
