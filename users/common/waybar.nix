@@ -115,6 +115,7 @@
         padding: 6px 0px;
 
         min-width: 64px;
+        min-height: 32px;
       }
 
       #workspaces {
