@@ -59,6 +59,8 @@
 
           modules = [
             ({ config, ... }: {
+              nixpkgs.config.allowUnfree = true;
+              
               nixpkgs.overlays = [
                 (final: prev: {
                   unstable = import nixpkgs-unstable {

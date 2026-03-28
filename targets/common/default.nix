@@ -69,13 +69,6 @@
   hardware.graphics.enable = true;
   hardware.enableRedistributableFirmware = lib.mkDefault true;
 
-  # Packages
-  nixpkgs.config.allowUnfree = lib.mkDefault true;
-
-  # environment.systemPackages = [
-  #   pkgs.git
-  # ];
-
   # Users
   users.users.${username} = {
     isNormalUser = true;
@@ -88,9 +81,6 @@
   };
 
   nix.settings.trusted-users = [ username ];
-
-  # Access tokens
-  # nix.settings.access-tokens = [ (import ../../secrets/common/github-pat-classic.nix) ];
 
   # Misc
   nix.settings.experimental-features = [
