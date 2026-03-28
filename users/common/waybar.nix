@@ -180,9 +180,7 @@
         border-radius: 4px;
       }
 
-      /*
-       * ISOLATED ISLANDS
-       * Notice the dots (.) instead of hashes (#) for the groups!
+      /* * ISOLATED ISLANDS
        */
       .group-audio,
       .group-light,
@@ -196,6 +194,10 @@
         border-radius: 2px;
         margin: 4px;
         padding: 6px 2px;
+
+        /* A minimal width that perfectly fits 4 characters.
+           This locks the VOL/MUT width without bloating the bar! */
+        min-width: 36px;
       }
 
       /* Hover states for the islands */
