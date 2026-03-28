@@ -1,93 +1,83 @@
 { ... }:
 
 {
-  programs.waybar = {
+  programs.ironbar = {
     enable = true;
-    settings = {
-      mainBar = {
-        layer = "top";
-        position = "left";
 
-        margin-top = 4;
-        margin-bottom = 4;
-        margin-left = 4;
+    config = {
+      position = "left";
+      margin = {
+        top = 4;
+        bottom = 4;
+        left = 4;
+        right = 0;
+      };
 
-        modules-left = [
-          "sway/workspaces"
-        ];
-        modules-center = [ ];
-        modules-right = [
-          "pulseaudio"
-          "backlight"
-          "network"
-          "battery"
-          "cpu"
-          "memory"
-          "clock"
-        ];
+      start = [
+        { type = "workspaces"; }
+      ];
 
-        "sway/workspaces" = {
-          disable-scroll = true;
-          format = "{icon}{name} ";
-          format-icons = {
-            focused = "*";
-            default = " ";
-          };
-        };
+      center = [ ];
 
+      end = [
         # --- AUDIO ---
-        "pulseaudio" = {
-          format = "VOL \n{volume:03d}%";
-          format-muted = "MUT \n{volume:03d}%";
-          tooltip = false;
-        };
+        {
+          type = "volume";
+          # Ironbar's volume widget natively handles the slider and icons.
+          # Advanced format overrides may require a custom script depending on your Ironbar version.
+        }
 
         # --- BACKLIGHT ---
-        "backlight" = {
-          format = "LGT \n{percent:03d}%";
-          tooltip = false;
-        };
+        {
+          type = "brightness";
+        }
 
-        # --- NETWORK ---
-        "network" = {
-          format-wifi = "WIF \n{signalStrength:03d}%";
-          format-ethernet = "ETH \n100%";
-          format-disconnected = "NET \nOFF ";
-          tooltip = false;
-        };
+        # --- NETWORK (Custom Script Fallback) ---
+        {
+          name = "network";
+          type = "script";
+          mode = "poll";
+          interval = 5;
+          # Mimics your Waybar WIF/ETH/OFF padding logic exactly
+          cmd = ''
+            if grep -q 'up' /sys/class/net/wl*/operstate 2>/dev/null; then
+              echo "WIF \n100%"
+            elif grep -q 'up' /sys/class/net/e*/operstate 2>/dev/null; then
+              echo "ETH \n100%"
+            else
+              echo "NET \nOFF "
+            fi
+          '';
+        }
 
         # --- BATTERY ---
-        "battery" = {
-          states = {
-            warning = 20;
-            critical = 10;
-          };
-          format = "BAT \n{capacity:03d}%";
-          format-charging = "CHR \n{capacity:03d}%";
-          format-plugged = "PLG \n{capacity:03d}%";
-          tooltip = false;
-        };
+        {
+          type = "battery";
+        }
 
         # --- CPU ---
-        "cpu" = {
-          format = "CPU \n{usage:03d}%";
+        {
+          name = "cpu";
+          type = "sys_info";
           interval = 10;
-          tooltip = false;
-        };
+          # Ironbar uses Rust formatting. :03 ensures 3 digits, padded with zeros.
+          format = [ "CPU \n{cpu_percent:03}%" ];
+        }
 
         # --- MEMORY ---
-        "memory" = {
-          format = "RAM \n{percentage:03d}%";
+        {
+          name = "memory";
+          type = "sys_info";
           interval = 10;
-          tooltip = false;
-        };
+          format = [ "RAM \n{memory_percent:03}%" ];
+        }
 
         # --- CLOCK ---
-        "clock" = {
-          format = "{:%d\n%m\n──\n%H\n%M}";
-          tooltip = false;
-        };
-      };
+        {
+          type = "clock";
+          format = "%d\n%m\n──\n%H\n%M";
+        }
+      ];
     };
 
     style = ''
@@ -97,19 +87,20 @@
         min-height: 0;
       }
 
-      window#waybar {
+      /* Base bar background */
+      .background {
         background: alpha(@base00, 0.85);
         border-radius: 4px;
       }
 
-      /* Apply the island background directly to the individual modules */
-      #pulseaudio,
-      #backlight,
+      /* Apply the island background directly to the Ironbar classes */
+      .volume,
+      .brightness,
       #network,
-      #battery,
+      .battery,
       #cpu,
       #memory,
-      #clock {
+      .clock {
         background: alpha(@base02, 0.85);
         color: @base05;
         border-radius: 2px;
@@ -117,25 +108,26 @@
         padding: 6px 4px;
       }
 
-      #workspaces {
+      .workspaces {
         background: transparent;
         margin: 4px;
       }
 
       /* Hover states target the individual modules */
-      #pulseaudio:hover,
-      #backlight:hover,
+      .volume:hover,
+      .brightness:hover,
       #network:hover,
-      #battery:hover,
+      .battery:hover,
       #cpu:hover,
       #memory:hover,
-      #clock:hover {
+      .clock:hover {
         background: alpha(@base03, 0.85);
         color: @base0D;
         transition: 0.2s;
       }
 
-      window#waybar #workspaces button {
+      /* Ironbar uses '.item' instead of 'button' for workspaces */
+      .workspaces .item {
         padding: 4px 0px;
         margin-bottom: 4px;
         color: @base04;
@@ -147,7 +139,7 @@
         box-shadow: none;
       }
 
-      window#waybar #workspaces button.focused {
+      .workspaces .item.focused {
         color: @base0D;
         background: alpha(@base03, 0.85);
 
@@ -160,7 +152,7 @@
         font-weight: 900;
       }
 
-      window#waybar #workspaces button:hover {
+      .workspaces .item:hover {
         background: alpha(@base03, 0.85);
         color: @base05;
         border-bottom: 2px solid transparent;
