@@ -17,12 +17,12 @@
         ];
         modules-center = [ ];
         modules-right = [
-          "group/audio"
-          "group/light"
-          "group/net"
-          "group/bat"
-          "group/cpu"
-          "group/ram"
+          "pulseaudio"
+          "backlight"
+          "network"
+          "battery"
+          "cpu"
+          "memory"
           "clock"
         ];
 
@@ -35,131 +35,47 @@
           };
         };
 
-        # --- AUDIO ---
-        "group/audio" = {
-          orientation = "vertical";
-          modules = [
-            "pulseaudio#label"
-            "pulseaudio#value"
-          ];
-        };
-        "pulseaudio#label" = {
-          format = "VOL";
-          format-muted = "MUT";
-          tooltip = false;
-        };
-        "pulseaudio#value" = {
-          format = "{volume:03d}%";
-          format-muted = "{volume:03d}%";
+        "pulseaudio" = {
+          format = "VOL\n{volume:03d}%";
+          format-muted = "MUT\n{volume:03d}%";
           tooltip = false;
         };
 
-        # --- BACKLIGHT ---
-        "group/light" = {
-          orientation = "vertical";
-          modules = [
-            "backlight#label"
-            "backlight#value"
-          ];
-        };
-        "backlight#label" = {
-          format = "LGT";
-          tooltip = false;
-        };
-        "backlight#value" = {
-          format = "{percent:03d}%";
+        "backlight" = {
+          format = "LGT\n{percent:03d}%";
           tooltip = false;
         };
 
-        # --- NETWORK ---
-        "group/net" = {
-          orientation = "vertical";
-          modules = [
-            "network#label"
-            "network#value"
-          ];
-        };
-        "network#label" = {
-          format-wifi = "WIF";
-          format-ethernet = "ETH";
-          format-disconnected = "NET";
-          tooltip = false;
-        };
-        "network#value" = {
-          format-wifi = "{signalStrength:03d}%";
-          format-ethernet = "100%";
-          format-disconnected = "OFF";
+        "network" = {
+          format-wifi = "WIF\n{signalStrength:03d}%";
+          format-ethernet = "ETH\n100%";
+          format-disconnected = "NET\nOFF";
           tooltip = false;
         };
 
-        # --- BATTERY ---
-        "group/bat" = {
-          orientation = "vertical";
-          modules = [
-            "battery#label"
-            "battery#value"
-          ];
-        };
-        "battery#label" = {
+        "battery" = {
           states = {
             warning = 20;
             critical = 10;
           };
-          format = "BAT";
-          format-charging = "CHR";
-          format-plugged = "PLG";
-          tooltip = false;
-        };
-        "battery#value" = {
-          states = {
-            warning = 20;
-            critical = 10;
-          };
-          format = "{capacity:03d}%";
-          format-charging = "{capacity:03d}%";
-          format-plugged = "{capacity:03d}%";
+          format = "BAT\n{capacity:03d}%";
+          format-charging = "CHR\n{capacity:03d}%";
+          format-plugged = "PLG\n{capacity:03d}%";
           tooltip = false;
         };
 
-        # --- CPU ---
-        "group/cpu" = {
-          orientation = "vertical";
-          modules = [
-            "cpu#label"
-            "cpu#value"
-          ];
-        };
-        "cpu#label" = {
-          format = "CPU";
-          interval = 10;
-          tooltip = false;
-        };
-        "cpu#value" = {
-          format = "{usage:03d}%";
+        "cpu" = {
+          format = "CPU\n{usage:03d}%";
           interval = 10;
           tooltip = false;
         };
 
-        # --- MEMORY ---
-        "group/ram" = {
-          orientation = "vertical";
-          modules = [
-            "memory#label"
-            "memory#value"
-          ];
-        };
-        "memory#label" = {
-          format = "RAM";
-          interval = 10;
-          tooltip = false;
-        };
-        "memory#value" = {
-          format = "{percentage:03d}%";
+        "memory" = {
+          format = "RAM\n{percentage:03d}%";
           interval = 10;
           tooltip = false;
         };
 
-        # --- CLOCK ---
         "clock" = {
           format = "{:%d\n%m\n──\n%H\n%M}";
           tooltip = false;
@@ -170,24 +86,22 @@
     style = ''
       * {
         font-size: 10px;
-        font-family: monospace;
+        /* Forcing the font directly ensures VOL and MUT are pixel-perfect matches */
+        font-family: "JetBrainsMono Nerd Font", monospace;
         min-height: 0;
       }
 
-      /* Main background bar */
       window#waybar {
         background: alpha(@base00, 0.85);
         border-radius: 4px;
       }
 
-      /* * ISOLATED ISLANDS
-       */
-      .group-audio,
-      .group-light,
-      .group-net,
-      .group-bat,
-      .group-cpu,
-      .group-ram,
+      #pulseaudio,
+      #backlight,
+      #network,
+      #cpu,
+      #memory,
+      #battery,
       #clock {
         background: alpha(@base02, 0.85);
         color: @base05;
@@ -195,40 +109,28 @@
         margin: 4px;
         padding: 6px 2px;
 
-        /* A minimal width that perfectly fits 4 characters.
-           This locks the VOL/MUT width without bloating the bar! */
-        min-width: 36px;
+        /* The Goldilocks size:
+           Small enough to keep the islands tight, large enough to
+           prevent GTK from word-wrapping the % sign. */
+        min-width: 40px;
+        min-height: 36px;
       }
 
-      /* Hover states for the islands */
-      .group-audio:hover,
-      .group-light:hover,
-      .group-net:hover,
-      .group-bat:hover,
-      .group-cpu:hover,
-      .group-ram:hover,
+      #workspaces {
+        background: transparent;
+        margin: 4px;
+      }
+
+      #pulseaudio:hover,
+      #backlight:hover,
+      #network:hover,
+      #cpu:hover,
+      #memory:hover,
+      #battery:hover,
       #clock:hover {
         background: alpha(@base03, 0.85);
         color: @base0D;
         transition: 0.2s;
-      }
-
-      /* Ensure the inner text lines don't have overlapping backgrounds */
-      #pulseaudio,
-      #backlight,
-      #network,
-      #cpu,
-      #memory,
-      #battery {
-        background: transparent;
-        margin: 0px;
-        padding: 0px;
-      }
-
-      /* --- WORKSPACES --- */
-      #workspaces {
-        background: transparent;
-        margin: 4px;
       }
 
       window#waybar #workspaces button {
