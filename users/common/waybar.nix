@@ -17,12 +17,12 @@
         ];
         modules-center = [ ];
         modules-right = [
-          "pulseaudio"
-          "backlight"
-          "network"
-          "battery"
-          "cpu"
-          "memory"
+          "group/audio"
+          "group/light"
+          "group/net"
+          "group/bat"
+          "group/cpu"
+          "group/ram"
           "clock"
         ];
 
@@ -35,50 +35,133 @@
           };
         };
 
-        "pulseaudio" = {
-          # Pango markup strictly enforces monospace at the rendering level
-          format = "<span font_family='monospace'>VOL\n{volume:03d}%</span>";
-          format-muted = "<span font_family='monospace'>VOL\n{volume:03d}%</span>";
+        # --- AUDIO ---
+        "group/audio" = {
+          orientation = "vertical";
+          modules = [
+            "pulseaudio#label"
+            "pulseaudio#value"
+          ];
+        };
+        "pulseaudio#label" = {
+          format = "VOL";
+          format-muted = "MUT";
+          tooltip = false;
+        };
+        "pulseaudio#value" = {
+          format = "{volume:03d}%";
+          format-muted = "{volume:03d}%";
           tooltip = false;
         };
 
-        "backlight" = {
-          format = "<span font_family='monospace'>LGT\n{percent:03d}%</span>";
+        # --- BACKLIGHT ---
+        "group/light" = {
+          orientation = "vertical";
+          modules = [
+            "backlight#label"
+            "backlight#value"
+          ];
+        };
+        "backlight#label" = {
+          format = "LGT";
+          tooltip = false;
+        };
+        "backlight#value" = {
+          format = "{percent:03d}%";
           tooltip = false;
         };
 
-        "network" = {
-          format-wifi = "<span font_family='monospace'>WIF\n{signalStrength:03d}%</span>";
-          format-ethernet = "<span font_family='monospace'>ETH\n100%</span>";
-          format-disconnected = "<span font_family='monospace'>NET\nOFF</span>";
+        # --- NETWORK ---
+        "group/net" = {
+          orientation = "vertical";
+          modules = [
+            "network#label"
+            "network#value"
+          ];
+        };
+        "network#label" = {
+          format-wifi = "WIF";
+          format-ethernet = "ETH";
+          format-disconnected = "NET";
+          tooltip = false;
+        };
+        "network#value" = {
+          format-wifi = "{signalStrength:03d}%";
+          format-ethernet = "100%";
+          format-disconnected = "OFF";
           tooltip = false;
         };
 
-        "battery" = {
+        # --- BATTERY ---
+        "group/bat" = {
+          orientation = "vertical";
+          modules = [
+            "battery#label"
+            "battery#value"
+          ];
+        };
+        "battery#label" = {
           states = {
             warning = 20;
             critical = 10;
           };
-          format = "<span font_family='monospace'>BAT\n{capacity:03d}%</span>";
-          format-charging = "<span font_family='monospace'>CHR\n{capacity:03d}%</span>";
-          format-plugged = "<span font_family='monospace'>PLG\n{capacity:03d}%</span>";
+          format = "BAT";
+          format-charging = "CHR";
+          format-plugged = "PLG";
+          tooltip = false;
+        };
+        "battery#value" = {
+          states = {
+            warning = 20;
+            critical = 10;
+          };
+          format = "{capacity:03d}%";
+          format-charging = "{capacity:03d}%";
+          format-plugged = "{capacity:03d}%";
           tooltip = false;
         };
 
-        "cpu" = {
-          format = "<span font_family='monospace'>CPU\n{usage:03d}%</span>";
+        # --- CPU ---
+        "group/cpu" = {
+          orientation = "vertical";
+          modules = [
+            "cpu#label"
+            "cpu#value"
+          ];
+        };
+        "cpu#label" = {
+          format = "CPU";
+          interval = 10;
+          tooltip = false;
+        };
+        "cpu#value" = {
+          format = "{usage:03d}%";
           interval = 10;
           tooltip = false;
         };
 
-        "memory" = {
-          format = "<span font_family='monospace'>RAM\n{percentage:03d}%</span>";
+        # --- MEMORY ---
+        "group/ram" = {
+          orientation = "vertical";
+          modules = [
+            "memory#label"
+            "memory#value"
+          ];
+        };
+        "memory#label" = {
+          format = "RAM";
+          interval = 10;
+          tooltip = false;
+        };
+        "memory#value" = {
+          format = "{percentage:03d}%";
           interval = 10;
           tooltip = false;
         };
 
+        # --- CLOCK ---
         "clock" = {
-          format = "<span font_family='monospace'>{:%d\n%m\n──\n%H\n%M}</span>";
+          format = "{:%d\n%m\n──\n%H\n%M}";
           tooltip = false;
         };
       };
@@ -87,7 +170,7 @@
     style = ''
       * {
         font-size: 10px;
-        font-family: "JetBrainsMono Nerd Font", monospace;
+        font-family: monospace;
         min-height: 0;
       }
 
@@ -96,22 +179,29 @@
         border-radius: 4px;
       }
 
-      #pulseaudio,
-      #backlight,
-      #network,
-      #cpu,
-      #memory,
-      #battery,
+      /* Apply the island background to the group containers */
+      #group-audio,
+      #group-light,
+      #group-net,
+      #group-bat,
+      #group-cpu,
+      #group-ram,
       #clock {
         background: alpha(@base02, 0.85);
         color: @base05;
         border-radius: 2px;
         margin: 4px;
-        padding: 6px 2px;
+        padding: 6px 0px;
+      }
 
-        /* These bounds are now permanently locked because the text width cannot fluctuate */
-        min-width: 40px;
-        min-height: 36px;
+      /* Inner modules spacing (the gap between 'VOL' and '100%') */
+      #pulseaudio,
+      #backlight,
+      #network,
+      #cpu,
+      #memory,
+      #battery {
+        padding: 0px 4px; /* Slight horizontal padding so text doesn't hit the very edge */
       }
 
       #workspaces {
@@ -119,12 +209,13 @@
         margin: 4px;
       }
 
-      #pulseaudio:hover,
-      #backlight:hover,
-      #network:hover,
-      #cpu:hover,
-      #memory:hover,
-      #battery:hover,
+      /* Hover states target the groups */
+      #group-audio:hover,
+      #group-light:hover,
+      #group-net:hover,
+      #group-bat:hover,
+      #group-cpu:hover,
+      #group-ram:hover,
       #clock:hover {
         background: alpha(@base03, 0.85);
         color: @base0D;
