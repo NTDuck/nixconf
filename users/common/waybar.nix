@@ -1,261 +1,3 @@
-# { ... }:
-
-# {
-#   programs.waybar = {
-#     enable = true;
-#     settings = {
-#       mainBar = {
-#         layer = "top";
-#         position = "left";
-
-#         margin-top = 4;
-#         margin-bottom = 4;
-#         margin-left = 4;
-
-#         modules-left = [
-#           "sway/workspaces"
-#         ];
-#         modules-center = [ ];
-#         modules-right = [
-#           "group/audio"
-#           "group/light"
-#           "group/net"
-#           "group/bat"
-#           "group/cpu"
-#           "group/ram"
-#           "clock"
-#         ];
-
-#         "sway/workspaces" = {
-#           disable-scroll = true;
-#           format = "{icon}{name} ";
-#           format-icons = {
-#             focused = "*";
-#             default = " ";
-#           };
-#         };
-
-#         # --- AUDIO ---
-#         "group/audio" = {
-#           orientation = "vertical";
-#           modules = [
-#             "pulseaudio#label"
-#             "pulseaudio#value"
-#           ];
-#         };
-#         "pulseaudio#label" = {
-#           format = "VOL";
-#           format-muted = "MUT";
-#           tooltip = false;
-#         };
-#         "pulseaudio#value" = {
-#           format = "{volume:03d}%";
-#           format-muted = "{volume:03d}%";
-#           tooltip = false;
-#         };
-
-#         # --- BACKLIGHT ---
-#         "group/light" = {
-#           orientation = "vertical";
-#           modules = [
-#             "backlight#label"
-#             "backlight#value"
-#           ];
-#         };
-#         "backlight#label" = {
-#           format = "LGT";
-#           tooltip = false;
-#         };
-#         "backlight#value" = {
-#           format = "{percent:03d}%";
-#           tooltip = false;
-#         };
-
-#         # --- NETWORK ---
-#         "group/net" = {
-#           orientation = "vertical";
-#           modules = [
-#             "network#label"
-#             "network#value"
-#           ];
-#         };
-#         "network#label" = {
-#           format-wifi = "WIF";
-#           format-ethernet = "ETH";
-#           format-disconnected = "NET";
-#           tooltip = false;
-#         };
-#         "network#value" = {
-#           format-wifi = "{signalStrength:03d}%";
-#           format-ethernet = "100%";
-#           format-disconnected = "OFF";
-#           tooltip = false;
-#         };
-
-#         # --- BATTERY ---
-#         "group/bat" = {
-#           orientation = "vertical";
-#           modules = [
-#             "battery#label"
-#             "battery#value"
-#           ];
-#         };
-#         "battery#label" = {
-#           states = {
-#             warning = 20;
-#             critical = 10;
-#           };
-#           format = "BAT";
-#           format-charging = "CHR";
-#           format-plugged = "PLG";
-#           tooltip = false;
-#         };
-#         "battery#value" = {
-#           states = {
-#             warning = 20;
-#             critical = 10;
-#           };
-#           format = "{capacity:03d}%";
-#           format-charging = "{capacity:03d}%";
-#           format-plugged = "{capacity:03d}%";
-#           tooltip = false;
-#         };
-
-#         # --- CPU ---
-#         "group/cpu" = {
-#           orientation = "vertical";
-#           modules = [
-#             "cpu#label"
-#             "cpu#value"
-#           ];
-#         };
-#         "cpu#label" = {
-#           format = "CPU";
-#           interval = 10;
-#           tooltip = false;
-#         };
-#         "cpu#value" = {
-#           format = "{usage:03d}%";
-#           interval = 10;
-#           tooltip = false;
-#         };
-
-#         # --- MEMORY ---
-#         "group/ram" = {
-#           orientation = "vertical";
-#           modules = [
-#             "memory#label"
-#             "memory#value"
-#           ];
-#         };
-#         "memory#label" = {
-#           format = "RAM";
-#           interval = 10;
-#           tooltip = false;
-#         };
-#         "memory#value" = {
-#           format = "{percentage:03d}%";
-#           interval = 10;
-#           tooltip = false;
-#         };
-
-#         # --- CLOCK ---
-#         "clock" = {
-#           format = "{:%d\n%m\n──\n%H\n%M}";
-#           tooltip = false;
-#         };
-#       };
-#     };
-
-#     style = ''
-#       * {
-#         font-size: 10px;
-#         font-family: monospace;
-#         min-height: 0;
-#       }
-
-#       window#waybar {
-#         background: alpha(@base00, 0.85);
-#         border-radius: 4px;
-#       }
-
-#       /* Apply the island background to the group containers */
-#       #group-audio,
-#       #group-light,
-#       #group-net,
-#       #group-bat,
-#       #group-cpu,
-#       #group-ram,
-#       #clock {
-#         background: alpha(@base02, 0.85);
-#         color: @base05;
-#         border-radius: 2px;
-#         margin: 4px;
-#         padding: 6px 0px;
-#       }
-
-#       /* Inner modules spacing (the gap between 'VOL' and '100%') */
-#       #pulseaudio,
-#       #backlight,
-#       #network,
-#       #cpu,
-#       #memory,
-#       #battery {
-#         padding: 0px 4px; /* Slight horizontal padding so text doesn't hit the very edge */
-#       }
-
-#       #workspaces {
-#         background: transparent;
-#         margin: 4px;
-#       }
-
-#       /* Hover states target the groups */
-#       #group-audio:hover,
-#       #group-light:hover,
-#       #group-net:hover,
-#       #group-bat:hover,
-#       #group-cpu:hover,
-#       #group-ram:hover,
-#       #clock:hover {
-#         background: alpha(@base03, 0.85);
-#         color: @base0D;
-#         transition: 0.2s;
-#       }
-
-#       window#waybar #workspaces button {
-#         padding: 4px 0px;
-#         margin-bottom: 4px;
-#         color: @base04;
-#         background: alpha(@base02, 0.85);
-#         border-radius: 2px;
-
-#         border: none;
-#         border-bottom: 2px solid transparent;
-#         box-shadow: none;
-#       }
-
-#       window#waybar #workspaces button.focused {
-#         color: @base0D;
-#         background: alpha(@base03, 0.85);
-
-#         border: none;
-#         border-bottom: 2px solid transparent;
-
-#         box-shadow: none;
-#         text-shadow: none;
-#         text-decoration: none;
-#         font-weight: 900;
-#       }
-
-#       window#waybar #workspaces button:hover {
-#         background: alpha(@base03, 0.85);
-#         color: @base05;
-#         border-bottom: 2px solid transparent;
-#       }
-#     '';
-#   };
-# }
-
 { ... }:
 
 {
@@ -295,22 +37,22 @@
 
         # --- AUDIO ---
         "pulseaudio" = {
-          format = "VOL\n{volume:03d}%";
-          format-muted = "MUT\n{volume:03d}%";
+          format = "VOL \n{volume:03d}%";
+          format-muted = "MUT \n{volume:03d}%";
           tooltip = false;
         };
 
         # --- BACKLIGHT ---
         "backlight" = {
-          format = "LGT\n{percent:03d}%";
+          format = "LGT \n{percent:03d}%";
           tooltip = false;
         };
 
         # --- NETWORK ---
         "network" = {
-          format-wifi = "WIF\n{signalStrength:03d}%";
-          format-ethernet = "ETH\n100%";
-          format-disconnected = "NET\nOFF";
+          format-wifi = "WIF \n{signalStrength:03d}%";
+          format-ethernet = "ETH \n100%";
+          format-disconnected = "NET \nOFF ";
           tooltip = false;
         };
 
@@ -320,22 +62,22 @@
             warning = 20;
             critical = 10;
           };
-          format = "BAT\n{capacity:03d}%";
-          format-charging = "CHR\n{capacity:03d}%";
-          format-plugged = "PLG\n{capacity:03d}%";
+          format = "BAT \n{capacity:03d}%";
+          format-charging = "CHR \n{capacity:03d}%";
+          format-plugged = "PLG \n{capacity:03d}%";
           tooltip = false;
         };
 
         # --- CPU ---
         "cpu" = {
-          format = "CPU\n{usage:03d}%";
+          format = "CPU \n{usage:03d}%";
           interval = 10;
           tooltip = false;
         };
 
         # --- MEMORY ---
         "memory" = {
-          format = "RAM\n{percentage:03d}%";
+          format = "RAM \n{percentage:03d}%";
           interval = 10;
           tooltip = false;
         };
@@ -373,7 +115,6 @@
         border-radius: 2px;
         margin: 4px;
         padding: 6px 4px;
-        text-align: center;
       }
 
       #workspaces {
