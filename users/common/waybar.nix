@@ -91,6 +91,7 @@
     style = ''
       * {
         font-size: 10px;
+        font-family: monospace;
         min-height: 0;
       }
 
@@ -137,7 +138,7 @@
         color: @base04;
         background: alpha(@base02, 0.85);
         border-radius: 2px;
-        
+
         border: none;
         border-bottom: 2px solid transparent;
         box-shadow: none;
@@ -149,7 +150,7 @@
 
         border: none;
         border-bottom: 2px solid transparent;
-        
+
         box-shadow: none;
         text-shadow: none;
         text-decoration: none;
