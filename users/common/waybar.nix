@@ -1,10 +1,9 @@
 { pkgs, ... }:
 
 {
-  # 1. Install the Ironbar package
-  home.packages = [ pkgs.unstable.ironbar ];
+  home.packages = [ pkgs.ironbar ];
 
-  # 2. Inject the TOML Configuration
+  # 1. Inject the TOML Configuration
   xdg.configFile."ironbar/config.toml".text = ''
     position = "left"
 
@@ -16,43 +15,44 @@
 
     [[start]]
     type = "workspaces"
+    name = "workspaces"
 
-    # --- AUDIO (Scripted to preserve text grid) ---
+    # --- AUDIO ---
     [[end]]
     type = "script"
     name = "audio"
     mode = "poll"
     interval = 500
     cmd = """
-    volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | tr -dc '0-9.' | awk '{printf "%03d", $1 * 100}')
-    if wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep -q MUTED; then
+    volume=$(${pkgs.wireplumber}/bin/wpctl get-volume @DEFAULT_AUDIO_SINK@ | ${pkgs.coreutils}/bin/tr -dc '0-9.' | ${pkgs.gawk}/bin/awk '{printf "%03d", $1 * 100}')
+    if ${pkgs.wireplumber}/bin/wpctl get-volume @DEFAULT_AUDIO_SINK@ | ${pkgs.gnugrep}/bin/grep -q MUTED; then
       printf "MUT \n%s%%" "$volume"
     else
       printf "VOL \n%s%%" "$volume"
     fi
     """
 
-    # --- BACKLIGHT (Scripted to preserve text grid) ---
+    # --- BACKLIGHT ---
     [[end]]
     type = "script"
     name = "backlight"
     mode = "poll"
     interval = 500
     cmd = """
-    light=$(brightnessctl -m | awk -F, '{print substr($4, 1, length($4)-1)}')
+    light=$(${pkgs.brightnessctl}/bin/brightnessctl -m | ${pkgs.gawk}/bin/awk -F, '{print substr($4, 1, length($4)-1)}')
     printf "LGT \n%03d%%" "$light"
     """
 
-    # --- NETWORK (Scripted for fallback logic) ---
+    # --- NETWORK ---
     [[end]]
     type = "script"
     name = "network"
     mode = "poll"
     interval = 2000
     cmd = """
-    if grep -q 'up' /sys/class/net/wl*/operstate 2>/dev/null; then
+    if ${pkgs.gnugrep}/bin/grep -q 'up' /sys/class/net/wl*/operstate 2>/dev/null; then
       printf "WIF \n100%"
-    elif grep -q 'up' /sys/class/net/e*/operstate 2>/dev/null; then
+    elif ${pkgs.gnugrep}/bin/grep -q 'up' /sys/class/net/e*/operstate 2>/dev/null; then
       printf "ETH \n100%"
     else
       printf "NET \nOFF "
@@ -62,6 +62,7 @@
     # --- BATTERY ---
     [[end]]
     type = "battery"
+    name = "battery"
 
     # --- CPU ---
     [[end]]
@@ -80,78 +81,83 @@
     # --- CLOCK ---
     [[end]]
     type = "clock"
+    name = "clock"
     format = "%d\n%m\n──\n%H\n%M"
   '';
 
-  # 3. Inject the CSS Stylesheet
+  # 2. Inject the CSS Stylesheet
   xdg.configFile."ironbar/style.css".text = ''
+    /*
+     * IMPORTANT: If your @base... colors are NOT globally defined in GTK,
+     * GTK will silently discard the background properties below.
+     * You may need to replace them with hex codes (e.g., #2E3440) or
+     * ensure your theming engine writes an @import "colors.css"; at the top here.
+     */
+
     * {
       font-size: 10px;
       font-family: monospace;
-      min-height: 0;
     }
 
     .background {
-      background: alpha(@base00, 0.85);
+      background-color: alpha(@base00, 0.85);
       border-radius: 4px;
     }
 
-    /* Target the custom script modules by their assigned names, and native modules by class */
+    /* Targeting outer containers strictly by ID ensures the background renders */
     #audio,
     #backlight,
     #network,
-    .battery,
+    #battery,
     #cpu,
     #memory,
-    .clock {
-      background: alpha(@base02, 0.85);
+    #clock {
+      background-color: alpha(@base02, 0.85);
       color: @base05;
       border-radius: 2px;
       margin: 4px;
       padding: 6px 4px;
     }
 
-    .workspaces {
-      background: transparent;
+    #workspaces {
+      background-color: transparent;
       margin: 4px;
     }
 
     #audio:hover,
     #backlight:hover,
     #network:hover,
-    .battery:hover,
+    #battery:hover,
     #cpu:hover,
     #memory:hover,
-    .clock:hover {
-      background: alpha(@base03, 0.85);
+    #clock:hover {
+      background-color: alpha(@base03, 0.85);
       color: @base0D;
       transition: 0.2s;
     }
 
-    .workspaces .item {
+    /* Workspace items inside the workspaces module */
+    #workspaces .item {
       padding: 4px 0px;
       margin-bottom: 4px;
       color: @base04;
-      background: alpha(@base02, 0.85);
+      background-color: alpha(@base02, 0.85);
       border-radius: 2px;
       border: none;
       border-bottom: 2px solid transparent;
       box-shadow: none;
     }
 
-    .workspaces .item.focused {
+    #workspaces .item.focused {
       color: @base0D;
-      background: alpha(@base03, 0.85);
+      background-color: alpha(@base03, 0.85);
       border: none;
       border-bottom: 2px solid transparent;
-      box-shadow: none;
-      text-shadow: none;
-      text-decoration: none;
       font-weight: 900;
     }
 
-    .workspaces .item:hover {
-      background: alpha(@base03, 0.85);
+    #workspaces .item:hover {
+      background-color: alpha(@base03, 0.85);
       color: @base05;
       border-bottom: 2px solid transparent;
     }
