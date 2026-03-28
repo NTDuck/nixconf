@@ -38,7 +38,7 @@
         "pulseaudio" = {
           # Pango markup strictly enforces monospace at the rendering level
           format = "<span font_family='monospace'>VOL\n{volume:03d}%</span>";
-          format-muted = "<span font_family='monospace'>MUT\n{volume:03d}%</span>";
+          format-muted = "<span font_family='monospace'>VOL\n{volume:03d}%</span>";
           tooltip = false;
         };
 
