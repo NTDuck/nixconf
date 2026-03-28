@@ -7,10 +7,10 @@
 
   programs.ironbar = {
     enable = true;
-    
+
     config = {
       position = "left";
-      
+
       margin = {
         top = 4;
         bottom = 4;
@@ -36,16 +36,15 @@
           type = "script";
           mode = "poll";
           interval = 1000;
-          # Mimics the LGT\nxxx% output natively
           cmd = "echo \"LGT\n$(${pkgs.brightnessctl}/bin/brightnessctl -m | ${pkgs.gawk}/bin/awk -F, '{print $4}')\"";
         }
         {
-          type = "network";
-          # Ironbar groups this; use the icon to represent state
-          format = "NET\n{icon}";
+          # Corrected module name
+          type = "network_manager";
         }
         {
-          type = "upower";
+          # Corrected module name
+          type = "battery";
           format = "BAT\n{percentage:03}%";
         }
         {
@@ -76,7 +75,8 @@
         border-radius: 4px;
       }
 
-      .volume, .script, .network, .sys_info, .upower, .clock {
+      /* Updated selectors: .network -> .network_manager and .upower -> .battery */
+      .volume, .script, .network_manager, .sys_info, .battery, .clock {
         background: alpha(@base02, 0.85);
         color: @base05;
         border-radius: 2px;
@@ -84,7 +84,7 @@
         padding: 6px 0px;
       }
 
-      .volume:hover, .script:hover, .network:hover, .sys_info:hover, .upower:hover, .clock:hover {
+      .volume:hover, .script:hover, .network_manager:hover, .sys_info:hover, .battery:hover, .clock:hover {
         background: alpha(@base03, 0.85);
         color: @base0D;
         transition: 0.2s;

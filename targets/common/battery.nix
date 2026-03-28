@@ -1,6 +1,8 @@
 { ... }:
 
 {
+  services.upower.enable = true;
+
   services.tlp = {
     enable = true;
     settings = {
@@ -17,6 +19,6 @@
 
   services.thermald.enable = true;
   powerManagement.powertop.enable = true;
-  
+
   services.power-profiles-daemon.enable = false;
 }
