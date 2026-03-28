@@ -17,7 +17,8 @@
       menu = "${pkgs.unstable.tofi}/bin/tofi-drun --drun-launch=true";
 
       bars = [
-        { command = "${pkgs.unstable.waybar}/bin/waybar"; }
+        # { command = "${pkgs.unstable.waybar}/bin/waybar"; }
+        { command = "${pkgs.unstable.ironbar}/bin/ironbar"; }
       ];
 
       startup = [
