@@ -8,7 +8,8 @@
   programs.ironbar = {
     enable = true;
 
-    features = [ "upower" "http" ]; # upower needed for battery
+    # Removed the 'features' attribute causing the build failure.
+    # Ironbar will now build with its default feature set.
 
     config = {
       position = "left";
@@ -35,7 +36,6 @@
           on_click_right = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
         }
         {
-          # Network module doesn't natively do multiline easily, so we use a custom script or simplified layout
           type = "network";
           format = "NET\n{icon}";
         }
@@ -82,7 +82,7 @@
         color: #8ab4f8; /* @base0D */
         transition: 0.2s;
       }
-      
+
       /* Workspaces styling */
       .workspaces .item {
         padding: 4px 0px;
