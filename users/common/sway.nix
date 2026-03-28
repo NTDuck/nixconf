@@ -18,7 +18,8 @@
 
       bars = [
         # { command = "${pkgs.unstable.waybar}/bin/waybar"; }
-        { command = "${pkgs.unstable.ironbar}/bin/ironbar"; }
+        # { command = "${pkgs.unstable.ironbar}/bin/ironbar"; }
+        { command = "ironbar"; }
       ];
 
       startup = [

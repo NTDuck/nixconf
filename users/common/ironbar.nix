@@ -7,10 +7,7 @@
 
   programs.ironbar = {
     enable = true;
-
-    # Removed the 'features' attribute causing the build failure.
-    # Ironbar will now build with its default feature set.
-
+    
     config = {
       position = "left";
       margin = {
@@ -23,7 +20,6 @@
       start = [
         {
           type = "workspaces";
-          # Sway/Hyprland workspaces
           sort = "alphanumeric";
         }
       ];
@@ -31,71 +27,99 @@
       end = [
         {
           type = "volume";
-          format = "VOL\n{percentage}%";
+          format = "VOL\n{percentage:03}%";
           max_volume = 100;
           on_click_right = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
         }
         {
+          type = "script";
+          mode = "poll";
+          interval = 1000;
+          # Mimics the LGT\nxxx% output natively
+          cmd = "echo \"LGT\n$(${pkgs.brightnessctl}/bin/brightnessctl -m | ${pkgs.gawk}/bin/awk -F, '{print $4}')\"";
+        }
+        {
           type = "network";
+          # Ironbar groups this; use the icon to represent state
           format = "NET\n{icon}";
         }
         {
           type = "upower";
-          format = "BAT\n{percentage}%";
+          format = "BAT\n{percentage:03}%";
         }
         {
           type = "sys_info";
-          format = [
-            "CPU\n{cpu_percent}%"
-            "RAM\n{memory_percent}%"
-          ];
+          format = [ "CPU\n{cpu_percent:03}%" ];
+          interval = 10;
+        }
+        {
+          type = "sys_info";
+          format = [ "RAM\n{memory_percent:03}%" ];
           interval = 10;
         }
         {
           type = "clock";
-          format = "%d\n%m\n──\n%H\n%M";
+          format = "%d\n%m\n \n%H\n%M";
         }
       ];
     };
 
     style = ''
       * {
-        font-family: "JetBrainsMono Nerd Font";
         font-size: 10px;
+        min-height: 0;
       }
 
       window#ironbar {
-        background: rgba(24, 24, 24, 0.85); /* Adjust to your @base00 */
+        background: alpha(@base00, 0.85);
         border-radius: 4px;
       }
 
-      .widget {
-        background: rgba(40, 40, 40, 0.85); /* Adjust to @base02 */
-        color: #d8d8d8; /* Adjust to @base05 */
+      .volume, .script, .network, .sys_info, .upower, .clock {
+        background: alpha(@base02, 0.85);
+        color: @base05;
         border-radius: 2px;
         margin: 4px;
         padding: 6px 0px;
       }
 
-      .widget:hover {
-        background: rgba(56, 56, 56, 0.85); /* @base03 */
-        color: #8ab4f8; /* @base0D */
+      .volume:hover, .script:hover, .network:hover, .sys_info:hover, .upower:hover, .clock:hover {
+        background: alpha(@base03, 0.85);
+        color: @base0D;
         transition: 0.2s;
       }
 
-      /* Workspaces styling */
+      .workspaces {
+        background: transparent;
+        margin: 4px;
+      }
+
       .workspaces .item {
         padding: 4px 0px;
         margin-bottom: 4px;
-        color: #b8b8b8;
-        background: rgba(40, 40, 40, 0.85);
+        color: @base04;
+        background: alpha(@base02, 0.85);
         border-radius: 2px;
+        border: none;
+        border-bottom: 2px solid transparent;
+        box-shadow: none;
       }
 
       .workspaces .item.focused {
-        color: #8ab4f8;
-        background: rgba(56, 56, 56, 0.85);
+        color: @base0D;
+        background: alpha(@base03, 0.85);
+        border: none;
+        border-bottom: 2px solid transparent;
+        box-shadow: none;
+        text-shadow: none;
+        text-decoration: none;
         font-weight: 900;
+      }
+
+      .workspaces .item:hover {
+        background: alpha(@base03, 0.85);
+        color: @base05;
+        border-bottom: 2px solid transparent;
       }
     '';
   };
