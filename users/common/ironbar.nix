@@ -10,8 +10,6 @@
 
     config = {
       position = "left";
-
-      # height = 32;
       margin = {
         top = 4;
         bottom = 4;
@@ -27,12 +25,33 @@
 
       end = [
         {
-          type = "volume";
-          format = "VOL\n{percentage}%";
+          # Replaces native volume module to stop mic/speaker duplication
+          type = "script";
+          mode = "poll";
+          interval = 1000;
+          name = "volume-script";
+          # Fetch the 5th space-separated word from pactl (e.g., '100%')
+          cmd = ''
+            vol=$(${pkgs.pulseaudio}/bin/pactl get-sink-volume @DEFAULT_SINK@ | awk '{print $5}')
+            echo -e "VOL\n$vol"
+          '';
+          on_scroll_down = "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
+          on_scroll_up = "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
+          on_click_left = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
         }
         {
-          type = "brightness";
-          format = "LGT\n{percentage}%";
+          # Replaces native brightness module to strip the forced icon
+          type = "script";
+          mode = "poll";
+          interval = 1000;
+          name = "brightness-script";
+          # Fetch the 4th comma-separated word from brightnessctl (e.g., '100%')
+          cmd = ''
+            b=$(${pkgs.brightnessctl}/bin/brightnessctl -m | awk -F, '{print $4}')
+            echo -e "LGT\n$b"
+          '';
+          on_scroll_down = "${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
+          on_scroll_up = "${pkgs.brightnessctl}/bin/brightnessctl set +5%";
         }
         {
           type = "network_manager";
@@ -48,35 +67,56 @@
         }
         {
           type = "clock";
-          format = "%d\n%m\n\n%H\n%M";
+          format = "%d\n%m\n──\n%H\n%M";
         }
       ];
     };
 
     style = ''
       * {
+        font-family: "JetBrainsMono Nerd Font", "Inter", sans-serif;
         font-size: 10px;
+        min-height: 0;
       }
 
+      /* * ISOLATED ISLANDS: 
+       * Setting the main bar window to transparent removes the connected pillar look.
+       */
       window#ironbar {
-        background: alpha(@base00, 0.85);
-        border-radius: 4px;
+        background: transparent;
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
       }
 
-      .volume, .script, .network_manager, .sys_info, .battery, .clock {
-        background: alpha(@base02, 0.85);
+      /* * MODULE STYLING 
+       * Referencing the custom scripts via #id 
+       */
+      #volume-script, 
+      #brightness-script, 
+      .network_manager, 
+      .sys_info, 
+      .battery, 
+      .clock {
+        background: alpha(@base02, 0.80);
         color: @base05;
         border-radius: 2px;
         margin: 4px;
         padding: 6px 0px;
       }
 
-      .volume:hover, .script:hover, .network_manager:hover, .sys_info:hover, .battery:hover, .clock:hover {
-        background: alpha(@base03, 0.85);
+      #volume-script:hover, 
+      #brightness-script:hover, 
+      .network_manager:hover, 
+      .sys_info:hover, 
+      .battery:hover, 
+      .clock:hover {
+        background: alpha(@base03, 0.80);
         color: @base0D;
         transition: 0.2s;
       }
 
+      /* WORKSPACES */
       .workspaces {
         background: transparent;
         margin: 4px;
@@ -84,9 +124,13 @@
 
       .workspaces .item {
         padding: 4px 0px;
-        margin-bottom: 4px;
+        /* Force GTK to remove internal margins between blocks to fix them being too far apart */
+        margin: 0px 0px 4px 0px; 
+        min-height: 0;
+        min-width: 0;
+
         color: @base04;
-        background: alpha(@base02, 0.85);
+        background: alpha(@base02, 0.80);
         border-radius: 2px;
         border: none;
         border-bottom: 2px solid transparent;
@@ -95,7 +139,7 @@
 
       .workspaces .item.focused {
         color: @base0D;
-        background: alpha(@base03, 0.85);
+        background: alpha(@base03, 0.80);
         border: none;
         border-bottom: 2px solid transparent;
         box-shadow: none;
@@ -105,7 +149,7 @@
       }
 
       .workspaces .item:hover {
-        background: alpha(@base03, 0.85);
+        background: alpha(@base03, 0.80);
         color: @base05;
         border-bottom: 2px solid transparent;
       }
