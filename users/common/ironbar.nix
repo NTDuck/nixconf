@@ -11,17 +11,16 @@
     config = {
       position = "left";
 
+      height = 32;
       margin = {
         top = 4;
         bottom = 4;
         left = 4;
-        right = 0;
       };
 
       start = [
         {
           type = "workspaces";
-          # sort = "alphanumeric";
         }
       ];
 
@@ -43,9 +42,8 @@
           type = "network_manager";
         }
         {
-          # Corrected module name
           type = "battery";
-          format = "BAT\n{percentage:03}%";
+          format = "BAT\n{percentage}%";
         }
         {
           type = "sys_info";
@@ -67,7 +65,6 @@
     style = ''
       * {
         font-size: 10px;
-        min-height: 0;
       }
 
       window#ironbar {
