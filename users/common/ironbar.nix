@@ -7,13 +7,13 @@
 
   programs.ironbar = {
     enable = true;
-
     config = {
       position = "left";
       margin = {
         top = 4;
         bottom = 4;
         left = 4;
+        right = 0;
       };
 
       start = [
@@ -25,33 +25,12 @@
 
       end = [
         {
-          # Replaces native volume module to stop mic/speaker duplication
-          type = "script";
-          mode = "poll";
-          interval = 1000;
-          name = "volume-script";
-          # Fetch the 5th space-separated word from pactl (e.g., '100%')
-          cmd = ''
-            vol=$(${pkgs.pulseaudio}/bin/pactl get-sink-volume @DEFAULT_SINK@ | awk '{print $5}')
-            echo -e "VOL\n$vol"
-          '';
-          on_scroll_down = "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
-          on_scroll_up = "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
-          on_click_left = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
+          type = "volume";
+          format = "VOL\n{percentage}%";
         }
         {
-          # Replaces native brightness module to strip the forced icon
-          type = "script";
-          mode = "poll";
-          interval = 1000;
-          name = "brightness-script";
-          # Fetch the 4th comma-separated word from brightnessctl (e.g., '100%')
-          cmd = ''
-            b=$(${pkgs.brightnessctl}/bin/brightnessctl -m | awk -F, '{print $4}')
-            echo -e "LGT\n$b"
-          '';
-          on_scroll_down = "${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
-          on_scroll_up = "${pkgs.brightnessctl}/bin/brightnessctl set +5%";
+          type = "brightness";
+          format = "LGT\n{percentage}%";
         }
         {
           type = "network_manager";
@@ -77,36 +56,39 @@
         font-family: "JetBrainsMono Nerd Font", "Inter", sans-serif;
         font-size: 10px;
         min-height: 0;
+        /* Force right alignment for both single and multi-line text */
+        text-align: right;
+        justify: right; 
       }
 
-      /* * ISOLATED ISLANDS: 
-       * Setting the main bar window to transparent removes the connected pillar look.
-       */
-      window#ironbar {
+      /* --- ISOLATED ISLANDS FIX --- */
+      /* Make the main window AND Ironbar's inner wrapper boxes completely transparent */
+      window#ironbar,
+      .background,
+      .container {
         background: transparent;
         background-color: transparent;
         border: none;
         box-shadow: none;
       }
 
-      /* * MODULE STYLING 
-       * Referencing the custom scripts via #id 
-       */
-      #volume-script, 
-      #brightness-script, 
+      /* Apply background and margins strictly to the individual modules */
+      .volume, 
+      .brightness, 
       .network_manager, 
       .sys_info, 
       .battery, 
       .clock {
         background: alpha(@base02, 0.80);
         color: @base05;
-        border-radius: 2px;
-        margin: 4px;
-        padding: 6px 0px;
+        border-radius: 4px;
+        /* Vertical margins separate the modules into distinct islands */
+        margin: 4px 0px; 
+        padding: 8px 6px; 
       }
 
-      #volume-script:hover, 
-      #brightness-script:hover, 
+      .volume:hover, 
+      .brightness:hover, 
       .network_manager:hover, 
       .sys_info:hover, 
       .battery:hover, 
@@ -116,42 +98,46 @@
         transition: 0.2s;
       }
 
-      /* WORKSPACES */
+      /* --- NATIVE MODULE QUIRK FIXES --- */
+
+      /* 1. Hide the microphone (source) to prevent the "2 VOL" horizontal split */
+      .volume .source {
+        display: none;
+      }
+      
+      /* 2. Hide the native GTK sliders from volume and brightness to keep it text-only */
+      .volume scale,
+      .brightness scale {
+        display: none;
+      }
+
+      /* --- WORKSPACES --- */
       .workspaces {
         background: transparent;
-        margin: 4px;
+        margin: 0;
+        padding: 0;
       }
 
       .workspaces .item {
-        padding: 4px 0px;
-        /* Force GTK to remove internal margins between blocks to fix them being too far apart */
+        padding: 6px 6px;
+        /* Enforce vertical spacing between workspace buttons to match the islands */
         margin: 0px 0px 4px 0px; 
-        min-height: 0;
-        min-width: 0;
-
         color: @base04;
         background: alpha(@base02, 0.80);
-        border-radius: 2px;
+        border-radius: 4px;
         border: none;
-        border-bottom: 2px solid transparent;
         box-shadow: none;
       }
 
       .workspaces .item.focused {
         color: @base0D;
         background: alpha(@base03, 0.80);
-        border: none;
-        border-bottom: 2px solid transparent;
-        box-shadow: none;
-        text-shadow: none;
-        text-decoration: none;
         font-weight: 900;
       }
 
       .workspaces .item:hover {
         background: alpha(@base03, 0.80);
         color: @base05;
-        border-bottom: 2px solid transparent;
       }
     '';
   };
