@@ -29,4 +29,8 @@
       padding-right = 20;
     };
   };
+
+  home.activation.rm-tofi-cache = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD rm -f $HOME/.cache/tofi-drun
+  '';
 }

@@ -80,13 +80,13 @@
         };
 
         "temperature" = {
-          format = "TMP\n{temperatureC:03d}°C";
+          format = "TMP\n{temperatureC:03d}°";
           interval = 10;
           tooltip = false;
         };
 
         "clock" = {
-          format = "{:%d\n%m\n──\n%H\n%M"; # https://www.reddit.com/r/unixporn/comments/1op5brb/comment/nnb1ugx/
+          format = "{:%d\n%m\n──\n%H\n%M}"; # https://www.reddit.com/r/unixporn/comments/1op5brb/comment/nnb1ugx/
           tooltip = false;
         };
       };
