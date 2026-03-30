@@ -30,6 +30,7 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 - make fastfetch stop "bleeding" consistent output idk
 
 - Cursor lacks stylix theme
+- alejandra
 
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
