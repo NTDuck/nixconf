@@ -11,7 +11,7 @@
     config = {
       position = "left";
 
-      height = 32;
+      # height = 32;
       margin = {
         top = 4;
         bottom = 4;
@@ -32,7 +32,7 @@
         }
         {
           type = "brightness";
-          format = "LGT\n{percentage}$";
+          format = "LGT\n{percentage}%";
         }
         {
           type = "network_manager";
@@ -48,7 +48,7 @@
         }
         {
           type = "clock";
-          format = "%d\n%m\n__\n%H\n%M";
+          format = "%d\n%m\n\n%H\n%M";
         }
       ];
     };
