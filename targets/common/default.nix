@@ -8,6 +8,7 @@
 
 {
   imports = [
+    ./ahab-assistant-limbus-company.nix
     ./battery.nix
     ./bluetooth.nix
     ./cachyos-kernel.nix
