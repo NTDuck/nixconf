@@ -12,12 +12,12 @@
     ./git.nix
     ./helix.nix
     ./imv.nix
-    ./ironbar.nix
     ./kanshi.nix
     ./mpv.nix
     ./sway.nix
     ./tofi.nix
     ./vesktop.nix
+    ./waybar.nix
     ./yazi.nix
     ./zed-editor.nix
   ];

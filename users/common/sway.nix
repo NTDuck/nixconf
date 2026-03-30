@@ -17,16 +17,11 @@
       menu = "${pkgs.unstable.tofi}/bin/tofi-drun --drun-launch=true";
 
       bars = [
-        { command = "${pkgs.unstable.ironbar}/bin/ironbar --config ~/.config/ironbar/config.json"; }
+        { command = "${pkgs.unstable.waybar}/bin/waybar"; }
       ];
 
       startup = [
         {
-          # command = ''
-          #   systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
-          #   dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
-          #   systemctl --user restart fcitx5-daemon
-          # '';
           command = ''
             ${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && \
             ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && \
