@@ -21,24 +21,20 @@
       start = [
         {
           type = "workspaces";
+          sort = "index";
         }
       ];
 
       end = [
         {
           type = "volume";
-          format = "VOL\n{percentage:03}%";
-          max_volume = 100;
-          on_click_right = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
+          format = "VOL\n{percentage}%";
         }
         {
-          type = "script";
-          mode = "poll";
-          interval = 1000;
-          cmd = "echo \"LGT\n$(${pkgs.brightnessctl}/bin/brightnessctl -m | ${pkgs.gawk}/bin/awk -F, '{print $4}')\"";
+          type = "brightness";
+          format = "LGT\n{percentage}$";
         }
         {
-          # Corrected module name
           type = "network_manager";
         }
         {
@@ -47,17 +43,12 @@
         }
         {
           type = "sys_info";
-          format = [ "CPU\n{cpu_percent:03}%" ];
-          interval = 10;
-        }
-        {
-          type = "sys_info";
-          format = [ "RAM\n{memory_percent:03}%" ];
+          format = [ "CPU\n{cpu_percent}%\nRAM\n{memory_percent}%\nTMP\n{temp_c}°C\nSTO\n{disk_percent}%" ];
           interval = 10;
         }
         {
           type = "clock";
-          format = "%d\n%m\n \n%H\n%M";
+          format = "%d\n%m\n__\n%H\n%M";
         }
       ];
     };
@@ -72,7 +63,6 @@
         border-radius: 4px;
       }
 
-      /* Updated selectors: .network -> .network_manager and .upower -> .battery */
       .volume, .script, .network_manager, .sys_info, .battery, .clock {
         background: alpha(@base02, 0.85);
         color: @base05;
