@@ -115,7 +115,7 @@
         color: @base05;
         border-radius: 2px;
         margin: 4px;
-        padding: 4px 2px;
+        padding: 2px 2px;
       }
 
       #pulseaudio.muted {
@@ -123,7 +123,7 @@
         color: @base05;
         border-radius: 2px;
         margin: 4px;
-        padding: 4px 2px;
+        padding: 2px 2px;
         border: none;
         font-weight: normal;
       }
