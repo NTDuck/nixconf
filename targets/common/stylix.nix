@@ -17,6 +17,12 @@
     base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
     image = ../../assets/wallpapers/girls-last-tour-library.jpg;
 
+    cursor = {
+      package = pkgs.bibata-cursors;
+      name = "Bibata-Modern-Classic";
+      size = 16;
+    };
+
     fonts = {
       sansSerif = {
         package = pkgs.inter;

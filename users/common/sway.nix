@@ -22,11 +22,12 @@
 
       startup = [
         {
-          command = ''
-            ${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && \
-            ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && \
-            ${pkgs.systemd}/bin/systemctl --user restart fcitx5-daemon
-          '';
+          # command = ''
+          #   ${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && \
+          #   ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && \
+          #   ${pkgs.systemd}/bin/systemctl --user restart fcitx5-daemon
+          # '';
+          command = "fcitx5 -d -r";
           always = true;
         }
         {

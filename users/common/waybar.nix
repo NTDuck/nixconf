@@ -7,7 +7,6 @@
       mainBar = {
         layer = "top";
         position = "left";
-
         margin-top = 4;
         margin-bottom = 4;
         margin-left = 4;
@@ -15,7 +14,9 @@
         modules-left = [
           "sway/workspaces"
         ];
+
         modules-center = [ ];
+
         modules-right = [
           "pulseaudio"
           "backlight"
@@ -38,7 +39,8 @@
         "pulseaudio" = {
           format = "VOL\n{volume:03d}%";
           format-muted = "MUT\n{volume:03d}%";
-          on-click = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
+          justify = "center";
+          # on-click = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
           tooltip = false;
         };
 
@@ -81,7 +83,7 @@
         };
 
         "clock" = {
-          format = "{:%d\n%m\n──\n%H\n%M}";
+          format = "{:%d\n%m\n \n%H\n%M}";
           tooltip = false;
         };
       };
@@ -89,6 +91,7 @@
 
     style = ''
       * {
+        font-family: "JetBrainsMono Nerd Font", monospace;
         font-size: 10px;
         min-height: 0;
       }
@@ -111,6 +114,17 @@
         margin: 4px;
         padding: 6px 0px;
         /* min-width: 40px; */
+      }
+
+      /* Explicitly target the muted state to block hidden GTK theme shifts */
+      #pulseaudio.muted {
+        background: alpha(@base02, 0.85);
+        color: @base05;
+        border-radius: 2px;
+        margin: 4px;
+        padding: 6px 0px;
+        border: none;
+        font-weight: normal;
       }
 
       #workspaces {
@@ -145,7 +159,6 @@
       window#waybar #workspaces button.focused {
         color: @base0D;
         background: alpha(@base03, 0.85);
-
         border: none;
         border-bottom: 2px solid transparent;
         
