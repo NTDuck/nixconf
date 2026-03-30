@@ -39,7 +39,7 @@
         "pulseaudio" = {
           format = "VOL\n{volume:03d}%";
           format-muted = "MUT\n{volume:03d}%";
-          justify = "center";
+          # justify = "center";
           # on-click = "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
           tooltip = false;
         };
