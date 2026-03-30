@@ -86,7 +86,7 @@
         };
 
         "clock" = {
-          format = "{:%d\n%m\n_\n%H\n%M}"; # https://www.reddit.com/r/unixporn/comments/1op5brb/comment/nnb1ugx/
+          format = "{:%d\n%m\n──\n%H\n%M"; # https://www.reddit.com/r/unixporn/comments/1op5brb/comment/nnb1ugx/
           tooltip = false;
         };
       };
@@ -108,13 +108,14 @@
       #network,
       #cpu,
       #memory,
+      #temperature,
       #battery,
       #clock {
         background: alpha(@base02, 0.8);
         color: @base05;
         border-radius: 2px;
         margin: 4px;
-        padding: 6px 0px;
+        padding: 4px 2px;
       }
 
       #pulseaudio.muted {
@@ -122,7 +123,7 @@
         color: @base05;
         border-radius: 2px;
         margin: 4px;
-        padding: 6px 0px;
+        padding: 4px 2px;
         border: none;
         font-weight: normal;
       }
@@ -137,6 +138,7 @@
       #network:hover,
       #cpu:hover,
       #memory:hover,
+      #temperature:hover,
       #battery:hover,
       #clock:hover {
         background: alpha(@base03, 0.8);

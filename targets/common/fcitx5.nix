@@ -17,6 +17,9 @@
             ShowInputMethodInformation = "False";
             EnableInputMethodInformation = "False";
           };
+          notification.globalSection = {
+            ShowInputMethodInformation = "False";
+          };
           bamboo.globalSection = {
             InputMode = "1";
             Underline = "False";
@@ -24,8 +27,9 @@
         };
         globalOptions = {
           "Hotkey/TriggerKeys" = {
-            "0" = "Control+Shift_L";
-            "1" = "Control+Shift_R";
+            "0" = "Super+space";
+            # "1" = "Control+Shift_L";
+            # "2" = "Control+Shift_R";
           };
         };
         inputMethod = {

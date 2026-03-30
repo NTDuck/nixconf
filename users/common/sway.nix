@@ -22,12 +22,7 @@
 
       startup = [
         {
-          # command = ''
-          #   ${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && \
-          #   ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP && \
-          #   ${pkgs.systemd}/bin/systemctl --user restart fcitx5-daemon
-          # '';
-          command = "fcitx5 -d -r";
+          command = "${pkgs.fcitx5}/bin/fcitx5 -d -r";
           always = true;
         }
         {
@@ -50,25 +45,25 @@
         "${modifier}+Shift+k" = "move up";
         "${modifier}+Shift+l" = "move right";
 
-        "${modifier}+1" = "workspace number 1:α";
-        "${modifier}+2" = "workspace number 2:β";
-        "${modifier}+3" = "workspace number 3:γ";
-        "${modifier}+4" = "workspace number 4:δ";
-        "${modifier}+5" = "workspace number 5:ε";
-        "${modifier}+6" = "workspace number 6:ζ";
-        "${modifier}+7" = "workspace number 7:η";
-        "${modifier}+8" = "workspace number 8:θ";
-        "${modifier}+9" = "workspace number 9:ι";
+        "${modifier}+1" = "workspace number 1";
+        "${modifier}+2" = "workspace number 2";
+        "${modifier}+3" = "workspace number 3";
+        "${modifier}+4" = "workspace number 4";
+        "${modifier}+5" = "workspace number 5";
+        "${modifier}+6" = "workspace number 6";
+        "${modifier}+7" = "workspace number 7";
+        "${modifier}+8" = "workspace number 8";
+        "${modifier}+9" = "workspace number 9";
 
-        "${modifier}+Shift+1" = "move container to workspace number 1:α";
-        "${modifier}+Shift+2" = "move container to workspace number 2:β";
-        "${modifier}+Shift+3" = "move container to workspace number 3:γ";
-        "${modifier}+Shift+4" = "move container to workspace number 4:δ";
-        "${modifier}+Shift+5" = "move container to workspace number 5:ε";
-        "${modifier}+Shift+6" = "move container to workspace number 6:ζ";
-        "${modifier}+Shift+7" = "move container to workspace number 7:η";
-        "${modifier}+Shift+8" = "move container to workspace number 8:θ";
-        "${modifier}+Shift+9" = "move container to workspace number 9:ι";
+        "${modifier}+Shift+1" = "move container to workspace number 1";
+        "${modifier}+Shift+2" = "move container to workspace number 2";
+        "${modifier}+Shift+3" = "move container to workspace number 3";
+        "${modifier}+Shift+4" = "move container to workspace number 4";
+        "${modifier}+Shift+5" = "move container to workspace number 5";
+        "${modifier}+Shift+6" = "move container to workspace number 6";
+        "${modifier}+Shift+7" = "move container to workspace number 7";
+        "${modifier}+Shift+8" = "move container to workspace number 8";
+        "${modifier}+Shift+9" = "move container to workspace number 9";
 
         "${modifier}+f" = "fullscreen toggle";
         "${modifier}+s" = "layout stacking";

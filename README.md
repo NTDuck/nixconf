@@ -27,10 +27,9 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 
 - Make bamboo not show gui when switching language input - disable underlining
 - gnome keyring persist, intuition: pw
-- warp equivalent
-- android studio
 - make fastfetch stop "bleeding" consistent output idk
-- bluetooth?
+
+- Cursor lacks stylix theme
 
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix

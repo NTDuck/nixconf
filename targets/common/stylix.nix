@@ -24,17 +24,34 @@
     };
 
     fonts = {
+      # sansSerif = {
+      #   package = pkgs.inter;
+      #   name = "Inter";
+      # };
+      # serif = {
+      #   package = pkgs.lora;
+      #   name = "Lora";
+      # };
+      # monospace = {
+      #   package = pkgs.nerd-fonts.jetbrains-mono;
+      #   name = "JetBrainsMono Nerd Font";
+      # };
+      # emoji = {
+      #   package = pkgs.noto-fonts-color-emoji;
+      #   name = "Noto Color Emoji";
+      # };
+
       sansSerif = {
-        package = pkgs.inter;
-        name = "Inter";
+        package = pkgs.ubuntu_font_family;
+        name = "Ubuntu";
       };
       serif = {
-        package = pkgs.lora;
-        name = "Lora";
+        package = pkgs.roboto-slab;
+        name = "Roboto Slab";
       };
       monospace = {
-        package = pkgs.nerd-fonts.jetbrains-mono;
-        name = "JetBrainsMono Nerd Font";
+        package = pkgs.nerd-fonts.fira-code;
+        name = "FiraCode Nerd Font";
       };
       emoji = {
         package = pkgs.noto-fonts-color-emoji;

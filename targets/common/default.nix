@@ -16,6 +16,7 @@
     ./fcitx5.nix
     ./greetd.nix
     ./pipewire.nix
+    ./steam.nix
     ./stylix.nix
     ./sway.nix
     ./zeroclaw.nix

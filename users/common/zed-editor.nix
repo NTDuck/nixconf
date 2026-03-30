@@ -53,11 +53,6 @@
     };
   };
 
-  home.packages = [
-    pkgs.unstable.nil
-    pkgs.unstable.nixd
-  ];
-
   programs.zsh.shellAliases = {
     zed = "zeditor";
   };
