@@ -35,6 +35,7 @@
       keybindings = {
         "${modifier}+Return" = "exec ${terminal}";
         "${modifier}+d" = "exec ${menu}";
+        "${modifier}+l" = "exec qylock";
 
         "${modifier}+h" = "focus left";
         "${modifier}+j" = "focus down";
@@ -105,5 +106,27 @@
         border = 2;
       };
     };
+  };
+
+  services.swayidle = {
+    enable = true;
+    package = pkgs.swayidle;
+
+    events = [
+      {
+        event = "before-sleep";
+        command = "qylock";
+      }
+      {
+        event = "after-resume";
+        command = "swaymsg 'output * dpms on'";
+      }
+    ];
+    # timeouts = [
+    #   {
+    #     timeout = 600;
+    #     command = "swaymsg 'output * dpms off'";
+    #   }
+    # ];
   };
 }
