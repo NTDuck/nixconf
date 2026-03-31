@@ -15,10 +15,12 @@
     ./kanshi.nix
     ./mpv.nix
     ./sway.nix
+    ./termusic.nix
     ./tofi.nix
     ./vesktop.nix
     ./waybar.nix
     ./yazi.nix
+    ./youtube-music.nix
     ./zed-editor.nix
   ];
 

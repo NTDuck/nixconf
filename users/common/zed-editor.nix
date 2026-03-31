@@ -31,16 +31,16 @@
       };
 
       languages = {
-      Nix = {
-        language_servers = [ "nixd" ];
-        format_on_save = "on";
-        formatter = {
-          external = {
-            command = "alejandra";
-            arguments = [ "--quiet" ];
-          };
-        };
-      };
+      # Nix = {
+      #   language_servers = [ "nixd" ];
+      #   format_on_save = "on";
+      #   formatter = {
+      #     external = {
+      #       command = "alejandra";
+      #       arguments = [ "--quiet" ];
+      #     };
+      #   };
+      # };
     };
 
       session.trust_all_worktrees = true;
