@@ -5,7 +5,7 @@ let
     owner = "Darkkal44";
     repo = "qylock";
     rev = "29db82fc020f3881c6963951bae8979de27f0759";
-    hash = "sha256-GSKeLJxWHkYSpRzVpqMBd/+IkPDoBgV0veHOMG/IQxE="; # pkgs.lib.fakeHash;
+    hash = "sha256-GSKeLJxWHkYSpRzVpqMBd/+IkPDoBgV0veHOMG/IQxE=";
   };
 in
 {
@@ -15,24 +15,36 @@ in
     pkgs.qt6.qtwayland
 
     (pkgs.writeShellScriptBin "qylock" ''
-        # The qylock repository is a collection of themes.
-        # Specify your preferred theme folder here (e.g., "paper", "nier-automata", "coffee")
-        DESIRED_THEME="windows_7"
+      # Modern quickshell requires a writable config directory and a shell.qml file.
+      CONFIG_DIR="$HOME/.config/quickshell/qylock"
 
-        # Search for the LockScreen.qml of the desired theme (case-insensitive)
-        QML_PATH=$(find ${qylock} -iname "LockScreen.qml" -o -iname "lock.qml" -o -iname "lockscreen.qml" | grep -i "$DESIRED_THEME" | head -n 1)
+      # Clear old configuration
+      rm -rf "$CONFIG_DIR"
+      mkdir -p "$CONFIG_DIR"
 
-        # Fallback to the first available theme if the desired one isn't found
-        if [ -z "$QML_PATH" ]; then
-        QML_PATH=$(find ${qylock} -iname "LockScreen.qml" -o -iname "lock.qml" -o -iname "lockscreen.qml" | head -n 1)
-        fi
+      # Dynamically find the directory containing the lockscreen QML file
+      THEME_DIR=$(find ${qylock} -iname "LockScreen.qml" -o -iname "lock.qml" -o -iname "shell.qml" | head -n 1 | xargs dirname)
 
-        if [ -z "$QML_PATH" ]; then
-        echo "Error: Could not find any LockScreen.qml in ${qylock}"
+      if [ -z "$THEME_DIR" ]; then
+        echo "Error: Could not find any QML lockscreen files in ${qylock}"
         exit 1
-        fi
+      fi
 
-        exec ${pkgs.quickshell}/bin/quickshell "$@" -p "$QML_PATH"
+      # Copy the theme contents to our writable config directory
+      cp -r "$THEME_DIR"/* "$CONFIG_DIR/"
+
+      # Make the directory and its contents writable!
+      chmod -R +w "$CONFIG_DIR"
+
+      # Rename LockScreen.qml (or lock.qml) to shell.qml to satisfy Quickshell
+      if [ -f "$CONFIG_DIR/LockScreen.qml" ]; then
+        mv "$CONFIG_DIR/LockScreen.qml" "$CONFIG_DIR/shell.qml"
+      elif [ -f "$CONFIG_DIR/lock.qml" ] && [ ! -f "$CONFIG_DIR/shell.qml" ]; then
+        mv "$CONFIG_DIR/lock.qml" "$CONFIG_DIR/shell.qml"
+      fi
+
+      # Launch quickshell pointing to the writable config directory
+      exec ${pkgs.quickshell}/bin/quickshell "$@" -p "$CONFIG_DIR"
     '')
   ];
 }

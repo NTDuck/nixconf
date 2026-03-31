@@ -42,7 +42,7 @@ if [ "$(cat "$APP_DIR/version" 2>/dev/null)" != "${version}" ]; then
   echo "${version}" > "$APP_DIR/version"
 fi
 
-EXE_PATH=$(find "$APP_DIR/app" -type f -name "*.exe" | head -n 1)
+EXE_PATH=$(find "$APP_DIR/app" -type f -iname "AALC.exe" | head -n 1)
 
 if [ -z "$EXE_PATH" ]; then
   echo "Error: No .exe file found in $APP_DIR/app"
