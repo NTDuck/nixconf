@@ -30,7 +30,7 @@
         metrics = false;
       };
 
-      languages = {
+      # languages = {
       # Nix = {
       #   language_servers = [ "nixd" ];
       #   format_on_save = "on";

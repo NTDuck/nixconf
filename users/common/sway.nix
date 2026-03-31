@@ -22,7 +22,8 @@
 
       startup = [
         {
-          command = "${pkgs.fcitx5}/bin/fcitx5 -d -r";
+          # command = "${pkgs.fcitx5}/bin/fcitx5 -d -r";
+          command = "fcitx5 -d -r";
           always = true;
         }
         {
