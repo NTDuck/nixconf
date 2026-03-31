@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  qylock-src = pkgs.fetchFromGitHub {
+  qylock = pkgs.fetchFromGitHub {
     owner = "Darkkal44";
     repo = "qylock";
     rev = "29db82fc020f3881c6963951bae8979de27f0759";
@@ -15,7 +15,7 @@ in
     pkgs.qt6.qtwayland
 
     (pkgs.writeShellScriptBin "qylock" ''
-      exec ${pkgs.quickshell}/bin/quickshell "$@" ${qylock-src}/LockScreen.qml
+      exec ${pkgs.quickshell}/bin/quickshell "$@" -p ${qylock}/LockScreen.qml
     '')
   ];
 }
