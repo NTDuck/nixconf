@@ -14,13 +14,13 @@
     ./imv.nix
     ./kanshi.nix
     ./mpv.nix
+    ./pear-desktop.nix
     ./sway.nix
     ./termusic.nix
     ./tofi.nix
     ./vesktop.nix
     ./waybar.nix
     ./yazi.nix
-    ./youtube-music.nix
     ./zed-editor.nix
   ];
 

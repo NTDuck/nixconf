@@ -10,7 +10,7 @@ let
     src = pkgs.fetchurl {
       url = "https://github.com/KIYI671/AhabAssistantLimbusCompany/releases/download/V${version}/AALC_V${version}.7z";
       # Replace this with the actual hash once Nix complains on the first build
-      hash = pkgs.lib.fakeHash;
+      hash = "sha256-9Wm2HeIHIm0DyLbeaSimeriy1g2BmGVsLBnrqI5kKp4="; # pkgs.lib.fakeHash;
     };
 
     nativeBuildInputs = [ pkgs.p7zip ];
