@@ -5,7 +5,7 @@ let
     owner = "Darkkal44";
     repo = "qylock";
     rev = "29db82fc020f3881c6963951bae8979de27f0759";
-    hash = pkgs.lib.fakeHash;
+    hash = "sha256-GSKeLJxWHkYSpRzVpqMBd/+IkPDoBgV0veHOMG/IQxE="; # pkgs.lib.fakeHash;
   };
 in
 {
