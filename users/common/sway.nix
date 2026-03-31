@@ -35,7 +35,7 @@
       keybindings = {
         "${modifier}+Return" = "exec ${terminal}";
         "${modifier}+d" = "exec ${menu}";
-        "${modifier}+l" = "exec qylock";
+        "${modifier}+Shift+l" = "exec qylock";
 
         "${modifier}+h" = "focus left";
         "${modifier}+j" = "focus down";
