@@ -18,6 +18,8 @@
 
     # Python
     pkgs.python3
+    pkgs.python3Packages.pip
+    pkgs.python3Packages.virtualenv
 
     # Kotlin - Jetpack Compose
     pkgs.android-studio

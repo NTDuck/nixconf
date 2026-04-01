@@ -9,7 +9,6 @@ let
 
     src = pkgs.fetchurl {
       url = "https://github.com/KIYI671/AhabAssistantLimbusCompany/releases/download/V${version}/AALC_V${version}.7z";
-      # Make sure to put the correct hash here after the first build fails
       hash = "sha256-9Wm2HeIHIm0DyLbeaSimeriy1g2BmGVsLBnrqI5kKp4="; # pkgs.lib.fakeHash;
     };
 
