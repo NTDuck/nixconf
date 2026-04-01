@@ -1,59 +1,67 @@
 { pkgs, lib, ... }:
 
 {
-  home.packages = [
-    pkgs.unstable.gtklock
-  ];
+  programs.gtklock = {
+    enable = true;
+    package = pkgs.unstable.gtklock;
 
-  xdg.configFile."gtklock/config.ini".text = ''
-    [main]
-    time-format="%H:%M:%S"
-    style=${"~"}/.config/gtklock/style.css
-  '';
+    settings = {
+      main = {
+        time-format = "%H:%M";
 
-  xdg.configFile."gtklock/style.css".text = lib.mkForce ''
-    window {
-      background-color: #000000;
-    }
+        # To enable modules later, you would add them here like this:
+        # modules = "${pkgs.gtklock-userinfo-module}/lib/gtklock/userinfo.so;${pkgs.gtklock-powerbar-module}/lib/gtklock/powerbar.so";
+      };
+    };
 
-    * {
-      font-family: "JetBrainsMono Nerd Font", monospace;
-      color: #00FF00; /* Terminal Green */
-      border-radius: 0px;
-      box-shadow: none;
-      text-shadow: none;
-    }
+    style = lib.mkForce ''
+      /* Sway Background with an 80% (0.8) opaque black overlay */
+      window {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("${../../assets/wallpapers/girls-last-tour-library.jpg}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
 
-    #clock-label {
-      font-size: 72px;
-      font-weight: 900;
-      margin-bottom: 10px;
-    }
+      * {
+        font-family: "JetBrainsMono Nerd Font", monospace;
+        color: #00FF00;
+        border-radius: 0px;
+        box-shadow: none;
+        text-shadow: none;
+      }
 
-    #date-label {
-      font-size: 24px;
-      margin-bottom: 60px;
-    }
+      #clock-label {
+        font-size: 72px;
+        font-weight: 900;
+        margin-bottom: 10px;
+      }
 
-    entry {
-      background-color: #000000;
-      border: 1px solid #00FF00;
-      color: #00FF00;
-      font-size: 20px;
-      padding: 10px 20px;
-      caret-color: #00FF00;
-      min-width: 300px;
-    }
+      #date-label {
+        font-size: 24px;
+        margin-bottom: 60px;
+      }
 
-    entry:focus {
-      border: 2px solid #00FF00;
-      background-color: #0a0a0a;
-    }
+      entry {
+        background-color: rgba(0, 0, 0, 0.5);
+        border: 1px solid #00FF00;
+        color: #00FF00;
+        font-size: 20px;
+        padding: 10px 20px;
+        caret-color: #00FF00;
+        min-width: 300px;
+      }
 
-    #warning-label {
-      color: #FF0000;
-      font-size: 18px;
-      margin-top: 20px;
-    }
-  '';
+      entry:focus {
+        border: 2px solid #00FF00;
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+
+      #warning-label {
+        color: #FF0000;
+        font-size: 18px;
+        margin-top: 20px;
+      }
+    '';
+  };
 }
