@@ -16,7 +16,6 @@
     ./dev-pkgs.nix
     ./fcitx5.nix
     ./greetd.nix
-    ./hyprlock.nix
     ./pipewire.nix
     ./steam.nix
     ./stylix.nix

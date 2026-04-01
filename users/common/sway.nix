@@ -35,7 +35,7 @@
       keybindings = {
         "${modifier}+Return" = "exec ${terminal}";
         "${modifier}+d" = "exec ${menu}";
-        "${modifier}+Ctrl+l" = "exec hyprlock";
+        "${modifier}+Ctrl+l" = "exec gtklock";
 
         "${modifier}+h" = "focus left";
         "${modifier}+j" = "focus down";
@@ -115,7 +115,7 @@
     events = [
       {
         event = "before-sleep";
-        command = "hyprlock";
+        command = "gtklock";
       }
       {
         event = "after-resume";
