@@ -11,6 +11,7 @@
     ./gh.nix
     ./git.nix
     ./helix.nix
+    ./hyprlock.nix
     ./imv.nix
     ./kanshi.nix
     ./mpv.nix
