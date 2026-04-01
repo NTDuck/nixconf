@@ -17,45 +17,35 @@
       display = {
         disableLinewrap = false;
         separator = "   ";
-        constants = [
-          # "╭──────────────┬─────────────────────────────────────────────╮"
-          # "╰──────────────┴─────────────────────────────────────────────╯"
-          # "│"
-          "╭──────────────┬─────────────────────────────────────────────"
-          "╰──────────────┴─────────────────────────────────────────────"
-          "│"
-        ];
       };
       modules = [
         "break"
-        { type = "custom"; format = "{$1}"; }
-        { type = "title"; key = "{$3} {#31} user       {$3}"; format = "{user-name}@{host-name}"; }
-        { type = "host"; key = "{$3} {#32}󰌢 machine    {$3}"; }
-        { type = "os"; key = "{$3} {#33} os         {$3}"; }
-        { type = "kernel"; key = "{$3} {#34} kernel     {$3}"; }
-        { type = "uptime"; key = "{$3} {#35} uptime     {$3}"; }
-        { type = "packages"; key = "{$3} {#36}󰏖 packages   {$3}"; }
-        { type = "shell"; key = "{$3} {#31} shell      {$3}"; }
-        { type = "display"; key = "{$3} {#32}󰍹 display    {$3}"; }
-        { type = "de"; key = "{$3} {#33}󰧨 de         {$3}"; }
-        { type = "wm"; key = "{$3} {#34} wm         {$3}"; }
-        { type = "wmtheme"; key = "{$3} {#35}󰉼 wm theme   {$3}"; }
-        { type = "theme"; key = "{$3} {#36}󰉼 theme      {$3}"; }
-        { type = "icons"; key = "{$3} {#31}󰀻 icons      {$3}"; }
-        { type = "font"; key = "{$3} {#32} font       {$3}"; }
-        { type = "cursor"; key = "{$3} {#33}󰇀 cursor     {$3}"; }
-        { type = "terminal"; key = "{$3} {#34} terminal   {$3}"; }
-        { type = "terminalfont"; key = "{$3} {#35} term font  {$3}"; }
-        { type = "cpu"; key = "{$3} {#36} cpu        {$3}"; }
-        { type = "gpu"; key = "{$3} {#31}󰢮 gpu        {$3}"; }
-        { type = "memory"; key = "{$3} {#32} memory     {$3}"; }
-        { type = "swap"; key = "{$3} {#33}󰓡 swap       {$3}"; }
-        { type = "disk"; key = "{$3} {#34}󰋊 disk       {$3}"; }
-        { type = "localip"; key = "{$3} {#35}󰩠 local ip   {$3}"; }
-        { type = "battery"; key = "{$3} {#36} battery    {$3}"; }
-        { type = "poweradapter"; key = "{$3} {#31} power      {$3}"; }
-        { type = "locale"; key = "{$3} {#32} locale     {$3}"; }
-        { type = "custom"; format = "{$2}"; }
+        { type = "title"; key = "  {#31} user        "; format = "{user-name}@{host-name}"; }
+        { type = "host"; key = "  {#32}󰌢 machine     "; }
+        { type = "os"; key = "  {#33} os          "; }
+        { type = "kernel"; key = "  {#34} kernel      "; }
+        { type = "uptime"; key = "  {#35} uptime      "; }
+        { type = "packages"; key = "  {#36}󰏖 packages    "; }
+        { type = "shell"; key = "  {#31} shell       "; }
+        { type = "display"; key = "  {#32}󰍹 display     "; }
+        { type = "de"; key = "  {#33}󰧨 de          "; }
+        { type = "wm"; key = "  {#34} wm          "; }
+        { type = "wmtheme"; key = "  {#35}󰉼 wm theme    "; }
+        { type = "theme"; key = "  {#36}󰉼 theme       "; }
+        { type = "icons"; key = "  {#31}󰀻 icons       "; }
+        { type = "font"; key = "  {#32} font        "; }
+        { type = "cursor"; key = "  {#33}󰇀 cursor      "; }
+        { type = "terminal"; key = "  {#34} terminal    "; }
+        { type = "terminalfont"; key = "  {#35} term font   "; }
+        { type = "cpu"; key = "  {#36} cpu         "; }
+        { type = "gpu"; key = "  {#31}󰢮 gpu         "; }
+        { type = "memory"; key = "  {#32} memory      "; }
+        { type = "swap"; key = "  {#33}󰓡 swap        "; }
+        { type = "disk"; key = "  {#34}󰋊 disk        "; }
+        { type = "localip"; key = "  {#35}󰩠 local ip    "; }
+        { type = "battery"; key = "  {#36} battery     "; }
+        { type = "poweradapter"; key = "  {#31} power       "; }
+        { type = "locale"; key = "  {#32} locale      "; }
         "break"
         "colors"
       ];
