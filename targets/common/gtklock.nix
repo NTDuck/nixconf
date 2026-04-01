@@ -5,7 +5,7 @@
     enable = true;
     package = pkgs.gtklock;
 
-    settings = {
+    config = {
       main = {
         time-format = "%H:%M";
 
