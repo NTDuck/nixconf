@@ -7,7 +7,7 @@
 
     settings = {
       logo = {
-        source = "arch3";
+        source = "void2";
         padding = {
           top = 1;
           left = 2;
