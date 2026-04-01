@@ -13,11 +13,11 @@
     config = rec {
       modifier = "Mod4";
 
-      terminal = "${pkgs.unstable.foot}/bin/footclient";
-      menu = "${pkgs.unstable.tofi}/bin/tofi-drun --drun-launch=true";
+      terminal = "${pkgs.foot}/bin/footclient";
+      menu = "${pkgs.tofi}/bin/tofi-drun --drun-launch=true";
 
       bars = [
-        { command = "${pkgs.unstable.waybar}/bin/waybar"; }
+        { command = "${pkgs.waybar}/bin/waybar"; }
       ];
 
       startup = [
@@ -27,7 +27,7 @@
           always = true;
         }
         {
-          command = "${pkgs.unstable.autotiling-rs}/bin/autotiling-rs";
+          command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
           always = true;
         }
       ];
@@ -35,7 +35,7 @@
       keybindings = {
         "${modifier}+Return" = "exec ${terminal}";
         "${modifier}+d" = "exec ${menu}";
-        "${modifier}+Ctrl+l" = "exec ${pkgs.unstable.gtklock}/bin/gtklock";
+        "${modifier}+Ctrl+l" = "exec ${pkgs.gtklock}/bin/gtklock";
 
         "${modifier}+h" = "focus left";
         "${modifier}+j" = "focus down";
@@ -115,7 +115,7 @@
     events = [
       {
         event = "before-sleep";
-        command = "${pkgs.unstable.gtklock}/bin/gtklock";
+        command = "${pkgs.gtklock}/bin/gtklock";
       }
       {
         event = "after-resume";

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }: # Make sure 'config' is added here!
+{ config, lib, ... }: # Make sure 'config' is added here!
 
 let
   # Grab the hex colors from your current Stylix theme
@@ -7,7 +7,6 @@ in
 {
   programs.gtklock = {
     enable = true;
-    package = pkgs.gtklock;
 
     config = {
       main = {
