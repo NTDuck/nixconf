@@ -1,8 +1,6 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 
 {
-  # boot.kernelPackages = pkgs.linuxPackages;  # https://github.com/NixOS/nixpkgs/issues/177798#issuecomment-1180609092
-
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.permittedInsecurePackages = [ config.boot.kernelPackages.broadcom_sta.name ];
 
