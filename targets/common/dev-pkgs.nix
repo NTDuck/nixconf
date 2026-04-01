@@ -3,25 +3,35 @@
 {
   environment.systemPackages = [
     # Nix
-    pkgs.nil
-    pkgs.nixd
+    pkgs.unstable.nil
+    pkgs.unstable.nixd
 
     # Rust
     # TODO Install https://github.com/oxalica/rust-overlay
-    pkgs.rustup
+    pkgs.unstable.rustup
 
-    pkgs.cargo
-    pkgs.rustc
-    pkgs.rustfmt
-    pkgs.clippy
-    pkgs.rust-analyzer
+    pkgs.unstable.cargo
+    pkgs.unstable.rustc
+    pkgs.unstable.rustfmt
+    pkgs.unstable.clippy
+    pkgs.unstable.rust-analyzer
 
     # Python
-    pkgs.python3
-    pkgs.python3Packages.pip
-    pkgs.python3Packages.virtualenv
+    pkgs.unstable.python3
+    pkgs.unstable.python3Packages.pip
+    pkgs.unstable.python3Packages.virtualenv
 
     # Kotlin - Jetpack Compose
-    pkgs.android-studio
+    pkgs.unstable.android-studio
+
+    # Java - Spring Boot
+    pkgs.unstable.jdk21
+
+    pkgs.unstable.maven
+    pkgs.unstable.gradle
+
+    pkgs.unstable.spring-boot-cli
+
+    pkgs.unstable.jetbrains.idea-community
   ];
 }

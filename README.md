@@ -31,11 +31,9 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 
 - Cursor lacks stylix theme
 - alejandra
-- gtklock/swaylock NO!!! qylock
+- gtklock
 - aalc
 - firefox
-- fastfetch
-- dev shells
 - helix
 
 ```cmd
