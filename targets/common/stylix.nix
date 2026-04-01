@@ -57,6 +57,5 @@
     };
 
     targets.console.enable = false;
-    targets.hyprlock.enable = false;
   };
 }

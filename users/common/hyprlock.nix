@@ -1,20 +1,18 @@
-{ pkgs, username, ... }:
+{ pkgs, username, lib, ... }: # Make sure 'lib' is imported here!
 
 {
   programs.hyprlock = {
     enable = true;
-    package = pkgs.unstable.hyprlock;
-
     settings = {
       general = {
         disable_loading_bar = true;
         hide_cursor = false;
       };
 
-      background = [
+      # Force Stylix to back off from the background
+      background = lib.mkForce [
         {
           monitor = "";
-          # You can replace this with a classic Windows 7 wallpaper path
           path = "${../../assets/wallpapers/girls-last-tour-library.jpg}";
           blur_passes = 2;
           blur_size = 4;
@@ -22,13 +20,13 @@
         }
       ];
 
-      image = [
+      # Force Stylix to back off from the image
+      image = lib.mkForce [
         {
           monitor = "";
-          # Place a profile picture at ~/.face.icon or change this path
           path = "/home/${username}/.face.icon";
           size = 140;
-          rounding = 15; # Win7 avatars were slightly rounded squares
+          rounding = 15;
           border_size = 4;
           border_color = "rgba(255, 255, 255, 1.0)";
           position = "0, 80";
@@ -37,13 +35,14 @@
         }
       ];
 
-      label = [
+      # Force Stylix to back off from the label
+      label = lib.mkForce [
         {
           monitor = "";
           text = "$USER";
           color = "rgba(255, 255, 255, 1.0)";
           font_size = 28;
-          font_family = "Segoe UI, sans-serif"; # Classic Win7 font
+          font_family = "Segoe UI, sans-serif";
           position = "0, -40";
           halign = "center";
           valign = "center";
@@ -51,7 +50,8 @@
         }
       ];
 
-      input-field = [
+      # Force Stylix to back off from the input field
+      input-field = lib.mkForce [
         {
           monitor = "";
           size = "220, 35";
@@ -60,8 +60,8 @@
           dots_spacing = 0.15;
           dots_center = true;
           outer_color = "rgba(180, 180, 180, 1.0)";
-          inner_color = "rgba(255, 255, 255, 1.0)"; # White box like Win7
-          font_color = "rgba(0, 0, 0, 1.0)";        # Black typing text
+          inner_color = "rgba(255, 255, 255, 1.0)";
+          font_color = "rgba(0, 0, 0, 1.0)";
           fade_on_empty = false;
           placeholder_text = "<i>Password</i>";
           hide_input = false;
