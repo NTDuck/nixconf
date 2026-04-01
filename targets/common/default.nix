@@ -15,6 +15,7 @@
     ./cloudflare-warp.nix
     ./dev-pkgs.nix
     ./fcitx5.nix
+    ./gc.nix
     ./greetd.nix
     ./gtklock.nix
     ./pipewire.nix
@@ -55,13 +56,6 @@
     LC_PAPER = "vi_VN";
     LC_TELEPHONE = "vi_VN";
     LC_TIME = "vi_VN";
-  };
-
-  # Garbage collection
-  nix.gc = {
-    automatic = true;
-    dates = "daily";
-    options = "--delete-older-than 4d";
   };
 
   # Firmware
