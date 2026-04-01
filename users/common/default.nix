@@ -5,6 +5,7 @@
     ./zsh # default.nix
 
     ./cliphist.nix
+    ./dev-pkgs.nix
     ./fastfetch.nix
     ./firefox.nix
     ./foot.nix

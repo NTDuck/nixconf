@@ -13,7 +13,6 @@
     ./bluetooth.nix
     ./cachyos-kernel.nix
     ./cloudflare-warp.nix
-    ./dev-pkgs.nix
     ./fcitx5.nix
     ./gc.nix
     ./greetd.nix
