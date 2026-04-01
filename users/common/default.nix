@@ -10,7 +10,6 @@
     ./foot.nix
     ./gh.nix
     ./git.nix
-    ./gtklock.nix
     ./helix.nix
     ./imv.nix
     ./kanshi.nix

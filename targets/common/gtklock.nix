@@ -3,7 +3,7 @@
 {
   programs.gtklock = {
     enable = true;
-    package = pkgs.unstable.gtklock;
+    package = pkgs.gtklock;
 
     settings = {
       main = {
