@@ -7,7 +7,7 @@
 
     settings = {
       logo = {
-        source = "void2_small";
+        source = "void_small";
         padding = {
           top = 1;
           left = 2;
