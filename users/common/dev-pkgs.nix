@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   home.packages = [
@@ -9,12 +9,6 @@
     # Rust
     # TODO Install https://github.com/oxalica/rust-overlay
     pkgs.unstable.rustup
-
-    pkgs.unstable.cargo
-    pkgs.unstable.rustc
-    pkgs.unstable.rustfmt
-    pkgs.unstable.clippy
-    pkgs.unstable.rust-analyzer
 
     # Python
     pkgs.unstable.python3
@@ -39,4 +33,14 @@
   home.sessionVariables = {
     JAVA_HOME = "${pkgs.unstable.jdk21.home}";
   };
+
+  home.activation.autorun-rustup = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    export PATH="${pkgs.unstable.rustup}/bin:$PATH"
+
+    $DRY_RUN_CMD rustup update stable nightly
+
+    if ! rustup show active-toolchain &> /dev/null; then
+      $DRY_RUN_CMD rustup default stable
+    fi
+  '';
 }
