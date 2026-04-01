@@ -7,7 +7,7 @@
 
     settings = {
       logo = {
-        source = "macOS_small";
+        source = "Kali";
         padding = {
           top = 1;
           left = 2;
