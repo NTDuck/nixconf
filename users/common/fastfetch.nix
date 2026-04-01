@@ -7,7 +7,7 @@
 
     settings = {
       logo = {
-        source = "arch_small";
+        source = "arch2";
         padding = {
           top = 1;
           left = 2;
@@ -47,6 +47,7 @@
         { type = "poweradapter"; key = "  {#31} power       "; }
         { type = "locale"; key = "  {#32} locale      "; }
         "break"
+        { type = "colors"; key = "                "; }
         "colors"
       ];
     };
