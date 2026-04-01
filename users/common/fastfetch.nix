@@ -7,7 +7,7 @@
 
     settings = {
       logo = {
-        source = "arch";
+        source = "arch_small";
         padding = {
           top = 1;
           left = 2;
