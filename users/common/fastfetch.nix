@@ -7,7 +7,7 @@
 
     settings = {
       logo = {
-        source = "Kali";
+        source = "arch2";
         padding = {
           top = 1;
           left = 2;
