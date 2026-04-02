@@ -21,6 +21,7 @@
     ./steam.nix
     ./stylix.nix
     ./sway.nix
+    ./waydroid.nix
     ./zeroclaw.nix
     ./zsh.nix
   ];

@@ -35,6 +35,7 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 - aalc
 - firefox
 - helix
+- echo on scripts
 
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix

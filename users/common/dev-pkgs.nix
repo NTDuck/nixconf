@@ -17,6 +17,7 @@
 
     # Kotlin - Jetpack Compose
     pkgs.unstable.android-studio
+    pkgs.unstable.android-tools
 
     # Java - Spring Boot
     pkgs.unstable.jdk21
