@@ -3,7 +3,7 @@
 {
   programs.taskwarrior = {
     enable = true;
-    package = pkgs.unstable.taskwarrior;
+    package = pkgs.unstable.taskwarrior3;
   };
 
   home.packages = [
