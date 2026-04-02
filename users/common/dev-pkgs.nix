@@ -10,6 +10,10 @@
     # TODO Install https://github.com/oxalica/rust-overlay
     pkgs.unstable.rustup
 
+    pkgs.gcc
+    pkgs.pkg-config
+    pkgs.openssl
+
     # Python
     pkgs.unstable.python3
     pkgs.unstable.python3Packages.pip
