@@ -17,6 +17,7 @@
     ./mpv.nix
     ./pear-desktop.nix
     ./sway.nix
+    ./taskwarrior.nix
     ./termusic.nix
     ./tofi.nix
     ./vesktop.nix
