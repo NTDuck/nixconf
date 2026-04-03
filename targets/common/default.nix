@@ -17,6 +17,7 @@
     ./gc.nix
     ./greetd.nix
     ./gtklock.nix
+    ./openclaude.nix
     ./pipewire.nix
     ./steam.nix
     ./stylix.nix

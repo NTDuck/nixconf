@@ -9,6 +9,7 @@
     # Rust
     # TODO Install https://github.com/oxalica/rust-overlay
     pkgs.unstable.rustup
+    pkgs.unstable.cargo-binstall
 
     pkgs.unstable.gcc
     pkgs.unstable.pkg-config
@@ -39,13 +40,21 @@
     JAVA_HOME = "${pkgs.unstable.jdk21.home}";
   };
 
-  home.activation.autorun-rustup = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    export PATH="${pkgs.unstable.rustup}/bin:$PATH"
+  home.activation.postinstall-rust = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    echo "> RUNNING home.activation.postinstall-rust"
+    export PATH="${pkgs.unstable.rustup}/bin:${pkgs.unstable.cargo-binstall}/bin:$PATH"
 
+    echo "> RUNNING rustup update stable nightly"
     $DRY_RUN_CMD rustup update stable nightly
 
     if ! rustup show active-toolchain &> /dev/null; then
+      echo "> RUNNING rustup default stable"
       $DRY_RUN_CMD rustup default stable
     fi
+
+    echo "> RUNNING cargo binstall -y cargo-nextest --secure"
+    $DRY_RUN_CMD cargo binstall -y cargo-nextest --secure
+
+    echo "> home.activation.postinstall-rust DONE"
   '';
 }
