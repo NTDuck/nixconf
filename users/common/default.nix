@@ -23,6 +23,7 @@
     ./vesktop.nix
     ./waybar.nix
     ./yazi.nix
+    ./zathura.nix
     ./zed-editor.nix
   ];
 
