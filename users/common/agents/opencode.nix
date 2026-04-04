@@ -6,7 +6,7 @@
     package = pkgs.unstable.opencode;
 
     settings = {
-      model = "g4f/gpt-4o";
+      model = "g4f/qwen-2.5-coder-32b";
       provider = {
         g4f = {
           npm = "@ai-sdk/openai-compatible";
@@ -16,8 +16,17 @@
             apiKey = "";
           };
           models = {
-            gpt-4o = {
-              name = "GPT-4o";
+            "qwen-2.5-coder-32b" = {
+              name = "Qwen 2.5 Coder 32B";
+            };
+            deepseek-coder = {
+              name = "DeepSeek Coder";
+            };
+            "llama-3.3-70b" = {
+              name = "Llama 3.3 70B";
+            };
+            gpt-4o-mini = {
+              name = "GPT-4o Mini";
             };
           };
         };
