@@ -26,6 +26,11 @@
             baseURL = "http://127.0.0.1:1337/v1";
             apiKey = "";
           };
+
+          models = {
+            auto = { name = "GPT4Free Auto"; };
+            gpt-4 = { name = "GPT4Free GPT-4"; };
+          };
         };
         groq = {
           npm = "@ai-sdk/groq";
