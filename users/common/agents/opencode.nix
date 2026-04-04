@@ -26,7 +26,7 @@
           name = "GPT4Free";
           options = {
             baseURL = "http://127.0.0.1:1337/v1";
-            apiKey = "sk-";
+            apiKey = "sk-dummy";
           };
           models = {
             auto = {
