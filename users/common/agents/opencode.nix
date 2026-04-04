@@ -2,6 +2,7 @@
 
 let
   default-model = "gemini-3-flash-preview"; # https://g4f.dev/docs/providers-and-models
+in
 {
   programs.opencode = {
     enable = true;
