@@ -6,27 +6,24 @@
     package = pkgs.unstable.opencode;
 
     settings = {
-      model = "g4f/qwen-2.5-coder-32b";
+      model = "g4f/auto";
       provider = {
         g4f = {
           npm = "@ai-sdk/openai-compatible";
-          name = "GPT4Free";
+          name = "GPT4Free Proxy";
           options = {
             baseURL = "http://127.0.0.1:1337/v1";
-            apiKey = "";
+            apiKey = "sk-dummy";
           };
           models = {
-            "qwen-2.5-coder-32b" = {
-              name = "Qwen 2.5 Coder 32B";
+            auto = {
+              name = "G4F Auto (Best Available Model/Provider)";
             };
-            deepseek-coder = {
-              name = "DeepSeek Coder";
+            gpt-4 = {
+              name = "GPT-4 (G4F Auto-Routing)";
             };
-            "llama-3.3-70b" = {
-              name = "Llama 3.3 70B";
-            };
-            gpt-4o-mini = {
-              name = "GPT-4o Mini";
+            "gpt-3.5-turbo" = {
+              name = "GPT-3.5 Turbo (G4F Stable Fallback)";
             };
           };
         };
