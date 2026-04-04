@@ -22,12 +22,15 @@
 
       startup = [
         {
-          # command = "${pkgs.fcitx5}/bin/fcitx5 -d -r";
           command = "fcitx5 -d -r";
           always = true;
         }
         {
           command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
+          always = true;
+        }
+        {
+          command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP";
           always = true;
         }
       ];

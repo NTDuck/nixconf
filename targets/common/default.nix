@@ -15,6 +15,7 @@
     ./cloudflare-warp.nix
     ./fcitx5.nix
     ./gc.nix
+    ./gpt4free.nix
     ./greetd.nix
     ./gtklock.nix
     ./pipewire.nix
