@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ osConfig, pkgs, ... }:
 
 {
   programs.opencode = {
@@ -10,8 +10,8 @@
       buildInputs = [ pkgs.makeWrapper ];
       postBuild = ''
         wrapProgram $out/bin/opencode \
-          --run 'export GROQ_API_KEY=$(cat ${config.age.secrets."groq-default-token".path})' \
-          --run 'export GOOGLE_GENERATIVE_AI_API_KEY=$(cat ${config.age.secrets."gemini-default-token".path})'
+          --run 'export GROQ_API_KEY=$(cat ${osConfig.age.secrets."groq-default-token".path})' \
+          --run 'export GOOGLE_GENERATIVE_AI_API_KEY=$(cat ${osConfig.age.secrets."gemini-default-token".path})'
       '';
     };
 
