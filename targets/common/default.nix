@@ -17,14 +17,11 @@
     ./gc.nix
     ./greetd.nix
     ./gtklock.nix
-    ./openclaude.nix
-    ./opencode.nix
     ./pipewire.nix
     ./steam.nix
     ./stylix.nix
     ./sway.nix
     ./waydroid.nix
-    ./zeroclaw.nix
     ./zsh.nix
   ];
 

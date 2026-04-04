@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./agents # default.nix
     ./zsh # default.nix
 
     ./cliphist.nix
