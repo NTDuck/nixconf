@@ -5,5 +5,5 @@ result-*
 # Ignore automatically generated direnv output
 .direnv
 
-# Secrets
-secrets/*
+# Ignore agenix root composition
+secrets/secrets.nix

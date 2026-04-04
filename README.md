@@ -20,6 +20,25 @@ $ git clone https://github.com/NTDuck/nixos-cfg && cd nixos-cfg
 $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 ```
 
+## Agenix lifecycle
+### Public key generation - Target
+```cmd
+$ sudo mkdir -p /etc/ssh
+$ sudo ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ""
+$ cat /etc/ssh/ssh_host_ed25519_key.pub
+```
+
+### Public key generation - User
+```cmd
+$ ssh-keygen -t ed25519 -C "ayin@dell-latitude"
+$ cat ~/.ssh/id_ed25519.pub
+```
+
+### Secret creation
+```cmd
+nix run github:ryantm/agenix -- -e secrets/my-secret.age
+```
+
 ## TODOs
 - Add support for HDMI (work?)
 - Change rule of Nix language server e.g. { a, b, c, ... } does not need newlining

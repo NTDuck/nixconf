@@ -23,6 +23,10 @@
     # Kernel
     cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
+    # Secrets
+    agenix.url = "github:ryantm/agenix";
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
+
     # TODO install https://kamadorueda.com/alejandra/
     # TODO use stable channels for nixosSystem & unstable channels for everything else
   };
@@ -45,6 +49,7 @@
           inherit system;
           specialArgs = {
             inherit
+              self
               inputs
               system
               hostname
@@ -53,20 +58,23 @@
           };
 
           modules = [
-            ({ config, ... }: {
-              nixpkgs.config.allowUnfree = true;
-              
-              nixpkgs.overlays = [
-                (final: prev: {
-                  unstable = import nixpkgs-unstable {
-                    inherit system;
-                    config.allowUnfree = true;
-                  };
-                })
-              ];
-            })
+            (
+              { ... }:
+              {
+                nixpkgs.config.allowUnfree = true;
 
-            ./targets/${hostname} # default.nix
+                nixpkgs.overlays = [
+                  (final: prev: {
+                    unstable = import nixpkgs-unstable {
+                      inherit system;
+                      config.allowUnfree = true;
+                    };
+                  })
+                ];
+              }
+            )
+
+            "${self}/targets/${hostname}" # default.nix
 
             inputs.home-manager.nixosModules.home-manager
             {
@@ -74,8 +82,16 @@
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
 
-              home-manager.extraSpecialArgs = { inherit inputs system hostname username; };
-              home-manager.users.${username} = import ./users/${username}; # default.nix
+              home-manager.extraSpecialArgs = {
+                inherit
+                  self
+                  inputs
+                  system
+                  hostname
+                  username
+                  ;
+              };
+              home-manager.users.${username} = import "${self}/users/${username}"; # default.nix
             }
           ];
         };

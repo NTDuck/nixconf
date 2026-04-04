@@ -1,5 +1,6 @@
 {
   pkgs,
+  self,
   inputs,
   ...
 }:
@@ -15,7 +16,7 @@
     polarity = "dark";
 
     base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
-    image = ../../assets/wallpapers/girls-last-tour-library.jpg;
+    image = "${self}/assets/wallpapers/girls-last-tour-library.jpg";
 
     cursor = {
       package = pkgs.bibata-cursors;

@@ -9,6 +9,7 @@
 {
   imports = [
     ./aalc.nix
+    ./agenix.nix
     ./battery.nix
     ./bluetooth.nix
     ./cachyos-kernel.nix
