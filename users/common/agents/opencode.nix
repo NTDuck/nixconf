@@ -22,8 +22,7 @@
 
       provider = {
         g4f = {
-          npm = "@ai-sdk/openai";
-          # npm = "@ai-sdk/openai-compatible";
+          npm = "@ai-sdk/openai-compatible";
           name = "GPT4Free";
           options = {
             baseURL = "http://127.0.0.1:1337/v1";
