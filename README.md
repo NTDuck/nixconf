@@ -26,8 +26,6 @@ $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 - Cloud for lock screen
 
 - Make bamboo not show gui when switching language input - disable underlining
-- gnome keyring persist, intuition: pw
-- make fastfetch stop "bleeding" consistent output idk
 
 - Cursor lacks stylix theme
 - alejandra
