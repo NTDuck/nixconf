@@ -10,20 +10,17 @@
       provider = {
         g4f = {
           npm = "@ai-sdk/openai-compatible";
-          name = "GPT4Free Proxy";
+          name = "GPT4Free";
           options = {
             baseURL = "http://127.0.0.1:1337/v1";
             apiKey = "sk-dummy";
           };
           models = {
             auto = {
-              name = "G4F Auto (Best Available Model/Provider)";
+              name = "GPT4Free Auto";
             };
             gpt-4 = {
-              name = "GPT-4 (G4F Auto-Routing)";
-            };
-            "gpt-3.5-turbo" = {
-              name = "GPT-3.5 Turbo (G4F Stable Fallback)";
+              name = "GPT-4";
             };
           };
         };
