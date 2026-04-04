@@ -13,15 +13,26 @@
           name = "GPT4Free Proxy";
           options = {
             baseURL = "http://127.0.0.1:1337/v1";
-            apiKey = "";
+            apiKey = "dummy";
           };
           models = {
             gpt-4o = {
-              name = "GPT-4o (G4F)";
+              name = "GPT-4o (OpenAI Proxy - Needs HAR)";
+            };
+            Blackbox = {
+              name = "Blackbox (No Auth Required)";
+            };
+            PollinationsAI = {
+              name = "PollinationsAI (No Auth Required)";
             };
           };
         };
       };
     };
+  };
+
+  programs.zsh.shellAliases = {
+    g4f-start = "sudo systemctl start docker-g4f";
+    g4f-stop = "sudo systemctl stop docker-g4f";
   };
 }
