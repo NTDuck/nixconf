@@ -5,6 +5,7 @@
     ./agents # default.nix
     ./zsh # default.nix
 
+    ./agenix.nix
     ./cliphist.nix
     ./dev-pkgs.nix
     ./fastfetch.nix
