@@ -10,20 +10,14 @@
       provider = {
         g4f = {
           npm = "@ai-sdk/openai-compatible";
-          name = "GPT4Free Proxy";
+          name = "GPT4Free";
           options = {
             baseURL = "http://127.0.0.1:1337/v1";
-            apiKey = "dummy";
+            apiKey = "";
           };
           models = {
             gpt-4o = {
-              name = "GPT-4o (OpenAI Proxy - Needs HAR)";
-            };
-            Blackbox = {
-              name = "Blackbox (No Auth Required)";
-            };
-            PollinationsAI = {
-              name = "PollinationsAI (No Auth Required)";
+              name = "GPT-4o";
             };
           };
         };
