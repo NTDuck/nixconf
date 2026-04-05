@@ -41,13 +41,10 @@ nix run github:ryantm/agenix -- -e secrets/my-secret.age
 
 ## TODOs
 - Add support for HDMI (work?)
-- Change rule of Nix language server e.g. { a, b, c, ... } does not need newlining
-- Cloud for lock screen
 
 - Make bamboo not show gui when switching language input - disable underlining
 
 - Cursor lacks stylix theme
-- alejandra
 - gtklock
 - aalc
 - firefox

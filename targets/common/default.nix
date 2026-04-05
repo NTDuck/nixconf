@@ -10,6 +10,7 @@
   imports = [
     ./aalc.nix
     ./agenix.nix
+    ./alejandra.nix
     ./battery.nix
     ./bluetooth.nix
     ./cachyos-kernel.nix
@@ -74,6 +75,8 @@
     extraGroups = [
       "networkmanager"
       "wheel"
+      "adbusers"
+      "kvm"
     ];
     packages = [ ];
   };

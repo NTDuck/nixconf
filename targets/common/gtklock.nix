@@ -1,23 +1,20 @@
-{ config, lib, ... }: # Make sure 'config' is added here!
+{ config, lib, self, ... }:
 
 let
-  # Grab the hex colors from your current Stylix theme
   colors = config.lib.stylix.colors.withHashtag;
 in
 {
   programs.gtklock = {
     enable = true;
-
     config = {
       main = {
-        time-format = "%H:%M";
+        time-format = "%H:%M:%S";
       };
     };
 
     style = lib.mkForce ''
-      /* Sway Background with an 80% (0.8) opaque black overlay */
       window {
-        background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("${../../assets/wallpapers/girls-last-tour-library.jpg}");
+        background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("${self}/assets/wallpapers/girls-last-tour-library.jpg");
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
@@ -25,23 +22,30 @@ in
 
       * {
         font-family: "JetBrainsMono Nerd Font", monospace;
-        color: ${colors.base05}; /* Default Foreground */
+        color: ${colors.base05};
         border-radius: 0px;
         box-shadow: none;
         text-shadow: none;
       }
 
       #clock-label {
+        font-family: "Inter", sans-serif;
         font-size: 72px;
         font-weight: 900;
         margin-bottom: 10px;
-        color: ${colors.base0B}; /* Theme Accent/Green */
+        color: ${colors.base0B};
       }
 
       #date-label {
-        font-size: 24px;
-        margin-bottom: 60px;
-        color: ${colors.base0B}; /* Theme Accent/Green */
+        font-size: 0px;
+        margin: 0px;
+        color: transparent;
+      }
+
+      #input-label {
+        font-size: 0px;
+        margin: 0px;
+        color: transparent;
       }
 
       entry {
@@ -52,6 +56,9 @@ in
         padding: 10px 20px;
         caret-color: ${colors.base05};
         min-width: 300px;
+        
+        letter-spacing: 8px;
+        border-radius: 4px;
       }
 
       entry:focus {
@@ -60,14 +67,11 @@ in
       }
 
       #warning-label {
-        color: ${colors.base08}; /* Theme Red/Error */
+        color: ${colors.base08};
         font-size: 18px;
         margin-top: 20px;
       }
 
-      /* * Hides the "Unlock" button by shrinking it to 0
-       * and making it transparent (GTK3 CSS doesn't support display: none)
-       */
       #unlock-button {
         background: transparent;
         color: transparent;
@@ -79,10 +83,10 @@ in
         font-size: 0;
       }
 
-      /* Hides the reveal-password 'eye' icon inside the text entry */
       entry image {
         color: transparent;
         background: transparent;
+        opacity: 0; 
       }
     '';
   };
