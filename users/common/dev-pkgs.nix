@@ -8,6 +8,7 @@
 
     # Topiary
     pkgs.unstable.topiary
+    pkgs.unstable.nickel
 
     # Rust
     # TODO Install https://github.com/oxalica/rust-overlay
