@@ -6,9 +6,13 @@
     pkgs.unstable.nil
     pkgs.unstable.nixd
 
+    pkgs.unstable.nixpkgs-fmt
+
     # Topiary
     pkgs.unstable.topiary
-    pkgs.unstable.nickel
+
+    pkgs.unstable.nickel # .ncl
+    pkgs.unstable.ts_query_ls # .scm
 
     # Rust
     # TODO Install https://github.com/oxalica/rust-overlay
@@ -18,6 +22,8 @@
     pkgs.unstable.gcc
     pkgs.unstable.pkg-config
     pkgs.unstable.openssl
+
+    pkgs.unstable.taplo # .toml
 
     # Lua
     pkgs.unstable.lua-language-server

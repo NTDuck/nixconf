@@ -2,17 +2,17 @@
   "eval": {
     "target": {
       "args": [],
-      "installable": ".#nixosConfigurations.default.config"
+      "installable": ".#nixosConfigurations.dell-latitude-E7270-H836QF2.config"
     }
   },
   "formatting": {
-    "command": ["topiary", "format", "--language", "nix"]
+    "command": ["nixpkgs-fmt"]
   },
   "options": {
     "enable": true,
     "target": {
       "args": [],
-      "installable": ".#nixosConfigurations.default.options"
+      "installable": ".#nixosConfigurations.dell-latitude-E7270-H836QF2.options"
     }
   }
 }

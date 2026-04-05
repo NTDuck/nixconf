@@ -1,4 +1,0 @@
-[[language]]
-name = "nix"
-extensions = [ "nix" ]
-query_file = ".topiary/nix.scm"
