@@ -33,7 +33,7 @@ in {
       #clock-label {
         font-family: "JetBrainsMono Nerd Font", monospace;
         font-size: 72px;
-        font-weight: 200;
+        font-weight: 400;
         margin-bottom: 10px;
         color: ${colors.base0B};
       }
