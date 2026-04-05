@@ -1,0 +1,18 @@
+{
+  "eval": {
+    "target": {
+      "args": [],
+      "installable": ".#nixosConfigurations.default.config"
+    }
+  },
+  "formatting": {
+    "command": ["topiary", "format", "--language", "nix"]
+  },
+  "options": {
+    "enable": true,
+    "target": {
+      "args": [],
+      "installable": ".#nixosConfigurations.default.options"
+    }
+  }
+}

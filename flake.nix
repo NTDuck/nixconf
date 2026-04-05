@@ -26,9 +26,6 @@
     # Secrets
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
-
-    # TODO install https://kamadorueda.com/alejandra/
-    # TODO use stable channels for nixosSystem & unstable channels for everything else
   };
 
   outputs =
