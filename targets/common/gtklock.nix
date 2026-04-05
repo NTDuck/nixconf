@@ -31,9 +31,9 @@ in {
       }
 
       #clock-label {
-        font-family: "Inter", sans-serif;
+        font-family: "JetBrainsMono Nerd Font", monospace;
         font-size: 72px;
-        font-weight: 900;
+        font-weight: 200;
         margin-bottom: 10px;
         color: ${colors.base0B};
       }
@@ -59,7 +59,7 @@ in {
         caret-color: ${colors.base05};
         min-width: 300px;
 
-        letter-spacing: 8px;
+        letter-spacing: 4px;
         border-radius: 4px;
       }
 
