@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   nix.gc = {
     automatic = true;
     dates = "daily";
@@ -13,6 +11,6 @@
       sudo nix-env -p /nix/var/nix/profiles/system --delete-generations +2
       echo "`nix-collect-garbage -d`"
       sudo nix-collect-garbage -d
-  '')
+    '')
   ];
 }

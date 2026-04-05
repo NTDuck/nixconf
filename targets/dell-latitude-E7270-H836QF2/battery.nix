@@ -1,6 +1,4 @@
-{ ... }:
-
-{
+{...}: {
   # services.undervolt = {
   #   enable = true;
   #   coreOffset = -50;

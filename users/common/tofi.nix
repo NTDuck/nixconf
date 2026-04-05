@@ -1,6 +1,8 @@
-{ lib, pkgs, ... }:
-
 {
+  lib,
+  pkgs,
+  ...
+}: {
   programs.tofi = {
     enable = true;
     package = pkgs.unstable.tofi;

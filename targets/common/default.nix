@@ -4,9 +4,7 @@
   username,
   hostname,
   ...
-}:
-
-{
+}: {
   imports = [
     ./aalc.nix
     ./agenix.nix
@@ -78,10 +76,10 @@
       "adbusers"
       "kvm"
     ];
-    packages = [ ];
+    packages = [];
   };
 
-  nix.settings.trusted-users = [ username ];
+  nix.settings.trusted-users = [username];
 
   # Misc
   nix.settings.experimental-features = [

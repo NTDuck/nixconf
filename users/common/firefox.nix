@@ -1,10 +1,8 @@
 {
-  pkgs, 
+  pkgs,
   username,
   ...
-}:
-
-{
+}: {
   programs.firefox = {
     enable = true;
     package = pkgs.unstable.firefox;
@@ -152,5 +150,5 @@
     };
   };
 
-  stylix.targets.firefox.profileNames = [ "${username}" ];
+  stylix.targets.firefox.profileNames = ["${username}"];
 }

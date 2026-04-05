@@ -1,19 +1,21 @@
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  ...
+}: {
   programs.opencode = {
     enable = true;
 
     package = pkgs.symlinkJoin {
       name = "opencode";
-      paths = [ pkgs.unstable.opencode ];
-      buildInputs = [ pkgs.makeWrapper ];
+      paths = [pkgs.unstable.opencode];
+      buildInputs = [pkgs.makeWrapper];
       postBuild = ''
         wrapProgram $out/bin/opencode \
           --run 'export GROQ_API_KEY=$(cat ${config.age.secrets."groq-default-token".path})' \
           --run 'export GOOGLE_GENERATIVE_AI_API_KEY=$(cat ${
-            config.age.secrets."gemini-default-token".path
-          })'
+          config.age.secrets."gemini-default-token".path
+        })'
       '';
     };
 

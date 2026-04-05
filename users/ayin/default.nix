@@ -1,8 +1,6 @@
-{ ... }:
-
-{
+{...}: {
   imports = [
-    ../common  # default.nix
+    ../common # default.nix
   ];
 
   programs.git.settings.user.name = "NTDuck";

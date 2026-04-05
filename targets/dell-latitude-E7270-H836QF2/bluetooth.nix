@@ -1,5 +1,3 @@
-{ ... }:
-
-{
-  boot.kernelModules = [ "brcmfmac" "btusb" ];
+{...}: {
+  boot.kernelModules = ["brcmfmac" "btusb"];
 }

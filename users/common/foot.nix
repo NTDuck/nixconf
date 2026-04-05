@@ -1,6 +1,4 @@
-{ lib, ... }:
-
-{
+{lib, ...}: {
   programs.foot = {
     enable = true;
     # package = pkgs.unstable.foot;

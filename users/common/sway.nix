@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   wayland.windowManager.sway = {
     enable = true;
     package = pkgs.sway;
@@ -17,7 +15,7 @@
       menu = "${pkgs.tofi}/bin/tofi-drun --drun-launch=true";
 
       bars = [
-        { command = "${pkgs.waybar}/bin/waybar"; }
+        {command = "${pkgs.waybar}/bin/waybar";}
       ];
 
       startup = [

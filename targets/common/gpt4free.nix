@@ -1,6 +1,4 @@
-{ ... }:
-
-{
+{...}: {
   virtualisation.docker.enable = true;
 
   virtualisation.oci-containers = {
@@ -12,7 +10,7 @@
         "1337:8080"
         "7900:7900"
       ];
-      extraOptions = [ "--shm-size=2g" ];
+      extraOptions = ["--shm-size=2g"];
       autoStart = false;
     };
   };

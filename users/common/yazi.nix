@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   programs.yazi = {
     enable = true;
     package = pkgs.unstable.yazi;
@@ -28,7 +26,11 @@
 
     keymap = {
       manager.prepend_keymap = [
-        { on = [ "g" "d" ]; run = "cd ~/Downloads"; desc = "RUN cd ~/Downloads"; }
+        {
+          on = ["g" "d"];
+          run = "cd ~/Downloads";
+          desc = "RUN cd ~/Downloads";
+        }
       ];
     };
   };

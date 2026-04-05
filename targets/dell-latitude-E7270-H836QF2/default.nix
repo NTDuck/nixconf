@@ -1,8 +1,6 @@
-{ ... }:
-
-{
+{...}: {
   imports = [
-    ../common  # default.nix
+    ../common # default.nix
 
     ./battery.nix
     ./hardware.nix

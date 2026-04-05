@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   programs.waybar = {
     enable = true;
     settings = {
@@ -152,7 +150,7 @@
         color: @base04;
         background: alpha(@base02, 0.8);
         border-radius: 2px;
-        
+
         border: none;
         border-bottom: 2px solid transparent;
         box-shadow: none;
@@ -163,7 +161,7 @@
         background: alpha(@base03, 0.8);
         border: none;
         border-bottom: 2px solid transparent;
-        
+
         box-shadow: none;
         text-shadow: none;
         text-decoration: none;

@@ -1,6 +1,4 @@
-{ username, ... }:
-
-{
+{username, ...}: {
   imports = [
     ./agents # default.nix
     ./zsh # default.nix

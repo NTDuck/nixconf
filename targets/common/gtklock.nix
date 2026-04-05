@@ -1,9 +1,11 @@
-{ config, lib, self, ... }:
-
-let
-  colors = config.lib.stylix.colors.withHashtag;
-in
 {
+  config,
+  lib,
+  self,
+  ...
+}: let
+  colors = config.lib.stylix.colors.withHashtag;
+in {
   programs.gtklock = {
     enable = true;
     config = {
@@ -56,7 +58,7 @@ in
         padding: 10px 20px;
         caret-color: ${colors.base05};
         min-width: 300px;
-        
+
         letter-spacing: 8px;
         border-radius: 4px;
       }
@@ -86,7 +88,7 @@ in
       entry image {
         color: transparent;
         background: transparent;
-        opacity: 0; 
+        opacity: 0;
       }
     '';
   };

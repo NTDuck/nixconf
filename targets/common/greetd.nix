@@ -1,10 +1,11 @@
-{ config, pkgs, ... }:
-
-let
+{
+  config,
+  pkgs,
+  ...
+}: let
   color-foreground = config.lib.stylix.colors.withHashtag.base05;
   color-background = config.lib.stylix.colors.withHashtag.base00;
-in
-{
+in {
   services.greetd = {
     enable = true;
     settings = {

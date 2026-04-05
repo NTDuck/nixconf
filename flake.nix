@@ -32,83 +32,77 @@
     alejandra.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs =
-    inputs@{
-      self,
-      nixpkgs,
-      nixpkgs-unstable,
-      ...
+  outputs = inputs @ {
+    self,
+    nixpkgs,
+    nixpkgs-unstable,
+    ...
+  }: let
+    mkHost = {
+      system,
+      hostname,
+      username,
     }:
-    let
-      mkHost =
-        {
-          system,
-          hostname,
-          username,
-        }:
-        nixpkgs.lib.nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit
-              self
-              inputs
-              system
-              hostname
-              username
-              ;
-          };
+      nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = {
+          inherit
+            self
+            inputs
+            system
+            hostname
+            username
+            ;
+        };
 
-          modules = [
-            (
-              { ... }:
-              {
-                nixpkgs.config.allowUnfree = true;
+        modules = [
+          (
+            {...}: {
+              nixpkgs.config.allowUnfree = true;
 
-                nixpkgs.overlays = [
-                  (final: prev: {
-                    unstable = import nixpkgs-unstable {
-                      inherit system;
-                      config.allowUnfree = true;
-                    };
-                  })
-                ];
-              }
-            )
-
-            "${self}/targets/${hostname}" # default.nix
-
-            inputs.home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "backup";
-
-              home-manager.extraSpecialArgs = {
-                inherit
-                  self
-                  inputs
-                  system
-                  hostname
-                  username
-                  ;
-              };
-              home-manager.users.${username} = import "${self}/users/${username}"; # default.nix
+              nixpkgs.overlays = [
+                (final: prev: {
+                  unstable = import nixpkgs-unstable {
+                    inherit system;
+                    config.allowUnfree = true;
+                  };
+                })
+              ];
             }
-          ];
-        };
+          )
 
-    in
-    {
-      nixosConfigurations = rec {
-        default = dell-latitude-E7270-H836QF2;
+          "${self}/targets/${hostname}" # default.nix
 
-        dell-latitude-E7270-H836QF2 = mkHost {
-          system = "x86_64-linux";
-          hostname = "dell-latitude-E7270-H836QF2";
-          username = "ayin";
-        };
+          inputs.home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+
+            home-manager.extraSpecialArgs = {
+              inherit
+                self
+                inputs
+                system
+                hostname
+                username
+                ;
+            };
+            home-manager.users.${username} = import "${self}/users/${username}"; # default.nix
+          }
+        ];
+      };
+  in {
+    nixosConfigurations = rec {
+      default = dell-latitude-E7270-H836QF2;
+
+      dell-latitude-E7270-H836QF2 = mkHost {
+        system = "x86_64-linux";
+        hostname = "dell-latitude-E7270-H836QF2";
+        username = "ayin";
       };
     };
+  };
 }
-
 # 528491
+

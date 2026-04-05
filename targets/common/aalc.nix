@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-
+{pkgs, ...}:
 # NOT WORKING!
 let
   version = "1.4.5";
@@ -13,61 +12,60 @@ let
       hash = "sha256-9Wm2HeIHIm0DyLbeaSimeriy1g2BmGVsLBnrqI5kKp4="; # pkgs.lib.fakeHash;
     };
 
-    nativeBuildInputs = [ pkgs.p7zip ];
+    nativeBuildInputs = [pkgs.p7zip];
     sourceRoot = ".";
 
     installPhase = ''
-      mkdir -p $out/opt/aalc
-      cp -r * $out/opt/aalc/
+            mkdir -p $out/opt/aalc
+            cp -r * $out/opt/aalc/
 
-      mkdir -p $out/bin
+            mkdir -p $out/bin
 
-      # Note: using <<'EOF' prevents Bash from expanding $HOME during the build phase
-      cat > $out/bin/aalc <<'EOF'
-#!/bin/sh
-APP_DIR="$HOME/.local/share/aalc"
-mkdir -p "$APP_DIR"
+            # Note: using <<'EOF' prevents Bash from expanding $HOME during the build phase
+            cat > $out/bin/aalc <<'EOF'
+      #!/bin/sh
+      APP_DIR="$HOME/.local/share/aalc"
+      mkdir -p "$APP_DIR"
 
-# If the version changed (or first run), copy the app to a writable location
-if [ "$(cat "$APP_DIR/version" 2>/dev/null)" != "${version}" ]; then
-  echo "Deploying Ahab Assistant version ${version}..."
-  rm -rf "$APP_DIR/app"
-  mkdir -p "$APP_DIR/app"
+      # If the version changed (or first run), copy the app to a writable location
+      if [ "$(cat "$APP_DIR/version" 2>/dev/null)" != "${version}" ]; then
+        echo "Deploying Ahab Assistant version ${version}..."
+        rm -rf "$APP_DIR/app"
+        mkdir -p "$APP_DIR/app"
 
-  cp -r ${placeholder "out"}/opt/aalc/* "$APP_DIR/app/"
+        cp -r ${placeholder "out"}/opt/aalc/* "$APP_DIR/app/"
 
-  # Make the directory writable!
-  chmod -R +w "$APP_DIR/app"
+        # Make the directory writable!
+        chmod -R +w "$APP_DIR/app"
 
-  echo "${version}" > "$APP_DIR/version"
-fi
+        echo "${version}" > "$APP_DIR/version"
+      fi
 
-EXE_PATH=$(find "$APP_DIR/app" -type f -iname "AALC.exe" | head -n 1)
+      EXE_PATH=$(find "$APP_DIR/app" -type f -iname "AALC.exe" | head -n 1)
 
-if [ -z "$EXE_PATH" ]; then
-  echo "Error: No .exe file found in $APP_DIR/app"
-  exit 1
-fi
+      if [ -z "$EXE_PATH" ]; then
+        echo "Error: No .exe file found in $APP_DIR/app"
+        exit 1
+      fi
 
-# Fix ucrtbase.dll.crealf Wine error by silently installing native vcrun2022
-if [ ! -f "$APP_DIR/vcrun2022_installed" ]; then
-  echo "Installing vcrun2022 in the Proton prefix to fix missing ucrtbase math functions..."
-  ${pkgs.protontricks}/bin/protontricks 1973530 -q vcrun2022
-  touch "$APP_DIR/vcrun2022_installed"
-fi
+      # Fix ucrtbase.dll.crealf Wine error by silently installing native vcrun2022
+      if [ ! -f "$APP_DIR/vcrun2022_installed" ]; then
+        echo "Installing vcrun2022 in the Proton prefix to fix missing ucrtbase math functions..."
+        ${pkgs.protontricks}/bin/protontricks 1973530 -q vcrun2022
+        touch "$APP_DIR/vcrun2022_installed"
+      fi
 
-# We must CD into the directory so Proton/Wine writes local files correctly
-cd "$(dirname "$EXE_PATH")"
+      # We must CD into the directory so Proton/Wine writes local files correctly
+      cd "$(dirname "$EXE_PATH")"
 
-echo "Launching $EXE_PATH in the Limbus Company Proton prefix..."
-exec ${pkgs.protontricks}/bin/protontricks-launch --appid 1973530 "$EXE_PATH"
-EOF
+      echo "Launching $EXE_PATH in the Limbus Company Proton prefix..."
+      exec ${pkgs.protontricks}/bin/protontricks-launch --appid 1973530 "$EXE_PATH"
+      EOF
 
-      chmod +x $out/bin/aalc
+            chmod +x $out/bin/aalc
     '';
   };
-in
-{
+in {
   environment.systemPackages = [
     aalc
   ];

@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   services.cliphist = {
     enable = true;
     package = pkgs.unstable.cliphist;

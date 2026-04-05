@@ -1,6 +1,8 @@
-{ lib, pkgs, ... }:
-
 {
+  lib,
+  pkgs,
+  ...
+}: {
   home.packages = [
     # Nix
     pkgs.unstable.nil
@@ -75,7 +77,7 @@
     JAVA_HOME = "${pkgs.unstable.jdk21.home}";
   };
 
-  home.activation.postinstall-rust = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.postinstall-rust = lib.hm.dag.entryAfter ["writeBoundary"] ''
     echo "> RUNNING home.activation.postinstall-rust"
     export PATH="${pkgs.unstable.rustup}/bin:${pkgs.unstable.cargo-binstall}/bin:$PATH"
 
