@@ -7,6 +7,9 @@
     export WINEPREFIX="$APP_DIR/wineprefix"
     export WINEDLLOVERRIDES="winemenubuilder.exe=d"
 
+    # THE FIX: Force XWayland for the CachyOS Miniloader
+    unset WAYLAND_DISPLAY
+
     mkdir -p "$APP_DIR"
 
     # 1. Fetch and extract the CachyOS Miniloader reproducibly

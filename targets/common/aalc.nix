@@ -43,6 +43,8 @@
       export WINEPREFIX="$APP_DIR/wineprefix"
       export WINEDLLOVERRIDES="winemenubuilder.exe=d" # Stop Wine from making clutter desktop shortcuts
 
+      unset WAYLAND_DISPLAY
+
       if [ ! -f "$APP_DIR/vcrun2022_installed" ]; then
         echo "Installing vcrun2022 via winetricks..."
         ${pkgs.winetricks}/bin/winetricks -q vcrun2022
