@@ -64,7 +64,7 @@
 #   ];
 # }
 {pkgs, ...}: let
-  version = "1.4.6";
+  version = "1.4.5";
   runnerUrl = "https://github.com/Kron4ek/Wine-Builds/releases/download/11.5/wine-11.5-staging-amd64.tar.xz";
 
   aalc = pkgs.stdenv.mkDerivation {
@@ -91,6 +91,9 @@
       export WINEPREFIX="$APP_DIR/wineprefix"
       export WINEDLLOVERRIDES="winemenubuilder.exe=d"
 
+      # THE FIX: Force XWayland. Native Wayland Wine completely breaks WPF mouse inputs.
+      unset WAYLAND_DISPLAY
+
       mkdir -p "$APP_DIR"
 
       if [ "$(cat "$APP_DIR/version" 2>/dev/null)" != "${version}" ]; then
@@ -113,16 +116,18 @@
       export WINE=$(find "$RUNNER_DIR" -name "wine" -type f -executable | head -n 1)
 
       if [ ! -f "$APP_DIR/wpf_fixed" ]; then
-        echo "Applying Sway compatibility fixes to Wine..."
+        echo "Applying Sway & XWayland compatibility fixes to Wine..."
 
-        # 1. Install C++ Dependencies
         ${pkgs.steam-run}/bin/steam-run ${pkgs.winetricks}/bin/winetricks -q vcrun2022
 
-        # 2. Kill the unclickable white shadow box by disabling WPF Hardware Acceleration
+        # Disable WPF Hardware Acceleration to kill the invisible shadow boxes
         ${pkgs.steam-run}/bin/steam-run "$WINE" reg add "HKCU\Software\Microsoft\Avalon.Graphics" /v DisableHWAcceleration /t REG_DWORD /d 1 /f
 
-        # 3. Prevent Wine from trying to draw native X11 window borders
+        # Tell Wine not to draw native X11 window borders
         ${pkgs.steam-run}/bin/steam-run "$WINE" reg add "HKCU\Software\Wine\X11 Driver" /v Decorated /t REG_SZ /d N /f
+
+        # Tell Wine to not let the Window Manager control the window hierarchy (fixes focus stealing)
+        ${pkgs.steam-run}/bin/steam-run "$WINE" reg add "HKCU\Software\Wine\X11 Driver" /v Managed /t REG_SZ /d N /f
 
         touch "$APP_DIR/wpf_fixed"
       fi
