@@ -1,5 +1,6 @@
 {pkgs, ...}: let
   version = "1.4.5";
+  runnerUrl = "https://github.com/wine-cachyos/releases/releases/download/10.0-1/wine-cachyos-miniloader-fonts-10.0-1-x86_64.tar.xz";
 
   aalc = pkgs.stdenv.mkDerivation {
     pname = "ahab-assistant-limbus-company";
@@ -21,6 +22,10 @@
             cat > $out/bin/aalc <<'EOF'
       #!/bin/sh
       APP_DIR="$HOME/.local/share/aalc"
+      RUNNER_DIR="$APP_DIR/runner"
+      export WINEPREFIX="$APP_DIR/wineprefix"
+      export WINEDLLOVERRIDES="winemenubuilder.exe=d"
+
       mkdir -p "$APP_DIR"
 
       if [ "$(cat "$APP_DIR/version" 2>/dev/null)" != "${version}" ]; then
@@ -34,36 +39,33 @@
 
       EXE_PATH=$(find "$APP_DIR/app" -type f -iname "AALC.exe" | head -n 1)
 
-      if [ -z "$EXE_PATH" ]; then
-        echo "Error: No .exe file found in $APP_DIR/app"
-        exit 1
+      # Fetch the highly optimized CachyOS Miniloader
+      if [ ! -d "$RUNNER_DIR" ]; then
+        echo "Downloading and extracting wine-cachyos-miniloader..."
+        mkdir -p "$RUNNER_DIR"
+        ${pkgs.wget}/bin/wget -qO- ${runnerUrl} | ${pkgs.gnutar}/bin/tar -xJ -C "$RUNNER_DIR"
       fi
 
-      # Use an isolated standalone prefix instead of a Steam Proton prefix
-      export WINEPREFIX="$APP_DIR/wineprefix"
-      export WINEDLLOVERRIDES="winemenubuilder.exe=d" # Stop Wine from making clutter desktop shortcuts
-
-      unset WAYLAND_DISPLAY
+      WINE_EXEC=$(find "$RUNNER_DIR" -name "wine" -type f -executable | head -n 1)
 
       if [ ! -f "$APP_DIR/vcrun2022_installed" ]; then
         echo "Installing vcrun2022 via winetricks..."
+        # Winetricks will now run using the native host display perfectly
         ${pkgs.winetricks}/bin/winetricks -q vcrun2022
         touch "$APP_DIR/vcrun2022_installed"
       fi
 
       cd "$(dirname "$EXE_PATH")"
-      # Using Wayland native Wine
-      exec ${pkgs.wineWowPackages.waylandFull}/bin/wine "$EXE_PATH"
+      exec "$WINE_EXEC" "$EXE_PATH"
       EOF
 
             chmod +x $out/bin/aalc
     '';
   };
 
-  # Make it accessible via tofi launcher
   desktopItem = pkgs.makeDesktopItem {
     name = "aalc";
-    desktopName = "AALC";
+    desktopName = "Ahab Assistant";
     exec = "aalc";
     terminal = false;
     categories = ["Utility"];
