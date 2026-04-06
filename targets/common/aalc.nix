@@ -56,8 +56,9 @@
       fi
 
       cd "$(dirname "$EXE_PATH")"
-      # Launch the app inside the steam-run FHS environment
-      exec ${pkgs.steam-run}/bin/steam-run "$WINE" "$EXE_PATH"
+      # Run inside a Virtual Desktop to stop Sway from tiling hidden WPF overlay windows
+      exec ${pkgs.steam-run}/bin/steam-run "$WINE" explorer /desktop=AALC,1280x720 "$EXE_PATH"
+
       EOF
 
             chmod +x $out/bin/aalc
