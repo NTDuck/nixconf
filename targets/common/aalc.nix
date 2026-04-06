@@ -1,6 +1,7 @@
 {pkgs, ...}: let
   version = "1.4.5";
-  runnerUrl = "https://github.com/wine-cachyos/releases/releases/download/10.0-1/wine-cachyos-miniloader-fonts-10.0-1-x86_64.tar.xz";
+  # Switched to Kron4ek's highly stable standalone Wine Staging build
+  runnerUrl = "https://github.com/Kron4ek/Wine-Builds/releases/download/11.5/wine-11.5-staging-amd64.tar.xz";
 
   aalc = pkgs.stdenv.mkDerivation {
     pname = "ahab-assistant-limbus-company";
@@ -39,18 +40,18 @@
 
       EXE_PATH=$(find "$APP_DIR/app" -type f -iname "AALC.exe" | head -n 1)
 
-      # Fetch the highly optimized CachyOS Miniloader
+      # Fetch the Kron4ek Wine runner
       if [ ! -d "$RUNNER_DIR" ]; then
-        echo "Downloading and extracting wine-cachyos-miniloader..."
+        echo "Downloading and extracting Kron4ek Wine..."
         mkdir -p "$RUNNER_DIR"
-        ${pkgs.wget}/bin/wget -qO- ${runnerUrl} | ${pkgs.gnutar}/bin/tar -xJ -C "$RUNNER_DIR"
+        # Added --strip-components=1 to correctly unwrap the top-level folder
+        ${pkgs.wget}/bin/wget -qO- ${runnerUrl} | ${pkgs.gnutar}/bin/tar -xJ --strip-components=1 -C "$RUNNER_DIR"
       fi
 
       WINE_EXEC=$(find "$RUNNER_DIR" -name "wine" -type f -executable | head -n 1)
 
       if [ ! -f "$APP_DIR/vcrun2022_installed" ]; then
         echo "Installing vcrun2022 via winetricks..."
-        # Winetricks will now run using the native host display perfectly
         ${pkgs.winetricks}/bin/winetricks -q vcrun2022
         touch "$APP_DIR/vcrun2022_installed"
       fi
