@@ -64,7 +64,7 @@
 #   ];
 # }
 {pkgs, ...}: let
-  version = "1.4.6";
+  version = "1.4.5";
   runnerUrl = "https://github.com/Kron4ek/Wine-Builds/releases/download/11.5/wine-11.5-staging-amd64.tar.xz";
 
   aalc = pkgs.stdenv.mkDerivation {
