@@ -1,6 +1,5 @@
 {pkgs, ...}: let
   version = "1.4.5";
-  # Switched to Kron4ek's highly stable standalone Wine Staging build
   runnerUrl = "https://github.com/Kron4ek/Wine-Builds/releases/download/11.5/wine-11.5-staging-amd64.tar.xz";
 
   aalc = pkgs.stdenv.mkDerivation {
@@ -40,24 +39,25 @@
 
       EXE_PATH=$(find "$APP_DIR/app" -type f -iname "AALC.exe" | head -n 1)
 
-      # Fetch the Kron4ek Wine runner
       if [ ! -d "$RUNNER_DIR" ]; then
         echo "Downloading and extracting Kron4ek Wine..."
         mkdir -p "$RUNNER_DIR"
-        # Added --strip-components=1 to correctly unwrap the top-level folder
         ${pkgs.wget}/bin/wget -qO- ${runnerUrl} | ${pkgs.gnutar}/bin/tar -xJ --strip-components=1 -C "$RUNNER_DIR"
       fi
 
-      WINE_EXEC=$(find "$RUNNER_DIR" -name "wine" -type f -executable | head -n 1)
+      # Explicitly assign our downloaded Wine to the WINE variable
+      export WINE=$(find "$RUNNER_DIR" -name "wine" -type f -executable | head -n 1)
 
       if [ ! -f "$APP_DIR/vcrun2022_installed" ]; then
         echo "Installing vcrun2022 via winetricks..."
-        ${pkgs.winetricks}/bin/winetricks -q vcrun2022
+        # Wrap winetricks in steam-run to satisfy dynamic linking
+        ${pkgs.steam-run}/bin/steam-run ${pkgs.winetricks}/bin/winetricks -q vcrun2022
         touch "$APP_DIR/vcrun2022_installed"
       fi
 
       cd "$(dirname "$EXE_PATH")"
-      exec "$WINE_EXEC" "$EXE_PATH"
+      # Launch the app inside the steam-run FHS environment
+      exec ${pkgs.steam-run}/bin/steam-run "$WINE" "$EXE_PATH"
       EOF
 
             chmod +x $out/bin/aalc
