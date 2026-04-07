@@ -42,7 +42,6 @@
   };
 in {
   home.packages = [
-    pkgs.cava
     terminal-oscilloscope
   ];
 }
