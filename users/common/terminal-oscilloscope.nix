@@ -9,11 +9,8 @@
 
     src = inputs.terminal-oscilloscope;
 
-    # Added makeWrapper to handle the NixOS dlopen quirk
     nativeBuildInputs = [pkgs.unstable.nim pkgs.makeWrapper];
 
-    # We include ffmpeg because the app requires libavdevice/libavformat
-    # We include illwill in case the repo doesn't vendor it
     buildInputs = [
       pkgs.unstable.ncurses
       pkgs.unstable.ffmpeg
@@ -23,8 +20,11 @@
     ];
 
     buildPhase = ''
-      # The source file was renamed to osc.nim by the developer
-      nim c -d:release --opt:speed src/osc.nim
+      # Compile osc.nim and explicitly point it to the injected illwill source
+      nim c -d:release --opt:speed \
+        --path:${inputs.illwill} \
+        --path:${inputs.illwill}/src \
+        src/osc.nim
     '';
 
     installPhase = ''
@@ -38,6 +38,7 @@
   };
 in {
   home.packages = [
+    pkgs.cava
     terminal-oscilloscope
   ];
 }

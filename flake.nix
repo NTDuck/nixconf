@@ -33,6 +33,11 @@
 
     terminal-oscilloscope.url = "github:rolandnsharp/terminal-oscilloscope";
     terminal-oscilloscope.flake = false;
+
+    illwill = {
+      url = "github:johnnovak/illwill";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {
