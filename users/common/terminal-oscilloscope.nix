@@ -20,10 +20,10 @@
     ];
 
     buildPhase = ''
-      # Compile osc.nim and explicitly point it to the injected illwill source
       nim c -d:release --opt:speed \
         --path:${inputs.illwill} \
         --path:${inputs.illwill}/src \
+        --nimcache:.nimcache \
         src/osc.nim
     '';
 

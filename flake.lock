@@ -377,6 +377,22 @@
         "type": "github"
       }
     },
+    "illwill": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1771312469,
+        "narHash": "sha256-qzwwxY74Pf2b+d5vceSEoy8ULsa1mmUeJZnBix1pLlE=",
+        "owner": "johnnovak",
+        "repo": "illwill",
+        "rev": "a85804aea5a6b83c2aa48e5de969624a9a437939",
+        "type": "github"
+      },
+      "original": {
+        "owner": "johnnovak",
+        "repo": "illwill",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1775231746,
@@ -471,6 +487,7 @@
         "alejandra": "alejandra",
         "cachyos-kernel": "cachyos-kernel",
         "home-manager": "home-manager_2",
+        "illwill": "illwill",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "stylix": "stylix",
