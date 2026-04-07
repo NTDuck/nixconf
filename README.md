@@ -36,7 +36,9 @@ $ cat ~/.ssh/id_ed25519.pub
 
 ### Secret creation
 ```cmd
-nix run github:ryantm/agenix -- -e secrets/my-secret.age
+cd secrets
+nix run github:ryantm/agenix -- -e my-secret.age
+agenix -e my-secret.age
 ```
 
 ## TODOs
