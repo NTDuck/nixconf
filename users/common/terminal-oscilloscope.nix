@@ -1,12 +1,13 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  inputs,
+  ...
+}: let
   terminal-oscilloscope = pkgs.stdenv.mkDerivation {
     pname = "terminal-oscilloscope";
     version = "latest";
 
-    src = builtins.fetchGit {
-      url = "https://github.com/rolandnsharp/terminal-oscilloscope.git";
-      ref = "master";
-    };
+    src = inputs.terminal-oscilloscope;
 
     nativeBuildInputs = [pkgs.unstable.nim];
     buildInputs = [

@@ -30,6 +30,9 @@
     # Formatter
     alejandra.url = "github:kamadorueda/alejandra/4.0.0";
     alejandra.inputs.nixpkgs.follows = "nixpkgs";
+
+    terminal-oscilloscope.url = "github:rolandnsharp/terminal-oscilloscope";
+    terminal-oscilloscope.flake = false;
   };
 
   outputs = inputs @ {
