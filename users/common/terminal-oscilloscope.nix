@@ -17,7 +17,9 @@
     buildInputs = [
       pkgs.unstable.ncurses
       pkgs.unstable.ffmpeg
-      pkgs.unstable.nimPackages.illwill
+      pkgs.unstable.fftw
+      pkgs.unstable.portaudio
+      pkgs.unstable.alsa-lib
     ];
 
     buildPhase = ''
