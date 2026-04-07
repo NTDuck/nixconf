@@ -34,6 +34,7 @@
     pkgs.unstable.clang-tools
     pkgs.unstable.xmake
     pkgs.unstable.cmake-language-server
+    pkgs.unstable.nim
 
     # Python
     pkgs.unstable.python3
