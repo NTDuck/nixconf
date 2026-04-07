@@ -4,6 +4,7 @@
     ./zsh # default.nix
 
     ./agenix.nix
+    ./cava.nix
     ./cliphist.nix
     ./dev-pkgs.nix
     ./fastfetch.nix
@@ -18,6 +19,7 @@
     ./pear-desktop.nix
     ./sway.nix
     ./taskwarrior.nix
+    ./terminal-oscilloscope.nix
     ./termusic.nix
     ./tofi.nix
     ./vesktop.nix
