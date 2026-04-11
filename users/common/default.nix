@@ -1,6 +1,6 @@
 {username, ...}: {
   imports = [
-    ./agents # default.nix
+    ./slops # default.nix
     ./zsh # default.nix
 
     ./agenix.nix
@@ -19,7 +19,6 @@
     ./pear-desktop.nix
     ./sway.nix
     ./taskwarrior.nix
-    ./terminal-oscilloscope.nix
     ./termusic.nix
     ./tofi.nix
     ./vesktop.nix

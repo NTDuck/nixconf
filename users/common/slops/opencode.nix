@@ -23,6 +23,22 @@
       model = "g4f/auto";
 
       provider = {
+        ollama = {
+          npm = "@ai-sdk/openai-compatible";
+          name = "Ollama";
+          options = {
+            baseURL = "http://${config.lib.ollama.host}:${config.lib.ollama.port}/v1";
+            apiKey = "sk-dummy";
+          };
+          models = {
+            gemma-4-e2b = {
+              name = "gemma-4-e2b";
+            };
+            gemma-4-e4b = {
+              name = "gemma-4-e4b";
+            };
+          };
+        };
         g4f = {
           npm = "@ai-sdk/openai-compatible";
           name = "GPT4Free";

@@ -86,9 +86,8 @@ in {
       }
 
       entry image {
-        color: transparent;
+        color: ${colors.base05};
         background: transparent;
-        opacity: 0;
       }
     '';
   };
