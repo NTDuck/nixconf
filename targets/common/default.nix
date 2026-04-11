@@ -6,6 +6,8 @@
   ...
 }: {
   imports = [
+    ./slops # default.nix
+
     ./aalc.nix
     ./agenix.nix
     ./alejandra.nix
