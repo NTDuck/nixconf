@@ -27,7 +27,7 @@
           npm = "@ai-sdk/openai-compatible";
           name = "Ollama";
           options = {
-            baseURL = "http://${config.lib.ollama.host}:${config.lib.ollama.port}/v1";
+            baseURL = "http://${config.services.ollama.host}:${config.services.ollama.port}/v1";
             apiKey = "sk-dummy";
           };
           models = {
