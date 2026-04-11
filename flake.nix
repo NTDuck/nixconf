@@ -17,6 +17,9 @@
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    # User Repository
+    nur.url = "github:nix-community/NUR";
+
     stylix.url = "github:nix-community/stylix/release-25.11";
     stylix.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -64,6 +67,8 @@
               nixpkgs.config.allowUnfree = true;
 
               nixpkgs.overlays = [
+                inputs.nur.overlays.default
+
                 (final: prev: {
                   unstable = import nixpkgs-unstable {
                     inherit system;
