@@ -35,7 +35,7 @@
     alejandra.inputs.nixpkgs.follows = "nixpkgs";
 
     # Dystopia
-    cursor.url = "github:jacopone/code-cursor-nix/v3.0.16";
+    cursor.url = "github:jacopone/code-cursor-nix/";
   };
 
   outputs = inputs @ {

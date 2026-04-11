@@ -184,6 +184,7 @@
       },
       "original": {
         "owner": "jacopone",
+        "ref": "v3.0.16",
         "repo": "code-cursor-nix",
         "type": "github"
       }
