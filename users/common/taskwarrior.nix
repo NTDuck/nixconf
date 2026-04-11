@@ -7,4 +7,8 @@
   home.packages = [
     pkgs.unstable.taskwarrior-tui
   ];
+
+  programs.zsh.shellAliases = {
+    tt = "taskwarrior-tui";
+  };
 }

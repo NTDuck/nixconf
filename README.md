@@ -46,13 +46,6 @@ agenix -e my-secret.age
 
 - Make bamboo not show gui when switching language input - disable underlining
 
-- Cursor lacks stylix theme
-- gtklock
-- aalc
-- firefox
-- helix
-- echo on scripts
-
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
 ```
