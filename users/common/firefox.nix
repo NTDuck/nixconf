@@ -14,8 +14,8 @@
         extensions.force = true;
 
         extensions.packages = [
-          pkgs.unstable.nur.repos.rycee.firefox-addons.sponsorblock
-          pkgs.unstable.nur.repos.rycee.firefox-addons.ublock-origin
+          pkgs.nur.repos.rycee.firefox-addons.sponsorblock
+          pkgs.nur.repos.rycee.firefox-addons.ublock-origin
         ];
 
         settings = {
