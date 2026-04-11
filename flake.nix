@@ -33,9 +33,6 @@
     # Formatter
     alejandra.url = "github:kamadorueda/alejandra/4.0.0";
     alejandra.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Dystopia
-    cursor.url = "github:jacopone/code-cursor-nix/";
   };
 
   outputs = inputs @ {
