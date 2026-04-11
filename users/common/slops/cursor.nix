@@ -8,7 +8,7 @@
 #   ];
 # }
 {pkgs, ...}: let
-  cursor = pkgs.appimageTools.wrapType2 {
+  cursor = pkgs.appimageTools.wrapType2 rec {
     pname = "cursor";
     version = "3.0.16";
     src = pkgs.fetchurl {
