@@ -31,11 +31,11 @@
             apiKey = "sk-dummy";
           };
           models = {
-            gemma-4-e2b = {
-              name = "gemma-4-e2b";
+            "gemma4:e2b" = {
+              name = "gemma4:e2b";
             };
-            gemma-4-e4b = {
-              name = "gemma-4-e4b";
+            "gemma4:e4b" = {
+              name = "gemma4:e4b";
             };
           };
         };
