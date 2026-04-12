@@ -29,7 +29,7 @@ in {
       }
 
       * {
-        font-family: "${fonts.monospace.name}", "${fonts.emoji.name}", sans-serif;
+        font-family: "${fonts.monospace.name}";
         color: ${colors.base05};
         border-radius: 0px;
         box-shadow: none;
@@ -37,23 +37,27 @@ in {
       }
 
       #clock-label {
-        font-family: "${fonts.monospace.name}", "${fonts.emoji.name}", sans-serif;
-        font-size: 72px;
+        font-family: "${fonts.monospace.name}";
+        font-size: 80px;
         font-weight: 400;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
         color: ${colors.base0B};
       }
 
       #date-label {
+        opacity: 0;
         font-size: 0px;
         margin: 0px;
-        color: transparent;
+        padding: 0px;
+        visibility: hidden;
       }
 
       #input-label {
+        opacity: 0;
         font-size: 0px;
         margin: 0px;
-        color: transparent;
+        padding: 0px;
+        visibility: hidden;
       }
 
       entry {
@@ -76,6 +80,14 @@ in {
         background-color: rgba(0, 0, 0, 0.8);
       }
 
+      /* Hide placeholder text */
+      entry text {
+        color: ${colors.base05};
+      }
+      entry text:blank {
+        color: transparent;
+      }
+
       #warning-label {
         color: ${colors.base08};
         font-size: 18px;
@@ -83,14 +95,13 @@ in {
       }
 
       #unlock-button {
-        background: transparent;
-        color: transparent;
-        border: none;
-        margin: 0;
-        padding: 0;
+        opacity: 0;
+        font-size: 0px;
+        margin: 0px;
+        padding: 0px;
+        visibility: hidden;
         min-height: 0;
         min-width: 0;
-        font-size: 0;
       }
 
       entry image {
@@ -98,6 +109,7 @@ in {
         background: transparent;
         min-width: 24px;
         min-height: 24px;
+        font-family: "${fonts.emoji.name}", sans-serif;
       }
     '';
   };

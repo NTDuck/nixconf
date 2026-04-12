@@ -4,7 +4,11 @@
     type = "fcitx5";
 
     fcitx5 = {
-      addons = [pkgs.unstable.fcitx5-bamboo];
+      addons = [
+        pkgs.unstable.fcitx5-bamboo
+        pkgs.unstable.fcitx5-gtk
+        pkgs.unstable.fcitx5-configtool
+      ];
 
       waylandFrontend = true;
       ignoreUserConfig = true; # ignore `~/.config/fcitx5`
@@ -16,6 +20,7 @@
             EnableInputMethodInformation = "False";
             ShowInputMethodInformationIfOnlyOneInputMethod = "False";
             ShowInputMethodInformationInApp = "False";
+            showInputMethodInformationWhenFocusIn = "False";
             Theme = "stylix";
           };
           notification.globalSection = {
@@ -25,6 +30,7 @@
             InputMode = "1";
             Underline = "False";
             ShowModeIndicator = "False";
+            ShowSwitchTip = "False";
           };
         };
         globalOptions = {
