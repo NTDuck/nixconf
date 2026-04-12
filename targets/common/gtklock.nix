@@ -1,11 +1,17 @@
 {
   config,
   lib,
+  pkgs,
   self,
   ...
 }: let
   colors = config.lib.stylix.colors.withHashtag;
+  fonts = config.stylix.fonts;
 in {
+  environment.systemPackages = [
+    pkgs.adwaita-icon-theme
+  ];
+
   programs.gtklock = {
     enable = true;
     config = {
@@ -23,7 +29,7 @@ in {
       }
 
       * {
-        font-family: "JetBrainsMono Nerd Font", monospace;
+        font-family: "${fonts.monospace.name}", "${fonts.emoji.name}", sans-serif;
         color: ${colors.base05};
         border-radius: 0px;
         box-shadow: none;
@@ -31,7 +37,7 @@ in {
       }
 
       #clock-label {
-        font-family: "JetBrainsMono Nerd Font", monospace;
+        font-family: "${fonts.monospace.name}", "${fonts.emoji.name}", sans-serif;
         font-size: 72px;
         font-weight: 400;
         margin-bottom: 10px;
@@ -61,6 +67,8 @@ in {
 
         letter-spacing: 4px;
         border-radius: 4px;
+
+        -GtkPasswordEntry-show-peek-icon: 1;
       }
 
       entry:focus {
@@ -88,6 +96,8 @@ in {
       entry image {
         color: ${colors.base05};
         background: transparent;
+        min-width: 24px;
+        min-height: 24px;
       }
     '';
   };

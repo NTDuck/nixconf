@@ -14,6 +14,9 @@
           classicui.globalSection = {
             ShowInputMethodInformation = "False";
             EnableInputMethodInformation = "False";
+            ShowInputMethodInformationIfOnlyOneInputMethod = "False";
+            ShowInputMethodInformationInApp = "False";
+            Theme = "stylix";
           };
           notification.globalSection = {
             ShowInputMethodInformation = "False";
@@ -21,6 +24,7 @@
           bamboo.globalSection = {
             InputMode = "1";
             Underline = "False";
+            ShowModeIndicator = "False";
           };
         };
         globalOptions = {
