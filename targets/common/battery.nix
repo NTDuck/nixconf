@@ -26,6 +26,7 @@
 
   services.fstrim.enable = true;
   services.thermald.enable = true;
+  services.throttled.enable = true;
   powerManagement.powertop.enable = true;
 
   boot.kernelParams = ["nmi_watchdog=0"];
