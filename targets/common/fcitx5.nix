@@ -11,33 +11,11 @@
       ];
 
       waylandFrontend = true;
-      ignoreUserConfig = true; # ignore `~/.config/fcitx5`
 
       settings = {
-        addons = {
-          classicui.globalSection = {
-            ShowInputMethodInformation = "False";
-            EnableInputMethodInformation = "False";
-            ShowInputMethodInformationIfOnlyOneInputMethod = "False";
-            ShowInputMethodInformationInApp = "False";
-            showInputMethodInformationWhenFocusIn = "False";
-            Theme = "stylix";
-          };
-          notification.globalSection = {
-            ShowInputMethodInformation = "False";
-          };
-          bamboo.globalSection = {
-            InputMode = "1";
-            Underline = "False";
-            ShowModeIndicator = "False";
-            ShowSwitchTip = "False";
-          };
-        };
         globalOptions = {
           "Hotkey/TriggerKeys" = {
             "0" = "Super+space";
-            # "1" = "Control+Shift_L";
-            # "2" = "Control+Shift_R";
           };
         };
         inputMethod = {
