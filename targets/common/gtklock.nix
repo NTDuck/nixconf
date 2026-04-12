@@ -70,7 +70,6 @@ in {
         background-color: rgba(0, 0, 0, 0.8);
       }
 
-      /* Hide placeholder text */
       entry text {
         color: ${colors.base05};
       }
@@ -84,14 +83,12 @@ in {
         margin-top: 20px;
       }
 
-
-
       entry image {
         color: ${colors.base05};
         background: transparent;
         min-width: 24px;
         min-height: 24px;
-        font-family: "${fonts.sansSerif.name}";
+        font-family: "${fonts.emoji.name}";
       }
     '';
   };
