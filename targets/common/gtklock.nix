@@ -91,7 +91,7 @@ in {
         background: transparent;
         min-width: 24px;
         min-height: 24px;
-        font-family: "${fonts.emoji.name}", sans-serif;
+        font-family: "${fonts.sansSerif.name}";
       }
     '';
   };
