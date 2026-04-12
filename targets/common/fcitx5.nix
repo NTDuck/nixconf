@@ -7,7 +7,7 @@
       addons = [
         pkgs.unstable.fcitx5-bamboo
         pkgs.unstable.fcitx5-gtk
-        pkgs.unstable.fcitx5-configtool
+        pkgs.unstable.qt6Packages.fcitx5-configtool
       ];
 
       waylandFrontend = true;
