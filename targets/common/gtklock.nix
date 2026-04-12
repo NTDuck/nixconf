@@ -44,20 +44,10 @@ in {
         color: ${colors.base0B};
       }
 
-      #date-label {
-        opacity: 0;
-        font-size: 0px;
-        margin: 0px;
-        padding: 0px;
-        visibility: hidden;
-      }
-
-      #input-label {
-        opacity: 0;
-        font-size: 0px;
-        margin: 0px;
-        padding: 0px;
-        visibility: hidden;
+      #date-label,
+      #input-label,
+      #unlock-button {
+        display: none;
       }
 
       entry {
@@ -94,15 +84,7 @@ in {
         margin-top: 20px;
       }
 
-      #unlock-button {
-        opacity: 0;
-        font-size: 0px;
-        margin: 0px;
-        padding: 0px;
-        visibility: hidden;
-        min-height: 0;
-        min-width: 0;
-      }
+
 
       entry image {
         color: ${colors.base05};
