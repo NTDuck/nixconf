@@ -4,15 +4,22 @@
     type = "fcitx5";
 
     fcitx5 = {
-      addons = [
-        pkgs.unstable.fcitx5-bamboo
-        pkgs.unstable.fcitx5-gtk
-        pkgs.unstable.qt6Packages.fcitx5-configtool
-      ];
+      addons = [pkgs.unstable.fcitx5-bamboo];
 
       waylandFrontend = true;
+      ignoreUserConfig = true; # ignore `~/.config/fcitx5`
 
       settings = {
+        addons = {
+          classicui.globalSection = {
+            ShowInputMethodInformation = "False";
+            EnableInputMethodInformation = "False";
+          };
+          bamboo.globalSection = {
+            InputMode = "1";
+            Underline = "False";
+          };
+        };
         globalOptions = {
           "Hotkey/TriggerKeys" = {
             "0" = "Super+space";
