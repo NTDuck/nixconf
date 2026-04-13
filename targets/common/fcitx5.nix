@@ -12,8 +12,9 @@
       settings = {
         addons = {
           classicui.globalSection = {
-            ShowInputMethodInformation = "False";
-            EnableInputMethodInformation = "False";
+            Theme = "stylix";
+            ShowInputMethodInformation = "True";
+            EnableInputMethodInformation = "True";
           };
           bamboo.globalSection = {
             InputMode = "1";

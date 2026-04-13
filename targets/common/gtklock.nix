@@ -14,9 +14,10 @@ in {
 
   programs.gtklock = {
     enable = true;
-    config = {
+    settings = {
       main = {
         time-format = "%H:%M:%S";
+        date-format = "";
       };
     };
 

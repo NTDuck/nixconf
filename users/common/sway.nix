@@ -28,7 +28,7 @@
           always = true;
         }
         {
-          command = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP";
+          command = "dbus-update-activation-environment --systemd --all; systemctl --user import-environment";
           always = true;
         }
       ];

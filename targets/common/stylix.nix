@@ -56,5 +56,6 @@
     };
 
     targets.console.enable = false;
+    targets.fcitx5.enable = true;
   };
 }
