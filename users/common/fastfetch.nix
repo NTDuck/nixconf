@@ -85,7 +85,7 @@
         }
         {
           type = "terminalfont";
-          key = "  {#35} term font   ";
+          key = "  {#35} terminal font   ";
         }
         {
           type = "cpu";

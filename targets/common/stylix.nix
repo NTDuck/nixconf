@@ -14,7 +14,8 @@
     polarity = "dark";
 
     base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
-    image = "${self}/assets/wallpapers/girls-last-tour-library.jpg";
+    image = "${self}/assets/wallpapers/oyasumi-punpun.jpg";
+    # image = "${self}/assets/wallpapers/girls-last-tour-library.jpg";
 
     cursor = {
       package = pkgs.bibata-cursors;
