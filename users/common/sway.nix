@@ -36,7 +36,7 @@
       keybindings = {
         "${modifier}+Return" = "exec ${terminal}";
         "${modifier}+d" = "exec ${menu}";
-        "${modifier}+Ctrl+l" = "exec ${pkgs.gtklock}/bin/gtklock -c /etc/gtklock/config.ini";
+        "${modifier}+Ctrl+l" = "exec ${pkgs.gtklock}/bin/gtklock";
 
         "${modifier}+h" = "focus left";
         "${modifier}+j" = "focus down";
@@ -129,7 +129,7 @@
     events = [
       {
         event = "before-sleep";
-        command = "${pkgs.gtklock}/bin/gtklock -c /etc/gtklock/config.ini";
+        command = "${pkgs.gtklock}/bin/gtklock";
       }
       {
         event = "after-resume";
