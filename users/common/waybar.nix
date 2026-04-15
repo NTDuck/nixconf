@@ -1,4 +1,8 @@
-{pkgs, config, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   programs.waybar = {
     enable = true;
     settings = {
@@ -68,7 +72,6 @@
         "cpu" = {
           format = "CPU\n{usage:03d}%";
           interval = 10;
-.
           tooltip = false;
         };
 
