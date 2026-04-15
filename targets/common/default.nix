@@ -41,8 +41,14 @@
   # Networking
   networking = {
     hostName = hostname;
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      dns = "systemd-resolved";
+    };
+    nameservers = ["8.8.8.8" "1.1.1.1"];
   };
+
+  services.resolved.enable = true;
 
   # Localization
   time.timeZone = "Asia/Ho_Chi_Minh";
