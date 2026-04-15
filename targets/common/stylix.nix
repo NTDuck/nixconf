@@ -32,7 +32,7 @@
         name = "Lora";
       };
       monospace = {
-        package = pkgs.maple-mono-nerd-font;
+        package = pkgs.maple-mono.truetype;
         name = "Maple Mono";
       };
       emoji = {
