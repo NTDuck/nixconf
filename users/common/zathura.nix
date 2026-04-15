@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{pkgs, config, ...}: {
   programs.zathura = {
     enable = true;
     package = pkgs.unstable.zathura;
@@ -6,7 +6,7 @@
     options = {
       adjust-open = "width"; # "best-fit"
       double-click-follow = "false";
-      font = "monospace normal 11";
+      font = "${config.stylix.fonts.monospace.name} normal ${toString config.stylix.fonts.sizes.applications}";
       guioptions = "chv";
       page-v-padding = "2";
       page-h-padding = "2";

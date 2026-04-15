@@ -40,6 +40,7 @@
     pkgs.unstable.python3
     pkgs.unstable.python3Packages.pip
     pkgs.unstable.python3Packages.virtualenv
+    pkgs.unstable.python3Packages.chromadb
 
     # Javascript/Typescript
     pkgs.unstable.deno

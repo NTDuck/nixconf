@@ -32,8 +32,8 @@
         name = "Lora";
       };
       monospace = {
-        package = pkgs.nerd-fonts.jetbrains-mono;
-        name = "JetBrainsMono Nerd Font";
+        package = pkgs.maple-mono-nerd-font;
+        name = "Maple Mono";
       };
       emoji = {
         package = pkgs.noto-fonts-color-emoji;

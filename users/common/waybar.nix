@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{pkgs, config, ...}: {
   programs.waybar = {
     enable = true;
     settings = {
@@ -68,6 +68,7 @@
         "cpu" = {
           format = "CPU\n{usage:03d}%";
           interval = 10;
+.
           tooltip = false;
         };
 
@@ -92,7 +93,8 @@
 
     style = ''
       * {
-        font-size: 10px;
+        font-family: "${config.stylix.fonts.monospace.name}";
+        font-size: ${toString config.stylix.fonts.sizes.desktop}px;
         min-height: 0;
       }
 
