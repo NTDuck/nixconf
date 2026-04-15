@@ -14,6 +14,7 @@ in {
 
   programs.gtklock = {
     enable = true;
+
     config = {
       main = {
         time-format = "%H:%M:%S";
@@ -56,6 +57,7 @@ in {
         border: 1px solid ${colors.base0B};
         color: ${colors.base05};
         font-size: ''${entryFontSize}px;
+        font-family: "${fonts.monospace.name}";
         padding: 10px 20px;
         caret-color: ${colors.base05};
         min-width: 300px;
@@ -74,6 +76,7 @@ in {
         color: transparent;
       }
       #warning-label {
+        font-family: "${fonts.monospace.name}";
         color: ${colors.base08};
         font-size: ''${warningFontSize}px;
         margin-top: 20px;
