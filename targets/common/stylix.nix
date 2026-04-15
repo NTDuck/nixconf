@@ -1,9 +1,12 @@
 {
+  config,
   pkgs,
   self,
   inputs,
   ...
-}: {
+}: let
+  colors = config.lib.stylix.colors.withHashtag;
+in {
   imports = [
     inputs.stylix.nixosModules.stylix
   ];
@@ -14,8 +17,14 @@
     polarity = "dark";
 
     base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
-    image = "${self}/assets/wallpapers/oyasumi-punpun.jpg";
-    # image = "${self}/assets/wallpapers/girls-last-tour-library.jpg";
+    image =
+      pkgs.runCommand "themed-wallpaper.png" {
+        nativeBuildInputs = [pkgs.imagemagick];
+      } ''
+        magick ${self}/assets/wallpapers/oyasumi-punpun.png \
+          +level-colors '${colors.base00},${colors.base05}' \
+          $out
+      '';
 
     cursor = {
       package = pkgs.bibata-cursors;
