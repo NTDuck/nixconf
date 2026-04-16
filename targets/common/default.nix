@@ -20,7 +20,6 @@
     ./gpt4free.nix
     ./greetd.nix
     ./gtklock.nix
-    ./nikke.nix
     ./pipewire.nix
     ./steam.nix
     ./stylix.nix

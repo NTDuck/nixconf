@@ -11,6 +11,7 @@
     ./firefox.nix
     ./foot.nix
     ./gh.nix
+    ./glab.nix
     ./git.nix
     ./helix.nix
     ./imv.nix
