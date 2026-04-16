@@ -4,6 +4,6 @@
   ];
 
   programs.git.extraConfig = {
-    credential."https://gitlab.com".helper = "!{pkgs.unstable.glab}/bin/glab auth git-credential";
+    credential."https://gitlab.com".helper = "!${pkgs.unstable.glab}/bin/glab auth git-credential";
   };
 }
