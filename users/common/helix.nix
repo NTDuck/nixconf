@@ -5,6 +5,12 @@
 
     defaultEditor = true;
 
+    settings = {
+      editor = {
+        soft-wrap.enable = true;
+      };
+    };
+
     languages = {
       language = [
         {
@@ -17,15 +23,6 @@
           language-servers = ["nixd"];
         }
       ];
-
-      language-server.nixd = {
-        command = "${pkgs.unstable.nixd}/bin/nixd";
-        config = {
-          formatting = {
-            command = ["${pkgs.unstable.alejandra}/bin/alejandra" "--quiet"];
-          };
-        };
-      };
     };
   };
 }

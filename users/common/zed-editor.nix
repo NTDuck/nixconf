@@ -47,6 +47,7 @@
 
       session.trust_all_worktrees = true;
       base_keymap = "VSCode";
+      soft_wrap = "editor_width";
 
       buffer_font_size = lib.mkForce 11;
       ui_font_size = lib.mkForce 11;
