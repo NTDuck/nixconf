@@ -5,7 +5,34 @@
   inputs,
   ...
 }: let
-  colors = config.lib.stylix.colors.withHashtag;
+  posterize = imgPath:
+    pkgs.runCommand "posterized.png" {
+      nativeBuildInputs = [pkgs.imagemagick];
+    } ''
+      magick \
+        xc:'${config.lib.stylix.colors.withHashtag.base00}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base01}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base02}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base03}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base04}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base05}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base06}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base07}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base08}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base09}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base0A}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base0B}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base0C}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base0D}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base0E}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base0F}' \
+        +append palette.png # lossless
+
+      magick ${imgPath} \
+        -dither FloydSteinberg \
+        -remap palette.png \
+        $out
+    '';
 in {
   imports = [
     inputs.stylix.nixosModules.stylix
@@ -17,14 +44,7 @@ in {
     polarity = "dark";
 
     base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
-    image =
-      pkgs.runCommand "themed-wallpaper.png" {
-        nativeBuildInputs = [pkgs.imagemagick];
-      } ''
-        magick ${self}/assets/wallpapers/oyasumi-punpun.png \
-          +level-colors '${colors.base00},${colors.base05}' \
-          $out
-      '';
+    image = posterize "${self}/assets/wallpapers/omori-persist.jpg";
 
     cursor = {
       package = pkgs.bibata-cursors;
