@@ -13,7 +13,7 @@
     pkgs.unstable.ts_query_ls # .scm
 
     # Rust
-    (pkgs.unstable.rust-bin.stable.latest.default.override {
+    (pkgs.rust-bin.stable.latest.default.override {
       extensions = ["rust-src" "rust-analyzer"];
     })
 
