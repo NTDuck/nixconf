@@ -1,8 +1,4 @@
-{
-  lib,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   home.packages = [
     # Nix
     pkgs.unstable.nil
@@ -20,6 +16,7 @@
     (pkgs.unstable.rust-bin.stable.latest.default.override {
       extensions = ["rust-src" "rust-analyzer"];
     })
+
     pkgs.unstable.cargo-nextest
     pkgs.unstable.cargo-binstall
 
