@@ -33,12 +33,17 @@
     # Formatter
     alejandra.url = "github:kamadorueda/alejandra/4.0.0";
     alejandra.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Rust
+    rust-overlay.url = "github:oxalica/rust-overlay";
+    rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs @ {
     self,
     nixpkgs,
     nixpkgs-unstable,
+    rust-overlay,
     ...
   }: let
     mkHost = {
@@ -65,11 +70,13 @@
 
               nixpkgs.overlays = [
                 inputs.nur.overlays.default
+                rust-overlay.overlays.default
 
                 (final: prev: {
                   unstable = import nixpkgs-unstable {
                     inherit system;
                     config.allowUnfree = true;
+                    overlays = [rust-overlay.overlays.default];
                   };
                 })
               ];
