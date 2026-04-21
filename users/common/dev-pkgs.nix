@@ -72,6 +72,9 @@
 
     pkgs.unstable.jetbrains.idea-oss
     # pkgs.unstable.jetbrains.idea-community
+
+    # Google Cloud SDK
+    pkgs.unstable.google-cloud-sdk
   ];
 
   home.sessionVariables = {
