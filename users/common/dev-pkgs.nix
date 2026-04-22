@@ -75,6 +75,10 @@
 
     # Google Cloud SDK
     pkgs.unstable.google-cloud-sdk
+
+    # Protobuf
+    pkgs.unstable.protobuf
+    pkgs.unstable.protobuf-language-server
   ];
 
   home.sessionVariables = {
