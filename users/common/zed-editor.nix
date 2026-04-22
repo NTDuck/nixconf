@@ -22,6 +22,10 @@
       "catppuccin-icons"
 
       "nix"
+
+      "toml"
+      "rust"
+      "crates"
     ]; # https://github.com/zed-industries/extensions/tree/main/extensions
 
     userSettings = {
@@ -52,7 +56,7 @@
       buffer_font_size = lib.mkForce 11;
       ui_font_size = lib.mkForce 11;
 
-      icon_theme = lib.mkForce "Catppuccin Latte";
+      # icon_theme = lib.mkForce "Catppuccin Latte";
     };
   };
 
