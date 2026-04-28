@@ -33,6 +33,26 @@
         -remap palette.png \
         $out
     '';
+
+  # Hard-coded so is bad!
+  pad = {
+    imgPath,
+    heightRatio,
+    screenWidth ? 1366,
+    screenHeight ? 768,
+  }: let
+    targetHeight = builtins.floor (screenHeight * heightRatio);
+  in
+    pkgs.runCommand "padded.png" {
+      nativeBuildInputs = [pkgs.imagemagick];
+    } ''
+      magick ${imgPath} \
+        -resize x${toString targetHeight} \
+        -background '${config.lib.stylix.colors.withHashtag.base00}' \
+        -gravity center \
+        -extent ${toString screenWidth}x${toString screenHeight} \
+        $out
+    '';
 in {
   imports = [
     inputs.stylix.nixosModules.stylix
@@ -42,9 +62,12 @@ in {
     enable = true;
 
     polarity = "dark";
-
     base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
-    image = posterize "${self}/assets/wallpapers/omori-persist.jpg";
+
+    image = pad {
+      imgPath = posterize "${self}/assets/wallpapers/shifting-tides.jpg";
+      heightRatio = 0.80;
+    };
 
     cursor = {
       package = pkgs.bibata-cursors;
