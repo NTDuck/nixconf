@@ -5,10 +5,20 @@
   inputs,
   ...
 }: let
-  posterize = imgPath:
+  posterize = {
+    imgPath,
+    intensity ? 1,
+  }:
     pkgs.runCommand "posterized.png" {
-      nativeBuildInputs = [pkgs.imagemagick];
+      nativeBuildInputs = [pkgs.imagemagick pkgs.gawk];
     } ''
+      PERCENT=$(awk -v i="${toString intensity}" 'BEGIN { print int(i * 100) }')
+
+      if [ "$PERCENT" -eq "0" ]; then
+        magick ${imgPath} $out
+        exit 0
+      fi
+
       magick \
         xc:'${config.lib.stylix.colors.withHashtag.base00}' \
         xc:'${config.lib.stylix.colors.withHashtag.base01}' \
@@ -26,12 +36,16 @@
         xc:'${config.lib.stylix.colors.withHashtag.base0D}' \
         xc:'${config.lib.stylix.colors.withHashtag.base0E}' \
         xc:'${config.lib.stylix.colors.withHashtag.base0F}' \
-        +append palette.png # lossless
+        +append palette.png
 
-      magick ${imgPath} \
-        -dither FloydSteinberg \
-        -remap palette.png \
-        $out
+      magick ${imgPath} -dither FloydSteinberg -remap palette.png remapped.png
+
+      if [ "$PERCENT" -eq "100" ]; then
+        mv remapped.png $out
+        exit 0
+      fi
+
+      magick ${imgPath} remapped.png -define compose:args=$PERCENT -compose blend -composite $out
     '';
 
   # Hard-coded so is bad!
@@ -48,7 +62,7 @@
     } ''
       magick ${imgPath} \
         -resize x${toString targetHeight} \
-        -background '${config.lib.stylix.colors.withHashtag.base00}' \
+        -background '${config.lib.stylix.colors.withHashtag.base05}' \
         -gravity center \
         -extent ${toString screenWidth}x${toString screenHeight} \
         $out
@@ -65,7 +79,10 @@ in {
     base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
 
     image = pad {
-      imgPath = posterize "${self}/assets/wallpapers/shifting-tides.jpg";
+      imgPath = posterize {
+        imgPath = "${self}/assets/wallpapers/shifting-tides.jpg";
+        intensity = 0.75;
+      };
       heightRatio = 0.80;
     };
 
