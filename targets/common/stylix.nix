@@ -19,6 +19,8 @@
         exit 0
       fi
 
+      magick ${imgPath} -alpha extract alpha_mask.png
+
       magick \
         xc:'${config.lib.stylix.colors.withHashtag.base00}' \
         xc:'${config.lib.stylix.colors.withHashtag.base01}' \
@@ -41,11 +43,12 @@
       magick ${imgPath} -dither FloydSteinberg -remap palette.png remapped.png
 
       if [ "$PERCENT" -eq "100" ]; then
-        mv remapped.png $out
+        magick remapped.png alpha_mask.png -compose CopyOpacity -composite $out
         exit 0
       fi
 
-      magick ${imgPath} remapped.png -define compose:args=$PERCENT -compose blend -composite $out
+      magick ${imgPath} remapped.png -define compose:args=$PERCENT -compose blend -composite temp_blended.png
+      magick temp_blended.png alpha_mask.png -compose CopyOpacity -composite $out
     '';
 
   # Hard-coded so is bad!
