@@ -1,5 +1,7 @@
 {pkgs, ...}: {
-  programs.ssh.startAgent = true;
+  # `services.gnome.gcr-ssh-agent.enable = true` elsewhere
+  # programs.ssh.startAgent = true;
+
   environment.systemPackages = [
     pkgs.openssh
   ];
