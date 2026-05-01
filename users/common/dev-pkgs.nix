@@ -43,7 +43,6 @@
 
     # Javascript/Typescript
     pkgs.unstable.deno
-    pkgs.unstable.bun
 
     pkgs.unstable.javascript-typescript-langserver
     pkgs.unstable.tailwindcss-language-server
@@ -56,6 +55,7 @@
     pkgs.unstable.svelte-language-server
 
     # Kotlin - Jetpack Compose
+    pkgs.unstable.scrcpy
     pkgs.unstable.android-studio
     pkgs.unstable.android-tools
 
@@ -80,6 +80,15 @@
     pkgs.unstable.protobuf
     pkgs.unstable.protobuf-language-server
   ];
+
+  programs.bun = {
+    enable = true;
+    package = pkgs.unstable.bun;
+
+    settings = {
+      telemetry = false;
+    };
+  };
 
   home.sessionVariables = {
     JAVA_HOME = "${pkgs.unstable.jdk21.home}";
