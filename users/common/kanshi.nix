@@ -24,6 +24,7 @@
             criteria = "HDMI-A-1";
             status = "enable";
             position = "0,0";
+            mode = "1366x768";
           }
         ];
       }
