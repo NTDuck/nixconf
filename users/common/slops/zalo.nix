@@ -7,9 +7,10 @@
   };
   zalo = pkgs.appimageTools.wrapType2 {
     inherit pname version src;
-    extraPkgs = pkgs: with pkgs; [
-      sqlite
-    ];
+    extraPkgs = pkgs:
+      with pkgs; [
+        sqlite
+      ];
   };
 in {
   home.packages = [

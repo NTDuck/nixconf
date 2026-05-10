@@ -1,4 +1,8 @@
-{pkgs, config, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   programs.zathura = {
     enable = true;
     package = pkgs.unstable.zathura;

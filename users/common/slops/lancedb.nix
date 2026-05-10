@@ -32,6 +32,6 @@ python3Packages.buildPythonPackage rec {
     description = "A lightweight, serverless vector database that's easy to embed in your application.";
     homepage = "https://github.com/lancedb/lancedb";
     license = licenses.asl20;
-    maintainers = [ maintainers.ayin ]; # placeholder
+    maintainers = [maintainers.ayin]; # placeholder
   };
 }

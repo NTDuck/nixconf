@@ -18,6 +18,6 @@ python3Packages.buildPythonPackage rec {
     description = "Lance Namespace interface and plugin registry";
     homepage = "https://github.com/lancedb/lancedb";
     license = licenses.asl20;
-    maintainers = [ maintainers.ayin ]; # placeholder
+    maintainers = [maintainers.ayin]; # placeholder
   };
 }
