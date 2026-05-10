@@ -43,8 +43,9 @@
         GAME_PID=$(pgrep -f "LimbusCompany.exe" | head -n 1)
         if [ -n "$GAME_PID" ]; then
           echo "Found Limbus Company process ($GAME_PID). Syncing environment..."
-          # Inherit the DISPLAY from the game process
-          GAME_DISPLAY=$(grep -z "DISPLAY=" /proc/$GAME_PID/environ | cut -d= -f2- | tr -d '\0')
+          # Inherit the DISPLAY from the game process correctly
+          # Using -P to ensure we match only the variable starting with DISPLAY
+          GAME_DISPLAY=$(grep -zP "^DISPLAY=" /proc/$GAME_PID/environ | tr -d '\0' | cut -d= -f2-)
           if [ -n "$GAME_DISPLAY" ]; then
             export DISPLAY="$GAME_DISPLAY"
             echo "Using DISPLAY: $DISPLAY"
@@ -103,6 +104,8 @@
       if [ -f "$CONFIG_FILE" ]; then
         echo "Updating AALC configuration..."
         sed -i 's|game_path:.*|game_path: "C:\\\\Program Files (x86)\\\\Steam\\\\steamapps\\\\common\\\\Limbus Company\\\\LimbusCompany.exe"|' "$CONFIG_FILE"
+        # On Linux, the process name in psutil might not have the .exe extension
+        sed -i 's|game_process_name:.*|game_process_name: "LimbusCompany"|' "$CONFIG_FILE"
       fi
 
       if [ ! -d "$RUNNER_DIR" ]; then
@@ -122,7 +125,8 @@
 
       if [ ! -f "$APP_DIR/wpf_fixed" ]; then
         echo "Applying compatibility fixes to Wine..."
-        ${pkgs.steam-run}/bin/steam-run ${pkgs.winetricks}/bin/winetricks -q vcrun2022
+        # wmp9 is often needed for WPF apps that play media or notifications
+        ${pkgs.steam-run}/bin/steam-run ${pkgs.winetricks}/bin/winetricks -q vcrun2022 wmp9
         # Disable WPF Hardware Acceleration
         ${pkgs.steam-run}/bin/steam-run "$WINE" reg add "HKCU\Software\Microsoft\Avalon.Graphics" /v DisableHWAcceleration /t REG_DWORD /d 1 /f
         touch "$APP_DIR/wpf_fixed"
