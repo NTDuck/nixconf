@@ -5,5 +5,6 @@
     ./gemini-cli.nix
     ./kuzu.nix
     ./opencode.nix
+    ./zalo.nix
   ];
 }
