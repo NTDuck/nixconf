@@ -7,3 +7,5 @@ result-*
 
 # Ignore agenix root composition
 secrets/secrets.nix
+
+docs/
