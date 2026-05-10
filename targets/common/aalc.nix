@@ -126,31 +126,58 @@
 
       EXE_PATH=$(find "$APP_DIR/app" -type f -iname "AALC.exe" | head -n 1)
 
-      # FIX: Create a fake Windows path to the game in our prefix so AALC's path check passes.
-      # We create both the correct and the typoed path just in case.
-      REAL_GAME_DIR="$HOME/.local/share/Steam/steamapps/common/Limbus Company"
+      # THE CRITICAL FIX: Share the Wine prefix AND the wineserver with the game.
+      # Limbus Company AppID: 1973530
+      STEAM_PREFIX="$HOME/.local/share/Steam/steamapps/compatdata/1973530/pfx"
       
-      # 1. Correct path
-      GAME_FAKE_PATH="$WINEPREFIX/drive_c/Program Files (x86)/Steam/steamapps/common/Limbus Company"
-      mkdir -p "$(dirname "$GAME_FAKE_PATH")"
-      if [ -d "$REAL_GAME_DIR" ] && [ ! -L "$GAME_FAKE_PATH" ]; then
-        echo "Symlinking Limbus Company to AALC prefix..."
-        ln -s "$REAL_GAME_DIR" "$GAME_FAKE_PATH"
-      fi
-      
-      # 2. Typoed path (used in older AALC versions or if our sed failed)
-      GAME_TYPO_PATH="$WINEPREFIX/drive_c/Program Files (x86\Steam/steamapps/common/Limbus Company"
-      mkdir -p "$(dirname "$GAME_TYPO_PATH")"
-      if [ -d "$REAL_GAME_DIR" ] && [ ! -L "$GAME_TYPO_PATH" ]; then
-        ln -s "$REAL_GAME_DIR" "$GAME_TYPO_PATH"
+      if [ -d "$STEAM_PREFIX" ]; then
+        export WINEPREFIX="$STEAM_PREFIX"
+        echo "Using Steam Proton prefix: $WINEPREFIX"
+        
+        # FIX: Find the running wineserver of the game and use its socket.
+        # This is essential for FindWindow to work across different Wine builds.
+        # We also need to use the same DISPLAY as the game.
+        GAME_PID=$(pgrep -f "LimbusCompany.exe" | head -n 1)
+        if [ -n "$GAME_PID" ]; then
+          echo "Found Limbus Company process ($GAME_PID). Syncing environment..."
+          # Inherit the DISPLAY from the game process
+          GAME_DISPLAY=$(grep -z "DISPLAY=" /proc/$GAME_PID/environ | cut -d= -f2- | tr -d '\0')
+          if [ -n "$GAME_DISPLAY" ]; then
+            export DISPLAY="$GAME_DISPLAY"
+            echo "Using DISPLAY: $DISPLAY"
+          fi
+          # Attempt to join the same wineserver by using the same prefix.
+          # To be safe, we also try to find the specific wineserver binary.
+          GAME_WINESERVER=$(pgrep -u $(id -u) -f "wineserver" | head -n 1 | xargs -I{} readlink -f /proc/{}/exe)
+          if [ -x "$GAME_WINESERVER" ]; then
+             echo "Using Game's wineserver: $GAME_WINESERVER"
+             export WINESERVER="$GAME_WINESERVER"
+          fi
+        fi
+      else
+        export WINEPREFIX="$APP_DIR/wineprefix"
+        echo "Warning: Steam prefix not found at $STEAM_PREFIX."
       fi
 
-      # FIX: Automatically update config.yaml
-      CONFIG_FILE="$APP_DIR/app/config/config.yaml"
-      if [ -f "$CONFIG_FILE" ]; then
-        echo "Updating AALC configuration..."
-        sed -i 's|game_path:.*|game_path: "C:\\\\Program Files (x86)\\\\Steam\\\\steamapps\\\\common\\\\Limbus Company\\\\LimbusCompany.exe"|' "$CONFIG_FILE"
+      # FIX: Create a fake Windows path to the game in our prefix.
+      # AALC v1.4.10 has a literal typo in its default path: "Program Files (x86\Steam" (missing parenthesis).
+      # We create both the correct and the typoed path to be safe.
+      REAL_GAME_DIR="$HOME/.local/share/Steam/steamapps/common/Limbus Company"
+      if [ -d "$REAL_GAME_DIR" ]; then
+        # 1. Correct path
+        GAME_FAKE_PATH="$WINEPREFIX/drive_c/Program Files (x86)/Steam/steamapps/common/Limbus Company"
+        mkdir -p "$(dirname "$GAME_FAKE_PATH")"
+        [ ! -L "$GAME_FAKE_PATH" ] && ln -s "$REAL_GAME_DIR" "$GAME_FAKE_PATH"
+        
+        # 2. Typoed path (matches AALC's log: "Program Files (x86\Steam")
+        GAME_TYPO_PATH="$WINEPREFIX/drive_c/Program Files (x86\Steam/steamapps/common/Limbus Company"
+        mkdir -p "$(dirname "$GAME_TYPO_PATH")"
+        [ ! -L "$GAME_TYPO_PATH" ] && ln -s "$REAL_GAME_DIR" "$GAME_TYPO_PATH"
       fi
+
+      # FIX: Force XWayland for Sway compatibility
+      unset WAYLAND_DISPLAY
+      [ -z "$DISPLAY" ] && export DISPLAY=:0
 
       if [ ! -d "$RUNNER_DIR" ]; then
         echo "Downloading and extracting Kron4ek Wine..."
