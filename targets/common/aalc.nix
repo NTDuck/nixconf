@@ -88,7 +88,19 @@
       #!/bin/sh
       APP_DIR="$HOME/.local/share/aalc"
       RUNNER_DIR="$APP_DIR/runner"
-      export WINEPREFIX="$APP_DIR/wineprefix"
+      
+      # THE CRITICAL FIX: To see the Limbus Company window, AALC MUST share the same Wine prefix as the game.
+      # Limbus Company AppID: 1973530
+      STEAM_PREFIX="$HOME/.local/share/Steam/steamapps/compatdata/1973530/pfx"
+      
+      if [ -d "$STEAM_PREFIX" ]; then
+        export WINEPREFIX="$STEAM_PREFIX"
+        echo "Using Steam Proton prefix: $WINEPREFIX"
+      else
+        export WINEPREFIX="$APP_DIR/wineprefix"
+        echo "Warning: Steam prefix not found at $STEAM_PREFIX. Using standalone prefix."
+      fi
+
       export WINEDLLOVERRIDES="winemenubuilder.exe=d"
 
       # THE FIX: Force XWayland. Native Wayland Wine completely breaks WPF mouse inputs.
@@ -106,6 +118,27 @@
       fi
 
       EXE_PATH=$(find "$APP_DIR/app" -type f -iname "AALC.exe" | head -n 1)
+
+      # FIX: Create a fake Windows path to the game in our prefix so AALC's path check passes.
+      # Limbus Company on Steam (Proton) is usually at ~/.local/share/Steam/steamapps/common/Limbus Company/
+      # We symlink the real Linux path to the expected Windows path in the AALC Wine prefix.
+      GAME_FAKE_PATH="$WINEPREFIX/drive_c/Program Files (x86)/Steam/steamapps/common/Limbus Company"
+      mkdir -p "$(dirname "$GAME_FAKE_PATH")"
+      REAL_GAME_DIR="$HOME/.local/share/Steam/steamapps/common/Limbus Company"
+      if [ -d "$REAL_GAME_DIR" ] && [ ! -L "$GAME_FAKE_PATH" ]; then
+        echo "Symlinking Limbus Company to AALC prefix..."
+        ln -s "$REAL_GAME_DIR" "$GAME_FAKE_PATH"
+      fi
+
+      # FIX: Automatically update config.yaml to point to the correct paths and use background mode if needed.
+      CONFIG_FILE="$APP_DIR/app/config/config.yaml"
+      if [ -f "$CONFIG_FILE" ]; then
+        # Ensure game_path and game_process_name match what AALC expects or our symlink
+        # Note: AALC v1.4.10 uses a specific config structure.
+        # We can use sed to update it if it already exists, or just let the user know.
+        echo "Updating AALC configuration..."
+        sed -i 's|game_path:.*|game_path: "C:\\\\Program Files (x86)\\\\Steam\\\\steamapps\\\\common\\\\Limbus Company\\\\LimbusCompany.exe"|' "$CONFIG_FILE"
+      fi
 
       if [ ! -d "$RUNNER_DIR" ]; then
         echo "Downloading and extracting Kron4ek Wine..."
@@ -134,6 +167,8 @@
 
       echo "Launching AALC via gamescope..."
       # Gamescope provides a stable X11 environment for Wine, fixing WPF clickability issues on Sway.
+      # NOTE: For AALC to detect Limbus Company, they should ideally share the same X server (Xwayland/Gamescope).
+      # If detection fails, try running the game inside this same gamescope instance.
       exec ${pkgs.steam-run}/bin/steam-run ${pkgs.gamescope}/bin/gamescope -W 1280 -H 720 -r 60 -- "$WINE" "$EXE_PATH"
       EOF
 
