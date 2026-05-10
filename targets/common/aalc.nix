@@ -1,12 +1,12 @@
 # {pkgs, ...}: let
-#   version = "1.4.5";
+#   version = "1.4.10";
 #   runnerUrl = "https://github.com/Kron4ek/Wine-Builds/releases/download/11.5/wine-11.5-staging-amd64.tar.xz";
 #   aalc = pkgs.stdenv.mkDerivation {
 #     pname = "ahab-assistant-limbus-company";
 #     inherit version;
 #     src = pkgs.fetchurl {
 #       url = "https://github.com/KIYI671/AhabAssistantLimbusCompany/releases/download/V${version}/AALC_V${version}.7z";
-#       hash = "sha256-9Wm2HeIHIm0DyLbeaSimeriy1g2BmGVsLBnrqI5kKp4=";
+#       hash = "sha256-N7bQIzunsdLZ+//jUARYrfpXANIjDnQNxn79b0t05jM=";
 #     };
 #     nativeBuildInputs = [pkgs.p7zip pkgs.makeWrapper];
 #     sourceRoot = ".";
@@ -64,7 +64,7 @@
 #   ];
 # }
 {pkgs, ...}: let
-  version = "1.4.5";
+  version = "1.4.10";
   runnerUrl = "https://github.com/Kron4ek/Wine-Builds/releases/download/11.5/wine-11.5-staging-amd64.tar.xz";
 
   aalc = pkgs.stdenv.mkDerivation {
@@ -73,7 +73,7 @@
 
     src = pkgs.fetchurl {
       url = "https://github.com/KIYI671/AhabAssistantLimbusCompany/releases/download/V${version}/AALC_V${version}.7z";
-      hash = "sha256-9Wm2HeIHIm0DyLbeaSimeriy1g2BmGVsLBnrqI5kKp4=";
+      hash = "sha256-N7bQIzunsdLZ+//jUARYrfpXANIjDnQNxn79b0t05jM=";
     };
 
     nativeBuildInputs = [pkgs.p7zip pkgs.makeWrapper];
