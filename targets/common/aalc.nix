@@ -79,9 +79,14 @@
     nativeBuildInputs = [pkgs.p7zip pkgs.makeWrapper];
     sourceRoot = ".";
 
-    installPhase = ''
+            installPhase = ''
             mkdir -p $out/opt/aalc
             cp -r * $out/opt/aalc/
+            
+            # FIX: Fix the typo in the source code itself so it uses the correct default path.
+            # The typo "Program Files (x86\Steam" is in module/config/config_typing.py
+            sed -i 's|Program Files (x86\\Steam|Program Files (x86)\\Steam|g' $out/opt/aalc/module/config/config_typing.py
+            
             mkdir -p $out/bin
 
             cat > $out/bin/aalc <<'EOF'
@@ -104,7 +109,9 @@
       export WINEDLLOVERRIDES="winemenubuilder.exe=d"
 
       # THE FIX: Force XWayland. Native Wayland Wine completely breaks WPF mouse inputs.
+      # And AALC MUST share the same X server as the game to 'see' its window.
       unset WAYLAND_DISPLAY
+      export DISPLAY=:0
 
       mkdir -p "$APP_DIR"
 
@@ -120,22 +127,27 @@
       EXE_PATH=$(find "$APP_DIR/app" -type f -iname "AALC.exe" | head -n 1)
 
       # FIX: Create a fake Windows path to the game in our prefix so AALC's path check passes.
-      # Limbus Company on Steam (Proton) is usually at ~/.local/share/Steam/steamapps/common/Limbus Company/
-      # We symlink the real Linux path to the expected Windows path in the AALC Wine prefix.
+      # We create both the correct and the typoed path just in case.
+      REAL_GAME_DIR="$HOME/.local/share/Steam/steamapps/common/Limbus Company"
+      
+      # 1. Correct path
       GAME_FAKE_PATH="$WINEPREFIX/drive_c/Program Files (x86)/Steam/steamapps/common/Limbus Company"
       mkdir -p "$(dirname "$GAME_FAKE_PATH")"
-      REAL_GAME_DIR="$HOME/.local/share/Steam/steamapps/common/Limbus Company"
       if [ -d "$REAL_GAME_DIR" ] && [ ! -L "$GAME_FAKE_PATH" ]; then
         echo "Symlinking Limbus Company to AALC prefix..."
         ln -s "$REAL_GAME_DIR" "$GAME_FAKE_PATH"
       fi
+      
+      # 2. Typoed path (used in older AALC versions or if our sed failed)
+      GAME_TYPO_PATH="$WINEPREFIX/drive_c/Program Files (x86\Steam/steamapps/common/Limbus Company"
+      mkdir -p "$(dirname "$GAME_TYPO_PATH")"
+      if [ -d "$REAL_GAME_DIR" ] && [ ! -L "$GAME_TYPO_PATH" ]; then
+        ln -s "$REAL_GAME_DIR" "$GAME_TYPO_PATH"
+      fi
 
-      # FIX: Automatically update config.yaml to point to the correct paths and use background mode if needed.
+      # FIX: Automatically update config.yaml
       CONFIG_FILE="$APP_DIR/app/config/config.yaml"
       if [ -f "$CONFIG_FILE" ]; then
-        # Ensure game_path and game_process_name match what AALC expects or our symlink
-        # Note: AALC v1.4.10 uses a specific config structure.
-        # We can use sed to update it if it already exists, or just let the user know.
         echo "Updating AALC configuration..."
         sed -i 's|game_path:.*|game_path: "C:\\\\Program Files (x86)\\\\Steam\\\\steamapps\\\\common\\\\Limbus Company\\\\LimbusCompany.exe"|' "$CONFIG_FILE"
       fi
@@ -146,30 +158,28 @@
         ${pkgs.wget}/bin/wget -qO- ${runnerUrl} | ${pkgs.gnutar}/bin/tar -xJ --strip-components=1 -C "$RUNNER_DIR"
       fi
 
-      export WINE=$(find "$RUNNER_DIR" -name "wine" -type f -executable | head -n 1)
+      # TRY TO USE PROTON'S WINE FIRST (for wineserver compatibility)
+      PROTON_WINE=$(find "$HOME/.local/share/Steam/steamapps/common" -name "wine" -path "*/files/bin/wine" | head -n 1)
+      if [ -x "$PROTON_WINE" ]; then
+        echo "Found Proton Wine: $PROTON_WINE"
+        export WINE="$PROTON_WINE"
+      else
+        export WINE=$(find "$RUNNER_DIR" -name "wine" -type f -executable | head -n 1)
+      fi
 
       if [ ! -f "$APP_DIR/wpf_fixed" ]; then
         echo "Applying compatibility fixes to Wine..."
-
         ${pkgs.steam-run}/bin/steam-run ${pkgs.winetricks}/bin/winetricks -q vcrun2022
-
-        # Disable WPF Hardware Acceleration to kill the invisible shadow boxes
+        # Disable WPF Hardware Acceleration
         ${pkgs.steam-run}/bin/steam-run "$WINE" reg add "HKCU\Software\Microsoft\Avalon.Graphics" /v DisableHWAcceleration /t REG_DWORD /d 1 /f
-
-        # Ensure Wine uses its own window management correctly inside gamescope
-        ${pkgs.steam-run}/bin/steam-run "$WINE" reg add "HKCU\Software\Wine\X11 Driver" /v Decorated /t REG_SZ /d Y /f
-        ${pkgs.steam-run}/bin/steam-run "$WINE" reg add "HKCU\Software\Wine\X11 Driver" /v Managed /t REG_SZ /d Y /f
-
         touch "$APP_DIR/wpf_fixed"
       fi
 
       cd "$(dirname "$EXE_PATH")"
 
-      echo "Launching AALC via gamescope..."
-      # Gamescope provides a stable X11 environment for Wine, fixing WPF clickability issues on Sway.
-      # NOTE: For AALC to detect Limbus Company, they should ideally share the same X server (Xwayland/Gamescope).
-      # If detection fails, try running the game inside this same gamescope instance.
-      exec ${pkgs.steam-run}/bin/steam-run ${pkgs.gamescope}/bin/gamescope -W 1280 -H 720 -r 60 -- "$WINE" "$EXE_PATH"
+      echo "Launching AALC..."
+      # NOTE: We use steam-run to ensure the Proton Wine has its needed libraries.
+      exec ${pkgs.steam-run}/bin/steam-run "$WINE" "$EXE_PATH"
       EOF
 
             chmod +x $out/bin/aalc
