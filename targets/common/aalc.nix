@@ -51,13 +51,19 @@
         [ -n "$GAME_DISPLAY" ] && export DISPLAY="$GAME_DISPLAY"
         
         # 3. Sync Wine Binary and Server (Ensures protocol compatibility)
-        GAME_WINE=$(readlink -f /proc/$GAME_PID/exe)
-        if [ -x "$GAME_WINE" ]; then
-          export WINE="$GAME_WINE"
-          # wineserver is usually in the same directory as wine
-          GAME_WINESERVER="$(dirname "$WINE")/wineserver"
-          [ -x "$GAME_WINESERVER" ] && export WINESERVER="$GAME_WINESERVER"
-        fi
+        GAME_EXE=$(readlink -f /proc/$GAME_PID/exe)
+        case "$(basename "$GAME_EXE")" in
+          wine*|*preloader*)
+            export WINE="$GAME_EXE"
+            GAME_WINESERVER="$(dirname "$WINE")/wineserver"
+            [ -x "$GAME_WINESERVER" ] && export WINESERVER="$GAME_WINESERVER"
+            ;;
+          *)
+            # If the exe is reaper or the game itself, don't use it as the WINE runner
+            echo "Detected non-wine executable ($GAME_EXE), falling back to search..."
+            unset WINE
+            ;;
+        esac
         
         # 4. Sync Game Path for symlinking
         REAL_GAME_DIR=$(readlink -f /proc/$GAME_PID/cwd)
