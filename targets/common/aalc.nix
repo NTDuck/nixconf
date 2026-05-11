@@ -41,15 +41,14 @@
         
         # 1. Sync WINEPREFIX
         DETECTED_PREFIX=$(grep -zP "^WINEPREFIX=" /proc/$GAME_PID/environ | tr -d '\0' | cut -d= -f2-)
-        if [ -n "$DETECTED_PREFIX" ]; then
-          export WINEPREFIX="$DETECTED_PREFIX"
-        else
-          export WINEPREFIX="$STEAM_PREFIX"
-        fi
+        [ -n "$DETECTED_PREFIX" ] && export WINEPREFIX="$DETECTED_PREFIX" || export WINEPREFIX="$STEAM_PREFIX"
         
-        # 2. Sync DISPLAY
+        # 2. Sync DISPLAY and XAUTHORITY
         GAME_DISPLAY=$(grep -zP "^DISPLAY=" /proc/$GAME_PID/environ | tr -d '\0' | cut -d= -f2-)
         [ -n "$GAME_DISPLAY" ] && export DISPLAY="$GAME_DISPLAY"
+        
+        GAME_XAUTH=$(grep -zP "^XAUTHORITY=" /proc/$GAME_PID/environ | tr -d '\0' | cut -d= -f2-)
+        [ -n "$GAME_XAUTH" ] && export XAUTHORITY="$GAME_XAUTH"
         
         # 3. Sync Wine Binary
         GAME_EXE=$(readlink -f /proc/$GAME_PID/exe)
@@ -67,6 +66,9 @@
         
         # 4. Sync Game Path
         REAL_GAME_DIR=$(readlink -f /proc/$GAME_PID/cwd)
+        # Handle the case where cwd is 'Limbus Company/LimbusCompany_Data'
+        REAL_GAME_DIR=$(echo "$REAL_GAME_DIR" | sed 's|/LimbusCompany_Data$||')
+        
         export STEAM_COMPAT_CLIENT_INSTALL_PATH="$HOME/.local/share/Steam"
       else
         export WINEPREFIX="$STEAM_PREFIX"
@@ -76,27 +78,25 @@
       # Fallback: If WINE is still not set, search for it
       if [ -z "$WINE" ]; then
         echo "Searching for Proton Wine runner..."
-        # Try to find the Wine used in the detected prefix first
         PROTON_DIR=$(echo "$WINEPREFIX" | sed 's|/pfx||')
         WINE_SEARCH_PATH=$(find "$(dirname "$(dirname "$PROTON_DIR")")" -name "wine" -path "*/files/bin/wine" | head -n 1)
-        
-        if [ -x "$WINE_SEARCH_PATH" ]; then
-          export WINE="$WINE_SEARCH_PATH"
-        else
-          # Global fallback
-          export WINE=$(find "$HOME/.local/share/Steam/steamapps/common" -name "wine" -path "*/files/bin/wine" | head -n 1)
-        fi
-        
-        # If still nothing, use the bundled runner
+        [ -x "$WINE_SEARCH_PATH" ] && export WINE="$WINE_SEARCH_PATH" || export WINE=$(find "$HOME/.local/share/Steam/steamapps/common" -name "wine" -path "*/files/bin/wine" | head -n 1)
         [ -z "$WINE" ] && export WINE=$(find "$RUNNER_DIR" -name "wine" -type f -executable | head -n 1)
       fi
 
-      echo "Final Environment: WINEPREFIX=$WINEPREFIX, DISPLAY=$DISPLAY, WINE=$WINE"
+      echo "Final Environment:"
+      echo "  WINEPREFIX: $WINEPREFIX"
+      echo "  DISPLAY:    $DISPLAY"
+      echo "  XAUTHORITY: $XAUTHORITY"
+      echo "  WINE:       $WINE"
+      echo "  GAME_DIR:   $REAL_GAME_DIR"
 
       export WINEDLLOVERRIDES="winemenubuilder.exe=d"
+      # Disable Proton features that might hide the window from AALC
+      export WINE_FULLSCREEN_FSR=0
+      export PROTON_USE_SECCOMP=1
 
-      # THE FIX: Force XWayland. Native Wayland Wine completely breaks WPF mouse inputs.
-      # And AALC MUST share the same X server as the game to 'see' its window.
+      # THE FIX: Force XWayland.
       unset WAYLAND_DISPLAY
       [ -z "$DISPLAY" ] && export DISPLAY=:0
 
@@ -114,19 +114,19 @@
       EXE_PATH=$(find "$APP_DIR/app" -type f -iname "AALC.exe" | head -n 1)
 
       # FIX: Create a fake Windows path to the game in our prefix.
-      # AALC v1.4.10 has a literal typo in its default path: "Program Files (x86\Steam" (missing parenthesis).
-      # We create both the correct and the typoed path to be safe.
       if [ -d "$REAL_GAME_DIR" ]; then
-        echo "Creating symlinks to game directory: $REAL_GAME_DIR"
+        echo "Creating symlinks to game directory..."
         # 1. Correct path
         GAME_FAKE_PATH="$WINEPREFIX/drive_c/Program Files (x86)/Steam/steamapps/common/Limbus Company"
         mkdir -p "$(dirname "$GAME_FAKE_PATH")"
-        [ ! -L "$GAME_FAKE_PATH" ] && ln -sfn "$REAL_GAME_DIR" "$GAME_FAKE_PATH"
+        rm -rf "$GAME_FAKE_PATH" # Prevent nesting
+        ln -sfn "$REAL_GAME_DIR" "$GAME_FAKE_PATH"
         
-        # 2. Typoed path (matches AALC's log: "Program Files (x86\Steam")
+        # 2. Typoed path
         GAME_TYPO_PATH="$WINEPREFIX/drive_c/Program Files (x86\Steam/steamapps/common/Limbus Company"
         mkdir -p "$(dirname "$GAME_TYPO_PATH")"
-        [ ! -L "$GAME_TYPO_PATH" ] && ln -sfn "$REAL_GAME_DIR" "$GAME_TYPO_PATH"
+        rm -rf "$GAME_TYPO_PATH"
+        ln -sfn "$REAL_GAME_DIR" "$GAME_TYPO_PATH"
       fi
 
       # FIX: Automatically update config.yaml
