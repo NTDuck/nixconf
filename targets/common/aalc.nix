@@ -29,39 +29,47 @@
       APP_DIR="$HOME/.local/share/aalc"
       RUNNER_DIR="$APP_DIR/runner"
       
-      # THE CRITICAL FIX: To see the Limbus Company window, AALC MUST share the same Wine prefix as the game.
+      # THE CRITICAL FIX: To see the Limbus Company window, AALC MUST share the same Wine prefix and wineserver as the game.
       # Limbus Company AppID: 1973530
       STEAM_PREFIX="$HOME/.local/share/Steam/steamapps/compatdata/1973530/pfx"
       
-      if [ -d "$STEAM_PREFIX" ]; then
-        export WINEPREFIX="$STEAM_PREFIX"
-        echo "Using Steam Proton prefix: $WINEPREFIX"
+      # Attempt to detect running game environment
+      GAME_PID=$(pgrep -f "LimbusCompany.exe" | head -n 1)
+      if [ -n "$GAME_PID" ]; then
+        echo "Found Limbus Company process ($GAME_PID). Syncing environment..."
         
-        # FIX: Find the running wineserver of the game and use its socket.
-        # This is essential for FindWindow to work across different Wine builds.
-        # We also need to use the same DISPLAY as the game.
-        GAME_PID=$(pgrep -f "LimbusCompany.exe" | head -n 1)
-        if [ -n "$GAME_PID" ]; then
-          echo "Found Limbus Company process ($GAME_PID). Syncing environment..."
-          # Inherit the DISPLAY from the game process correctly
-          # Using -P to ensure we match only the variable starting with DISPLAY
-          GAME_DISPLAY=$(grep -zP "^DISPLAY=" /proc/$GAME_PID/environ | tr -d '\0' | cut -d= -f2-)
-          if [ -n "$GAME_DISPLAY" ]; then
-            export DISPLAY="$GAME_DISPLAY"
-            echo "Using DISPLAY: $DISPLAY"
-          fi
-          # Attempt to join the same wineserver by using the same prefix.
-          # To be safe, we also try to find the specific wineserver binary.
-          GAME_WINESERVER=$(pgrep -u $(id -u) -f "wineserver" | head -n 1 | xargs -I{} readlink -f /proc/{}/exe)
-          if [ -x "$GAME_WINESERVER" ]; then
-             echo "Using Game's wineserver: $GAME_WINESERVER"
-             export WINESERVER="$GAME_WINESERVER"
-          fi
+        # 1. Sync WINEPREFIX
+        DETECTED_PREFIX=$(grep -zP "^WINEPREFIX=" /proc/$GAME_PID/environ | tr -d '\0' | cut -d= -f2-)
+        if [ -n "$DETECTED_PREFIX" ]; then
+          export WINEPREFIX="$DETECTED_PREFIX"
+        else
+          export WINEPREFIX="$STEAM_PREFIX"
         fi
+        
+        # 2. Sync DISPLAY (Critical for XWayland window detection)
+        GAME_DISPLAY=$(grep -zP "^DISPLAY=" /proc/$GAME_PID/environ | tr -d '\0' | cut -d= -f2-)
+        [ -n "$GAME_DISPLAY" ] && export DISPLAY="$GAME_DISPLAY"
+        
+        # 3. Sync Wine Binary and Server (Ensures protocol compatibility)
+        GAME_WINE=$(readlink -f /proc/$GAME_PID/exe)
+        if [ -x "$GAME_WINE" ]; then
+          export WINE="$GAME_WINE"
+          # wineserver is usually in the same directory as wine
+          GAME_WINESERVER="$(dirname "$WINE")/wineserver"
+          [ -x "$GAME_WINESERVER" ] && export WINESERVER="$GAME_WINESERVER"
+        fi
+        
+        # 4. Sync Game Path for symlinking
+        REAL_GAME_DIR=$(readlink -f /proc/$GAME_PID/cwd)
+        
+        # 5. Set Steam context (helps some Proton versions)
+        export STEAM_COMPAT_CLIENT_INSTALL_PATH="$HOME/.local/share/Steam"
       else
-        export WINEPREFIX="$APP_DIR/wineprefix"
-        echo "Warning: Steam prefix not found at $STEAM_PREFIX."
+        export WINEPREFIX="$STEAM_PREFIX"
+        REAL_GAME_DIR="$HOME/.local/share/Steam/steamapps/common/Limbus Company"
       fi
+
+      echo "Environment: WINEPREFIX=$WINEPREFIX, DISPLAY=$DISPLAY, WINE=$WINE"
 
       export WINEDLLOVERRIDES="winemenubuilder.exe=d"
 
@@ -86,17 +94,17 @@
       # FIX: Create a fake Windows path to the game in our prefix.
       # AALC v1.4.10 has a literal typo in its default path: "Program Files (x86\Steam" (missing parenthesis).
       # We create both the correct and the typoed path to be safe.
-      REAL_GAME_DIR="$HOME/.local/share/Steam/steamapps/common/Limbus Company"
       if [ -d "$REAL_GAME_DIR" ]; then
+        echo "Creating symlinks to game directory: $REAL_GAME_DIR"
         # 1. Correct path
         GAME_FAKE_PATH="$WINEPREFIX/drive_c/Program Files (x86)/Steam/steamapps/common/Limbus Company"
         mkdir -p "$(dirname "$GAME_FAKE_PATH")"
-        [ ! -L "$GAME_FAKE_PATH" ] && ln -s "$REAL_GAME_DIR" "$GAME_FAKE_PATH"
+        [ ! -L "$GAME_FAKE_PATH" ] && ln -sfn "$REAL_GAME_DIR" "$GAME_FAKE_PATH"
         
         # 2. Typoed path (matches AALC's log: "Program Files (x86\Steam")
         GAME_TYPO_PATH="$WINEPREFIX/drive_c/Program Files (x86\Steam/steamapps/common/Limbus Company"
         mkdir -p "$(dirname "$GAME_TYPO_PATH")"
-        [ ! -L "$GAME_TYPO_PATH" ] && ln -s "$REAL_GAME_DIR" "$GAME_TYPO_PATH"
+        [ ! -L "$GAME_TYPO_PATH" ] && ln -sfn "$REAL_GAME_DIR" "$GAME_TYPO_PATH"
       fi
 
       # FIX: Automatically update config.yaml
@@ -104,8 +112,8 @@
       if [ -f "$CONFIG_FILE" ]; then
         echo "Updating AALC configuration..."
         sed -i 's|game_path:.*|game_path: "C:\\\\Program Files (x86)\\\\Steam\\\\steamapps\\\\common\\\\Limbus Company\\\\LimbusCompany.exe"|' "$CONFIG_FILE"
-        # On Linux, the process name in psutil might not have the .exe extension
-        sed -i 's|game_process_name:.*|game_process_name: "LimbusCompany"|' "$CONFIG_FILE"
+        # Inside Wine, psutil DOES see the .exe extension for Windows processes.
+        sed -i 's|game_process_name:.*|game_process_name: "LimbusCompany.exe"|' "$CONFIG_FILE"
       fi
 
       if [ ! -d "$RUNNER_DIR" ]; then
@@ -114,13 +122,15 @@
         ${pkgs.wget}/bin/wget -qO- ${runnerUrl} | ${pkgs.gnutar}/bin/tar -xJ --strip-components=1 -C "$RUNNER_DIR"
       fi
 
-      # TRY TO USE PROTON'S WINE FIRST (for wineserver compatibility)
-      PROTON_WINE=$(find "$HOME/.local/share/Steam/steamapps/common" -name "wine" -path "*/files/bin/wine" | head -n 1)
-      if [ -x "$PROTON_WINE" ]; then
-        echo "Found Proton Wine: $PROTON_WINE"
-        export WINE="$PROTON_WINE"
-      else
-        export WINE=$(find "$RUNNER_DIR" -name "wine" -type f -executable | head -n 1)
+      if [ -z "$WINE" ]; then
+        # Fallback to finding ANY Proton Wine
+        PROTON_WINE=$(find "$HOME/.local/share/Steam/steamapps/common" -name "wine" -path "*/files/bin/wine" | head -n 1)
+        if [ -x "$PROTON_WINE" ]; then
+          echo "Found Proton Wine: $PROTON_WINE"
+          export WINE="$PROTON_WINE"
+        else
+          export WINE=$(find "$RUNNER_DIR" -name "wine" -type f -executable | head -n 1)
+        fi
       fi
 
       if [ ! -f "$APP_DIR/wpf_fixed" ]; then
