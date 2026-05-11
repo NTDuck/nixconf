@@ -1,9 +1,7 @@
-{ pkgs, lib, ... }:
-
-{
+{lib, ...}: {
   programs.foot = {
     enable = true;
-    package = pkgs.unstable.foot;
+    # package = pkgs.unstable.foot;
 
     server.enable = true;
 

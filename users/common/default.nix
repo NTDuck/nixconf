@@ -1,24 +1,32 @@
-{ username, ... }:
-
-{
+{username, ...}: {
   imports = [
+    ./slops # default.nix
     ./zsh # default.nix
 
+    ./agenix.nix
+    ./cava.nix
     ./cliphist.nix
+    ./dev-pkgs.nix
     ./fastfetch.nix
     ./firefox.nix
     ./foot.nix
     ./gh.nix
+    ./glab.nix
     ./git.nix
     ./helix.nix
     ./imv.nix
     ./kanshi.nix
     ./mpv.nix
+    ./pear-desktop.nix
     ./sway.nix
+    ./taskwarrior.nix
+    ./termusic.nix
     ./tofi.nix
     ./vesktop.nix
     ./waybar.nix
     ./yazi.nix
+    ./zalo.nix
+    ./zathura.nix
     ./zed-editor.nix
   ];
 

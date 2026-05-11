@@ -1,10 +1,8 @@
 {
-  pkgs, 
+  pkgs,
   username,
   ...
-}:
-
-{
+}: {
   programs.firefox = {
     enable = true;
     package = pkgs.unstable.firefox;
@@ -15,79 +13,56 @@
 
         extensions.force = true;
 
-        # extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
-        #   bitwarden
-        #   darkreader
-        #   sponsorblock
-        #   ublock-origin
-        # ];
+        extensions.packages = [
+          pkgs.nur.repos.rycee.firefox-addons.sponsorblock
+          pkgs.nur.repos.rycee.firefox-addons.ublock-origin
+        ];
 
         settings = {
-          # --- Battery & Performance Tuning ---
-          # 1. Force hardware video acceleration (Crucial for YouTube/Video battery life)
+          "media.av1.enabled" = false;
           "media.ffmpeg.vaapi.enabled" = true;
           "media.hardware-video-decoding.force-enabled" = true;
 
-          # 2. Force WebRender (GPU acceleration for drawing the browser)
           "gfx.webrender.all" = true;
           "layers.acceleration.force-enabled" = true;
 
-          # 3. Reduce background tab resource usage
           "dom.suspend_inactive.enabled" = true;
           "browser.tabs.unloadOnLowMemory" = true;
 
-          # 4. Disable heavy telemetry and data reporting
           "datareporting.healthreport.uploadEnabled" = false;
           "toolkit.telemetry.enabled" = false;
           "toolkit.telemetry.server" = "data:,";
 
-          # Show previous session on startup (2 = restore session)
           "browser.startup.page" = 2;
-
-          # Remember zoom level per site
           "browser.zoom.siteSpecific" = true;
 
-          # Cookie persistence behavior
-          "network.cookie.lifetimePolicy" = 0; # Accept cookies normally
-          "privacy.clearOnShutdown.cookies" = false; # Don't clear cookies on shutdown
-          "privacy.clearOnShutdown.siteSettings" = false; # Keep site permissions/settings
-          "privacy.sanitize.sanitizeOnShutdown" = false; # Disable general auto-cleanup
+          "network.cookie.lifetimePolicy" = 0;
+          "privacy.clearOnShutdown.cookies" = false;
+          "privacy.clearOnShutdown.siteSettings" = false;
+          "privacy.sanitize.sanitizeOnShutdown" = false;
 
-          # Needed for proper zoom and feature behavior — disables anti-fingerprinting zoom locking
           "privacy.resistFingerprinting" = false;
 
-          # URL bar autocomplete behavior
-          "browser.urlbar.autoFill" = true; # Autocomplete URLs as you type
-          "browser.urlbar.dnsFirstForSingleWords" = true; # Resolve single words as domains if possible
+          "browser.urlbar.autoFill" = true;
+          "browser.urlbar.dnsFirstForSingleWords" = true;
 
-          # Enable suggestions in the address bar
-          "browser.urlbar.suggest.history" = true; # Suggest URLs from history
-          "browser.urlbar.suggest.bookmark" = true; # Suggest bookmarks
-          "browser.urlbar.suggest.openpage" = true; # Suggest open tabs
-          "browser.urlbar.suggest.searches" = true; # Suggest search engine suggestions
+          "browser.urlbar.suggest.history" = true;
+          "browser.urlbar.suggest.bookmark" = true;
+          "browser.urlbar.suggest.openpage" = true;
+          "browser.urlbar.suggest.searches" = true;
 
-          # Enable search suggestions in the search bar
           "browser.search.suggest.enabled" = true;
 
-          # Disable password saving prompt
           "signon.rememberSignons" = false;
           "passwordmanager.enabled" = false;
 
-          # Remove the "Firefox View" button/tab
           "browser.tabs.firefox-view" = false;
 
-          # Disable Pocket integration (saves articles to Firefox Account)
           "extensions.pocket.enabled" = false;
 
-          # Remove ads and sponsored content from new tab page
           "browser.newtabpage.activity-stream.showSponsored" = false;
           "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
-
-          # Disable news/top stories from Mozilla on new tab page
           "browser.newtabpage.activity-stream.feeds.system.topstories" = false;
-
-          # (Optional additions if you want a clean new tab page)
-          # Disable highlights like recent history and bookmarks
           "browser.newtabpage.activity-stream.feeds.section.highlights" = false;
           "browser.newtabpage.activity-stream.section.highlights.includeVisited" = false;
           "browser.newtabpage.activity-stream.section.highlights.includeBookmarks" = false;
@@ -152,5 +127,5 @@
     };
   };
 
-  stylix.targets.firefox.profileNames = [ "${username}" ];
+  stylix.targets.firefox.profileNames = ["${username}"];
 }

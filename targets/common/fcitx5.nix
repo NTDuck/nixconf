@@ -1,12 +1,10 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";
 
     fcitx5 = {
-      addons = [ pkgs.unstable.fcitx5-bamboo ];
+      addons = [pkgs.unstable.fcitx5-bamboo];
 
       waylandFrontend = true;
       ignoreUserConfig = true; # ignore `~/.config/fcitx5`
@@ -14,8 +12,9 @@
       settings = {
         addons = {
           classicui.globalSection = {
-            ShowInputMethodInformation = "False";
-            EnableInputMethodInformation = "False";
+            Theme = "stylix";
+            ShowInputMethodInformation = "True";
+            EnableInputMethodInformation = "True";
           };
           bamboo.globalSection = {
             InputMode = "1";
@@ -24,8 +23,7 @@
         };
         globalOptions = {
           "Hotkey/TriggerKeys" = {
-            "0" = "Control+Shift_L";
-            "1" = "Control+Shift_R";
+            "0" = "Super+space";
           };
         };
         inputMethod = {

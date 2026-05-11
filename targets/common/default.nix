@@ -4,19 +4,28 @@
   username,
   hostname,
   ...
-}:
-
-{
+}: {
   imports = [
+    ./slops # default.nix
+
+    ./aalc.nix
+    ./agenix.nix
+    ./alejandra.nix
     ./battery.nix
+    ./bluetooth.nix
     ./cachyos-kernel.nix
-    ./dev-pkgs.nix
+    ./cloudflare-warp.nix
     ./fcitx5.nix
+    ./gc.nix
+    ./gpt4free.nix
     ./greetd.nix
+    ./gtklock.nix
+    ./openssh.nix
     ./pipewire.nix
+    ./steam.nix
     ./stylix.nix
     ./sway.nix
-    ./zeroclaw.nix
+    ./waydroid.nix
     ./zsh.nix
   ];
 
@@ -32,8 +41,14 @@
   # Networking
   networking = {
     hostName = hostname;
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      dns = "systemd-resolved";
+    };
+    nameservers = ["8.8.8.8" "1.1.1.1"];
   };
+
+  services.resolved.enable = true;
 
   # Localization
   time.timeZone = "Asia/Ho_Chi_Minh";
@@ -52,16 +67,6 @@
     LC_TIME = "vi_VN";
   };
 
-  # Garbage collection
-  nix.gc = {
-    automatic = true;
-    dates = "daily";
-    options = "--delete-older-than 4d";
-  };
-
-  # Printing
-  services.printing.enable = true;
-
   # Firmware
   hardware.firmware = [
     pkgs.linux-firmware
@@ -70,13 +75,6 @@
   hardware.graphics.enable = true;
   hardware.enableRedistributableFirmware = lib.mkDefault true;
 
-  # Packages
-  nixpkgs.config.allowUnfree = lib.mkDefault true;
-
-  environment.systemPackages = [
-    pkgs.git
-  ];
-
   # Users
   users.users.${username} = {
     isNormalUser = true;
@@ -84,14 +82,13 @@
     extraGroups = [
       "networkmanager"
       "wheel"
+      "adbusers"
+      "kvm"
     ];
-    packages = [ ];
+    packages = [];
   };
 
-  nix.settings.trusted-users = [ username ];
-
-  # Access tokens
-  # nix.settings.access-tokens = [ (import ../../secrets/common/github-pat-classic.nix) ];
+  nix.settings.trusted-users = [username];
 
   # Misc
   nix.settings.experimental-features = [

@@ -1,6 +1,8 @@
-{ pkgs, ... }:
-
 {
+  lib,
+  pkgs,
+  ...
+}: {
   programs.tofi = {
     enable = true;
     package = pkgs.unstable.tofi;
@@ -19,10 +21,18 @@
       border-width = 2;
       outline-width = 0;
 
+      selection-background = lib.mkForce "#00000000";
+      default-result-background = lib.mkForce "#00000000";
+      alternate-result-background = lib.mkForce "#00000000";
+
       padding-top = 20;
       padding-bottom = 20;
       padding-left = 20;
       padding-right = 20;
     };
   };
+
+  home.activation.rm-tofi-cache = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD rm -f $HOME/.cache/tofi-drun
+  '';
 }
