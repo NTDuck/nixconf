@@ -25,6 +25,7 @@
     ./vesktop.nix
     ./waybar.nix
     ./yazi.nix
+    ./zalo.nix
     ./zathura.nix
     ./zed-editor.nix
   ];
