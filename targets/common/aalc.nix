@@ -34,7 +34,8 @@
       STEAM_PREFIX="$HOME/.local/share/Steam/steamapps/compatdata/1973530/pfx"
       
       # Attempt to detect running game environment
-      GAME_PID=$(pgrep -f "LimbusCompany.exe" | head -n 1)
+      # We filter out 'reaper' and 'steam-launch' to find the actual game process
+      GAME_PID=$(pgrep -f "LimbusCompany.exe" | grep -v "reaper" | grep -v "steam-launch" | head -n 1)
       if [ -n "$GAME_PID" ]; then
         echo "Found Limbus Company process ($GAME_PID). Syncing environment..."
         
@@ -46,11 +47,11 @@
           export WINEPREFIX="$STEAM_PREFIX"
         fi
         
-        # 2. Sync DISPLAY (Critical for XWayland window detection)
+        # 2. Sync DISPLAY
         GAME_DISPLAY=$(grep -zP "^DISPLAY=" /proc/$GAME_PID/environ | tr -d '\0' | cut -d= -f2-)
         [ -n "$GAME_DISPLAY" ] && export DISPLAY="$GAME_DISPLAY"
         
-        # 3. Sync Wine Binary and Server (Ensures protocol compatibility)
+        # 3. Sync Wine Binary
         GAME_EXE=$(readlink -f /proc/$GAME_PID/exe)
         case "$(basename "$GAME_EXE")" in
           wine*|*preloader*)
@@ -59,23 +60,38 @@
             [ -x "$GAME_WINESERVER" ] && export WINESERVER="$GAME_WINESERVER"
             ;;
           *)
-            # If the exe is reaper or the game itself, don't use it as the WINE runner
-            echo "Detected non-wine executable ($GAME_EXE), falling back to search..."
+            echo "Process $GAME_PID is $(basename "$GAME_EXE"), not wine. Searching for Proton runner..."
             unset WINE
             ;;
         esac
         
-        # 4. Sync Game Path for symlinking
+        # 4. Sync Game Path
         REAL_GAME_DIR=$(readlink -f /proc/$GAME_PID/cwd)
-        
-        # 5. Set Steam context (helps some Proton versions)
         export STEAM_COMPAT_CLIENT_INSTALL_PATH="$HOME/.local/share/Steam"
       else
         export WINEPREFIX="$STEAM_PREFIX"
         REAL_GAME_DIR="$HOME/.local/share/Steam/steamapps/common/Limbus Company"
       fi
 
-      echo "Environment: WINEPREFIX=$WINEPREFIX, DISPLAY=$DISPLAY, WINE=$WINE"
+      # Fallback: If WINE is still not set, search for it
+      if [ -z "$WINE" ]; then
+        echo "Searching for Proton Wine runner..."
+        # Try to find the Wine used in the detected prefix first
+        PROTON_DIR=$(echo "$WINEPREFIX" | sed 's|/pfx||')
+        WINE_SEARCH_PATH=$(find "$(dirname "$(dirname "$PROTON_DIR")")" -name "wine" -path "*/files/bin/wine" | head -n 1)
+        
+        if [ -x "$WINE_SEARCH_PATH" ]; then
+          export WINE="$WINE_SEARCH_PATH"
+        else
+          # Global fallback
+          export WINE=$(find "$HOME/.local/share/Steam/steamapps/common" -name "wine" -path "*/files/bin/wine" | head -n 1)
+        fi
+        
+        # If still nothing, use the bundled runner
+        [ -z "$WINE" ] && export WINE=$(find "$RUNNER_DIR" -name "wine" -type f -executable | head -n 1)
+      fi
+
+      echo "Final Environment: WINEPREFIX=$WINEPREFIX, DISPLAY=$DISPLAY, WINE=$WINE"
 
       export WINEDLLOVERRIDES="winemenubuilder.exe=d"
 
