@@ -8,7 +8,8 @@
 
     database.external.enable = true;
 
-    environmentFile = "/var/lib/secrets/paperclip.env";
+    # environmentFile = "/var/lib/secrets/paperclip.env";
+    systemd.services.paperclip.serviceConfig.EnvironmentFile = "/var/lib/secrets/paperclip.env";
 
     settings = {
       server = {
