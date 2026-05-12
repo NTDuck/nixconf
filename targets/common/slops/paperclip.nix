@@ -9,7 +9,6 @@
     database.external.enable = true;
 
     # environmentFile = "/var/lib/secrets/paperclip.env";
-    systemd.services.paperclip.serviceConfig.EnvironmentFile = "/var/lib/secrets/paperclip.env";
 
     settings = {
       server = {
@@ -17,6 +16,8 @@
       };
     };
   };
+
+  systemd.services.paperclip.serviceConfig.EnvironmentFile = "/var/lib/secrets/paperclip.env";
 
   # sudo mkdir -p /var/lib/secrets
   # sudo touch /var/lib/secrets/paperclip.env
