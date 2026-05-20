@@ -1,10 +1,23 @@
-- dendritic! - den (AOP)
+- dendritic! + lix (1st)
+- lenovo (2nd)
 
 - Virtual Machine that runs Windows
 - Convenient method for SSH
-- MangoWC/Hyprland/Niri + Noctalia-shell + wezterm
+- Hyprland + Noctalia-shell + wezterm
 - nh + lix
 - scoop list to see which packages are using, then try to find nixos equivalent!
 - speedtest-cli
-- LLL
--
+- LLL: https://mynixos.com/nixpkgs/package/lenovo-legion
+- ashell?
+- https://nixos.wiki/wiki/Storage_optimization
+- monkeytype local
+- residue from windows-scoop: cmake, deno, docker, ffmpeg, gallery-dl, gcc, git-xet, go, gradle, itch, llama, llvm, miktex, mingw, nodejs, notion, obs-studio, ollama, opencode, openjdk, pandoc, poetry, protobuf, protonvpn, python, rufus, telegram, virtualbox?, vivaldi, vortex, webtorrent, p7zip, xmake, yt-dlp
+- disko for impermanance/preservation (vimjoyer)
+- nix specialization for gaming/battery mode
+
+- https://github.com/robbsbro69/nixos/blob/main/configuration.nix
+- https://www.reddit.com/r/unixporn/comments/1s85ebb/hyprland_my_first_hyprland_rice_on_cachyos/
+
+- naive bayes for text classification
+
+- a stable, conforming facade

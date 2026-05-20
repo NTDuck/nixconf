@@ -21,23 +21,23 @@
 
       magick ${imgPath} -alpha extract alpha_mask.png
 
-      magick \
-        xc:'${config.lib.stylix.colors.withHashtag.base00}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base01}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base02}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base03}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base04}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base05}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base06}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base07}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base08}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base09}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base0A}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base0B}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base0C}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base0D}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base0E}' \
-        xc:'${config.lib.stylix.colors.withHashtag.base0F}' \
+      magick 
+        xc:'${config.lib.stylix.colors.withHashtag.base00}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base01}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base02}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base03}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base04}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base05}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base06}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base07}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base08}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base09}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base0A}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base0B}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base0C}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base0D}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base0E}' 
+        xc:'${config.lib.stylix.colors.withHashtag.base0F}' 
         +append palette.png
 
       magick ${imgPath} -dither FloydSteinberg -remap palette.png remapped.png
@@ -63,11 +63,11 @@
     pkgs.runCommand "padded.png" {
       nativeBuildInputs = [pkgs.imagemagick];
     } ''
-      magick ${imgPath} \
-        -resize x${toString targetHeight} \
-        -background '${config.lib.stylix.colors.withHashtag.base05}' \
-        -gravity center \
-        -extent ${toString screenWidth}x${toString screenHeight} \
+      magick ${imgPath} 
+        -resize x${toString targetHeight} 
+        -background '${config.lib.stylix.colors.withHashtag.base05}' 
+        -gravity center 
+        -extent ${toString screenWidth}x${toString screenHeight} 
         $out
     '';
 in {
@@ -79,7 +79,27 @@ in {
     enable = true;
 
     polarity = "dark";
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
+    base16Scheme = {
+      scheme = "catppuccin-latte";
+      name = "Catppuccin-Latte";
+      author = "Catppuccin";
+      base00 = "eff1f5"; # Base
+      base01 = "e6e9ef"; # Mantle
+      base02 = "dce0e8"; # Crust
+      base03 = "bcc0cc"; # Surface1
+      base04 = "acb0be"; # Surface2
+      base05 = "9ca0b0"; # Overlay0
+      base06 = "8c8fa1"; # Overlay1
+      base07 = "7c7f93"; # Overlay2
+      base08 = "d20f39"; # Red
+      base09 = "fe640b"; # Peach
+      base0A = "df8e1d"; # Yellow
+      base0B = "40a02b"; # Green
+      base0C = "179287"; # Teal
+      base0D = "1e66f5"; # Blue
+      base0E = "8839ef"; # Mauve
+      base0F = "ea76cb"; # Pink
+    };
 
     image = pad {
       imgPath = posterize {

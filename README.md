@@ -50,3 +50,8 @@ agenix -e my-secret.age
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
 ```
+
+
+<!--
+IMPORTANT: Write up the specifications into the ".gemini/specs/" folder with each domain topic (including technical topic) as a seperate markdown file. Create a ".gemini/specs/SPECS.md" which is an overview document that contains a table that links to all the specs.
+-->

@@ -1,48 +1,52 @@
-# Examples
+# nixos-cfg
 
-This template provides some basic examples of how to use Den features.
-However, you will learn more by reading templates/ci which tests all of Den.
+## Overview
+- Compositor: [sway](https://github.com/swaywm/sway)
+- Bar: [waybar](https://github.com/Alexays/Waybar)
+- Terminal: [foot](https://codeberg.org/dnkl/foot)
+- Launcher: [tofi](https://github.com/philj56/tofi)
+- Fonts:
+  JetBrainsMono Nerd Font - Monospace |
+  Lora - Serif |
+  Inter - Sans-serif |
+  Noto Color Emoji - Emoji
+- Theme: [charcoal-dark](https://github.com/tinted-theming/schemes/blob/spec-0.11/base16/charcoal-dark.yaml)
+<!--- Wallpaper: [./assets/wallpapers/girls-last-tour-library.jpg](https://x.com/LeoLeonardK10/status/1465607483372699656)-->
+- Wallpaper: [./assets/wallpapers/shifting-tides.jpg](https://x.com/elfilter_a/status/2043948619460411476)
 
-Steps you can follow after cloning this template:
-
-- Be sure to read the [den documentation](https://den.oeiuwq.com)
-
-- Update den input.
-
-```console
-nix flake update den
+## Deployment
+```cmd
+$ nix shell nixpkgs#git --extra-experimental-features "nix-command flakes"
+$ git clone https://github.com/NTDuck/nixos-cfg && cd nixos-cfg
+$ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 ```
 
-- Run checks to test everything works.
-
-```console
-nix flake check
+## Agenix lifecycle
+### Public key generation - Target
+```cmd
+$ sudo mkdir -p /etc/ssh
+$ sudo ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ""
+$ cat /etc/ssh/ssh_host_ed25519_key.pub
 ```
 
-- Read [modules/den.nix](modules/den.nix) where hosts and homes definitions are for this example.
-
-- Read [modules/namespace.nix](modules/namespace.nix) where a new `eg` (an example) aspects namespace is created.
-
-- Read [modules/aspects/igloo.nix](modules/aspects/igloo.nix) where the `igloo` host is configured.
-
-- Read [modules/aspects/alice.nix](modules/aspects/alice.nix) where the `alice` user is configured.
-
-- Build
-
-```console
-# default action is build
-nix run .#igloo
-
-# pass any other nh action
-nix run .#igloo -- switch
+### Public key generation - User
+```cmd
+$ ssh-keygen -t ed25519 -C "ayin@dell-latitude"
+$ cat ~/.ssh/id_ed25519.pub
 ```
 
-- Run the VM.
-
-```console
-nix run .#vm
+### Secret creation
+```cmd
+cd secrets
+nix run github:ryantm/agenix -- -e my-secret.age
+agenix -e my-secret.age
 ```
 
-- Edit and run VM loop.
+## TODOs
+- Add support for HDMI (work?)
 
-Feel free to add more aspects, organize things to your liking.
+- Make bamboo not show gui when switching language input - disable underlining
+
+```cmd
+$ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
+```
