@@ -18,6 +18,4 @@
 - https://github.com/robbsbro69/nixos/blob/main/configuration.nix
 - https://www.reddit.com/r/unixporn/comments/1s85ebb/hyprland_my_first_hyprland_rice_on_cachyos/
 
-- naive bayes for text classification
-
 - a stable, conforming facade
