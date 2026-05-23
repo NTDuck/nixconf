@@ -19,3 +19,14 @@
 - https://www.reddit.com/r/unixporn/comments/1s85ebb/hyprland_my_first_hyprland_rice_on_cachyos/
 
 - a stable, conforming facade
+
+
+#96
+Hệ thống Thu thập log và Giám sát Lỗi Ứng dụng
+
+if not then
+
+Hệ thống cho phép lưu trữ và quản lý tài liệu trong một tổ chức có cấu trúc phân cấp dạng cây
+Xây dựng một ứng dụng video call realtime đơn giản theo mô hình peer-to-peer sử dụng WebRTC
+Xây dựng một hệ thống chat realtime đơn giản,"Xây dựng một hệ thống chat realtime cho phép người dùng
+Nền tảng tạo & làm Quiz trực tuyến
