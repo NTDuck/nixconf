@@ -57,5 +57,12 @@
     llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
   };
 
-  outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./modules);
+  outputs = inputs @ {lib, ...}: let
+    modules = lib.pipe inputs.import-tree [
+      (module: module.matchNot ".*/common/.*")
+      (module: module.matchNot ".*/shared/.*")
+      (module: module ./modules)
+    ];
+  in
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} modules;
 }
