@@ -21,23 +21,23 @@
 
       magick ${imgPath} -alpha extract alpha_mask.png
 
-      magick 
-        xc:'${config.lib.stylix.colors.withHashtag.base00}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base01}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base02}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base03}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base04}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base05}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base06}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base07}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base08}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base09}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base0A}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base0B}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base0C}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base0D}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base0E}' 
-        xc:'${config.lib.stylix.colors.withHashtag.base0F}' 
+      magick \
+        xc:'${config.lib.stylix.colors.withHashtag.base00}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base01}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base02}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base03}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base04}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base05}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base06}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base07}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base08}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base09}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base0A}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base0B}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base0C}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base0D}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base0E}' \
+        xc:'${config.lib.stylix.colors.withHashtag.base0F}' \
         +append palette.png
 
       magick ${imgPath} -dither FloydSteinberg -remap palette.png remapped.png
@@ -63,11 +63,11 @@
     pkgs.runCommand "padded.png" {
       nativeBuildInputs = [pkgs.imagemagick];
     } ''
-      magick ${imgPath} 
-        -resize x${toString targetHeight} 
-        -background '${config.lib.stylix.colors.withHashtag.base05}' 
-        -gravity center 
-        -extent ${toString screenWidth}x${toString screenHeight} 
+      magick ${imgPath}
+        -resize x${toString targetHeight}
+        -background '${config.lib.stylix.colors.withHashtag.base05}'
+        -gravity center
+        -extent ${toString screenWidth}x${toString screenHeight}
         $out
     '';
 in {
