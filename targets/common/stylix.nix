@@ -63,11 +63,11 @@
     pkgs.runCommand "padded.png" {
       nativeBuildInputs = [pkgs.imagemagick];
     } ''
-      magick ${imgPath}
-        -resize x${toString targetHeight}
-        -background '${config.lib.stylix.colors.withHashtag.base05}'
-        -gravity center
-        -extent ${toString screenWidth}x${toString screenHeight}
+      magick ${imgPath} \
+        -resize x${toString targetHeight} \
+        -background '${config.lib.stylix.colors.withHashtag.base05}' \
+        -gravity center \
+        -extent ${toString screenWidth}x${toString screenHeight} \
         $out
     '';
 in {
