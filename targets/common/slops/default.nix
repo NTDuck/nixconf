@@ -1,7 +1,7 @@
 {...}: {
   imports = [
     ./ollama.nix
-    ./ralph-tui.nix
+    ./llm-agents.nix
     # install paperclip too!
   ];
 }
