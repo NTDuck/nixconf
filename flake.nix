@@ -36,12 +36,10 @@
 
     # Rust
     rust-overlay.url = "github:oxalica/rust-overlay";
-    rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+    rust-overlay.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
-    llm-agents = {
-      url = "github:numtide/llm-agents.nix";
-      # inputs.nixpkgs.follows = "nixpkgs";
-    };
+    llm-agents.url = "github:numtide/llm-agents.nix";
+    llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
   };
 
   outputs = inputs @ {
