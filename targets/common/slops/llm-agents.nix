@@ -8,5 +8,6 @@
     inputs.llm-agents.packages.${pkgs.system}.antigravity
     inputs.llm-agents.packages.${pkgs.system}.codex
     inputs.llm-agents.packages.${pkgs.system}.ralph-tui
+    pkgs.unstable.gemini-cli
   ];
 }
