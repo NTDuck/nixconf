@@ -8,4 +8,4 @@ result-*
 # Ignore agenix root composition
 secrets/secrets.nix
 
-.antigravitycli
+.antigravitycli/
