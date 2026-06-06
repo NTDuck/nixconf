@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "nix-dendritic": {
+      "source": "mattstruble/skills",
+      "sourceType": "github",
+      "skillPath": "nix-dendritic/SKILL.md",
+      "computedHash": "e590bfb5879a5d66d42cfa211ba4a78645052fec89edf5f5291fe47a76dab920"
+    }
+  }
+}

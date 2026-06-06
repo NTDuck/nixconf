@@ -1,1 +1,0 @@
-# Migration Plan\n1. Move targets/common to _/modules/nixos/common\n2. Move users/common to _/modules/home/common\n3. Move users/ayin to _/modules/home/ayin\n4. Move targets/* to _/modules/hosts\n5. Rewrite all migrated files to the dendritic pattern.

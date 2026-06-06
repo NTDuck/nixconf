@@ -1,0 +1,17 @@
+{ inputs, pkgs, config, lib, ... }:
+{
+  flake.modules.homeManager.git = {
+
+  programs.git = {
+    enable = true;
+    package = pkgs.unstable.git;
+
+    settings = {
+      alias = {
+        nccommit = "commit -a --allow-empty-message -m ''"; # https://trunk.io/blog/git-commit-messages-are-useless
+      };
+    };
+  };
+
+  };
+}
