@@ -1,17 +1,13 @@
 {
-  inputs,
-  config,
-  ...
-}: let
-  username = config.this.username;
-  hostname = config.this.hostname;
-in {
   flake.modules.homeManager.zathura = {
     pkgs,
     config,
     lib,
     ...
-  }: {
+  }: let
+    username = config.this.username;
+    hostname = config.this.hostname;
+  in {
     programs.zathura = {
       enable = true;
       package = pkgs.unstable.zathura;

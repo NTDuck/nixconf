@@ -1,10 +1,12 @@
-{inputs, ...}: {
-  flake.nixosConfigurations."dell-latitude-E7270-H836QF2" = inputs.nixpkgs.lib.nixosSystem {
-    system = "x86_64-linux";
-    specialArgs = {
-      inherit inputs;
-    };
-    modules = [
+{
+  flake.modules.nixos.hosts-dell-latitude-E7270-H836QF2 = {
+    inputs,
+    config,
+    pkgs,
+    ...
+  }: {
+    nixpkgs.hostPlatform = "x86_64-linux";
+    imports = [
       inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-battery
       inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-drivers
       inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-hardware

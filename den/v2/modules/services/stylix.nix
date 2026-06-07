@@ -1,4 +1,4 @@
-{inputs, ...}: {
+{
   flake.modules.nixos.stylix = {
     pkgs,
     config,

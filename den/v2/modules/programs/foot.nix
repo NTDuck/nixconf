@@ -1,17 +1,13 @@
 {
-  inputs,
-  config,
-  ...
-}: let
-  username = config.this.username;
-  hostname = config.this.hostname;
-in {
   flake.modules.homeManager.foot = {
     pkgs,
     config,
     lib,
     ...
-  }: {
+  }: let
+    username = config.this.username;
+    hostname = config.this.hostname;
+  in {
     programs.foot = {
       enable = true;
       # package = pkgs.unstable.foot;

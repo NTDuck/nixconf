@@ -1,17 +1,13 @@
 {
-  inputs,
-  config,
-  ...
-}: let
-  username = config.this.username;
-  hostname = config.this.hostname;
-in {
   flake.modules.homeManager.git = {
     pkgs,
     config,
     lib,
     ...
-  }: {
+  }: let
+    username = config.this.username;
+    hostname = config.this.hostname;
+  in {
     programs.git = {
       enable = true;
       package = pkgs.unstable.git;

@@ -1,8 +1,4 @@
 {
-  inputs,
-  config,
-  ...
-}: {
   flake.modules.nixos.cachyos-kernel = {
     pkgs,
     config,

@@ -1,12 +1,4 @@
 {
-  inputs,
-  config,
-  ...
-}: let
-  username = config.this.username;
-  hostname = config.this.hostname;
-  modifier = "Mod4";
-in {
   flake.modules.nixos.sway = {
     pkgs,
     config,
@@ -27,7 +19,9 @@ in {
     config,
     lib,
     ...
-  }: {
+  }: let
+    modifier = "Mod4";
+  in {
     wayland.windowManager.sway = {
       enable = true;
       package = pkgs.sway;

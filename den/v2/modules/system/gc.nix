@@ -1,17 +1,13 @@
 {
-  inputs,
-  config,
-  ...
-}: let
-  username = config.this.username;
-  hostname = config.this.hostname;
-in {
   flake.modules.nixos.gc = {
     pkgs,
     config,
     lib,
     ...
-  }: {
+  }: let
+    username = config.this.username;
+    hostname = config.this.hostname;
+  in {
     nix.gc = {
       automatic = true;
       dates = "daily";

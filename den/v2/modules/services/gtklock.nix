@@ -1,4 +1,4 @@
-{inputs, ...}: {
+{
   flake.modules.nixos.gtklock = {
     config,
     lib,

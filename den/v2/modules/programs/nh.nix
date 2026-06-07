@@ -1,8 +1,4 @@
 {
-  inputs,
-  config,
-  ...
-}: {
   flake.modules.nixos.nh = {pkgs, ...}: {
     programs.nh = {
       enable = true;

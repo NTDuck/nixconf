@@ -1,4 +1,4 @@
-{lib, ...}: {
+{
   flake.modules.nixos.this = {
     options.this = {
       hostname = lib.mkOption {

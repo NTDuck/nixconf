@@ -1,10 +1,12 @@
-{inputs, ...}: {
-  flake.nixosConfigurations."lenovo-legion-pro-16-iah7h" = inputs.nixpkgs.lib.nixosSystem {
-    system = "x86_64-linux";
-    specialArgs = {
-      inherit inputs;
-    };
-    modules = [
+{
+  flake.modules.nixos.hosts-lenovo-legion-pro-16-iah7h = {
+    inputs,
+    config,
+    pkgs,
+    ...
+  }: {
+    nixpkgs.hostPlatform = "x86_64-linux";
+    imports = [
       ./hardware.nix
 
       (
