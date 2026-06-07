@@ -4,13 +4,10 @@
     extra-substituters = [
       "https://attic.xuyh0120.win/lantian"
       "https://cache.garnix.io"
-      "https://nyx.chaotic.cx"
     ];
     extra-trusted-public-keys = [
       "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
-      "nyx.chaotic.cx-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="
-      "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="
     ];
   };
 
@@ -29,7 +26,16 @@
     stylix.inputs.nixpkgs.follows = "nixpkgs";
 
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
-    lix-module.url = "https://git.lix.systems/lix-project/nixos-module/archive/main.tar.gz";
+    
+    lix = {
+      url = "https://git.lix.systems/lix-project/lix/archive/main.tar.gz";
+      flake = false;
+    };
+    lix-module = {
+      url = "https://git.lix.systems/lix-project/nixos-module/archive/main.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.lix.follows = "lix";
+    };
 
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";

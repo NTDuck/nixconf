@@ -20,7 +20,6 @@
                 system = pkgs.system;
                 config.allowUnfree = true;
               };
-              mdbook-linkcheck = prev.mdbook-linkcheck2;
             })
           ];
         }
