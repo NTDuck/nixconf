@@ -17,9 +17,16 @@
           sqlite
         ];
     };
+    zalo-desktop = pkgs.makeDesktopItem {
+      name = "zalo";
+      desktopName = "Zalo";
+      exec = "zalo";
+      categories = ["Network" "InstantMessaging"];
+    };
   in {
     home.packages = [
       zalo
+      zalo-desktop
     ];
   };
 }

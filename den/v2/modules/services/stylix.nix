@@ -78,11 +78,11 @@
       enable = true;
 
       polarity = "dark";
-      base16Scheme = "''${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
+      base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
 
       image = pad {
         imgPath = posterize {
-          imgPath = "''${self}/assets/wallpapers/shifting-tides.jpg";
+          imgPath = "${self}/assets/wallpapers/shifting-tides.jpg";
           intensity = 0.75;
         };
         heightRatio = 0.80;

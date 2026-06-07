@@ -55,14 +55,8 @@
 
       {this.hostname = "dell-latitude-E7270-H836QF2";}
 
-      inputs.home-manager.nixosModules.home-manager
+      inputs.self.modules.nixos.this-home-manager
       {
-        home-manager.useGlobalPkgs = true;
-        home-manager.useUserPackages = true;
-        home-manager.backupFileExtension = "backup";
-        home-manager.extraSpecialArgs = {
-          inherit inputs;
-        };
         home-manager.users.ayin = {
           imports = [
             inputs.self.modules.homeManager.agenix
