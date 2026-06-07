@@ -1,9 +1,13 @@
-{ inputs, pkgs, config, lib, ... }:
-{
+{inputs, ...}: {
   flake.modules.nixos.cachyos-kernel = {
-
-  nixpkgs.overlays = [inputs.cachyos-kernel.overlays.pinned];
-  boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
-
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
+    nixpkgs.overlays = [inputs.cachyos-kernel.overlays.pinned];
+    boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
   };
 }

@@ -1,10 +1,4 @@
-{ inputs, pkgs, config, lib, ... }:
-{
-  flake.modules.homeManager.zalo = {
-
-  home.packages = [
-    zalo
-  ];
-
-  };
+{inputs, ...}: {
+  flake.modules.homeManager.zalo = {pkgs, ...}:
+    import ../../../../users/common/zalo.nix {inherit pkgs;};
 }

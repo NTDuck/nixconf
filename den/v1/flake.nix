@@ -17,7 +17,7 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
-    import-tree.url = "github:numtide/import-tree";
+    import-tree.url = "github:vic/import-tree";
 
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -42,14 +42,13 @@
     llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
   };
 
-  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-    systems = [ "x86_64-linux" "aarch64-linux" ];
-    
-    imports = [
-      inputs.import-tree.flakeModule
-    ];
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} {
+      systems = ["x86_64-linux" "aarch64-linux"];
 
-    # import-tree recursively imports everything in modules/
-    importTree.modules = ./modules;
-  };
+      imports = [
+        inputs.flake-parts.flakeModules.modules
+        (inputs.import-tree ./modules)
+      ];
+    };
 }

@@ -1,10 +1,14 @@
-{ inputs, pkgs, config, lib, ... }:
-{
+{inputs, ...}: {
   flake.modules.homeManager.termusic = {
-
-  home.packages = [
-    pkgs.unstable.termusic
-  ];
-
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
+    home.packages = [
+      pkgs.unstable.termusic
+    ];
   };
 }

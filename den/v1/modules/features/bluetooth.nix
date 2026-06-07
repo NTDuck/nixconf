@@ -1,17 +1,21 @@
-{ inputs, pkgs, config, lib, ... }:
-{
+{inputs, ...}: {
   flake.modules.nixos.bluetooth = {
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
+    hardware.bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+    };
 
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-  };
+    services.blueman.enable = false;
 
-  services.blueman.enable = false;
-
-  environment.systemPackages = [
-    pkgs.bluetui
-  ];
-
+    environment.systemPackages = [
+      pkgs.bluetui
+    ];
   };
 }

@@ -1,73 +1,77 @@
-{ inputs, pkgs, config, lib, ... }:
-{
+{inputs, ...}: {
   flake.modules.nixos.waydroid = {
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
+    virtualisation.waydroid.enable = true;
 
-  virtualisation.waydroid.enable = true;
-
-  environment.systemPackages = [
-    pkgs.waydroid
-  ];
-
-  # This service runs automatically on system rebuilds and boots.
-  # The `if` condition ensures it only executes the heavy lifting if Waydroid isn't set up.
-  systemd.services.waydroid-auto-init = {
-    description = "Auto-initialize Waydroid with GAPPS and libndk";
-    wantedBy = ["multi-user.target"];
-    after = ["network-online.target"];
-    wants = ["network-online.target"];
-
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-
-    # Provide all the necessary dependencies directly to the script
-    path = with pkgs; [
-      waydroid
-      python3
-      git
-      lzip
-      squashfsTools
-      coreutils
-      bash
+    environment.systemPackages = [
+      pkgs.waydroid
     ];
 
-    script = ''
-      IMAGE_DIR="/var/lib/waydroid/images"
+    # This service runs automatically on system rebuilds and boots.
+    # The `if` condition ensures it only executes the heavy lifting if Waydroid isn't set up.
+    systemd.services.waydroid-auto-init = {
+      description = "Auto-initialize Waydroid with GAPPS and libndk";
+      wantedBy = ["multi-user.target"];
+      after = ["network-online.target"];
+      wants = ["network-online.target"];
 
-      # Check if the system image exists
-      if [ ! -f "$IMAGE_DIR/system.img" ]; then
-        echo "Waydroid not initialized. Starting GAPPS initialization..."
-        waydroid init -s GAPPS
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
 
-        echo "GAPPS initialized. Preparing to inject libndk..."
+      # Provide all the necessary dependencies directly to the script
+      path = with pkgs; [
+        waydroid
+        python3
+        git
+        lzip
+        squashfsTools
+        coreutils
+        bash
+      ];
 
-        # Create a temporary workspace for the casualsnek script
-        TMP_DIR=$(mktemp -d)
-        cd "$TMP_DIR"
+      script = ''
+        IMAGE_DIR="/var/lib/waydroid/images"
 
-        # Clone the Waydroid script
-        git clone https://github.com/casualsnek/waydroid_script.git
-        cd waydroid_script
+        # Check if the system image exists
+        if [ ! -f "$IMAGE_DIR/system.img" ]; then
+          echo "Waydroid not initialized. Starting GAPPS initialization..."
+          waydroid init -s GAPPS
 
-        # Setup an isolated Python virtual environment and install dependencies
-        python3 -m venv venv
-        source venv/bin/activate
-        pip install -r requirements.txt
+          echo "GAPPS initialized. Preparing to inject libndk..."
 
-        # Run the injection script
-        python3 main.py install libndk
+          # Create a temporary workspace for the casualsnek script
+          TMP_DIR=$(mktemp -d)
+          cd "$TMP_DIR"
 
-        # Cleanup
-        cd /
-        rm -rf "$TMP_DIR"
+          # Clone the Waydroid script
+          git clone https://github.com/casualsnek/waydroid_script.git
+          cd waydroid_script
 
-        echo "Waydroid initialization and libndk injection complete."
-      else
-        echo "Waydroid is already initialized. Skipping script."
-      fi
-    '';
-  };
+          # Setup an isolated Python virtual environment and install dependencies
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
 
+          # Run the injection script
+          python3 main.py install libndk
+
+          # Cleanup
+          cd /
+          rm -rf "$TMP_DIR"
+
+          echo "Waydroid initialization and libndk injection complete."
+        else
+          echo "Waydroid is already initialized. Skipping script."
+        fi
+      '';
+    };
   };
 }

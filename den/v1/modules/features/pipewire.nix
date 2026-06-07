@@ -1,17 +1,21 @@
-{ inputs, pkgs, config, lib, ... }:
-{
+{inputs, ...}: {
   flake.modules.nixos.pipewire = {
-
-  services.pipewire = {
-    enable = true;
-    alsa = {
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
+    services.pipewire = {
       enable = true;
-      support32Bit = true;
+      alsa = {
+        enable = true;
+        support32Bit = true;
+      };
+      pulse.enable = true;
     };
-    pulse.enable = true;
-  };
 
-  services.pulseaudio.enable = false;
-
+    services.pulseaudio.enable = false;
   };
 }

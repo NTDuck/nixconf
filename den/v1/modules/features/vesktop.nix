@@ -1,11 +1,15 @@
-{ inputs, pkgs, config, lib, ... }:
-{
+{inputs, ...}: {
   flake.modules.homeManager.vesktop = {
-
-  programs.vesktop = {
-    enable = true;
-    package = pkgs.unstable.vesktop;
-  };
-
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
+    programs.vesktop = {
+      enable = true;
+      package = pkgs.unstable.vesktop;
+    };
   };
 }

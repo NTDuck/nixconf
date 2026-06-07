@@ -1,10 +1,14 @@
-{ inputs, pkgs, config, lib, ... }:
-{
+{inputs, ...}: {
   flake.modules.homeManager.cava = {
-
-  home.packages = [
-    pkgs.unstable.cava
-  ];
-
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
+    home.packages = [
+      pkgs.unstable.cava
+    ];
   };
 }

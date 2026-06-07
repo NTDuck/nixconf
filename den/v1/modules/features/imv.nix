@@ -1,11 +1,15 @@
-{ inputs, pkgs, config, lib, ... }:
-{
+{inputs, ...}: {
   flake.modules.homeManager.imv = {
-
-  programs.imv = {
-    enable = true;
-    package = pkgs.unstable.imv;
-  };
-
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
+    programs.imv = {
+      enable = true;
+      package = pkgs.unstable.imv;
+    };
   };
 }

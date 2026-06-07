@@ -1,11 +1,4 @@
-{ inputs, pkgs, config, lib, ... }:
-{
-  flake.modules.nixos.aalc = {
-
-  environment.systemPackages = [
-    aalc
-    desktopItem
-  ];
-
-  };
+{inputs, ...}: {
+  flake.modules.nixos.aalc = {pkgs, ...}:
+    import ../../../../targets/common/aalc.nix {inherit pkgs;};
 }

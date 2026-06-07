@@ -1,8 +1,12 @@
-{ inputs, pkgs, config, lib, ... }:
-{
+{inputs, ...}: {
   flake.modules.nixos.cloudflare-warp = {
-
-  services.cloudflare-warp.enable = true;
-
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
+    services.cloudflare-warp.enable = true;
   };
 }

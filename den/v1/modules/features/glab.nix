@@ -1,14 +1,18 @@
-{ inputs, pkgs, config, lib, ... }:
-{
+{inputs, ...}: {
   flake.modules.homeManager.glab = {
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
+    home.packages = [
+      pkgs.unstable.glab
+    ];
 
-  home.packages = [
-    pkgs.unstable.glab
-  ];
-
-  programs.git.settings = {
-    credential."https://gitlab.com".helper = "!${pkgs.unstable.glab}/bin/glab auth git-credential";
-  };
-
+    programs.git.settings = {
+      credential."https://gitlab.com".helper = "!${pkgs.unstable.glab}/bin/glab auth git-credential";
+    };
   };
 }

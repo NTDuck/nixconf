@@ -1,10 +1,14 @@
-{ inputs, pkgs, config, lib, ... }:
-{
+{inputs, ...}: {
   flake.modules.nixos.alejandra = {
-
-  environment.systemPackages = [
-    inputs.alejandra.defaultPackage.${system}
-  ];
-
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
+    environment.systemPackages = [
+      pkgs.alejandra
+    ];
   };
 }

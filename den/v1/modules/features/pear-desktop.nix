@@ -1,10 +1,14 @@
-{ inputs, pkgs, config, lib, ... }:
-{
+{inputs, ...}: {
   flake.modules.homeManager.pear-desktop = {
-
-  home.packages = [
-    pkgs.unstable.pear-desktop
-  ];
-
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
+    home.packages = [
+      pkgs.unstable.pear-desktop
+    ];
   };
 }

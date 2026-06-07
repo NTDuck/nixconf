@@ -1,8 +1,14 @@
-{ inputs, pkgs, ... }:
-let
+{inputs, ...}: let
   modifier = "Mod4";
 in {
   flake.modules.nixos.sway = {
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
     programs.sway.enable = true;
     security.polkit.enable = true;
     services.gnome.gnome-keyring.enable = true;
@@ -13,24 +19,40 @@ in {
   };
 
   flake.modules.homeManager.sway = {
+    pkgs,
+    config,
+    lib,
+    username ? "ayin",
+    hostname ? "default",
+    ...
+  }: {
     wayland.windowManager.sway = {
       enable = true;
       package = pkgs.sway;
       systemd.enable = true;
       xwayland = true;
       wrapperFeatures.gtk = true;
-      
+
       config = {
         inherit modifier;
-        
+
         terminal = "${pkgs.foot}/bin/footclient";
         menu = "${pkgs.tofi}/bin/tofi-drun --drun-launch=true";
-        bars = [ { command = "${pkgs.waybar}/bin/waybar"; } ];
-        
+        bars = [{command = "${pkgs.waybar}/bin/waybar";}];
+
         startup = [
-          { command = "fcitx5 -d -r"; always = true; }
-          { command = "${pkgs.autotiling-rs}/bin/autotiling-rs"; always = true; }
-          { command = "dbus-update-activation-environment --systemd --all; systemctl --user import-environment"; always = true; }
+          {
+            command = "fcitx5 -d -r";
+            always = true;
+          }
+          {
+            command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
+            always = true;
+          }
+          {
+            command = "dbus-update-activation-environment --systemd --all; systemctl --user import-environment";
+            always = true;
+          }
         ];
 
         keybindings = {
@@ -123,8 +145,14 @@ in {
       enable = true;
       package = pkgs.swayidle;
       events = [
-        { event = "before-sleep"; command = "${pkgs.gtklock}/bin/gtklock"; }
-        { event = "after-resume"; command = "swaymsg 'output * dpms on'"; }
+        {
+          event = "before-sleep";
+          command = "${pkgs.gtklock}/bin/gtklock";
+        }
+        {
+          event = "after-resume";
+          command = "swaymsg 'output * dpms on'";
+        }
       ];
     };
 

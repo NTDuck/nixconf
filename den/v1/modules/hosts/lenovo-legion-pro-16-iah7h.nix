@@ -1,4 +1,4 @@
-{ inputs, ... }: {
+{inputs, ...}: {
   flake.nixosConfigurations."lenovo-legion-pro-16-iah7h" = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     specialArgs = {
@@ -10,14 +10,14 @@
       ./lenovo-legion-pro-16-iah7h/hardware.nix
 
       (
-        { system, ... }: {
+        {pkgs, ...}: {
           nixpkgs.config.allowUnfree = true;
           nixpkgs.overlays = [
             inputs.nur.overlays.default
             inputs.rust-overlay.overlays.default
             (final: prev: {
               unstable = import inputs.nixpkgs-unstable {
-                inherit system;
+                system = pkgs.system;
                 config.allowUnfree = true;
               };
             })

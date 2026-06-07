@@ -1,4 +1,4 @@
-{ inputs, ... }: {
+{inputs, ...}: {
   flake.nixosConfigurations."dell-latitude-E7270-H836QF2" = inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     specialArgs = {
@@ -7,19 +7,19 @@
       username = "ayin";
     };
     modules = [
-      ./dell-latitude-E7270-H836QF2/battery.nix
-      ./dell-latitude-E7270-H836QF2/drivers.nix
-      ./dell-latitude-E7270-H836QF2/hardware.nix
+      ./_dell-latitude-E7270-H836QF2/battery.nix
+      ./_dell-latitude-E7270-H836QF2/drivers.nix
+      ./_dell-latitude-E7270-H836QF2/hardware.nix
 
       (
-        { system, ... }: {
+        {pkgs, ...}: {
           nixpkgs.config.allowUnfree = true;
           nixpkgs.overlays = [
             inputs.nur.overlays.default
             inputs.rust-overlay.overlays.default
             (final: prev: {
               unstable = import inputs.nixpkgs-unstable {
-                inherit system;
+                system = pkgs.system;
                 config.allowUnfree = true;
               };
             })
