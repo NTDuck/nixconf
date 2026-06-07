@@ -1,4 +1,4 @@
 {
   stylix.autoEnable = false;
-  imports = [ ./catppuccin.nix ./waybar.nix ];
+  imports = [./catppuccin.nix ./waybar.nix];
 }

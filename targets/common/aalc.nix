@@ -17,39 +17,39 @@
     installPhase = ''
             mkdir -p $out/opt/aalc
             cp -r * $out/opt/aalc/
-            
+
             # FIX: Fix the typo in the source code itself so it uses the correct default path.
             # We use find to locate the file as the directory structure in the 7z can vary.
             find $out/opt/aalc -name "config_typing.py" -exec sed -i 's|Program Files (x86\\Steam|Program Files (x86)\\Steam|g' {} +
-            
+
             mkdir -p $out/bin
 
             cat > $out/bin/aalc <<'EOF'
       #!/bin/sh
       APP_DIR="$HOME/.local/share/aalc"
       RUNNER_DIR="$APP_DIR/runner"
-      
+
       # THE CRITICAL FIX: To see the Limbus Company window, AALC MUST share the same Wine prefix and wineserver as the game.
       # Limbus Company AppID: 1973530
       STEAM_PREFIX="$HOME/.local/share/Steam/steamapps/compatdata/1973530/pfx"
-      
+
       # Attempt to detect running game environment
       # We filter out 'reaper' and 'steam-launch' to find the actual game process
       GAME_PID=$(pgrep -f "LimbusCompany.exe" | grep -v "reaper" | grep -v "steam-launch" | head -n 1)
       if [ -n "$GAME_PID" ]; then
         echo "Found Limbus Company process ($GAME_PID). Syncing environment..."
-        
+
         # 1. Sync WINEPREFIX
         DETECTED_PREFIX=$(grep -zP "^WINEPREFIX=" /proc/$GAME_PID/environ | tr -d '\0' | cut -d= -f2-)
         [ -n "$DETECTED_PREFIX" ] && export WINEPREFIX="$DETECTED_PREFIX" || export WINEPREFIX="$STEAM_PREFIX"
-        
+
         # 2. Sync DISPLAY and XAUTHORITY
         GAME_DISPLAY=$(grep -zP "^DISPLAY=" /proc/$GAME_PID/environ | tr -d '\0' | cut -d= -f2-)
         [ -n "$GAME_DISPLAY" ] && export DISPLAY="$GAME_DISPLAY"
-        
+
         GAME_XAUTH=$(grep -zP "^XAUTHORITY=" /proc/$GAME_PID/environ | tr -d '\0' | cut -d= -f2-)
         [ -n "$GAME_XAUTH" ] && export XAUTHORITY="$GAME_XAUTH"
-        
+
         # 3. Sync Wine Binary
         GAME_EXE=$(readlink -f /proc/$GAME_PID/exe)
         case "$(basename "$GAME_EXE")" in
@@ -63,12 +63,12 @@
             unset WINE
             ;;
         esac
-        
+
         # 4. Sync Game Path
         REAL_GAME_DIR=$(readlink -f /proc/$GAME_PID/cwd)
         # Handle the case where cwd is 'Limbus Company/LimbusCompany_Data'
         REAL_GAME_DIR=$(echo "$REAL_GAME_DIR" | sed 's|/LimbusCompany_Data$||')
-        
+
         export STEAM_COMPAT_CLIENT_INSTALL_PATH="$HOME/.local/share/Steam"
       else
         export WINEPREFIX="$STEAM_PREFIX"
@@ -121,7 +121,7 @@
         mkdir -p "$(dirname "$GAME_FAKE_PATH")"
         rm -rf "$GAME_FAKE_PATH" # Prevent nesting
         ln -sfn "$REAL_GAME_DIR" "$GAME_FAKE_PATH"
-        
+
         # 2. Typoed path
         GAME_TYPO_PATH="$WINEPREFIX/drive_c/Program Files (x86\Steam/steamapps/common/Limbus Company"
         mkdir -p "$(dirname "$GAME_TYPO_PATH")"
