@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.this = {
+  flake.modules.nixos.this = { lib, ... }: {
     options.this = {
       hostname = lib.mkOption {
         type = lib.types.str;
@@ -11,7 +11,7 @@
       };
     };
   };
-  flake.modules.homeManager.this = {
+  flake.modules.homeManager.this = { lib, ... }: {
     options.this = {
       hostname = lib.mkOption {
         type = lib.types.str;

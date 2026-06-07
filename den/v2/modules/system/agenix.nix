@@ -3,7 +3,7 @@
     pkgs,
     config,
     lib,
-    ...
+    inputs, ...
   }: let
     username = config.this.username;
     hostname = config.this.hostname;
@@ -28,6 +28,7 @@
     pkgs,
     config,
     lib,
+    inputs,
     ...
   }: {
     imports = [
