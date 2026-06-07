@@ -9,7 +9,7 @@
     hostname = config.this.hostname;
   in {
     nix.gc = {
-      automatic = true;
+      automatic = false;
       dates = "daily";
       options = "--delete-older-than 4d";
     };

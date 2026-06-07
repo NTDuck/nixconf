@@ -18,13 +18,14 @@
       outputs = self.outputs;
     };
   in
-    config.flake.modules.nixos
-    |> lib.filterAttrs (name: _: lib.hasPrefix hostModulePrefix name)
-    |> lib.mapAttrs' (name: module: {
-      name = lib.removePrefix hostModulePrefix name;
-      value = inputs.nixpkgs.lib.nixosSystem {
-        inherit specialArgs;
-        modules = [module];
-      };
-    });
+    lib.pipe config.flake.modules.nixos [
+      (lib.filterAttrs (name: _: lib.hasPrefix hostModulePrefix name))
+      (lib.mapAttrs' (name: module: {
+        name = lib.removePrefix hostModulePrefix name;
+        value = inputs.nixpkgs.lib.nixosSystem {
+          inherit specialArgs;
+          modules = [module];
+        };
+      }))
+    ];
 }

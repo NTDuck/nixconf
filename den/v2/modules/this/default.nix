@@ -58,6 +58,8 @@
 
       nix.settings.trusted-users = [config.this.username];
       nix.settings.experimental-features = [ "nix-command" "flakes" ];
+      nix.settings.substituters = [ "https://cache.nixos.org/" "https://cache.lix.systems" ];
+      nix.settings.trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o=" ];
 
       security.sudo.extraConfig = ''
         Defaults timestamp_timeout=-1

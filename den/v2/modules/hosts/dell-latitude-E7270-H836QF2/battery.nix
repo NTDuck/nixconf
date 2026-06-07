@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  flake.modules.nixos.dell-latitude-E7270-H836QF2-battery = {
+  flake.modules.nixos.dell-latitude-E7270-H836QF2-battery = { lib, ... }: {
     services.tlp = {
       enable = true;
       settings = {
@@ -9,10 +9,10 @@
         CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
         CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
 
-        CPU_MIN_PERF_ON_AC = 0;
-        CPU_MAX_PERF_ON_AC = 100;
-        CPU_MIN_PERF_ON_BAT = 0;
-        CPU_MAX_PERF_ON_BAT = 20;
+        CPU_MIN_PERF_ON_AC = lib.mkForce 0;
+        CPU_MAX_PERF_ON_AC = lib.mkForce 100;
+        CPU_MIN_PERF_ON_BAT = lib.mkForce 0;
+        CPU_MAX_PERF_ON_BAT = lib.mkForce 20;
 
         START_CHARGE_THRESH_BAT0 = 40; # 40 and bellow it starts to charge
         STOP_CHARGE_THRESH_BAT0 = 80; # 80 and above it stops charging
