@@ -49,7 +49,6 @@
 
       inputs.self.modules.nixos.llm-agents
       inputs.self.modules.nixos.ollama
-      inputs.self.modules.nixos.catppuccin
 
       {this.hostname = "lenovo-legion-pro-16-iah7h";}
 

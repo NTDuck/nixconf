@@ -54,7 +54,6 @@
 
       inputs.self.modules.nixos.llm-agents
       inputs.self.modules.nixos.ollama
-      inputs.self.modules.nixos.catppuccin
 
       {this.hostname = "dell-latitude-E7270-H836QF2";}
 

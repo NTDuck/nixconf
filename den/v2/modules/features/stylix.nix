@@ -79,7 +79,7 @@
       enable = true;
 
       polarity = "dark";
-      base16Scheme = "${pkgs.unstable.base16-schemes}/share/themes/charcoal-dark.yaml";
+      base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
 
       image = pad {
         imgPath = posterize {
