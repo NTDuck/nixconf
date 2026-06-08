@@ -5,7 +5,7 @@
       "https://attic.xuyh0120.win/lantian"
       "https://cache.garnix.io"
       "https://cache.lix.systems"
-      "https://nyx.chaotic.cx"
+      "https://chaotic-nyx.cachix.org"
     ];
     extra-trusted-public-keys = [
       "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
