@@ -84,6 +84,7 @@
             inputs.self.modules.homeManager.yazi
             inputs.self.modules.homeManager.zathura
             inputs.self.modules.homeManager.zed-editor
+            inputs.self.modules.homeManager.zsh
           ];
 
           programs.git.settings.user.name = "NTDuck";
