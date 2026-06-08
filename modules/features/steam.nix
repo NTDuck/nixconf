@@ -1,8 +1,5 @@
 {
-  flake.modules.nixos.steam = {config, ...}: let
-    username = config.this.username;
-    hostname = config.this.hostname;
-  in {
+  flake.modules.nixos.steam = {config, ...}: {
     programs.steam = {
       enable = true;
       remotePlay.openFirewall = true;

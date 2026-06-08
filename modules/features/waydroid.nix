@@ -1,13 +1,9 @@
 {
   flake.modules.nixos.waydroid = {
     pkgs,
-    config,
     lib,
     ...
-  }: let
-    username = config.this.username;
-    hostname = config.this.hostname;
-  in {
+  }: {
     virtualisation.waydroid.enable = true;
 
     environment.systemPackages = [

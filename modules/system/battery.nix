@@ -1,8 +1,5 @@
 {
-  flake.modules.nixos.battery = {config, ...}: let
-    username = config.this.username;
-    hostname = config.this.hostname;
-  in {
+  flake.modules.nixos.battery = { ...}: {
     services.tlp = {
       enable = true;
       settings = {

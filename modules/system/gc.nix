@@ -1,12 +1,8 @@
 {
   flake.modules.nixos.gc = {
     pkgs,
-    config,
     ...
-  }: let
-    username = config.this.username;
-    hostname = config.this.hostname;
-  in {
+  }: {
     nix.gc = {
       automatic = false;
       dates = "daily";

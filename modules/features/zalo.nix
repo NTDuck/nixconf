@@ -1,5 +1,5 @@
 {
-  flake.modules.homeManager.zalo = {pkgs, ...}: let
+  flake.modules.nixos.zalo = {pkgs, ...}: let
     pname = "zalo";
     version = "26.4.10";
     src = pkgs.fetchurl {
@@ -20,7 +20,7 @@
       categories = ["Network" "InstantMessaging"];
     };
   in {
-    home.packages = [
+    environment.systemPackages = [
       zalo
       zalo-desktop
     ];

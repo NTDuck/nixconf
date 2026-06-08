@@ -1,8 +1,5 @@
 {
-  flake.modules.nixos.pipewire = {config, ...}: let
-    username = config.this.username;
-    hostname = config.this.hostname;
-  in {
+  flake.modules.nixos.pipewire = {...}: {
     services.pipewire = {
       enable = true;
       alsa = {

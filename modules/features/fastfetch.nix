@@ -1,12 +1,8 @@
 {
   flake.modules.homeManager.fastfetch = {
     pkgs,
-    config,
     ...
-  }: let
-    username = config.this.username;
-    hostname = config.this.hostname;
-  in {
+  }: {
     programs.fastfetch = {
       enable = true;
       package = pkgs.unstable.fastfetch;
@@ -140,7 +136,7 @@
       };
     };
 
-    programs.zsh.shellAliases = {
+    home.shellAliases = {
       ff = "fastfetch";
     };
   };

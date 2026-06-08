@@ -1,22 +1,20 @@
 {
+  flake.modules.nixos.taskwarrior = {pkgs, ... }: {
+    environment.systemPackages = [
+      pkgs.unstable.taskwarrior-tui
+    ];
+  };
+
   flake.modules.homeManager.taskwarrior = {
     pkgs,
-    config,
     ...
-  }: let
-    username = config.this.username;
-    hostname = config.this.hostname;
-  in {
+  }: {
     programs.taskwarrior = {
       enable = true;
       package = pkgs.unstable.taskwarrior3;
     };
 
-    home.packages = [
-      pkgs.unstable.taskwarrior-tui
-    ];
-
-    programs.zsh.shellAliases = {
+    home.shellAliases = {
       tt = "taskwarrior-tui";
     };
   };

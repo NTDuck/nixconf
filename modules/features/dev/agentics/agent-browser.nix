@@ -1,10 +1,10 @@
 {
-  flake.modules.nixos.pear-desktop = {
+  flake.modules.nixos.agent-browser = {
     pkgs,
     ...
   }: {
     environment.systemPackages = [
-      pkgs.unstable.pear-desktop
+      pkgs.unstable.agent-browser
     ];
   };
 }

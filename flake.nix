@@ -52,8 +52,8 @@
 
   outputs = inputs: let
     modules = lib.pipe inputs.import-tree [
-      (module: module.matchNot ".*/common/.*")
-      (module: module.matchNot ".*/shared/.*")
+      # (module: module.matchNot ".*/common/.*")
+      # (module: module.matchNot ".*/shared/.*")
       (module: module ./modules)
     ];
   in

@@ -1,12 +1,8 @@
 {
   flake.modules.homeManager.waybar = {
-    config,
     lib,
     ...
-  }: let
-    username = config.this.username;
-    hostname = config.this.hostname;
-  in {
+  }: {
     programs.waybar = {
       enable = true;
       settings = {

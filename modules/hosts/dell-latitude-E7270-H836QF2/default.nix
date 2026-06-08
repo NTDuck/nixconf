@@ -8,9 +8,9 @@
     nixpkgs.hostPlatform = "x86_64-linux";
     imports = [
       inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-battery
+      inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-bluetooth
       inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-drivers
       inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-hardware
-      inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-bluetooth
 
       (
         {pkgs, ...}: {
@@ -32,11 +32,16 @@
       inputs.self.modules.nixos.this-share-home
 
       inputs.self.modules.nixos.agenix
+      inputs.self.modules.nixos.agent-browser
       inputs.self.modules.nixos.alejandra
+      inputs.self.modules.nixos.antigravity-cli
+      inputs.self.modules.nixos.antigravity-usage
       inputs.self.modules.nixos.battery
       inputs.self.modules.nixos.bluetooth
+      inputs.self.modules.nixos.bluetuith
       inputs.self.modules.nixos.cachyos-kernel
       inputs.self.modules.nixos.cloudflare-warp
+      inputs.self.modules.nixos.dev-toolchains
       inputs.self.modules.nixos.fcitx5
       inputs.self.modules.nixos.gc
       inputs.self.modules.nixos.greetd
@@ -49,10 +54,7 @@
       inputs.self.modules.nixos.waydroid
       inputs.self.modules.nixos.zsh
       inputs.self.modules.nixos.lix
-      inputs.self.modules.nixos.speedtest
-
-      inputs.self.modules.nixos.llm-agents
-      inputs.self.modules.nixos.ollama
+      inputs.self.modules.nixos.speedtest-cli
 
       {this.hostname = "dell-latitude-E7270-H836QF2";}
 
@@ -61,9 +63,11 @@
         home-manager.users.ayin = {
           imports = [
             inputs.self.modules.homeManager.agenix
+            inputs.self.modules.homeManager.antigravity-usage
             inputs.self.modules.homeManager.cava
+            inputs.self.modules.homeManager.claude-code
             inputs.self.modules.homeManager.cliphist
-            inputs.self.modules.homeManager.dev-pkgs
+            inputs.self.modules.homeManager.codex
             inputs.self.modules.homeManager.fastfetch
             inputs.self.modules.homeManager.firefox
             inputs.self.modules.homeManager.foot
@@ -71,6 +75,7 @@
             inputs.self.modules.homeManager.glab
             inputs.self.modules.homeManager.git
             inputs.self.modules.homeManager.helix
+            inputs.self.modules.homeManager.iflow-cli
             inputs.self.modules.homeManager.imv
             inputs.self.modules.homeManager.kanshi
             inputs.self.modules.homeManager.mpv
@@ -85,10 +90,6 @@
             inputs.self.modules.homeManager.zalo
             inputs.self.modules.homeManager.zathura
             inputs.self.modules.homeManager.zed-editor
-            inputs.self.modules.homeManager.claude-code
-            inputs.self.modules.homeManager.cursor
-            inputs.self.modules.homeManager.kuzu
-            inputs.self.modules.homeManager.opencode
           ];
 
           programs.git.settings.user.name = "NTDuck";
