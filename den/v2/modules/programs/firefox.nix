@@ -2,7 +2,6 @@
   flake.modules.homeManager.firefox = {
     pkgs,
     config,
-    lib,
     ...
   }: let
     username = config.this.username;

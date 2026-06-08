@@ -1,4 +1,4 @@
-{inputs, ...}: {
+{...}: {
   flake.modules.nixos.dell-latitude-E7270-H836QF2-drivers = {config, ...}: {
     nixpkgs.config.allowUnfree = true;
     nixpkgs.config.permittedInsecurePackages = [config.boot.kernelPackages.broadcom_sta.name];

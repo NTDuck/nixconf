@@ -2,7 +2,6 @@
   flake.modules.homeManager.pear-desktop = {
     pkgs,
     config,
-    lib,
     ...
   }: let
     username = config.this.username;

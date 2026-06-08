@@ -78,7 +78,6 @@
             inputs.self.modules.homeManager.zalo
             inputs.self.modules.homeManager.zathura
             inputs.self.modules.homeManager.zed-editor
-
           ];
         };
       }

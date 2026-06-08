@@ -1,10 +1,5 @@
 {
-  flake.modules.nixos.steam = {
-    pkgs,
-    config,
-    lib,
-    ...
-  }: let
+  flake.modules.nixos.steam = {config, ...}: let
     username = config.this.username;
     hostname = config.this.hostname;
   in {

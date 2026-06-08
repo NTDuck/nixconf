@@ -1,10 +1,5 @@
 {
-  flake.modules.nixos.pipewire = {
-    pkgs,
-    config,
-    lib,
-    ...
-  }: let
+  flake.modules.nixos.pipewire = {config, ...}: let
     username = config.this.username;
     hostname = config.this.hostname;
   in {

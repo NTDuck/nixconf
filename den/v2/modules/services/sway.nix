@@ -2,7 +2,6 @@
   flake.modules.nixos.sway = {
     pkgs,
     config,
-    lib,
     ...
   }: {
     programs.sway.enable = true;
@@ -17,7 +16,6 @@
   flake.modules.homeManager.sway = {
     pkgs,
     config,
-    lib,
     ...
   }: let
     modifier = "Mod4";

@@ -52,7 +52,6 @@
       inputs.self.modules.nixos.lix
       inputs.self.modules.nixos.speedtest
 
-
       {this.hostname = "dell-latitude-E7270-H836QF2";}
 
       inputs.self.modules.nixos.this-home-manager
@@ -84,7 +83,6 @@
             inputs.self.modules.homeManager.zalo
             inputs.self.modules.homeManager.zathura
             inputs.self.modules.homeManager.zed-editor
-
           ];
         };
       }

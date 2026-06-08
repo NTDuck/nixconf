@@ -1,5 +1,10 @@
 {
-  flake.modules.nixos.this = { lib, config, pkgs, ... }: {
+  flake.modules.nixos.this = {
+    lib,
+    config,
+    pkgs,
+    ...
+  }: {
     options.this = {
       hostname = lib.mkOption {
         type = lib.types.str;
@@ -45,31 +50,35 @@
         LC_TIME = "vi_VN";
       };
 
-      hardware.firmware = [ pkgs.linux-firmware ];
+      hardware.firmware = [pkgs.linux-firmware];
       hardware.graphics.enable = true;
       hardware.enableRedistributableFirmware = lib.mkDefault true;
 
       users.users.${config.this.username} = {
         isNormalUser = true;
         description = config.this.username;
-        extraGroups = [ "networkmanager" "wheel" "adbusers" "kvm" ];
+        extraGroups = ["networkmanager" "wheel" "adbusers" "kvm"];
         packages = [];
       };
 
       nix.settings.trusted-users = [config.this.username];
-      nix.settings.experimental-features = [ "nix-command" "flakes" ];
-      nix.settings.substituters = [ "https://cache.nixos.org/" "https://cache.lix.systems" "https://chaotic-nyx.cachix.org" ];
-      nix.settings.trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o=" "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8=" ];
+      nix.settings.experimental-features = ["nix-command" "flakes"];
+      nix.settings.substituters = ["https://cache.nixos.org/" "https://cache.lix.systems" "https://chaotic-nyx.cachix.org"];
+      nix.settings.trusted-public-keys = ["cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o=" "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="];
 
       security.sudo.extraConfig = ''
         Defaults timestamp_timeout=-1
         Defaults timestamp_type=tty
       '';
 
-      environment.pathsToLink = [ "/share/applications" "/share/xdg-desktop-portal" ];
+      environment.pathsToLink = ["/share/applications" "/share/xdg-desktop-portal"];
     };
   };
-  flake.modules.homeManager.this = { lib, config, ... }: {
+  flake.modules.homeManager.this = {
+    lib,
+    config,
+    ...
+  }: {
     options.this = {
       hostname = lib.mkOption {
         type = lib.types.str;

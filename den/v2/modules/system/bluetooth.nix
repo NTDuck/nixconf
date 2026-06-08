@@ -2,7 +2,6 @@
   flake.modules.nixos.bluetooth = {
     pkgs,
     config,
-    lib,
     ...
   }: let
     username = config.this.username;

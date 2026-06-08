@@ -1,10 +1,5 @@
 {
-  flake.modules.nixos.battery = {
-    pkgs,
-    config,
-    lib,
-    ...
-  }: let
+  flake.modules.nixos.battery = {config, ...}: let
     username = config.this.username;
     hostname = config.this.hostname;
   in {

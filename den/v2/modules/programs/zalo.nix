@@ -1,9 +1,5 @@
 {
-  flake.modules.homeManager.zalo = {
-    pkgs,
-    config,
-    ...
-  }: let
+  flake.modules.homeManager.zalo = {pkgs, ...}: let
     pname = "zalo";
     version = "26.4.10";
     src = pkgs.fetchurl {

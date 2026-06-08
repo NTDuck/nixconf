@@ -2,8 +2,8 @@
   flake.modules.nixos.agenix = {
     pkgs,
     config,
-    lib,
-    inputs, ...
+    inputs,
+    ...
   }: let
     username = config.this.username;
     hostname = config.this.hostname;
@@ -24,13 +24,7 @@
       !include ${config.age.secrets."github-token".path}
     '';
   };
-  flake.modules.homeManager.agenix = {
-    pkgs,
-    config,
-    lib,
-    inputs,
-    ...
-  }: {
+  flake.modules.homeManager.agenix = {inputs, ...}: {
     imports = [
       inputs.agenix.homeManagerModules.default
     ];
