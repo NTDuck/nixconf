@@ -1,8 +1,5 @@
 {
-  flake.modules.homeManager.waybar = {
-    lib,
-    ...
-  }: {
+  flake.modules.homeManager.waybar = {lib, ...}: {
     programs.waybar = {
       enable = true;
       settings = {

@@ -1,8 +1,5 @@
 {
-  flake.modules.nixos.fcitx5 = {
-    pkgs,
-    ...
-  }: let
+  flake.modules.nixos.fcitx5 = {pkgs, ...}: let
   in {
     i18n.inputMethod = {
       enable = true;

@@ -1,8 +1,5 @@
 {
-  flake.modules.homeManager.claude-code = {
-    pkgs,
-    ...
-  }: {
+  flake.modules.homeManager.claude-code = {pkgs, ...}: {
     programs.claude-code = {
       enable = true;
       package = pkgs.unstable.claude-code;

@@ -1,8 +1,5 @@
 {
-  flake.modules.homeManager.kanshi = {
-    pkgs,
-    ...
-  }: {
+  flake.modules.homeManager.kanshi = {pkgs, ...}: {
     services.kanshi = {
       enable = true;
       systemdTarget = "sway-session.target";

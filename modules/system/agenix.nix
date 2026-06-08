@@ -20,7 +20,7 @@
       !include ${config.age.secrets."github-token".path}
     '';
   };
-  
+
   flake.modules.homeManager.agenix = {inputs, ...}: {
     imports = [
       inputs.agenix.homeManagerModules.default

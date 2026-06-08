@@ -1,7 +1,5 @@
 {
-  flake.modules.nixos.dev-toolchains = {
-    pkgs, ...
-  }: {
+  flake.modules.nixos.dev-toolchains = {pkgs, ...}: {
     environment.systemPackages = [
       pkgs.unstable.topiary
 

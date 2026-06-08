@@ -1,8 +1,5 @@
 {
-  flake.modules.homeManager.foot = {
-    pkgs,
-    ...
-  }: {
+  flake.modules.homeManager.foot = {pkgs, ...}: {
     programs.foot = {
       enable = true;
       # package = pkgs.unstable.foot;

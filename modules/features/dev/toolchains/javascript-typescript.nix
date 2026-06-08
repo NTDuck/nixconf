@@ -1,7 +1,5 @@
 {
-  flake.modules.nixos.dev-toolchains = {
-    pkgs, ...
-  }: {
+  flake.modules.nixos.dev-toolchains = {pkgs, ...}: {
     environment.systemPackages = [
       pkgs.unstable.deno
 
@@ -12,9 +10,7 @@
     ];
   };
 
-  flake.modules.homeManager.dev-toolchains = {
-    pkgs, ...
-  }: {
+  flake.modules.homeManager.dev-toolchains = {pkgs, ...}: {
     programs.bun = {
       enable = true;
       package = pkgs.unstable.bun;

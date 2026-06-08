@@ -1,7 +1,5 @@
 {
-  flake.modules.nixos.dev-toolchains = {
-    pkgs, ...
-  }: {
+  flake.modules.nixos.dev-toolchains = {pkgs, ...}: {
     environment.systemPackages = [
       pkgs.unstable.python3
       pkgs.unstable.python3Packages.pip
@@ -9,9 +7,7 @@
     ];
   };
 
-  flake.modules.homeManager.dev-toolchains = {
-    pkgs, ... 
-  }: {
+  flake.modules.homeManager.dev-toolchains = {pkgs, ...}: {
     programs.poetry = {
       enable = true;
       package = pkgs.unstable.poetry;

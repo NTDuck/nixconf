@@ -1,8 +1,5 @@
 {
-  flake.modules.nixos.gc = {
-    pkgs,
-    ...
-  }: {
+  flake.modules.nixos.gc = {pkgs, ...}: {
     nix.gc = {
       automatic = false;
       dates = "daily";

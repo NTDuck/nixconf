@@ -1,14 +1,11 @@
 {
-  flake.modules.nixos.taskwarrior = {pkgs, ... }: {
+  flake.modules.nixos.taskwarrior = {pkgs, ...}: {
     environment.systemPackages = [
       pkgs.unstable.taskwarrior-tui
     ];
   };
 
-  flake.modules.homeManager.taskwarrior = {
-    pkgs,
-    ...
-  }: {
+  flake.modules.homeManager.taskwarrior = {pkgs, ...}: {
     programs.taskwarrior = {
       enable = true;
       package = pkgs.unstable.taskwarrior3;

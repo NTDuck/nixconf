@@ -1,8 +1,5 @@
 {
-  flake.modules.homeManager.helix = {
-    pkgs,
-    ...
-  }: {
+  flake.modules.homeManager.helix = {pkgs, ...}: {
     programs.helix = {
       enable = true;
       package = pkgs.unstable.helix;

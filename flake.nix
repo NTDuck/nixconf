@@ -1,4 +1,6 @@
-{
+let
+  version = "26.05";
+in {
   nixConfig = {
     extra-substituters = [
       "https://attic.xuyh0120.win/lantian" # `xddxdd`'s CachyOS Kernel binary cache, Hydra CI
@@ -14,9 +16,7 @@
     ];
   };
 
-  inputs = let
-    version = "26.05";
-  in {
+  inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-${version}";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
