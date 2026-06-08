@@ -2,7 +2,6 @@
   flake.modules.nixos.fcitx5 = {
     pkgs,
     config,
-    lib,
     ...
   }: let
     username = config.this.username;

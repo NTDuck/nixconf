@@ -1,8 +1,7 @@
-{inputs, ...}: {
+{...}: {
   flake.modules.nixos.dell-latitude-E7270-H836QF2-hardware = {
     config,
     lib,
-    pkgs,
     modulesPath,
     ...
   }: {

@@ -2,7 +2,6 @@
   flake.modules.homeManager.imv = {
     pkgs,
     config,
-    lib,
     ...
   }: let
     username = config.this.username;

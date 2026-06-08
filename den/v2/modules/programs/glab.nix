@@ -2,7 +2,6 @@
   flake.modules.homeManager.glab = {
     pkgs,
     config,
-    lib,
     ...
   }: let
     username = config.this.username;

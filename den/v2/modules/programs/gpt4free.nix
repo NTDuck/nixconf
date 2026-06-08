@@ -2,7 +2,6 @@
   flake.modules.nixos.gpt4free = {
     pkgs,
     config,
-    lib,
     ...
   }: let
     username = config.this.username;

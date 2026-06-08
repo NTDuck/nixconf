@@ -1,6 +1,5 @@
 {
   flake.modules.homeManager.waybar = {
-    pkgs,
     config,
     lib,
     ...

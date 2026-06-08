@@ -2,7 +2,6 @@
   flake.modules.homeManager.taskwarrior = {
     pkgs,
     config,
-    lib,
     ...
   }: let
     username = config.this.username;

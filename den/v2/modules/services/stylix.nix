@@ -2,7 +2,8 @@
   flake.modules.nixos.stylix = {
     pkgs,
     config,
-    inputs, ...
+    inputs,
+    ...
   }: let
     self = inputs.self;
     posterize = {

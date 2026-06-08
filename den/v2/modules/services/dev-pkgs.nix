@@ -2,7 +2,6 @@
   flake.modules.homeManager.dev-pkgs = {
     pkgs,
     config,
-    lib,
     ...
   }: let
     username = config.this.username;

@@ -3,7 +3,8 @@
     config,
     lib,
     pkgs,
-    inputs, ...
+    inputs,
+    ...
   }: let
     self = inputs.self;
     colors = config.lib.stylix.colors.withHashtag;

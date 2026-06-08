@@ -2,7 +2,6 @@
   flake.modules.nixos.gc = {
     pkgs,
     config,
-    lib,
     ...
   }: let
     username = config.this.username;

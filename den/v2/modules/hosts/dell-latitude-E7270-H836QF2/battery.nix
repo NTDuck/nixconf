@@ -1,5 +1,5 @@
-{inputs, ...}: {
-  flake.modules.nixos.dell-latitude-E7270-H836QF2-battery = { lib, ... }: {
+{...}: {
+  flake.modules.nixos.dell-latitude-E7270-H836QF2-battery = {lib, ...}: {
     services.tlp = {
       enable = true;
       settings = {
