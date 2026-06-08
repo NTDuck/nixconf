@@ -54,14 +54,9 @@
     # llm-agents.inputs.bun2nix.url = "git+https://github.com/nix-community/bun2nix.git";
   };
 
-  outputs = inputs: let
-    modules = inputs.nixpkgs.lib.pipe inputs.import-tree [
-      # (module: module.matchNot ".*/common/.*")
-      # (module: module.matchNot ".*/shared/.*")
-      (module: module ./modules)
-    ];
-  in
-    inputs.flake-parts.lib.mkFlake {inherit inputs;} modules;
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake {inherit inputs;}
+    (inputs.import-tree ./modules);
 }
-
 # 528491
+
