@@ -41,8 +41,8 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
-    llm-agents.url = "github:numtide/llm-agents.nix";
-    llm-agents.inputs.nixpkgs.follows = "nixpkgs";
+    llm-agents.url = "git+https://github.com/numtide/llm-agents.nix.git";
+    llm-agents.inputs.bun2nix.url = "git+https://github.com/nix-community/bun2nix.git";
   };
 
   outputs = inputs: let

@@ -34,7 +34,6 @@
       inputs.self.modules.nixos.cloudflare-warp
       inputs.self.modules.nixos.fcitx5
       inputs.self.modules.nixos.gc
-      inputs.self.modules.nixos.gpt4free
       inputs.self.modules.nixos.greetd
       inputs.self.modules.nixos.gtklock
       inputs.self.modules.nixos.openssh
