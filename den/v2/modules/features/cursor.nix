@@ -1,6 +1,0 @@
-{
-  flake.modules.homeManager.cursor = {
-    ...
-  }: {
-  };
-}
