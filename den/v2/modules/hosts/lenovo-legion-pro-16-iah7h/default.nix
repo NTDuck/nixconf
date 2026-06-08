@@ -7,8 +7,6 @@
   }: {
     nixpkgs.hostPlatform = "x86_64-linux";
     imports = [
-      ./hardware.nix
-
       (
         {pkgs, ...}: {
           nixpkgs.config.allowUnfree = true;
@@ -25,6 +23,7 @@
         }
       )
 
+      inputs.self.modules.nixos.this
       inputs.self.modules.nixos.this-share-home
 
       inputs.self.modules.nixos.agenix
@@ -79,8 +78,7 @@
             inputs.self.modules.homeManager.zalo
             inputs.self.modules.homeManager.zathura
             inputs.self.modules.homeManager.zed-editor
-            inputs.self.modules.homeManager.nh
-            inputs.self.modules.homeManager.antigravity-usage
+
           ];
         };
       }
