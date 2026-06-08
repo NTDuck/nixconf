@@ -41,7 +41,7 @@
       inputs.self.modules.nixos.greetd
       inputs.self.modules.nixos.gtklock
       inputs.self.modules.nixos.pear-desktop
-      inputs.self.modules.nixos.iflow-cli
+      inputs.self.modules.nixos.qoder-cli
       inputs.self.modules.nixos.openssh
       inputs.self.modules.nixos.pipewire
       inputs.self.modules.nixos.steam

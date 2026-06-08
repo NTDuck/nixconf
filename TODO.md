@@ -19,6 +19,10 @@
 - gh dash
 - refactor users/ayin
 - refactor variosus other places
+- https://github.com/hardikpandya/stop-slop
+- nix-gaming
+- spec-kit
+- https://github.com/nix-community/nixos-facter
 
 - https://github.com/robbsbro69/nixos/blob/main/configuration.nix
 - https://www.reddit.com/r/unixporn/comments/1s85ebb/hyprland_my_first_hyprland_rice_on_cachyos/
@@ -31,5 +35,6 @@
 
 REFS
 
+- https://not-a-number.io/2025/refactoring-my-infrastructure-as-code-configurations/
 - https://blog.decent.id/post/flake-parts-and-dendritic-nix/
 - https://simonshine.dk/articles/dendritic-nix-with-nixos-shell/
