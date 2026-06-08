@@ -1,10 +1,5 @@
 {
-  flake.modules.nixos.hosts-dell-latitude-E7270-H836QF2 = {
-    inputs,
-    config,
-    pkgs,
-    ...
-  }: {
+  flake.modules.nixos.hosts-dell-latitude-E7270-H836QF2 = {inputs, ...}: {
     nixpkgs.hostPlatform = "x86_64-linux";
     imports = [
       inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-battery
@@ -38,7 +33,6 @@
       inputs.self.modules.nixos.antigravity-usage
       inputs.self.modules.nixos.battery
       inputs.self.modules.nixos.bluetooth
-      inputs.self.modules.nixos.bluetuith
       inputs.self.modules.nixos.cachyos-kernel
       inputs.self.modules.nixos.cloudflare-warp
       inputs.self.modules.nixos.dev-toolchains
@@ -46,6 +40,8 @@
       inputs.self.modules.nixos.gc
       inputs.self.modules.nixos.greetd
       inputs.self.modules.nixos.gtklock
+      inputs.self.modules.nixos.pear-desktop
+      inputs.self.modules.nixos.iflow-cli
       inputs.self.modules.nixos.openssh
       inputs.self.modules.nixos.pipewire
       inputs.self.modules.nixos.steam
@@ -55,6 +51,7 @@
       inputs.self.modules.nixos.zsh
       inputs.self.modules.nixos.lix
       inputs.self.modules.nixos.speedtest-cli
+      inputs.self.modules.nixos.zalo
 
       {this.hostname = "dell-latitude-E7270-H836QF2";}
 
@@ -64,6 +61,7 @@
           imports = [
             inputs.self.modules.homeManager.agenix
             inputs.self.modules.homeManager.antigravity-usage
+            inputs.self.modules.homeManager.bluetuith
             inputs.self.modules.homeManager.cava
             inputs.self.modules.homeManager.claude-code
             inputs.self.modules.homeManager.cliphist
@@ -75,19 +73,15 @@
             inputs.self.modules.homeManager.glab
             inputs.self.modules.homeManager.git
             inputs.self.modules.homeManager.helix
-            inputs.self.modules.homeManager.iflow-cli
             inputs.self.modules.homeManager.imv
             inputs.self.modules.homeManager.kanshi
             inputs.self.modules.homeManager.mpv
-            inputs.self.modules.homeManager.pear-desktop
             inputs.self.modules.homeManager.sway
             inputs.self.modules.homeManager.taskwarrior
-            inputs.self.modules.homeManager.termusic
             inputs.self.modules.homeManager.tofi
             inputs.self.modules.homeManager.vesktop
             inputs.self.modules.homeManager.waybar
             inputs.self.modules.homeManager.yazi
-            inputs.self.modules.homeManager.zalo
             inputs.self.modules.homeManager.zathura
             inputs.self.modules.homeManager.zed-editor
           ];

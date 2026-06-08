@@ -1,6 +1,7 @@
 {
   flake.modules.nixos.agenix = {
     pkgs,
+    config,
     inputs,
     ...
   }: {

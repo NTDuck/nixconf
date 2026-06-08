@@ -1,5 +1,9 @@
 {
-  flake.modules.homeManager.zathura = {pkgs, ...}: {
+  flake.modules.homeManager.zathura = {
+    pkgs,
+    config,
+    ...
+  }: {
     programs.zathura = {
       enable = true;
       package = pkgs.unstable.zathura;
