@@ -12,42 +12,42 @@
       pkgs.runCommand "posterized.png" {
         nativeBuildInputs = [pkgs.imagemagick pkgs.gawk];
       } ''
-        PERCENT=$(awk -v i="''${intensity}" 'BEGIN { print int(i * 100) }')
+        PERCENT=$(awk -v i="${toString intensity}" 'BEGIN { print int(i * 100) }')
 
         if [ "$PERCENT" -eq "0" ]; then
-          magick ''${imgPath} $out
+          magick ${imgPath} $out
           exit 0
         fi
 
-        magick ''${imgPath} -alpha extract alpha_mask.png
+        magick ${imgPath} -alpha extract alpha_mask.png
 
         magick \
-          xc:'''${config.lib.stylix.colors.withHashtag.base00}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base01}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base02}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base03}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base04}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base05}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base06}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base07}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base08}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base09}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base0A}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base0B}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base0C}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base0D}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base0E}' \
-          xc:'''${config.lib.stylix.colors.withHashtag.base0F}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base00}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base01}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base02}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base03}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base04}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base05}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base06}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base07}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base08}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base09}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base0A}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base0B}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base0C}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base0D}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base0E}' \
+          xc:'${config.lib.stylix.colors.withHashtag.base0F}' \
           +append palette.png
 
-        magick ''${imgPath} -dither FloydSteinberg -remap palette.png remapped.png
+        magick ${imgPath} -dither FloydSteinberg -remap palette.png remapped.png
 
         if [ "$PERCENT" -eq "100" ]; then
           magick remapped.png alpha_mask.png -compose CopyOpacity -composite $out
           exit 0
         fi
 
-        magick ''${imgPath} remapped.png -define compose:args=$PERCENT -compose blend -composite temp_blended.png
+        magick ${imgPath} remapped.png -define compose:args=$PERCENT -compose blend -composite temp_blended.png
         magick temp_blended.png alpha_mask.png -compose CopyOpacity -composite $out
       '';
 
@@ -62,11 +62,11 @@
       pkgs.runCommand "padded.png" {
         nativeBuildInputs = [pkgs.imagemagick];
       } ''
-        magick ''${imgPath} \
-          -resize x''${toString targetHeight} \
-          -background '''${config.lib.stylix.colors.withHashtag.base05}' \
+        magick ${imgPath} \
+          -resize x${toString targetHeight} \
+          -background '${config.lib.stylix.colors.withHashtag.base05}' \
           -gravity center \
-          -extent ''${toString screenWidth}x''${toString screenHeight} \
+          -extent ${toString screenWidth}x${toString screenHeight} \
           $out
       '';
   in {

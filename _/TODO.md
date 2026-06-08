@@ -18,6 +18,7 @@
 - disko for impermanance/preservation (vimjoyer)
 - nix specialization for gaming/battery mode
 - hands-on docker proj
+- gh dash
 
 - https://github.com/robbsbro69/nixos/blob/main/configuration.nix
 - https://www.reddit.com/r/unixporn/comments/1s85ebb/hyprland_my_first_hyprland_rice_on_cachyos/
