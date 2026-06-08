@@ -10,21 +10,27 @@
     ];
   };
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+  inputs = let
+    version = "26.05";
+  in {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-${version}";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    home-manager.url = "github:nix-community/home-manager/release-25.11";
+    home-manager.url = "github:nix-community/home-manager/release-${version}";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # User Repository
     nur.url = "github:nix-community/NUR";
 
-    stylix.url = "github:nix-community/stylix/release-25.11";
+    stylix.url = "github:nix-community/stylix/release-${version}";
     stylix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Kernel
     cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+
+    # Sugars
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    import-tree.url = "github:vic/import-tree";
 
     # Secrets
     agenix.url = "github:ryantm/agenix";
@@ -32,91 +38,26 @@
 
     # Formatter
     alejandra.url = "github:kamadorueda/alejandra/4.0.0";
-    alejandra.inputs.nixpkgs.follows = "nixpkgs";
+    alejandra.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
     # Rust
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
+    # Agentics
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
+    # llm-agents.inputs.bun2nix.url = "git+https://github.com/nix-community/bun2nix.git";
   };
 
-  outputs = inputs @ {
-    self,
-    nixpkgs,
-    nixpkgs-unstable,
-    rust-overlay,
-    ...
-  }: let
-    mkHost = {
-      system,
-      hostname,
-      username,
-    }:
-      nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {
-          inherit
-            self
-            inputs
-            system
-            hostname
-            username
-            ;
-        };
-
-        modules = [
-          (
-            {...}: {
-              nixpkgs.config.allowUnfree = true;
-
-              nixpkgs.overlays = [
-                inputs.nur.overlays.default
-                rust-overlay.overlays.default
-
-                (final: prev: {
-                  unstable = import nixpkgs-unstable {
-                    inherit system;
-                    config.allowUnfree = true;
-                  };
-                })
-              ];
-            }
-          )
-
-          "${self}/targets/${hostname}" # default.nix
-
-          inputs.home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = "backup";
-
-            home-manager.extraSpecialArgs = {
-              inherit
-                self
-                inputs
-                system
-                hostname
-                username
-                ;
-            };
-            home-manager.users.${username} = import "${self}/users/${username}"; # default.nix
-          }
-        ];
-      };
-  in {
-    nixosConfigurations = rec {
-      default = dell-latitude-E7270-H836QF2;
-
-      dell-latitude-E7270-H836QF2 = mkHost {
-        system = "x86_64-linux";
-        hostname = "dell-latitude-E7270-H836QF2";
-        username = "ayin";
-      };
-    };
-  };
+  outputs = inputs: let
+    modules = lib.pipe inputs.import-tree [
+      (module: module.matchNot ".*/common/.*")
+      (module: module.matchNot ".*/shared/.*")
+      (module: module ./modules)
+    ];
+  in
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} modules;
 }
-# 528491
 
+# 528491
