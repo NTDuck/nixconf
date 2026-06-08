@@ -31,16 +31,6 @@
     stylix.inputs.nixpkgs.follows = "nixpkgs";
 
     cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
-    
-    lix = {
-      url = "https://git.lix.systems/lix-project/lix/archive/main.tar.gz";
-      flake = false;
-    };
-    lix-module = {
-      url = "https://git.lix.systems/lix-project/nixos-module/archive/main.tar.gz";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.lix.follows = "lix";
-    };
 
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
