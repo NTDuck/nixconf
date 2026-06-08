@@ -1,6 +1,4 @@
-let
-  version = "26.05";
-in {
+{
   nixConfig = {
     extra-substituters = [
       "https://attic.xuyh0120.win/lantian" # `xddxdd`'s CachyOS Kernel binary cache, Hydra CI
@@ -17,16 +15,16 @@ in {
   };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-${version}";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    home-manager.url = "github:nix-community/home-manager/release-${version}";
+    home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # User Repository
     nur.url = "github:nix-community/NUR";
 
-    stylix.url = "github:nix-community/stylix/release-${version}";
+    stylix.url = "github:nix-community/stylix/release-26.05";
     stylix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Kernel
