@@ -24,7 +24,7 @@
   in {
     wayland.windowManager.sway = {
       enable = true;
-      package = pkgs.sway;
+      package = pkgs.unstable.sway;
       systemd.enable = true;
       xwayland = true;
       wrapperFeatures.gtk = true;
@@ -32,9 +32,9 @@
       config = {
         inherit modifier;
 
-        terminal = "${pkgs.foot}/bin/footclient";
-        menu = "${pkgs.tofi}/bin/tofi-drun --drun-launch=true";
-        bars = [{command = "${pkgs.waybar}/bin/waybar";}];
+        terminal = "${pkgs.unstable.foot}/bin/footclient";
+        menu = "${pkgs.unstable.tofi}/bin/tofi-drun --drun-launch=true";
+        bars = [{command = "${pkgs.unstable.waybar}/bin/waybar";}];
 
         startup = [
           {
@@ -42,7 +42,7 @@
             always = true;
           }
           {
-            command = "${pkgs.autotiling-rs}/bin/autotiling-rs";
+            command = "${pkgs.unstable.autotiling-rs}/bin/autotiling-rs";
             always = true;
           }
           {
@@ -52,9 +52,9 @@
         ];
 
         keybindings = {
-          "${modifier}+Return" = "exec ${pkgs.foot}/bin/footclient";
-          "${modifier}+d" = "exec ${pkgs.tofi}/bin/tofi-drun --drun-launch=true";
-          "${modifier}+Ctrl+l" = "exec ${pkgs.gtklock}/bin/gtklock";
+          "${modifier}+Return" = "exec ${pkgs.unstable.foot}/bin/footclient";
+          "${modifier}+d" = "exec ${pkgs.unstable.tofi}/bin/tofi-drun --drun-launch=true";
+          "${modifier}+Ctrl+l" = "exec ${pkgs.unstable.gtklock}/bin/gtklock";
 
           "${modifier}+h" = "focus left";
           "${modifier}+j" = "focus down";
@@ -94,12 +94,12 @@
           "${modifier}+q" = "kill";
           "${modifier}+Shift+E" = "exit";
 
-          "XF86MonBrightnessDown" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
-          "XF86MonBrightnessUp" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set +5%";
+          "XF86MonBrightnessDown" = "exec ${pkgs.unstable.brightnessctl}/bin/brightnessctl set 5%-";
+          "XF86MonBrightnessUp" = "exec ${pkgs.unstable.brightnessctl}/bin/brightnessctl set +5%";
 
-          "XF86AudioRaiseVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
-          "XF86AudioLowerVolume" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
-          "XF86AudioMute" = "exec ${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
+          "XF86AudioRaiseVolume" = "exec ${pkgs.unstable.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%";
+          "XF86AudioLowerVolume" = "exec ${pkgs.unstable.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%";
+          "XF86AudioMute" = "exec ${pkgs.unstable.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle";
         };
 
         input = {
@@ -139,11 +139,11 @@
 
     services.swayidle = {
       enable = true;
-      package = pkgs.swayidle;
+      package = pkgs.unstable.swayidle;
       events = [
         {
           event = "before-sleep";
-          command = "${pkgs.gtklock}/bin/gtklock";
+          command = "${pkgs.unstable.gtklock}/bin/gtklock";
         }
         {
           event = "after-resume";

@@ -9,7 +9,7 @@
     hostname = config.this.hostname;
   in {
     virtualisation.docker.enable = true;
-    virtualisation.docker.package = pkgs.docker_29;
+    virtualisation.docker.package = pkgs.unstable.docker_29;
 
     virtualisation.oci-containers = {
       backend = "docker";

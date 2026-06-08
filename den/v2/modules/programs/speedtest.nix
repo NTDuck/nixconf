@@ -1,5 +1,5 @@
 {
   flake.modules.nixos.speedtest = {pkgs, ...}: {
-    environment.systemPackages = [pkgs.speedtest-cli];
+    environment.systemPackages = [pkgs.unstable.speedtest-cli];
   };
 }

@@ -9,7 +9,7 @@
     hostname = config.this.hostname;
   in {
     environment.systemPackages = [
-      pkgs.alejandra
+      pkgs.unstable.alejandra
     ];
   };
 }

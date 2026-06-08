@@ -5,7 +5,7 @@
     lib,
     inputs, ...
   }: {
-    imports = [inputs.chaotic.nixosModules.default];
-    boot.kernelPackages = pkgs.linuxPackages_cachyos;
+    nixpkgs.overlays = [inputs.cachyos-kernel.overlays.pinned];
+    boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
   };
 }

@@ -19,7 +19,7 @@
             inputs.nur.overlays.default
             inputs.rust-overlay.overlays.default
             (final: prev: {
-              unstable = import inputs.nixpkgs {
+              unstable = import inputs.nixpkgs-unstable {
                 system = pkgs.system;
                 config.allowUnfree = true;
               };

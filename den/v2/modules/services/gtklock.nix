@@ -10,7 +10,7 @@
     fonts = config.stylix.fonts;
   in {
     environment.systemPackages = [
-      pkgs.adwaita-icon-theme
+      pkgs.unstable.adwaita-icon-theme
     ];
 
     programs.gtklock = {

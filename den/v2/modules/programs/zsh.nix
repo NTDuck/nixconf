@@ -10,7 +10,7 @@
   in {
     programs.zsh.enable = true;
 
-    users.users.${username}.shell = pkgs.zsh;
-    users.defaultUserShell = pkgs.zsh;
+    users.users.${username}.shell = pkgs.unstable.zsh;
+    users.defaultUserShell = pkgs.unstable.zsh;
   };
 }

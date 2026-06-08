@@ -9,8 +9,8 @@
       imgPath,
       intensity ? 1,
     }:
-      pkgs.runCommand "posterized.png" {
-        nativeBuildInputs = [pkgs.imagemagick pkgs.gawk];
+      pkgs.unstable.runCommand "posterized.png" {
+        nativeBuildInputs = [pkgs.unstable.imagemagick pkgs.unstable.gawk];
       } ''
         PERCENT=$(awk -v i="${toString intensity}" 'BEGIN { print int(i * 100) }')
 
@@ -59,8 +59,8 @@
     }: let
       targetHeight = builtins.floor (screenHeight * heightRatio);
     in
-      pkgs.runCommand "padded.png" {
-        nativeBuildInputs = [pkgs.imagemagick];
+      pkgs.unstable.runCommand "padded.png" {
+        nativeBuildInputs = [pkgs.unstable.imagemagick];
       } ''
         magick ${imgPath} \
           -resize x${toString targetHeight} \
@@ -78,7 +78,7 @@
       enable = true;
 
       polarity = "dark";
-      base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
+      base16Scheme = "${pkgs.unstable.base16-schemes}/share/themes/charcoal-dark.yaml";
 
       image = pad {
         imgPath = posterize {
@@ -89,26 +89,26 @@
       };
 
       cursor = {
-        package = pkgs.bibata-cursors;
+        package = pkgs.unstable.bibata-cursors;
         name = "Bibata-Modern-Classic";
         size = 16;
       };
 
       fonts = {
         sansSerif = {
-          package = pkgs.inter;
+          package = pkgs.unstable.inter;
           name = "Inter";
         };
         serif = {
-          package = pkgs.lora;
+          package = pkgs.unstable.lora;
           name = "Lora";
         };
         monospace = {
-          package = pkgs.maple-mono.truetype;
+          package = pkgs.unstable.maple-mono.truetype;
           name = "Maple Mono";
         };
         emoji = {
-          package = pkgs.noto-fonts-color-emoji;
+          package = pkgs.unstable.noto-fonts-color-emoji;
           name = "Noto Color Emoji";
         };
 

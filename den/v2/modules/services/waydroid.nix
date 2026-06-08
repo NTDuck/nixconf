@@ -11,7 +11,7 @@
     virtualisation.waydroid.enable = true;
 
     environment.systemPackages = [
-      pkgs.waydroid
+      pkgs.unstable.waydroid
     ];
 
     # This service runs automatically on system rebuilds and boots.
