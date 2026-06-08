@@ -3,10 +3,14 @@
     extra-substituters = [
       "https://attic.xuyh0120.win/lantian" # `xddxdd`'s CachyOS Kernel binary cache, Hydra CI
       "https://cache.garnix.io" # `xddxdd`'s CachyOS Kernel binary cache, Garnix CI
+      "https://cache.lix.systems"
+      "https://chaotic-nyx.cachix.org"
     ];
     extra-trusted-public-keys = [
       "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" # `xddxdd`'s CachyOS Kernel binary cache, Hydra CI
       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" # `xddxdd`'s CachyOS Kernel binary cache, Garnix CI
+      "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o="
+      "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="
     ];
   };
 
@@ -51,7 +55,7 @@
   };
 
   outputs = inputs: let
-    modules = lib.pipe inputs.import-tree [
+    modules = inputs.nixpkgs.lib.pipe inputs.import-tree [
       # (module: module.matchNot ".*/common/.*")
       # (module: module.matchNot ".*/shared/.*")
       (module: module ./modules)
