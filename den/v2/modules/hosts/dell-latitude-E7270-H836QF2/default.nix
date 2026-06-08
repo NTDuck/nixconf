@@ -51,6 +51,10 @@
       inputs.self.modules.nixos.zsh
       inputs.self.modules.nixos.lix
       inputs.self.modules.nixos.speedtest
+      inputs.self.modules.nixos.aalc
+      inputs.self.modules.nixos.llm-agents
+      inputs.self.modules.nixos.ollama
+      inputs.self.modules.nixos.catppuccin
 
 
       {this.hostname = "dell-latitude-E7270-H836QF2";}
@@ -84,6 +88,10 @@
             inputs.self.modules.homeManager.zalo
             inputs.self.modules.homeManager.zathura
             inputs.self.modules.homeManager.zed-editor
+            inputs.self.modules.homeManager.claude-code
+            inputs.self.modules.homeManager.cursor
+            inputs.self.modules.homeManager.kuzu
+            inputs.self.modules.homeManager.opencode
 
           ];
         };
