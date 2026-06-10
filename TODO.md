@@ -38,3 +38,6 @@ REFS
 - https://not-a-number.io/2025/refactoring-my-infrastructure-as-code-configurations/
 - https://blog.decent.id/post/flake-parts-and-dendritic-nix/
 - https://simonshine.dk/articles/dendritic-nix-with-nixos-shell/
+
+- feature: +, -, merge nixos & home-manager
+-
