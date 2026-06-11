@@ -2,7 +2,6 @@
   den.aspects."qoder-cli" = {
     nixos = {
       pkgs,
-      inputs,
       ...
     }: {
       environment.systemPackages = [

@@ -2,7 +2,6 @@
   den.aspects."antigravity-cli" = {
     nixos = {
       pkgs,
-      inputs,
       ...
     }: {
       environment.systemPackages = [

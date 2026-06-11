@@ -1,12 +1,11 @@
-{ den, inputs, ... }: {
+{ den, ... }: {
   den.aspects."gtklock".nixos = {
     config,
     lib,
     pkgs,
-    inputs,
     ...
   }: let
-    self = inputs.self;
+    self = den.inputs.self;
     colors = config.lib.stylix.colors.withHashtag;
     fonts = config.stylix.fonts;
   in {

@@ -3,7 +3,6 @@
   den.aspects."cachyos-kernel" = {
     nixos = {
     pkgs,
-    inputs,
     ...
   }: {
     nixpkgs.overlays = [inputs.cachyos-kernel.overlays.pinned];
