@@ -1,93 +1,74 @@
+{ den, ... }:
 {
-  den.aspects.dell-latitude-E7270-H836QF2.nixos = {inputs, ...}: {
-    nixpkgs.hostPlatform = "x86_64-linux";
-    imports = [
-      ./hardware/default.nix
-
-      (
-        {pkgs, ...}: {
-          nixpkgs.config.allowUnfree = true;
-          nixpkgs.overlays = [
-            inputs.nur.overlays.default
-            inputs.rust-overlay.overlays.default
-            (final: prev: {
-              unstable = import inputs.nixpkgs-unstable {
-                system = pkgs.system;
-                config.allowUnfree = true;
-              };
-            })
-          ];
-        }
-      )
-
-      inputs.self.modules.nixos.this
-      inputs.self.modules.nixos.this-share-home
-
-      inputs.self.modules.nixos.agenix
-      inputs.self.modules.nixos.agent-browser
-      inputs.self.modules.nixos.alejandra
-      inputs.self.modules.nixos.antigravity-cli
-      inputs.self.modules.nixos.antigravity-usage
-      inputs.self.modules.nixos.battery
-      inputs.self.modules.nixos.bluetooth
-      inputs.self.modules.nixos.cachyos-kernel
-      inputs.self.modules.nixos.cloudflare-warp
-      inputs.self.modules.nixos.dev-toolchains
-      inputs.self.modules.nixos.fcitx5
-      inputs.self.modules.nixos.gc
-      inputs.self.modules.nixos.greetd
-      inputs.self.modules.nixos.gtklock
-      inputs.self.modules.nixos.pear-desktop
-      inputs.self.modules.nixos.qoder-cli
-      inputs.self.modules.nixos.openssh
-      inputs.self.modules.nixos.pipewire
-      inputs.self.modules.nixos.steam
-      inputs.self.modules.nixos.stylix
-      inputs.self.modules.nixos.sway
-      inputs.self.modules.nixos.waydroid
-      inputs.self.modules.nixos.zsh
-      inputs.self.modules.nixos.lix
-      inputs.self.modules.nixos.speedtest-cli
-      inputs.self.modules.nixos.zalo
-
-      {this.hostname = "dell-latitude-E7270-H836QF2";}
-
-      inputs.self.modules.nixos.this-home-manager
-      {
-        home-manager.users.ayin = {
-          imports = [
-            inputs.self.modules.homeManager.agenix
-            inputs.self.modules.homeManager.antigravity-usage
-            inputs.self.modules.homeManager.bluetuith
-            inputs.self.modules.homeManager.cava
-            inputs.self.modules.homeManager.claude-code
-            inputs.self.modules.homeManager.cliphist
-            inputs.self.modules.homeManager.codex
-            inputs.self.modules.homeManager.fastfetch
-            inputs.self.modules.homeManager.firefox
-            inputs.self.modules.homeManager.foot
-            inputs.self.modules.homeManager.gh
-            inputs.self.modules.homeManager.glab
-            inputs.self.modules.homeManager.git
-            inputs.self.modules.homeManager.helix
-            inputs.self.modules.homeManager.imv
-            inputs.self.modules.homeManager.kanshi
-            inputs.self.modules.homeManager.mpv
-            inputs.self.modules.homeManager.sway
-            inputs.self.modules.homeManager.taskwarrior
-            inputs.self.modules.homeManager.tofi
-            inputs.self.modules.homeManager.vesktop
-            inputs.self.modules.homeManager.waybar
-            inputs.self.modules.homeManager.yazi
-            inputs.self.modules.homeManager.zathura
-            inputs.self.modules.homeManager.zed-editor
-            inputs.self.modules.homeManager.zsh
-          ];
-
-          programs.git.settings.user.name = "NTDuck";
-          programs.git.settings.user.email = "nguyentuduck@gmail.com";
-        };
-      }
+  den.aspects."dell-latitude-E7270-H836QF2" = {
+    includes = [
+      den.aspects."agenix"
+      den.aspects."agent-browser"
+      den.aspects."alejandra"
+      den.aspects."antigravity-cli"
+      den.aspects."antigravity-usage"
+      den.aspects."base"
+      den.aspects."home-manager"
+      den.aspects."nixpkgs-overlays"
+      den.aspects."battery"
+      den.aspects."bluetooth"
+      den.aspects."bluetuith"
+      den.aspects."c-cpp"
+      den.aspects."cachyos-kernel"
+      den.aspects."cava"
+      den.aspects."claude-code"
+      den.aspects."cliphist"
+      den.aspects."cloudflare-warp"
+      den.aspects."codex"
+      den.aspects."docker"
+      den.aspects."fastfetch"
+      den.aspects."fcitx5"
+      den.aspects."firefox"
+      den.aspects."foot"
+      den.aspects."gc"
+      den.aspects."gh"
+      den.aspects."git"
+      den.aspects."glab"
+      den.aspects."greetd"
+      den.aspects."gtklock"
+      den.aspects."helix"
+      den.aspects."imv"
+      den.aspects."java-kotlin"
+      den.aspects."javascript-typescript"
+      den.aspects."kanshi"
+      den.aspects."lix"
+      den.aspects."lua"
+      den.aspects."mpv"
+      den.aspects."nh"
+      den.aspects."nix"
+      den.aspects."ollama"
+      den.aspects."openssh"
+      den.aspects."pear-desktop"
+      den.aspects."pipewire"
+      den.aspects."protobuf"
+      den.aspects."python"
+      den.aspects."qoder-cli"
+      den.aspects."rust"
+      den.aspects."speedtest-cli"
+      den.aspects."steam"
+      den.aspects."stylix"
+      den.aspects."sway"
+      den.aspects."taskwarrior"
+      den.aspects."tofi"
+      den.aspects."topiary"
+      den.aspects."users"
+      den.aspects."vesktop"
+      den.aspects."waybar"
+      den.aspects."waydroid"
+      den.aspects."yazi"
+      den.aspects."zalo"
+      den.aspects."zathura"
+      den.aspects."zed-editor"
+      den.aspects."zsh"
     ];
+    nixos = { config, lib, pkgs, inputs, ... }: {
+      imports = [ ./hardware/default.nix ];
+      this.hostname = "dell-latitude-E7270-H836QF2";
+    };
   };
 }

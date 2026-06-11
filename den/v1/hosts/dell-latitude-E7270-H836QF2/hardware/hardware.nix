@@ -1,5 +1,5 @@
-{...}: {
-  flake.modules.nixos.dell-latitude-E7270-H836QF2-hardware = {
+
+  {
     config,
     lib,
     modulesPath,
@@ -38,5 +38,4 @@
 
     nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
     hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  };
-}
+  }

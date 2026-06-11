@@ -1,5 +1,5 @@
-{...}: {
-  flake.modules.nixos.dell-latitude-E7270-H836QF2-battery = {lib, ...}: {
+
+  {lib, ...}: {
     services.tlp = {
       enable = true;
       settings = {
@@ -18,5 +18,4 @@
         STOP_CHARGE_THRESH_BAT0 = 80; # 80 and above it stops charging
       };
     };
-  };
-}
+  }
