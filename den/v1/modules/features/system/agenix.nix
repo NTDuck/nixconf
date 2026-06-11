@@ -1,4 +1,4 @@
-{ den,  ... }:
+{ den, inputs, ... }: 
 {
   den.aspects."agenix" = {
     nixos = {
