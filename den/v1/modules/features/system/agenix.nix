@@ -1,10 +1,10 @@
-{ den, inputs, ... }:
+{ den,  ... }:
 {
   den.aspects."agenix" = {
     nixos = {
     pkgs,
     config,
-    inputs,
+    
     ...
   }: {
     imports = [
@@ -23,7 +23,7 @@
       !include ${config.age.secrets."github-token".path}
     '';
   };
-    homeManager = {inputs, ...}: {
+    homeManager = { ...}: {
     imports = [
       inputs.agenix.homeManagerModules.default
     ];
