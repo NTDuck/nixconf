@@ -1,5 +1,5 @@
 {
-  den.aspects.\"ollama\" = {
+  den.aspects."ollama" = {
     nixos = {
       lib,
       pkgs,

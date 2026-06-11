@@ -1,5 +1,5 @@
 {
-  den.aspects.\"glab\" = {
+  den.aspects."glab" = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.glab

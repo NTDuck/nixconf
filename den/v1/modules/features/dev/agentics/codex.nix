@@ -1,5 +1,5 @@
 {
-  den.aspects.\"codex\" = {
+  den.aspects."codex" = {
     homeManager = {pkgs, ...}: {
       programs.codex = {
         enable = true;
