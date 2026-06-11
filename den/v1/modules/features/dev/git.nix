@@ -1,4 +1,4 @@
-{
+{ den, inputs, ... }: {
   den.aspects."git" = {
     homeManager = {pkgs, ...}: {
       programs.git = {

@@ -1,4 +1,4 @@
-{
+{ den, inputs, ... }: {
   den.aspects."cloudflare-warp" = {
     nixos = {pkgs, ...}: {
       services.cloudflare-warp = {

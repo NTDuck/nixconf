@@ -1,4 +1,4 @@
-{
+{ den, inputs, ... }: {
   den.aspects."codex" = {
     homeManager = {pkgs, ...}: {
       programs.codex = {

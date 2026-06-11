@@ -1,4 +1,4 @@
-{
+{ den, inputs, ... }: {
   den.aspects."c-cpp" = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [

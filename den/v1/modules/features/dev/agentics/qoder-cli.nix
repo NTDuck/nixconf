@@ -1,4 +1,4 @@
-{
+{ den, inputs, ... }: {
   den.aspects."qoder-cli" = {
     nixos = {
       pkgs,

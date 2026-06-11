@@ -1,4 +1,4 @@
-{
+{ den, inputs, ... }: {
   den.aspects."javascript-typescript" = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [

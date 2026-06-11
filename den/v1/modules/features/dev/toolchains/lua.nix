@@ -1,4 +1,4 @@
-{
+{ den, inputs, ... }: {
   den.aspects."lua" = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
