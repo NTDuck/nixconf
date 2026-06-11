@@ -1,11 +1,8 @@
 {
-  flake.modules.nixos.hosts-dell-latitude-E7270-H836QF2 = {inputs, ...}: {
+  den.aspects.dell-latitude-E7270-H836QF2.nixos = {inputs, ...}: {
     nixpkgs.hostPlatform = "x86_64-linux";
     imports = [
-      inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-battery
-      inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-bluetooth
-      inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-drivers
-      inputs.self.modules.nixos.dell-latitude-E7270-H836QF2-hardware
+      ./hardware/default.nix
 
       (
         {pkgs, ...}: {
