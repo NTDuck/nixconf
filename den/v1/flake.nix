@@ -26,8 +26,6 @@
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       imports = [
         (inputs.import-tree ./modules)
-        ./hosts/dell-latitude-E7270-H836QF2/configuration.nix
-        ./hosts/lenovo-legion-pro-16-iah7h/configuration.nix
       ];
     };
 }
