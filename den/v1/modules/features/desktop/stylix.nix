@@ -2,7 +2,6 @@
   den.aspects."stylix".nixos = {
     pkgs,
     config,
-    inputs,
     ...
   }: let
     self = inputs.self;
