@@ -1,1 +1,3 @@
-{}
+{
+  den.aspects."docker" = {};
+}
