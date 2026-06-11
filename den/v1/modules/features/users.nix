@@ -1,6 +1,6 @@
 { den, ... }:
 {
-  den.aspects.users = {
+  den.aspects.\"users\" = {
     nixos = {
       users.users.ayin = {
         isNormalUser = true;

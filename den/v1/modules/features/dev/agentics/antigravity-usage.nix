@@ -1,5 +1,5 @@
 {
-  den.aspects.antigravity-usage = {
+  den.aspects.\"antigravity-usage\" = {
     nixos = {pkgs, ...}: {
       # environment.systemPackages = [
       #   pkgs.unstable.nodejs

@@ -1,5 +1,5 @@
 {
-  den.aspects.dev-toolchains = {
+  den.aspects."java-kotlin" = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.jdk21

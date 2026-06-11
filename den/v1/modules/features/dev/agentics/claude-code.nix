@@ -1,5 +1,5 @@
 {
-  den.aspects.claude-code = {
+  den.aspects.\"claude-code\" = {
     homeManager = {pkgs, ...}: {
       programs.claude-code = {
         enable = true;

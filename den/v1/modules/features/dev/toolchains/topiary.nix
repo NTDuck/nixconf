@@ -1,5 +1,5 @@
 {
-  den.aspects.dev-toolchains = {
+  den.aspects."topiary" = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.topiary

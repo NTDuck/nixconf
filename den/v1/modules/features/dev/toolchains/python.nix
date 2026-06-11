@@ -1,5 +1,5 @@
 {
-  den.aspects.dev-toolchains = {
+  den.aspects."python" = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.python3

@@ -1,5 +1,5 @@
 {
-  den.aspects.cloudflare-warp = {
+  den.aspects.\"cloudflare-warp\" = {
     nixos = {pkgs, ...}: {
       services.cloudflare-warp = {
         enable = true;
