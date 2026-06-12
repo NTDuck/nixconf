@@ -5,12 +5,13 @@
 }: {
   den.aspects.yazi = {
     homeManager = {
+      user,
+      host,
       pkgs,
-      config,
       ...
     }: let
-      username = config.this.username;
-      hostname = config.this.hostname;
+      username = user.name;
+      hostname = host.name;
     in {
       programs.yazi = {
         enable = true;

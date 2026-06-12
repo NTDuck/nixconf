@@ -17,7 +17,6 @@
       ...
     }: {
       imports = [./private/hardware/default.nix];
-      this.hostname = "dell-latitude-E7270-H836QF2";
     };
   };
 }

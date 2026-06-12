@@ -17,7 +17,6 @@
       ...
     }: {
       imports = [./private/hardware/default.nix];
-      this.hostname = "lenovo-legion-pro-16-iah7h";
     };
   };
 }

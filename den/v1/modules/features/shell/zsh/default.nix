@@ -1,11 +1,12 @@
 {den, ...}: {
   den.aspects.zsh = {
     nixos = {
+      user,
       pkgs,
       config,
       ...
     }: let
-      username = config.this.username;
+      username = user.name;
     in {
       programs.zsh.enable = true;
 
