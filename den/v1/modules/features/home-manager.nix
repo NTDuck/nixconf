@@ -1,11 +1,15 @@
-{ den, inputs, ... }: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.homeManager = {
-    nixos = { ... }: {
-      imports = [ inputs.home-manager.nixosModules.home-manager ];
+    nixos = {...}: {
+      imports = [inputs.home-manager.nixosModules.home-manager];
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
       home-manager.backupFileExtension = "backup";
-      home-manager.extraSpecialArgs = { inherit inputs; };
+      home-manager.extraSpecialArgs = {inherit inputs;};
     };
   };
 }

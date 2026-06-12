@@ -1,4 +1,8 @@
-{ den, inputs, ... }: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.cava = {
     homeManager = {pkgs, ...}: {
       programs.cava = {

@@ -1,3 +1,7 @@
-{ den, inputs, ... }: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.docker = {};
 }

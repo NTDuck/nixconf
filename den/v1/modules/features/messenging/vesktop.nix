@@ -1,4 +1,8 @@
-{ den, inputs, ... }: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.vesktop = {
     homeManager = {pkgs, ...}: {
       programs.vesktop = {

@@ -1,49 +1,52 @@
-{ den, inputs, ... }:
 {
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.fcitx5 = {
     nixos = {pkgs, ...}: {
-    i18n.inputMethod = {
-      enable = true;
-      type = "fcitx5";
+      i18n.inputMethod = {
+        enable = true;
+        type = "fcitx5";
 
-      fcitx5 = {
-        addons = [pkgs.unstable.fcitx5-bamboo];
+        fcitx5 = {
+          addons = [pkgs.unstable.fcitx5-bamboo];
 
-        waylandFrontend = true;
-        ignoreUserConfig = true; # ignore `~/.config/fcitx5`
+          waylandFrontend = true;
+          ignoreUserConfig = true; # ignore `~/.config/fcitx5`
 
-        settings = {
-          addons = {
-            classicui.globalSection = {
-              Theme = "stylix";
-              ShowInputMethodInformation = "True";
-              EnableInputMethodInformation = "True";
+          settings = {
+            addons = {
+              classicui.globalSection = {
+                Theme = "stylix";
+                ShowInputMethodInformation = "True";
+                EnableInputMethodInformation = "True";
+              };
             };
-          };
-          globalOptions = {
-            "Hotkey/TriggerKeys" = {
-              "0" = "Super+space";
+            globalOptions = {
+              "Hotkey/TriggerKeys" = {
+                "0" = "Super+space";
+              };
             };
-          };
-          inputMethod = {
-            "Groups/0" = {
-              Name = "Default";
-              "Default Layout" = "us";
-              DefaultIM = "bamboo";
+            inputMethod = {
+              "Groups/0" = {
+                Name = "Default";
+                "Default Layout" = "us";
+                DefaultIM = "bamboo";
+              };
+              "Groups/0/Items/0".Name = "keyboard-us";
+              "Groups/0/Items/1".Name = "bamboo";
+              GroupOrder."0" = "Default";
             };
-            "Groups/0/Items/0".Name = "keyboard-us";
-            "Groups/0/Items/1".Name = "bamboo";
-            GroupOrder."0" = "Default";
           };
         };
       };
-    };
 
-    environment.sessionVariables = {
-      XMODIFIERS = "@im=fcitx";
-      QT_IM_MODULE = "fcitx";
-      GTK_IM_MODULE = "fcitx";
+      environment.sessionVariables = {
+        XMODIFIERS = "@im=fcitx";
+        QT_IM_MODULE = "fcitx";
+        GTK_IM_MODULE = "fcitx";
+      };
     };
-  };
   };
 }

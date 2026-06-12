@@ -1,4 +1,8 @@
-{ den, inputs, ... }: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.antigravityUsage = {
     nixos = {pkgs, ...}: {
       # environment.systemPackages = [

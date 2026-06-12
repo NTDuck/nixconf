@@ -1,4 +1,8 @@
-{ den, inputs, ... }: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.claudeCode = {
     homeManager = {pkgs, ...}: {
       programs.claude-code = {

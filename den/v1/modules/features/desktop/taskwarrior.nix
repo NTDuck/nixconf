@@ -1,4 +1,8 @@
-{ den, inputs, ... }: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.taskwarrior = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
@@ -16,5 +20,4 @@
       };
     };
   };
-
 }

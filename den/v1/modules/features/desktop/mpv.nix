@@ -1,4 +1,8 @@
-{ den, inputs, ... }: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.mpv = {
     homeManager = {pkgs, ...}: {
       programs.mpv = {

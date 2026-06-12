@@ -1,4 +1,8 @@
-{ den, inputs, ... }: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.protobuf = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [

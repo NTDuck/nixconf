@@ -1,5 +1,8 @@
-{ den, inputs, ... }:
 {
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.greetd = {
     nixos = {
       config,

@@ -1,4 +1,8 @@
-{ den, inputs, ... }: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.fastfetch = {
     homeManager = {pkgs, ...}: {
       programs.fastfetch = {

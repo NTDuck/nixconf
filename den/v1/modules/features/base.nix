@@ -1,10 +1,20 @@
-{ den, ... }:
-{
+{den, ...}: {
   den.aspects.base = {
-    nixos = { lib, config, pkgs, ... }: {
+    nixos = {
+      lib,
+      config,
+      pkgs,
+      ...
+    }: {
       options.this = {
-        hostname = lib.mkOption { type = lib.types.str; default = "default"; };
-        username = lib.mkOption { type = lib.types.str; default = "ayin"; };
+        hostname = lib.mkOption {
+          type = lib.types.str;
+          default = "default";
+        };
+        username = lib.mkOption {
+          type = lib.types.str;
+          default = "ayin";
+        };
       };
       config = {
         system.stateVersion = "26.05";
@@ -13,7 +23,10 @@
         zramSwap.enable = true;
         networking = {
           hostName = config.this.hostname;
-          networkmanager = { enable = true; dns = "systemd-resolved"; };
+          networkmanager = {
+            enable = true;
+            dns = "systemd-resolved";
+          };
           nameservers = ["8.8.8.8" "1.1.1.1"];
         };
         services.resolved.enable = true;
@@ -33,17 +46,30 @@
         security.sudo.extraConfig = "Defaults timestamp_timeout=-1\nDefaults timestamp_type=tty";
       };
     };
-    homeManager = { lib, config, ... }: {
+    homeManager = {
+      lib,
+      config,
+      ...
+    }: {
       options.this = {
-        hostname = lib.mkOption { type = lib.types.str; default = "default"; };
-        username = lib.mkOption { type = lib.types.str; default = "ayin"; };
+        hostname = lib.mkOption {
+          type = lib.types.str;
+          default = "default";
+        };
+        username = lib.mkOption {
+          type = lib.types.str;
+          default = "ayin";
+        };
       };
       config = {
         home.stateVersion = "26.05";
         home.username = config.this.username;
         home.homeDirectory = "/home/${config.this.username}";
         programs.home-manager.enable = true;
-        home.sessionVariables = { EDITOR = "hx"; TERMINAL = "foot"; };
+        home.sessionVariables = {
+          EDITOR = "hx";
+          TERMINAL = "foot";
+        };
       };
     };
   };

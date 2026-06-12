@@ -1,4 +1,8 @@
-{ den, inputs, ... }: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.bluetuith = {
     homeManager = {pkgs, ...}: {
       programs.bluetuith = {

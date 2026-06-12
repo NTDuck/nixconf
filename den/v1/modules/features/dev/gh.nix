@@ -1,4 +1,8 @@
-{ den, inputs, ... }: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.gh = {
     homeManager = {pkgs, ...}: {
       programs.gh = {

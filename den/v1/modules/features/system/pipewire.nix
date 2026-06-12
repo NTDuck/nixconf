@@ -1,17 +1,20 @@
-{ den, inputs, ... }:
 {
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.pipewire = {
     nixos = {...}: {
-    services.pipewire = {
-      enable = true;
-      alsa = {
+      services.pipewire = {
         enable = true;
-        support32Bit = true;
+        alsa = {
+          enable = true;
+          support32Bit = true;
+        };
+        pulse.enable = true;
       };
-      pulse.enable = true;
-    };
 
-    services.pulseaudio.enable = false;
-  };
+      services.pulseaudio.enable = false;
+    };
   };
 }

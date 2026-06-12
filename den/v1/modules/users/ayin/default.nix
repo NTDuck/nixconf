@@ -1,5 +1,8 @@
-{ den, config, ... }:
 {
+  den,
+  config,
+  ...
+}: {
   den.hosts.x86_64-linux."dell-latitude-E7270-H836QF2" = {
     users.ayin = {};
   };

@@ -1,21 +1,24 @@
-{ den, inputs, ... }:
 {
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.gc = {
     nixos = {pkgs, ...}: {
-    nix.gc = {
-      automatic = false;
-      dates = "daily";
-      options = "--delete-older-than 4d";
-    };
+      nix.gc = {
+        automatic = false;
+        dates = "daily";
+        options = "--delete-older-than 4d";
+      };
 
-    environment.systemPackages = [
-      (pkgs.writeShellScriptBin "nix-clean" ''
-        echo "`sudo nix-env -p /nix/var/nix/profiles/system --delete-generations +2`"
-        sudo nix-env -p /nix/var/nix/profiles/system --delete-generations +2
-        echo "`nix-collect-garbage -d`"
-        sudo nix-collect-garbage -d
-      '')
-    ];
-  };
+      environment.systemPackages = [
+        (pkgs.writeShellScriptBin "nix-clean" ''
+          echo "`sudo nix-env -p /nix/var/nix/profiles/system --delete-generations +2`"
+          sudo nix-env -p /nix/var/nix/profiles/system --delete-generations +2
+          echo "`nix-collect-garbage -d`"
+          sudo nix-collect-garbage -d
+        '')
+      ];
+    };
   };
 }
