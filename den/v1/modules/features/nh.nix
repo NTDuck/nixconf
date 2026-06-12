@@ -1,33 +1,11 @@
-{
-  den,
-  inputs ? {},
-  ...
-} @ flakeArgs: let
-  old = import ../../../../modules/features/nh.nix;
-
-  oldEval =
-    if builtins.isFunction old
-    then old flakeArgs
-    else old;
-
-  extract = class:
-    if builtins.hasAttr "flake" oldEval && builtins.hasAttr "modules" oldEval.flake && builtins.hasAttr class oldEval.flake.modules
-    then builtins.head (builtins.attrValues oldEval.flake.modules."${class}")
-    else {};
-
-  wrap = inner:
-    if builtins.isFunction inner
-    then {
-      __functor = self: args: inner (args // {inherit inputs;});
-      __functionArgs = builtins.functionArgs inner;
-    }
-    else inner;
-
-  nixosMod = wrap (extract "nixos");
-  hmMod = wrap (extract "homeManager");
-in {
+{den, ...}: {
   den.aspects.nh = {
-    nixos = nixosMod;
-    homeManager = hmMod;
+    nixos = {...}: {
+      programs.nh = {
+        enable = true;
+        clean.enable = true;
+        clean.extraArgs = "--keep-since 7d --keep 3";
+      };
+    };
   };
 }
