@@ -6,8 +6,7 @@
       ...
     }: let
       username = config.this.username;
-  };
-  in {
+    in {
     programs.firefox = {
       enable = true;
       package = pkgs.unstable.firefox;
@@ -133,5 +132,6 @@
     };
 
     stylix.targets.firefox.profileNames = ["${username}"];
+  };
   };
 }

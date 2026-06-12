@@ -1,8 +1,7 @@
 { den, inputs, ... }:
 {
   den.aspects.fcitx5 = {
-    nixos = {pkgs, ...}: let
-  in {
+    nixos = {pkgs, ...}: {
     i18n.inputMethod = {
       enable = true;
       type = "fcitx5";

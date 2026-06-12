@@ -1,13 +1,13 @@
-{ den, ... }:
+{ den, config, ... }:
 {
-  den.aspects.dellLatitudeE7270H836qf2 = {
+  den.aspects."dell-latitude-E7270-H836QF2" = {
     includes = [
-      den.aspects.userAyin
-      den.aspects.battery
-      den.aspects.bluetooth
-      den.aspects.cachyosKernel
+      config.den.aspects.userAyin
+      config.den.aspects.battery
+      config.den.aspects.bluetooth
+      config.den.aspects.cachyosKernel
     ];
-    nixos = { config, lib, pkgs, inputs, ... }: {
+    nixos = { config, lib, pkgs, ... }: {
       imports = [ ./private/hardware/default.nix ];
       this.hostname = "dell-latitude-E7270-H836QF2";
     };

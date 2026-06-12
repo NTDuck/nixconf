@@ -6,7 +6,6 @@
       ...
     }: let
       self = inputs.self;
-  };
     posterize = {
       imgPath,
       intensity ? 1,
@@ -131,5 +130,6 @@
 
       targets.console.enable = false;
     };
+  };
   };
 }

@@ -44,10 +44,7 @@
   in
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       imports = [
-        (lib.pipe ./modules [
-          inputs.import-tree
-          (modules: lib.filterAttrsRecursive (n: v: n != "private") modules)
-        ])
+        (inputs.import-tree.matchNot ".*/private/.*" ./modules)
       ];
     };
 }

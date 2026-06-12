@@ -1,70 +1,75 @@
-{ den, ... }:
+{ den, config, ... }:
 {
-  den.hosts.x86_64-linux."dell-latitude-E7270-H836QF2".users.ayin = {};
-  den.hosts.x86_64-linux."lenovo-legion-pro-16-iah7h".users.ayin = {};
+  den.hosts.x86_64-linux."dell-latitude-E7270-H836QF2" = {
+    users.ayin = {};
+  };
+
+  den.hosts.x86_64-linux."lenovo-legion-pro-16-iah7h" = {
+    users.ayin = {};
+  };
 
   den.aspects.userAyin = {
     includes = [
-      den.aspects."agenix"
-      den.aspects."agent-browser"
-      den.aspects."alejandra"
-      den.aspects."antigravity-cli"
-      den.aspects."antigravity-usage"
-      den.aspects."base"
-      den.aspects."home-manager"
-      den.aspects."nixpkgs-overlays"
-      den.aspects."bluetuith"
-      den.aspects."c-cpp"
-      den.aspects."cava"
-      den.aspects."claude-code"
-      den.aspects."cliphist"
-      den.aspects."cloudflare-warp"
-      den.aspects."codex"
-      den.aspects."docker"
-      den.aspects."fastfetch"
-      den.aspects."fcitx5"
-      den.aspects."firefox"
-      den.aspects."foot"
-      den.aspects."gc"
-      den.aspects."gh"
-      den.aspects."git"
-      den.aspects."glab"
-      den.aspects."greetd"
-      den.aspects."gtklock"
-      den.aspects."helix"
-      den.aspects."imv"
-      den.aspects."java-kotlin"
-      den.aspects."javascript-typescript"
-      den.aspects."kanshi"
-      den.aspects."lix"
-      den.aspects."lua"
-      den.aspects."mpv"
-      den.aspects."nh"
-      den.aspects."nix"
-      den.aspects."ollama"
-      den.aspects."openssh"
-      den.aspects."pear-desktop"
-      den.aspects."pipewire"
-      den.aspects."protobuf"
-      den.aspects."python"
-      den.aspects."qoder-cli"
-      den.aspects."rust"
-      den.aspects."speedtest-cli"
-      den.aspects."steam"
-      den.aspects."stylix"
-      den.aspects."sway"
-      den.aspects."taskwarrior"
-      den.aspects."tofi"
-      den.aspects."topiary"
-      den.aspects."users"
-      den.aspects."vesktop"
-      den.aspects."waybar"
-      den.aspects."waydroid"
-      den.aspects."yazi"
-      den.aspects."zalo"
-      den.aspects."zathura"
-      den.aspects."zed-editor"
-      den.aspects."zsh"
+      config.den.aspects.agenix
+      config.den.aspects.agentBrowser
+      config.den.aspects.alejandra
+      config.den.aspects.antigravityCli
+      config.den.aspects.antigravityUsage
+      config.den.aspects.base
+      config.den.aspects.homeManager
+      config.den.aspects.nixpkgsOverlays
+      config.den.aspects.bluetuith
+      config.den.aspects.cCpp
+      config.den.aspects.cava
+      config.den.aspects.claudeCode
+      config.den.aspects.cliphist
+      config.den.aspects.cloudflareWarp
+      config.den.aspects.codex
+      config.den.aspects.docker
+      config.den.aspects.fastfetch
+      config.den.aspects.fcitx5
+      config.den.aspects.firefox
+      config.den.aspects.foot
+      config.den.aspects.gc
+      config.den.aspects.gh
+      config.den.aspects.git
+      config.den.aspects.glab
+      config.den.aspects.greetd
+      config.den.aspects.gtklock
+      config.den.aspects.helix
+      config.den.aspects.imv
+      config.den.aspects.javaKotlin
+      config.den.aspects.javascriptTypescript
+      config.den.aspects.kanshi
+      config.den.aspects.lix
+      config.den.aspects.lua
+      config.den.aspects.mpv
+      config.den.aspects.nh
+      config.den.aspects.nix
+      config.den.aspects.ollama
+      config.den.aspects.openssh
+      config.den.aspects.pearDesktop
+      config.den.aspects.pipewire
+      config.den.aspects.protobuf
+      config.den.aspects.python
+      config.den.aspects.qoderCli
+      config.den.aspects.rust
+      config.den.aspects.speedtestCli
+      config.den.aspects.steam
+      config.den.aspects.stylix
+      config.den.aspects.sway
+      config.den.aspects.taskwarrior
+      config.den.aspects.tofi
+      config.den.aspects.topiary
+      config.den.aspects.users
+      config.den.aspects.vesktop
+      config.den.aspects.waybar
+      config.den.aspects.waydroid
+      config.den.aspects.yazi
+      config.den.aspects.zalo
+      config.den.aspects.zathura
+      config.den.aspects.zedEditor
+      config.den.aspects.zsh
     ];
   };
 }

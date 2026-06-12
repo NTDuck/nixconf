@@ -2,8 +2,7 @@
   den.aspects.zalo = {
     nixos = {pkgs, ...}: let
       pname = "zalo";
-  };
-    version = "26.4.10";
+      version = "26.4.10";
     src = pkgs.fetchurl {
       url = "https://github.com/doandat943/zalo-for-linux/releases/download/${version}/Zalo-${version}+ZaDark-26.2-ffca4ab.AppImage";
       hash = "sha256-ldBkzc1H7Ku3+R8K1c0gygY6htSRtRuCuw/TeDHPQFI=";
@@ -26,5 +25,6 @@
       zalo
       zalo-desktop
     ];
+  };
   };
 }

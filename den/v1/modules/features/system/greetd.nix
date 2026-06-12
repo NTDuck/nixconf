@@ -2,11 +2,12 @@
 {
   den.aspects.greetd = {
     nixos = {
-      pkgs,
       config,
+      pkgs,
       ...
     }: let
       colors = config.lib.stylix.colors.withHashtag;
+      fonts = config.stylix.fonts;
     in {
       services.greetd = {
         enable = true;

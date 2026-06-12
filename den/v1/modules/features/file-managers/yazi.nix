@@ -6,9 +6,8 @@
       ...
     }: let
       username = config.this.username;
-  };
-    hostname = config.this.hostname;
-  in {
+      hostname = config.this.hostname;
+    in {
     programs.yazi = {
       enable = true;
       package = pkgs.unstable.yazi;
@@ -44,5 +43,6 @@
         ];
       };
     };
+  };
   };
 }

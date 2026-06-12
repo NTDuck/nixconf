@@ -19,9 +19,7 @@
       ...
     }: let
       modifier = "Mod4";
-  };
-
-  in {
+    in {
     wayland.windowManager.sway = {
       enable = true;
       package = pkgs.unstable.sway;
@@ -153,5 +151,6 @@
     };
 
     stylix.targets.fcitx5.enable = true;
+  };
   };
 }

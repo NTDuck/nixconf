@@ -1,13 +1,13 @@
-{ den, ... }:
+{ den, config, ... }:
 {
-  den.aspects.lenovoLegionPro16Iah7h = {
+  den.aspects."lenovo-legion-pro-16-iah7h" = {
     includes = [
-      den.aspects.userAyin
-      den.aspects.battery
-      den.aspects.bluetooth
-      den.aspects.cachyosKernel
+      config.den.aspects.userAyin
+      config.den.aspects.battery
+      config.den.aspects.bluetooth
+      config.den.aspects.cachyosKernel
     ];
-    nixos = { config, lib, pkgs, inputs, ... }: {
+    nixos = { config, lib, pkgs, ... }: {
       imports = [ ./private/hardware/default.nix ];
       this.hostname = "lenovo-legion-pro-16-iah7h";
     };
