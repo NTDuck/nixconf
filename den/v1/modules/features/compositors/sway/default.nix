@@ -142,16 +142,10 @@
       services.swayidle = {
         enable = true;
         package = pkgs.unstable.swayidle;
-        events = [
-          {
-            event = "before-sleep";
-            command = "${pkgs.unstable.gtklock}/bin/gtklock";
-          }
-          {
-            event = "after-resume";
-            command = "swaymsg 'output * dpms on'";
-          }
-        ];
+        events = {
+          "before-sleep" = "${pkgs.unstable.gtklock}/bin/gtklock";
+          "after-resume" = "swaymsg 'output * dpms on'";
+        };
       };
 
       stylix.targets.fcitx5.enable = true;
