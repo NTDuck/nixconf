@@ -1,5 +1,5 @@
 { den, inputs, ... }: {
-  den.aspects."topiary" = {
+  den.aspects.topiary = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.topiary

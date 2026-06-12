@@ -1,5 +1,5 @@
 { den, inputs, ... }: {
-  den.aspects."antigravity-cli" = {
+  den.aspects.antigravityCli = {
     nixos = {
       pkgs,
       ...

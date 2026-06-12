@@ -1,6 +1,6 @@
 { den, inputs, ... }:
 {
-  den.aspects."cliphist" = {
+  den.aspects.cliphist = {
     homeManager = {pkgs, ...}: {
     services.cliphist = {
       enable = true;

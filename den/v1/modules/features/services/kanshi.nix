@@ -1,6 +1,6 @@
 { den, inputs, ... }:
 {
-  den.aspects."kanshi" = {
+  den.aspects.kanshi = {
     homeManager = {pkgs, ...}: {
     services.kanshi = {
       enable = true;

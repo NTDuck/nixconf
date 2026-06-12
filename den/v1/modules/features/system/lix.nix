@@ -1,6 +1,6 @@
 { den, inputs, ... }:
 {
-  den.aspects."lix" = {
+  den.aspects.lix = {
     nixos = {pkgs, ...}: {
     nixpkgs.overlays = [
       (final: prev: {

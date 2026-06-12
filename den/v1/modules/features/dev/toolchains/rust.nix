@@ -1,5 +1,5 @@
 { den, inputs, ... }: {
-  den.aspects."rust" = {
+  den.aspects.rust = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         (pkgs.rust-bin.stable.latest.default.override {

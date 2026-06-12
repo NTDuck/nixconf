@@ -1,10 +1,12 @@
 { den, inputs, ... }: {
-  den.aspects."yazi".homeManager = {
-    pkgs,
-    config,
-    ...
-  }: let
-    username = config.this.username;
+  den.aspects.yazi = {
+    homeManager = {
+      pkgs,
+      config,
+      ...
+    }: let
+      username = config.this.username;
+  };
     hostname = config.this.hostname;
   in {
     programs.yazi = {

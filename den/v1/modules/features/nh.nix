@@ -23,7 +23,7 @@ let
   hmMod = wrap (extract "homeManager");
 in
 {
-  den.aspects."nh" = {
+  den.aspects.nh = {
     nixos = nixosMod;
     homeManager = hmMod;
   };

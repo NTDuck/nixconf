@@ -1,5 +1,5 @@
 { den, inputs, ... }: {
-  den.aspects."java-kotlin" = {
+  den.aspects.javaKotlin = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.jdk21

@@ -1,6 +1,6 @@
 { den, ... }:
 {
-  den.aspects."base" = {
+  den.aspects.base = {
     nixos = { lib, config, pkgs, ... }: {
       options.this = {
         hostname = lib.mkOption { type = lib.types.str; default = "default"; };

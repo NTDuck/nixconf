@@ -23,7 +23,7 @@ let
   hmMod = wrap (extract "homeManager");
 in
 {
-  den.aspects."zsh" = {
+  den.aspects.zsh = {
     nixos = nixosMod;
     homeManager = hmMod;
   };

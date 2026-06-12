@@ -1,10 +1,12 @@
 { den, inputs, ... }: {
-  den.aspects."firefox".homeManager = {
-    pkgs,
-    config,
-    ...
-  }: let
-    username = config.this.username;
+  den.aspects.firefox = {
+    homeManager = {
+      pkgs,
+      config,
+      ...
+    }: let
+      username = config.this.username;
+  };
   in {
     programs.firefox = {
       enable = true;

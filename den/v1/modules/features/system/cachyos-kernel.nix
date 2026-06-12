@@ -1,6 +1,6 @@
 { den, inputs, ... }:
 {
-  den.aspects."cachyos-kernel" = {
+  den.aspects.cachyosKernel = {
     nixos = {
     pkgs,
     ...

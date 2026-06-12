@@ -1,5 +1,5 @@
 { den, inputs, ... }: {
-  den.aspects."agent-browser" = {
+  den.aspects.agentBrowser = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.agent-browser

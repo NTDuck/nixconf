@@ -1,5 +1,5 @@
 { den, inputs, ... }: {
-  den.aspects."nixpkgs-overlays" = {
+  den.aspects.nixpkgsOverlays = {
     nixos = { pkgs, ... }: {
       nixpkgs.config.allowUnfree = true;
       nixpkgs.overlays = [

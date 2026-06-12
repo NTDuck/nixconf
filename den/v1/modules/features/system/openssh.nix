@@ -1,6 +1,6 @@
 { den, inputs, ... }:
 {
-  den.aspects."openssh" = {
+  den.aspects.openssh = {
     nixos = {pkgs, ...}: {
     # `services.gnome.gcr-ssh-agent.enable = true` elsewhere
     # programs.ssh.startAgent = true;

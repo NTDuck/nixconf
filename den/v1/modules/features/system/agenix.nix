@@ -1,6 +1,6 @@
 { den, inputs, ... }: 
 {
-  den.aspects."agenix" = {
+  den.aspects.agenix = {
     nixos = {
     pkgs,
     config,

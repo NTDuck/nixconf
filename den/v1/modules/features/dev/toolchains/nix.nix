@@ -1,5 +1,5 @@
 { den, inputs, ... }: {
-  den.aspects."nix" = {
+  den.aspects.nix = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.nil

@@ -1,6 +1,8 @@
 { den, inputs, ... }: {
-  den.aspects."zalo".nixos = {pkgs, ...}: let
-    pname = "zalo";
+  den.aspects.zalo = {
+    nixos = {pkgs, ...}: let
+      pname = "zalo";
+  };
     version = "26.4.10";
     src = pkgs.fetchurl {
       url = "https://github.com/doandat943/zalo-for-linux/releases/download/${version}/Zalo-${version}+ZaDark-26.2-ffca4ab.AppImage";

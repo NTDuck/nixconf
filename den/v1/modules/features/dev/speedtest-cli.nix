@@ -1,5 +1,5 @@
 { den, inputs, ... }: {
-  den.aspects."speedtest-cli" = {
+  den.aspects.speedtestCli = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [pkgs.unstable.speedtest-cli];
     };

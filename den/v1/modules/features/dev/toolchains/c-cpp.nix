@@ -1,5 +1,5 @@
 { den, inputs, ... }: {
-  den.aspects."c-cpp" = {
+  den.aspects.cCpp = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.clang-tools

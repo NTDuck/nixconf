@@ -1,6 +1,6 @@
 { den, inputs, ... }:
 {
-  den.aspects."gc" = {
+  den.aspects.gc = {
     nixos = {pkgs, ...}: {
     nix.gc = {
       automatic = false;

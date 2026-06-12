@@ -1,10 +1,12 @@
 { den, inputs, ... }: {
-  den.aspects."stylix".nixos = {
-    pkgs,
-    config,
-    ...
-  }: let
-    self = inputs.self;
+  den.aspects.stylix = {
+    nixos = {
+      pkgs,
+      config,
+      ...
+    }: let
+      self = inputs.self;
+  };
     posterize = {
       imgPath,
       intensity ? 1,

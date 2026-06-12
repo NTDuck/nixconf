@@ -1,6 +1,6 @@
 { den, inputs, ... }:
 {
-  den.aspects."fcitx5" = {
+  den.aspects.fcitx5 = {
     nixos = {pkgs, ...}: let
   in {
     i18n.inputMethod = {

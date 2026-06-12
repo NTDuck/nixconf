@@ -1,24 +1,26 @@
 { den, inputs, ... }: {
-  den.aspects."sway".nixos = {
-    pkgs,
-    config,
-    ...
-  }: {
-    programs.sway.enable = true;
-    security.polkit.enable = true;
-    services.gnome.gnome-keyring.enable = true;
-    programs.dconf.enable = true;
-    security.pam.services.sway.enableGnomeKeyring = true;
-    security.pam.services.greetd.enableGnomeKeyring = true;
-    security.pam.services.gtklock.enableGnomeKeyring = true;
+  den.aspects.sway = {
+    nixos = {
+      pkgs,
+      config,
+      ...
+    }: {
+      programs.sway.enable = true;
+      security.polkit.enable = true;
+      services.gnome.gnome-keyring.enable = true;
+      programs.dconf.enable = true;
+      security.pam.services.sway.enableGnomeKeyring = true;
+      security.pam.services.greetd.enableGnomeKeyring = true;
+      security.pam.services.gtklock.enableGnomeKeyring = true;
+    };
+    homeManager = {
+      pkgs,
+      config,
+      ...
+    }: let
+      modifier = "Mod4";
   };
 
-  den.aspects."sway".homeManager = {
-    pkgs,
-    config,
-    ...
-  }: let
-    modifier = "Mod4";
   in {
     wayland.windowManager.sway = {
       enable = true;

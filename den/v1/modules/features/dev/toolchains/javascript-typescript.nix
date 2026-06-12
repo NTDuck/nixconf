@@ -1,5 +1,5 @@
 { den, inputs, ... }: {
-  den.aspects."javascript-typescript" = {
+  den.aspects.javascriptTypescript = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.deno

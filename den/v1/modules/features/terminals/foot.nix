@@ -1,6 +1,6 @@
 { den, inputs, ... }:
 {
-  den.aspects."foot" = {
+  den.aspects.foot = {
     homeManager = {pkgs, ...}: {
     programs.foot = {
       enable = true;

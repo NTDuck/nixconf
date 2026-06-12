@@ -1,6 +1,6 @@
 { den, inputs, ... }:
 {
-  den.aspects."greetd" = {
+  den.aspects.greetd = {
     nixos = {
       pkgs,
       config,
