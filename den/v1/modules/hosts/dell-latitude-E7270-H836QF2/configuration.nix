@@ -8,7 +8,7 @@
       config.den.aspects.ayin
       config.den.aspects.battery
       config.den.aspects.bluetooth
-      config.den.aspects.cachyosKernel
+      config.den.aspects."cachyos-kernel"
     ];
     nixos = {
       config,

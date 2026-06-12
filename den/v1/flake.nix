@@ -12,6 +12,9 @@
     stylix.url = "github:nix-community/stylix/release-26.05";
     stylix.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Hardware
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
     # Kernel
     cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
