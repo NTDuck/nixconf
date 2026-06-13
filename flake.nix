@@ -1,19 +1,4 @@
 {
-  nixConfig = {
-    extra-substituters = [
-      "https://attic.xuyh0120.win/lantian" # `xddxdd`'s CachyOS Kernel binary cache, Hydra CI
-      "https://cache.garnix.io" # `xddxdd`'s CachyOS Kernel binary cache, Garnix CI
-      "https://cache.lix.systems"
-      "https://chaotic-nyx.cachix.org"
-    ];
-    extra-trusted-public-keys = [
-      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" # `xddxdd`'s CachyOS Kernel binary cache, Hydra CI
-      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" # `xddxdd`'s CachyOS Kernel binary cache, Garnix CI
-      "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o="
-      "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="
-    ];
-  };
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -27,12 +12,17 @@
     stylix.url = "github:nix-community/stylix/release-26.05";
     stylix.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Hardware
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+
     # Kernel
     cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
     # Sugars
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
+    den.url = "github:denful/den";
+    flake-file.url = "github:vic/flake-file";
 
     # Secrets
     agenix.url = "github:ryantm/agenix";
@@ -53,8 +43,9 @@
   };
 
   outputs = inputs:
-    inputs.flake-parts.lib.mkFlake {inherit inputs;}
-    (inputs.import-tree ./modules);
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} {
+      imports = [
+        (inputs.import-tree.matchNot ".*/private/.*" ./modules)
+      ];
+    };
 }
-# 528491
-

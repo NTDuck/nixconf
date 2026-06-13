@@ -1,10 +1,16 @@
 {
-  flake.modules.homeManager.gh = {pkgs, ...}: {
-    programs.gh = {
-      enable = true;
-      package = pkgs.unstable.gh;
+  den,
+  inputs,
+  ...
+}: {
+  den.aspects.gh = {
+    homeManager = {pkgs, ...}: {
+      programs.gh = {
+        enable = true;
+        package = pkgs.unstable.gh;
 
-      gitCredentialHelper.enable = true;
+        gitCredentialHelper.enable = true;
+      };
     };
   };
 }

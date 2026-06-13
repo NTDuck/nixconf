@@ -1,7 +1,13 @@
 {
-  flake.modules.nixos.alejandra = {pkgs, ...}: {
-    environment.systemPackages = [
-      pkgs.unstable.alejandra
-    ];
+  den,
+  inputs,
+  ...
+}: {
+  den.aspects.alejandra = {
+    nixos = {pkgs, ...}: {
+      environment.systemPackages = [
+        pkgs.unstable.alejandra
+      ];
+    };
   };
 }

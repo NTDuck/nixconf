@@ -1,11 +1,13 @@
 {
-  flake.modules.nixos.qoder-cli = {
-    pkgs,
-    inputs,
-    ...
-  }: {
-    environment.systemPackages = [
-      inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.qoder-cli
-    ];
+  den,
+  inputs,
+  ...
+}: {
+  den.aspects.qoderCli = {
+    nixos = {pkgs, ...}: {
+      environment.systemPackages = [
+        inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.qoder-cli
+      ];
+    };
   };
 }
