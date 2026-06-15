@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects."lenovo-legion" = {
+  den.aspects.lenovo-legion = {
     nixos = {
       pkgs,
       ...
