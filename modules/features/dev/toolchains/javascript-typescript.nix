@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.javascriptTypescript = {
+  den.aspects.javascript-typescript = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.deno

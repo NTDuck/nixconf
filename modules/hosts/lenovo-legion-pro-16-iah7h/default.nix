@@ -8,22 +8,22 @@
       (den.batteries.import-tree ./private)
 
       den.aspects.agenix
-      den.aspects.agentBrowser
+      den.aspects.agent-browser
       den.aspects.alejandra
-      den.aspects.antigravityCli
-      den.aspects.antigravityUsage
+      den.aspects.antigravity-cli
+      den.aspects.antigravity-usage
       den.aspects.base
-      den.aspects.homeManager
-      den.aspects.nixpkgsOverlays
+      den.aspects.home-manager
+      den.aspects.nixpkgs-overlays
       den.aspects.battery
       den.aspects.bluetooth
       den.aspects.bluetuith
       den.aspects.cachyos-kernel
-      den.aspects.cCpp
+      den.aspects.c-cpp
       den.aspects.cava
-      den.aspects.claudeCode
+      den.aspects.claude-code
       den.aspects.cliphist
-      den.aspects.cloudflareWarp
+      den.aspects.cloudflare-warp
       den.aspects.codex
       den.aspects.docker
       den.aspects.fastfetch
@@ -38,8 +38,8 @@
       den.aspects.gtklock
       den.aspects.helix
       den.aspects.imv
-      den.aspects.javaKotlin
-      den.aspects.javascriptTypescript
+      den.aspects.java-kotlin
+      den.aspects.javascript-typescript
       den.aspects.kanshi
       den.aspects.lenovo-legion
       den.aspects.lix
@@ -49,13 +49,13 @@
       den.aspects.nix
       den.aspects.ollama
       den.aspects.openssh
-      den.aspects.pearDesktop
+      den.aspects.pear-desktop
       den.aspects.pipewire
       den.aspects.protobuf
       den.aspects.python
-      den.aspects.qoderCli
+      den.aspects.qoder-cli
       den.aspects.rust
-      den.aspects.speedtestCli
+      den.aspects.speedtest-cli
       den.aspects.steam
       den.aspects.stylix
       den.aspects.sway
@@ -69,7 +69,7 @@
       den.aspects.yazi
       den.aspects.zalo
       den.aspects.zathura
-      den.aspects.zedEditor
+      den.aspects.zed-editor
       den.aspects.zsh
     ];
 

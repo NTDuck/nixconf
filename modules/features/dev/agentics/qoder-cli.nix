@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.qoderCli = {
+  den.aspects.qoder-cli = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.qoder-cli

@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.antigravityCli = {
+  den.aspects.antigravity-cli = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.antigravity-cli

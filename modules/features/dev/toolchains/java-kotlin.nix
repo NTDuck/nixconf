@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.javaKotlin = {
+  den.aspects.java-kotlin = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.jdk21

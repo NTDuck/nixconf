@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.cloudflareWarp = {
+  den.aspects.cloudflare-warp = {
     nixos = {pkgs, ...}: {
       services.cloudflare-warp = {
         enable = true;

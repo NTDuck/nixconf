@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.cCpp = {
+  den.aspects.c-cpp = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.clang-tools
