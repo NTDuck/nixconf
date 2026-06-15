@@ -8,7 +8,6 @@
       includes = [
         den.batteries.primary-user
         (den.batteries.user-shell "zsh")
-        den.aspects.blob
       ];
     };
   };
@@ -22,6 +21,7 @@
       den.aspects.alejandra
       den.aspects.antigravity-cli
       den.aspects.antigravity-usage
+      den.aspects.blob
       den.aspects.nixpkgs-overlays
       den.aspects.battery
       den.aspects.bluetooth
