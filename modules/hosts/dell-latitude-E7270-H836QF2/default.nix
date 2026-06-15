@@ -1,0 +1,82 @@
+{
+  den,
+  config,
+  ...
+}: {
+  den.hosts.x86_64-linux.dell-latitude-E7270-H836QF2 = {
+    includes = [
+      (den.batteries.import-tree ./private)
+
+      den.aspects.agenix
+      den.aspects.agentBrowser
+      den.aspects.alejandra
+      den.aspects.antigravityCli
+      den.aspects.antigravityUsage
+      den.aspects.base
+      den.aspects.homeManager
+      den.aspects.nixpkgsOverlays
+      den.aspects.battery
+      den.aspects.bluetooth
+      den.aspects.bluetuith
+      den.aspects.cachyos-kernel
+      den.aspects.cCpp
+      den.aspects.cava
+      den.aspects.claudeCode
+      den.aspects.cliphist
+      den.aspects.cloudflareWarp
+      den.aspects.codex
+      den.aspects.docker
+      den.aspects.fastfetch
+      den.aspects.fcitx5
+      den.aspects.firefox
+      den.aspects.foot
+      den.aspects.gc
+      den.aspects.gh
+      den.aspects.git
+      den.aspects.glab
+      den.aspects.greetd
+      den.aspects.gtklock
+      den.aspects.helix
+      den.aspects.imv
+      den.aspects.javaKotlin
+      den.aspects.javascriptTypescript
+      den.aspects.kanshi
+      den.aspects.lix
+      den.aspects.lua
+      den.aspects.mpv
+      den.aspects.nh
+      den.aspects.nix
+      den.aspects.ollama
+      den.aspects.openssh
+      den.aspects.pearDesktop
+      den.aspects.pipewire
+      den.aspects.protobuf
+      den.aspects.python
+      den.aspects.qoderCli
+      den.aspects.rust
+      den.aspects.speedtestCli
+      den.aspects.steam
+      den.aspects.stylix
+      den.aspects.sway
+      den.aspects.taskwarrior
+      den.aspects.tofi
+      den.aspects.topiary
+      den.aspects.users
+      den.aspects.vesktop
+      den.aspects.waybar
+      den.aspects.waydroid
+      den.aspects.yazi
+      den.aspects.zalo
+      den.aspects.zathura
+      den.aspects.zedEditor
+      den.aspects.zsh
+    ];
+
+    users.ayin = {
+      includes = [
+        den.batteries.primary-user
+        (den.batteries.user-shell "zsh")
+      ];
+    };
+  };
+}

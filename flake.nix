@@ -1,4 +1,13 @@
 {
+  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree.matchNot ".*/private/.*" ./modules);
+  
+  # outputs = inputs:
+  #   inputs.flake-parts.lib.mkFlake {inherit inputs;} {
+  #     imports = [
+  #       (inputs.import-tree.matchNot ".*/private/.*" ./modules)
+  #     ];
+  #   };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -39,13 +48,27 @@
     # Agentics
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
-    # llm-agents.inputs.bun2nix.url = "git+https://github.com/nix-community/bun2nix.git";
   };
 
-  outputs = inputs:
-    inputs.flake-parts.lib.mkFlake {inherit inputs;} {
-      imports = [
-        (inputs.import-tree.matchNot ".*/private/.*" ./modules)
-      ];
-    };
+  # https://nix.dev/manual/nix/latest/command-ref/conf-file#available-settings
+  # https://codeberg.org/Adda/nixos-config/src/commit/826b5ec6f5733e4b6bc0771dc9639e2e074358b5/flake.nix
+  nixConfig = {
+    accept-flake-config = true;
+    allow-import-from-derivation = true;
+    auto-optimise-store = true;
+
+    # TODO Verify
+    extra-substituters = [
+      "https://attic.xuyh0120.win/lantian" # `xddxdd`'s CachyOS Kernel binary cache, Hydra CI
+      "https://cache.garnix.io" # `xddxdd`'s CachyOS Kernel binary cache, Garnix CI
+      "https://cache.lix.systems"
+      "https://chaotic-nyx.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" # `xddxdd`'s CachyOS Kernel binary cache, Hydra CI
+      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" # `xddxdd`'s CachyOS Kernel binary cache, Garnix CI
+      "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o="
+      "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="
+    ];
+  };
 }
