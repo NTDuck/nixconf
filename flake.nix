@@ -1,12 +1,5 @@
 {
-  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree.matchNot ".*/private/.*" ./modules);
-  
-  # outputs = inputs:
-  #   inputs.flake-parts.lib.mkFlake {inherit inputs;} {
-  #     imports = [
-  #       (inputs.import-tree.matchNot ".*/private/.*" ./modules)
-  #     ];
-  #   };
+  outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree.matchNot ".*/private/.*" ./modules);
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
