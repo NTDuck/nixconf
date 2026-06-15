@@ -21,7 +21,7 @@
       den.aspects.alejandra
       den.aspects.antigravity-cli
       den.aspects.antigravity-usage
-      den.aspects.base
+      den.aspects.blob
       den.aspects.nixpkgs-overlays
       den.aspects.battery
       den.aspects.bluetooth
