@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.base = {
+  den.aspects.blob = {
     nixos = {
       lib,
       config,
