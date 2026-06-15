@@ -8,10 +8,9 @@
       user,
       ...
     }: {
-      # THE FIX: Force the Home Manager stateVersion from the NixOS level
-      home-manager.users.${user.name}.home.stateVersion = "26.05";
+      home-manager.users.${user.name}.home.stateVersion = lib.mkDefault "26.05";
 
-      system.stateVersion = "26.05";
+      system.stateVersion = lib.mkDefault "26.05";
       boot.loader.systemd-boot.enable = true;
       boot.loader.efi.canTouchEfiVariables = true;
       zramSwap.enable = true;
@@ -46,6 +45,7 @@
       user,
       ...
     }: {
+      home.stateVersion = lib.mkDefault "26.05";
       home.username = user.name;
       home.homeDirectory = "/home/${user.name}";
       programs.home-manager.enable = true;

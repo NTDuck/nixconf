@@ -4,6 +4,7 @@
   ...
 }: {
   den.hosts.x86_64-linux.dell-latitude-E7270-H836QF2 = {
+    includes = [ den.aspects.dell-latitude-E7270-H836QF2 ];
     users.ayin = {
       includes = [
         den.batteries.primary-user
