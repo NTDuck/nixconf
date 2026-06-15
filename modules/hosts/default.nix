@@ -1,6 +1,8 @@
-{ den, ... }:
-
 {
+  den,
+  lib,
+  ...
+}: {
   den.default.includes = [
     den.batteries.inputs'
     den.batteries.self'
@@ -9,5 +11,5 @@
     den.batteries.hostname
   ];
 
-  den.schema.user.classes = lib.mkDefault [ "homeManager" ];
+  den.schema.user.classes = lib.mkDefault ["homeManager"];
 }

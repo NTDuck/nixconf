@@ -4,6 +4,15 @@
   ...
 }: {
   den.hosts.x86_64-linux.dell-latitude-E7270-H836QF2 = {
+    users.ayin = {
+      includes = [
+        den.batteries.primary-user
+        (den.batteries.user-shell "zsh")
+      ];
+    };
+  };
+
+  den.aspects.dell-latitude-E7270-H836QF2 = {
     includes = [
       (den.batteries.import-tree ./private)
 
@@ -13,7 +22,6 @@
       den.aspects.antigravity-cli
       den.aspects.antigravity-usage
       den.aspects.base
-      den.aspects.home-manager
       den.aspects.nixpkgs-overlays
       den.aspects.battery
       den.aspects.bluetooth
@@ -61,7 +69,6 @@
       den.aspects.taskwarrior
       den.aspects.tofi
       den.aspects.topiary
-      den.aspects.users
       den.aspects.vesktop
       den.aspects.waybar
       den.aspects.waydroid
@@ -71,12 +78,5 @@
       den.aspects.zed-editor
       den.aspects.zsh
     ];
-
-    users.ayin = {
-      includes = [
-        den.batteries.primary-user
-        (den.batteries.user-shell "zsh")
-      ];
-    };
   };
 }
