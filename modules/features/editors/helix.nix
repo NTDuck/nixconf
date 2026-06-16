@@ -4,11 +4,11 @@
   ...
 }: {
   den.aspects.helix = {
-    nixos = {pkgs, ...}: {
-      environment.systemPackages = [
-        pkgs.unstable.helix
-      ];
-    };
+    # nixos = {pkgs, ...}: {
+    #   environment.systemPackages = [
+    #     pkgs.unstable.helix
+    #   ];
+    # };
 
     homeManager = {pkgs, ...}: {
       programs.helix = {
@@ -48,6 +48,10 @@
             }
           ];
         };
+      };
+
+      home.sessionVariables = {
+        EDITOR = "hx";
       };
     };
   };

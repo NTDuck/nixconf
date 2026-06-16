@@ -5,7 +5,7 @@
       config,
       pkgs,
       ...
-    }@args: let
+    } @ args: let
       host = args.host or {name = "unknown";};
       user = args.user or {name = "ayin";};
     in {
@@ -44,17 +44,13 @@
       lib,
       config,
       ...
-    }@args: let
+    } @ args: let
       user = args.user or {name = "ayin";};
     in {
       home.stateVersion = lib.mkDefault "26.05";
       home.username = user.name;
       home.homeDirectory = "/home/${user.name}";
       programs.home-manager.enable = true;
-      home.sessionVariables = {
-        EDITOR = "hx";
-        TERMINAL = "foot";
-      };
     };
   };
 }

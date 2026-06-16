@@ -27,6 +27,10 @@
           };
         };
       };
+
+      home.sessionVariables = {
+        TERMINAL = "foot";
+      };
     };
   };
 }

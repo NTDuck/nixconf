@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.hosts.x86_64-linux.dell-latitude-E7270-H836QF2 = {
     users.ayin = {
       includes = [
@@ -14,14 +10,9 @@
 
   den.aspects.dell-latitude-E7270-H836QF2 = {
     includes = [
-      # (inputs.import-tree ./private)
-
       den.aspects.dell-latitude-E7270-H836QF2-bluetooth-driver
       den.aspects.dell-latitude-E7270-H836QF2-network-driver
       den.aspects.dell-latitude-E7270-H836QF2-hardware
-      # den.aspects.hardware-dell-latitude-E7270
-      # den.aspects.network-driver-dell-latitude-E7270
-      # den.aspects.bluetooth-driver-dell-latitude-E7270
 
       den.aspects.home-manager-integration
       den.aspects.agenix
