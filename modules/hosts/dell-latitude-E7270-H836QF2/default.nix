@@ -14,7 +14,6 @@
       den.aspects.dell-latitude-E7270-H836QF2-network-driver
       den.aspects.dell-latitude-E7270-H836QF2-hardware
 
-      den.aspects.home-manager-integration
       den.aspects.agenix
       den.aspects.nixpkgs-overlays
       den.aspects.battery

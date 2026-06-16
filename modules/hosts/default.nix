@@ -20,19 +20,13 @@
   # den.schema.host.classes = ["nixos"];
   den.schema.user.classes = lib.mkDefault ["homeManager"];
 
-  # den.default.homeManager = {
-  #   # options.__args = lib.mkOption {
-  #   #   type = lib.types.anything;
-  #   #   default = {};
-  #   # };
-  #   config.home.stateVersion = "26.05";
-  # };
+  den.default.homeManager = {
+    config.home.stateVersion = "26.05";
+  };
 
-  # den.default.nixos = {
-  #   # options.__args = lib.mkOption {
-  #   #   type = lib.types.anything;
-  #   #   default = {};
-  #   # };
-  #   config.system.stateVersion = "26.05";
-  # };
+  den.default.nixos = {
+    config.system.stateVersion = "26.05";
+    config.home-manager.useGlobalPkgs = true;
+    config.home-manager.useUserPackages = true;
+  };
 }

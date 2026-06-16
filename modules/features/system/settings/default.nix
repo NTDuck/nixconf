@@ -6,7 +6,6 @@
       den.aspects.system-locale
       den.aspects.system-network
       den.aspects.system-nix
-      den.aspects.system-state-version
       den.aspects.system-users
     ];
   };
