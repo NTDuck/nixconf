@@ -4,6 +4,12 @@
   ...
 }: {
   den.aspects.yazi = {
+    nixos = {pkgs, ...}: {
+      environment.systemPackages = [
+        pkgs.unstable.yazi
+      ];
+    };
+
     homeManager = {
       user,
       host,

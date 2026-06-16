@@ -10,6 +10,9 @@
       ...
     }: {
       programs.sway.enable = true;
+      environment.systemPackages = [
+        pkgs.unstable.sway
+      ];
       security.polkit.enable = true;
       services.gnome.gnome-keyring.enable = true;
       programs.dconf.enable = true;

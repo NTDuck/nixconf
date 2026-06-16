@@ -4,6 +4,12 @@
   ...
 }: {
   den.aspects.git = {
+    nixos = {pkgs, ...}: {
+      environment.systemPackages = [
+        pkgs.unstable.git
+      ];
+    };
+
     homeManager = {pkgs, ...}: {
       programs.git = {
         enable = true;

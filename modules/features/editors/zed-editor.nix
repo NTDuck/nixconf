@@ -4,6 +4,12 @@
   ...
 }: {
   den.aspects.zed-editor = {
+    nixos = {pkgs, ...}: {
+      environment.systemPackages = [
+        pkgs.unstable.zed-editor
+      ];
+    };
+
     homeManager = {
       pkgs,
       lib,

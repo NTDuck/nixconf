@@ -4,10 +4,11 @@
       lib,
       config,
       pkgs,
-      host,
-      user,
       ...
-    }: {
+    }@args: let
+      host = args.host or {name = "unknown";};
+      user = args.user or {name = "ayin";};
+    in {
       home-manager.users.${user.name}.home.stateVersion = lib.mkDefault "26.05";
 
       system.stateVersion = lib.mkDefault "26.05";
@@ -15,7 +16,7 @@
       boot.loader.efi.canTouchEfiVariables = true;
       zramSwap.enable = true;
       networking = {
-        hostName = host.name;
+        hostName = lib.mkDefault host.name;
         networkmanager = {
           enable = true;
           dns = "systemd-resolved";
@@ -42,9 +43,10 @@
     homeManager = {
       lib,
       config,
-      user,
       ...
-    }: {
+    }@args: let
+      user = args.user or {name = "ayin";};
+    in {
       home.stateVersion = lib.mkDefault "26.05";
       home.username = user.name;
       home.homeDirectory = "/home/${user.name}";

@@ -1,16 +1,11 @@
 {den, ...}: {
   den.aspects.zsh = {
     nixos = {
-      user,
       pkgs,
       config,
       ...
-    }: let
-      username = user.name;
-    in {
+    }: {
       programs.zsh.enable = true;
-
-      users.users.${username}.shell = pkgs.unstable.zsh;
       users.defaultUserShell = pkgs.unstable.zsh;
     };
 

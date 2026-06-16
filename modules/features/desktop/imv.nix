@@ -4,6 +4,12 @@
   ...
 }: {
   den.aspects.imv = {
+    nixos = {pkgs, ...}: {
+      environment.systemPackages = [
+        pkgs.unstable.imv
+      ];
+    };
+
     homeManager = {
       pkgs,
       config,

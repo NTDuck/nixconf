@@ -25,12 +25,14 @@
         !include ${config.age.secrets."github-token".path}
       '';
     };
-    homeManager = {...}: {
+    homeManager = args@{...}: let
+      user = args.user or {name = "ayin";};
+    in {
       imports = [
         inputs.agenix.homeManagerModules.default
       ];
 
-      age.identityPaths = ["/home/ayin/.ssh/id_ed25519"];
+      age.identityPaths = ["/home/${user.name}/.ssh/id_ed25519"];
 
       age.secrets."gemini-default-token".file = "${inputs.self}/secrets/gemini-default-token.age";
       age.secrets."groq-default-token".file = "${inputs.self}/secrets/groq-default-token.age";
