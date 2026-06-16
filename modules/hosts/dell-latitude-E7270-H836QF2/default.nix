@@ -18,7 +18,7 @@
       den.aspects.agenix
       den.aspects.nixpkgs-overlays
       den.aspects.battery
-      den.aspects.blob
+      den.aspects.system-settings
       den.aspects.bluetooth
       den.aspects.bluetuith
       den.aspects.cachyos-kernel
