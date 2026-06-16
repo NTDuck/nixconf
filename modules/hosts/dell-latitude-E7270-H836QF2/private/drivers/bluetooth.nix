@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.bluetooth = {
+  den.aspects.bluetooth-driver = {
     nixos = {
       boot.kernelModules = ["brcmfmac" "btusb"];
     };

@@ -4,10 +4,7 @@
   ...
 }: {
   den.aspects.lenovo-legion = {
-    nixos = {
-      pkgs,
-      ...
-    }: {
+    nixos = {pkgs, ...}: {
       imports = [
         inputs.nixos-hardware.nixosModules.lenovo-legion-16iah7h
       ];
