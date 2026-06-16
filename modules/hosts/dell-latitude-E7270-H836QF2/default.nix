@@ -1,7 +1,6 @@
 {
   den,
   inputs,
-  lib,
   ...
 }: {
   den.hosts.x86_64-linux.dell-latitude-E7270-H836QF2 = {
@@ -13,78 +12,16 @@
     };
   };
 
-  den.aspects.hardware-dell-latitude-E7270 = {
-    nixos = {
-      config,
-      lib,
-      pkgs,
-      modulesPath,
-      ...
-    }: {
-      imports = [
-        (modulesPath + "/installer/scan/not-detected.nix")
-      ];
-
-      boot.initrd.availableKernelModules = ["xhci_pci" "ahci" "sd_mod" "rtsx_pci_sdmmc"];
-      boot.initrd.kernelModules = [];
-      boot.kernelModules = ["kvm-intel"];
-      boot.extraModulePackages = [];
-
-      fileSystems."/" = {
-        device = "/dev/disk/by-uuid/6a5f5f0e-d1d9-4ba3-b0ed-32b5289c408e";
-        fsType = "btrfs";
-        options = ["subvol=@"];
-      };
-
-      fileSystems."/home" = {
-        device = "/dev/disk/by-uuid/6a5f5f0e-d1d9-4ba3-b0ed-32b5289c408e";
-        fsType = "btrfs";
-        options = ["subvol=@home"];
-      };
-
-      fileSystems."/boot" = {
-        device = "/dev/disk/by-uuid/7563-564F";
-        fsType = "vfat";
-        options = ["fmask=0077" "dmask=0077"];
-      };
-
-      swapDevices = [
-        {device = "/dev/disk/by-uuid/6561ae85-6ede-4b42-a200-a1fd04e26628";}
-      ];
-
-      nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-      hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-    };
-  };
-
-  den.aspects.network-driver-dell-latitude-E7270 = {
-    nixos = {
-      config,
-      lib,
-      ...
-    }: {
-      nixpkgs.config.allowUnfreePredicate = pkg:
-        builtins.elem (lib.getName pkg) [
-          "broadcom-sta"
-        ];
-
-      boot.kernelModules = ["wl"];
-      boot.blacklistedKernelModules = ["b43" "bcma"];
-      boot.extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
-    };
-  };
-
-  den.aspects.bluetooth-driver-dell-latitude-E7270 = {
-    nixos = {
-      boot.kernelModules = ["brcmfmac" "btusb"];
-    };
-  };
-
   den.aspects.dell-latitude-E7270-H836QF2 = {
     includes = [
-      den.aspects.hardware-dell-latitude-E7270
-      den.aspects.network-driver-dell-latitude-E7270
-      den.aspects.bluetooth-driver-dell-latitude-E7270
+      # (inputs.import-tree ./private)
+
+      den.aspects.dell-latitude-E7270-H836QF2-bluetooth-driver
+      den.aspects.dell-latitude-E7270-H836QF2-network-driver
+      den.aspects.dell-latitude-E7270-H836QF2-hardware
+      # den.aspects.hardware-dell-latitude-E7270
+      # den.aspects.network-driver-dell-latitude-E7270
+      # den.aspects.bluetooth-driver-dell-latitude-E7270
 
       den.aspects.home-manager-integration
       den.aspects.agenix
