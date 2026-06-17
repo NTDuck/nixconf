@@ -1,10 +1,6 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.pipewire = {
-    nixos = {...}: {
+    nixos = {
       services.pipewire = {
         enable = true;
         alsa = {

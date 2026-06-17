@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.cliphist = {
     homeManager = {pkgs, ...}: {
       services.cliphist = {

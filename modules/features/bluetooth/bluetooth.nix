@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.bluetooth = {
     nixos = {...}: {
       hardware.bluetooth = {

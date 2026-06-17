@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.sway = {
-    nixos = {pkgs, ...}: {
+    nixos = {
       # programs.sway.enable = true;
       # environment.systemPackages = [
       #   pkgs.unstable.sway

@@ -1,15 +1,5 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.fastfetch = {
-    nixos = {pkgs, ...}: {
-      environment.systemPackages = [
-        pkgs.unstable.fastfetch
-      ];
-    };
-
     homeManager = {pkgs, ...}: {
       programs.fastfetch = {
         enable = true;

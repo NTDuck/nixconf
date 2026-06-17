@@ -11,7 +11,7 @@
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     includes = [
       den.aspects.agenix
-      den.aspects.nixpkgs-overlays
+      den.aspects.bichannel
       den.aspects.battery
       den.aspects.system-settings
       den.aspects.bluetooth
@@ -34,6 +34,7 @@
       den.aspects.lix
       den.aspects.mpv
       den.aspects.nh
+      den.aspects.nur
       den.aspects.openssh
       den.aspects.pear-desktop
       den.aspects.pipewire

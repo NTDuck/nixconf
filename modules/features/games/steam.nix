@@ -1,10 +1,6 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.steam = {
-    nixos = {config, ...}: {
+    nixos = {
       programs.steam = {
         enable = true;
         remotePlay.openFirewall = true;

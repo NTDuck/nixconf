@@ -8,6 +8,7 @@
 
       den.aspects.cloudflare-warp
       den.aspects.speedtest-cli
+      den.aspects.ripgrep
     ];
   };
 }

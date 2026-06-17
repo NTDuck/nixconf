@@ -1,10 +1,6 @@
 {den, ...}: {
   den.aspects.zsh = {
-    nixos = {
-      pkgs,
-      config,
-      ...
-    }: {
+    nixos = {pkgs, ...}: {
       programs.zsh.enable = true;
       users.defaultUserShell = pkgs.unstable.zsh;
     };
@@ -12,13 +8,14 @@
     homeManager = {pkgs, ...}: {
       programs.zsh = {
         enable = true;
+        package = pkgs.unstable.zsh;
 
         enableCompletion = true;
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
 
         initContent = ''
-          source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+          source ${pkgs.unstable.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
 
           [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
         '';

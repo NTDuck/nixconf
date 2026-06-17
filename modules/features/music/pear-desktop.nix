@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.pear-desktop = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [

@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.bluetuith = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [

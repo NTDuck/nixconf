@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.kanshi = {
     homeManager = {pkgs, ...}: {
       services.kanshi = {

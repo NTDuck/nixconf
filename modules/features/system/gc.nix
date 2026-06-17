@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.gc = {
     nixos = {pkgs, ...}: {
       nix.gc = {

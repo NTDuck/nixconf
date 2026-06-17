@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.waybar = {
     homeManager = {config, ...}: {
       programs.waybar = {

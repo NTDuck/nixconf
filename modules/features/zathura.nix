@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.zathura = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
@@ -10,11 +6,7 @@
       ];
     };
 
-    homeManager = {
-      pkgs,
-      config,
-      ...
-    }: {
+    homeManager = {pkgs, ...}: {
       programs.zathura = {
         enable = true;
         package = pkgs.unstable.zathura;

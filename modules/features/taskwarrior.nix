@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.taskwarrior = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
@@ -16,7 +12,7 @@
       };
 
       home.shellAliases = {
-        tt = "taskwarrior-tui";
+        tt = "${pkgs.unstable.taskwarrior-tui}/bin/taskwarrior-tui";
       };
     };
   };

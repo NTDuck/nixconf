@@ -1,10 +1,6 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.battery = {
-    nixos = {...}: {
+    nixos = {
       services.tlp = {
         enable = true;
         settings = {

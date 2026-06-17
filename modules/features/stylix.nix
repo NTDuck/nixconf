@@ -67,7 +67,7 @@
         pkgs.unstable.runCommand "padded.png" {
           nativeBuildInputs = [pkgs.unstable.imagemagick];
         } ''
-          magick ${imgPath} \
+          ${pkgs.unstable.imagemagick}/bin/magick ${imgPath} \
             -resize x${toString targetHeight} \
             -background '${config.lib.stylix.colors.withHashtag.base05}' \
             -gravity center \

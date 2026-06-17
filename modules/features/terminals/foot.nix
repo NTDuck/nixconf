@@ -1,19 +1,9 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.foot = {
-    nixos = {pkgs, ...}: {
-      environment.systemPackages = [
-        pkgs.unstable.foot
-      ];
-    };
-
     homeManager = {pkgs, ...}: {
       programs.foot = {
         enable = true;
-        # package = pkgs.unstable.foot;
+        package = pkgs.unstable.foot;
 
         server.enable = true;
 

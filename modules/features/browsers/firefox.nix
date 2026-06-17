@@ -1,23 +1,16 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.firefox = {
     homeManager = {
       user,
       pkgs,
-      lib,
       ...
-    }: let
-      username = user.name;
-    in {
+    }: {
       programs.firefox = {
         enable = true;
         package = pkgs.unstable.firefox;
 
         profiles = {
-          ${username} = {
+          ${user.name} = {
             isDefault = true;
 
             extensions.force = true;
@@ -136,7 +129,7 @@
         };
       };
 
-      stylix.targets.firefox.profileNames = ["${username}"];
+      stylix.targets.firefox.profileNames = ["${user.name}"];
     };
   };
 }

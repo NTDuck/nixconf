@@ -1,24 +1,6 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.yazi = {
-    nixos = {pkgs, ...}: {
-      environment.systemPackages = [
-        pkgs.unstable.yazi
-      ];
-    };
-
-    homeManager = {
-      user,
-      host,
-      pkgs,
-      ...
-    }: let
-      username = user.name;
-      hostname = host.name;
-    in {
+    homeManager = {pkgs, ...}: {
       programs.yazi = {
         enable = true;
         package = pkgs.unstable.yazi;

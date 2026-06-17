@@ -1,15 +1,5 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.tofi = {
-    nixos = {pkgs, ...}: {
-      environment.systemPackages = [
-        pkgs.unstable.tofi
-      ];
-    };
-
     homeManager = {
       pkgs,
       lib,
