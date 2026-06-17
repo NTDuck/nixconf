@@ -3,7 +3,7 @@
     users.ayin = {
       includes = [
         den.batteries.primary-user
-        (den.batteries.user-shell "zsh")
+        (den.batteries.user-shell "nushell")
       ];
     };
   };
@@ -13,6 +13,7 @@
       den.aspects.lenovo-legion
 
       den.aspects.agenix
+      den.aspects.airllm
       den.aspects.battery
       den.aspects.bichannel
       den.aspects.bluetooth
@@ -31,7 +32,6 @@
       den.aspects.ffmpeg
       den.aspects.firefox
       den.aspects.firmware
-      den.aspects.foot
       den.aspects.gallery-dl
       den.aspects.gc
       den.aspects.gcc
@@ -39,25 +39,25 @@
       den.aspects.go
       den.aspects.gradle
       den.aspects.greetd
-      den.aspects.gtklock
       den.aspects.helix
-      den.aspects.Hyprland
+      den.aspects.hyprland
       den.aspects.imv
       den.aspects.itch
-      den.aspects.kanshi
       den.aspects.lix
       den.aspects.llama
       den.aspects.llvm
       den.aspects.locale
+      den.aspects.mangohud
       den.aspects.miktex
       den.aspects.mingw
       den.aspects.mpv
       den.aspects.network
       den.aspects.nh
-      den.aspects.Noctalia-shell
+      den.aspects.noctalia-shell
       den.aspects.nodejs
       den.aspects.notion
       den.aspects.nur
+      den.aspects.nushell
       den.aspects.obs-studio
       den.aspects.ollama
       den.aspects.opencode
@@ -75,15 +75,12 @@
       den.aspects.steam
       den.aspects.stylix
       den.aspects.swap
-      den.aspects.sway
       den.aspects.taskwarrior
       den.aspects.telegram
-      den.aspects.tofi
       den.aspects.vesktop
       den.aspects.virtualbox
       den.aspects.vivaldi
       den.aspects.vortex
-      den.aspects.waybar
       den.aspects.waydroid
       den.aspects.webtorrent
       den.aspects.wezterm
@@ -93,7 +90,6 @@
       den.aspects.zalo
       den.aspects.zathura
       den.aspects.zed-editor
-      den.aspects.zsh
     ];
   };
 }

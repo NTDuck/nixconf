@@ -15,8 +15,8 @@
             addons = {
               classicui.globalSection = {
                 Theme = "stylix";
-                ShowInputMethodInformation = "True";
-                EnableInputMethodInformation = "True";
+                ShowInputMethodInformation = "False";
+                EnableInputMethodInformation = "False";
               };
             };
             globalOptions = {

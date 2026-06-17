@@ -42,6 +42,10 @@
     # Agentics
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
+
+    # Noctalia
+    noctalia.url = "github:noctalia-dev/noctalia/legacy-v4";
+    noctalia.inputs.nixpkgs.follows = "nixpkgs-unstable";
   };
 
   # https://nix.dev/manual/nix/latest/command-ref/conf-file#available-settings
