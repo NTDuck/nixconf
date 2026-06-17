@@ -42,16 +42,6 @@ nix run github:ryantm/agenix -- -e my-secret.age
 agenix -e my-secret.age
 ```
 
-## TODOs
-- Add support for HDMI (work?)
-
-- Make bamboo not show gui when switching language input - disable underlining
-
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
 ```
-
-
-<!--
-IMPORTANT: Write up the specifications into the ".gemini/specs/" folder with each domain topic (including technical topic) as a seperate markdown file. Create a ".gemini/specs/SPECS.md" which is an overview document that contains a table that links to all the specs.
--->

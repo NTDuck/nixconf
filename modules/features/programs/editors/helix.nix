@@ -1,15 +1,5 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.helix = {
-    # nixos = {pkgs, ...}: {
-    #   environment.systemPackages = [
-    #     pkgs.unstable.helix
-    #   ];
-    # };
-
     homeManager = {pkgs, ...}: {
       programs.helix = {
         enable = true;
@@ -18,7 +8,6 @@
         defaultEditor = true;
 
         settings = {
-          # theme = "catppuccin_mocha";
           editor = {
             line-number = "relative";
             lsp.display-messages = true;

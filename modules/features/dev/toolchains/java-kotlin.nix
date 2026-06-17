@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.java-kotlin = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [

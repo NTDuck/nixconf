@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.hosts.x86_64-linux.dell-latitude-E7270-H836QF2 = {
+  den.hosts.x86_64-linux.lenovo-legion-16iah7h-PF3XJ8SP = {
     users.ayin = {
       includes = [
         den.batteries.primary-user
@@ -8,12 +8,8 @@
     };
   };
 
-  den.aspects.dell-latitude-E7270-H836QF2 = {
+  den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     includes = [
-      den.aspects.dell-latitude-E7270-H836QF2-bluetooth-driver
-      den.aspects.dell-latitude-E7270-H836QF2-network-driver
-      den.aspects.dell-latitude-E7270-H836QF2-hardware
-
       den.aspects.agenix
       den.aspects.nixpkgs-overlays
       den.aspects.battery
@@ -34,6 +30,7 @@
       den.aspects.helix
       den.aspects.imv
       den.aspects.kanshi
+      den.aspects.lenovo-legion
       den.aspects.lix
       den.aspects.mpv
       den.aspects.nh
@@ -55,6 +52,41 @@
       den.aspects.zsh
       den.aspects.nodejs
       den.aspects.p7zip
+      den.aspects.cmake
+      den.aspects.deno
+      den.aspects.docker
+      den.aspects.ffmpeg
+      den.aspects.gallery-dl
+      den.aspects.gcc
+      den.aspects.git-xet
+      den.aspects.go
+      den.aspects.gradle
+      den.aspects.itch
+      den.aspects.llama
+      den.aspects.llvm
+      den.aspects.miktex
+      den.aspects.mingw
+      den.aspects.notion
+      den.aspects.obs-studio
+      den.aspects.ollama
+      den.aspects.opencode
+      den.aspects.openjdk
+      den.aspects.pandoc
+      den.aspects.poetry
+      den.aspects.protobuf
+      den.aspects.protonvpn
+      den.aspects.python
+      den.aspects.rufus
+      den.aspects.telegram
+      den.aspects.virtualbox
+      den.aspects.vivaldi
+      den.aspects.vortex
+      den.aspects.webtorrent
+      den.aspects.xmake
+      den.aspects.yt-dlp
+      den.aspects.Hyprland
+      den.aspects.Noctalia-shell
+      den.aspects.wezterm
     ];
   };
 }

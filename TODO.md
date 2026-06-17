@@ -17,8 +17,6 @@
 - nix specialization for gaming/battery mode
 - hands-on docker proj
 - gh dash
-- refactor users/ayin
-- refactor variosus other places
 - https://github.com/hardikpandya/stop-slop
 - nix-gaming
 - spec-kit

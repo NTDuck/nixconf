@@ -4,12 +4,6 @@
   ...
 }: {
   den.aspects.zed-editor = {
-    nixos = {pkgs, ...}: {
-      environment.systemPackages = [
-        pkgs.unstable.zed-editor
-      ];
-    };
-
     homeManager = {
       pkgs,
       lib,
@@ -41,6 +35,25 @@
         ]; # https://github.com/zed-industries/extensions/tree/main/extensions
 
         userSettings = {
+          cursor_shape = "block";
+          cli_default_open_behaviour = "new_window";
+
+          project_panel = {
+            default_width = 60.0;
+            entry_spacing = "standard";
+            dock = "left";
+          };
+
+          outline_panel.dock = "left";
+          collaboration_panel.dock = "left";
+          git_panel.dock = "left";
+
+          agent = {
+            dock = "right";
+            favourite_models = [];
+            model_parameters = [];
+          };
+
           features.copilot = false;
 
           telemetry = {

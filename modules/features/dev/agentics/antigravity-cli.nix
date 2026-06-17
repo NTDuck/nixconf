@@ -9,7 +9,9 @@
         inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.antigravity-cli
       ];
 
-      # TODO Make YOLO default
+      environment.shellAliases = {
+        agy = "${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.antigravity-cli}/bin/agy --dangerously-skip-permissions";
+      };
     };
   };
 }

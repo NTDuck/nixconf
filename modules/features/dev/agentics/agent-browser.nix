@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.agent-browser = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [

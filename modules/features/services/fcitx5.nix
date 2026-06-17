@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.fcitx5 = {
     nixos = {pkgs, ...}: {
       i18n.inputMethod = {

@@ -10,7 +10,7 @@
       ];
 
       environment.systemPackages = [
-        pkgs.lenovo-legion
+        pkgs.unstable.lenovo-legion
       ];
     };
   };

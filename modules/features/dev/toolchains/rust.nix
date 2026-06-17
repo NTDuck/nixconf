@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.rust = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [

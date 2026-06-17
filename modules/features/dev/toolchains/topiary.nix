@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.topiary = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [

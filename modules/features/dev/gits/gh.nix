@@ -1,16 +1,5 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.gh = {
-    nixos = {pkgs, ...}: {
-      environment.systemPackages = [
-        pkgs.unstable.gh
-        pkgs.unstable.gh-dash
-      ];
-    };
-
     homeManager = {pkgs, ...}: {
       programs.gh = {
         enable = true;

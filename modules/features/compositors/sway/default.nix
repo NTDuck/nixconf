@@ -1,18 +1,10 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.sway = {
-    nixos = {
-      pkgs,
-      config,
-      ...
-    }: {
-      programs.sway.enable = true;
-      environment.systemPackages = [
-        pkgs.unstable.sway
-      ];
+    nixos = {pkgs, ...}: {
+      # programs.sway.enable = true;
+      # environment.systemPackages = [
+      #   pkgs.unstable.sway
+      # ];
       security.polkit.enable = true;
       services.gnome.gnome-keyring.enable = true;
       programs.dconf.enable = true;
@@ -20,16 +12,14 @@
       security.pam.services.greetd.enableGnomeKeyring = true;
       security.pam.services.gtklock.enableGnomeKeyring = true;
     };
-    homeManager = {
-      pkgs,
-      config,
-      ...
-    }: let
+
+    homeManager = {pkgs, ...}: let
       modifier = "Mod4";
     in {
       wayland.windowManager.sway = {
         enable = true;
         package = pkgs.unstable.sway;
+
         systemd.enable = true;
         xwayland = true;
         wrapperFeatures.gtk = true;
@@ -51,7 +41,8 @@
               always = true;
             }
             {
-              command = "dbus-update-activation-environment --systemd --all; systemctl --user import-environment";
+              # command = "dbus-update-activation-environment --systemd --all; systemctl --user import-environment";
+              command = "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all; ${pkgs.systemd}/bin/systemctl --user import-environment";
               always = true;
             }
           ];
@@ -147,7 +138,7 @@
         package = pkgs.unstable.swayidle;
         events = {
           "before-sleep" = "${pkgs.unstable.gtklock}/bin/gtklock";
-          "after-resume" = "swaymsg 'output * dpms on'";
+          "after-resume" = "${pkgs.unstable.sway}/bin/swaymsg 'output * dpms on'";
         };
       };
 

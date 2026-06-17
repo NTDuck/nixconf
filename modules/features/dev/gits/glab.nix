@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.glab = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [

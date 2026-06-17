@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.waydroid = {
     nixos = {
       pkgs,
@@ -29,16 +25,17 @@
         };
 
         # Provide all the necessary dependencies directly to the script
-        path = with pkgs; [
-          waydroid
-          python3
-          git
-          lzip
-          squashfsTools
-          coreutils
-          bash
+        path = [
+          pkgs.unstable.waydroid
+          pkgs.unstable.python3
+          pkgs.unstable.git
+          pkgs.unstable.lzip
+          pkgs.unstable.squashfsTools
+          pkgs.unstable.coreutils
+          pkgs.unstable.bash
         ];
 
+        # TODO Convert to ${pkgs.foo}/bin/bar
         script = ''
           IMAGE_DIR="/var/lib/waydroid/images"
 

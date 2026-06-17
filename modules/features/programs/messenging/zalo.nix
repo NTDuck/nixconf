@@ -21,8 +21,10 @@
       zalo-desktop = pkgs.makeDesktopItem {
         name = "zalo";
         desktopName = "Zalo";
-        exec = "zalo";
+        exec = "${zalo}/bin/zalo";
         categories = ["Network" "InstantMessaging"];
+        terminal = false;
+        type = "Application";
       };
     in {
       environment.systemPackages = [
