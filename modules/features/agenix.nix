@@ -25,7 +25,7 @@
         !include ${config.age.secrets."github-token".path}
       '';
     };
-    homeManager = args@{...}: let
+    homeManager = args @ {...}: let
       user = args.user or {name = "ayin";};
     in {
       imports = [

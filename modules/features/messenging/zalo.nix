@@ -18,14 +18,21 @@
         name = "zalo";
         desktopName = "Zalo";
         exec = "${zalo}/bin/zalo";
+        icon = "zalo";
         categories = ["Network" "InstantMessaging"];
         terminal = false;
         type = "Application";
       };
+      zalo-pkg = pkgs.symlinkJoin {
+        name = "zalo-${version}";
+        paths = [
+          zalo
+          zalo-desktop
+        ];
+      };
     in {
       environment.systemPackages = [
-        zalo
-        zalo-desktop
+        zalo-pkg
       ];
     };
   };
