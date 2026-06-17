@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.zalo = {
     nixos = {pkgs, ...}: let
       pname = "zalo";

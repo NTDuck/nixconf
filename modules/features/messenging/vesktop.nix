@@ -1,15 +1,5 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.vesktop = {
-    nixos = {pkgs, ...}: {
-      environment.systemPackages = [
-        pkgs.unstable.vesktop
-      ];
-    };
-
     homeManager = {pkgs, ...}: {
       programs.vesktop = {
         enable = true;
