@@ -1,6 +1,7 @@
 {den, ...}: {
   den.aspects.toolchains = {
     includes = [
+      den.aspects.android
       den.aspects.c-cpp
       den.aspects.docker
       den.aspects.java-kotlin

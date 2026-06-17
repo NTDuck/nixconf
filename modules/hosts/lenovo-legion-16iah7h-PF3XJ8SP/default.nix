@@ -13,7 +13,12 @@
       den.aspects.agenix
       den.aspects.bichannel
       den.aspects.battery
-      den.aspects.system-settings
+      den.aspects.boot
+      den.aspects.experimental-features
+      den.aspects.firmware
+      den.aspects.locale
+      den.aspects.network
+      den.aspects.swap
       den.aspects.bluetooth
       den.aspects.bluetuith
       den.aspects.cachyos-kernel

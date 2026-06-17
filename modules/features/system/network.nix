@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.system-network = {
+  den.aspects.network = {
     nixos = {
       networking = {
         networkmanager = {
