@@ -2,7 +2,6 @@
   den.hosts.x86_64-linux.lenovo-legion-16iah7h-PF3XJ8SP = {
     users.ayin = {
       includes = [
-        den.batteries.primary-user
         (den.batteries.user-shell "nushell")
       ];
     };
@@ -10,6 +9,7 @@
 
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     includes = [
+      den.batteries.primary-user
       den.aspects.lenovo-legion
 
       den.aspects.agenix

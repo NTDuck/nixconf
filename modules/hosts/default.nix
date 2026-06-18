@@ -16,7 +16,7 @@
   ];
 
   den.schema.host.classes = ["nixos"];
-  den.schema.user.classes = lib.mkDefault ["homeManager"];
+  den.schema.user.classes = lib.mkDefault ["nixos" "homeManager"];
 
   den.default.homeManager = {
     config.home.stateVersion = "26.05";

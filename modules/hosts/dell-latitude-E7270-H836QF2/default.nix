@@ -10,6 +10,8 @@
 
   den.aspects.dell-latitude-E7270-H836QF2 = {
     includes = [
+      den.batteries.primary-user
+
       den.aspects.dell-latitude-E7270-H836QF2-bluetooth-driver
       den.aspects.dell-latitude-E7270-H836QF2-hardware
       den.aspects.dell-latitude-E7270-H836QF2-network-driver
