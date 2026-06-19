@@ -31,6 +31,7 @@
         ]; # https://github.com/zed-industries/extensions/tree/main/extensions
 
         userSettings = {
+          cursor_blink = false;
           cursor_shape = "block";
           cli_default_open_behaviour = "new_window";
 

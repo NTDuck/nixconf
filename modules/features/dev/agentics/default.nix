@@ -7,6 +7,7 @@
       den.aspects.codex
       den.aspects.ollama
       den.aspects.qoder-cli
+      den.aspects.spec-kit
     ];
   };
 }

@@ -60,7 +60,6 @@
       den.aspects.nushell
       den.aspects.obs-studio
       den.aspects.ollama
-      den.aspects.opencode
       den.aspects.openjdk
       den.aspects.openssh
       den.aspects.p7zip
