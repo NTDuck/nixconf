@@ -1,8 +1,12 @@
-{den, ...}: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.spec-kit = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.unstable.spec-kit
+        inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.spec-kit
       ];
     };
   };
