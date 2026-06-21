@@ -1,0 +1,26 @@
+{den, ...}: {
+  den.aspects.javascript-typescript = {
+    nixos = {pkgs, ...}: {
+      environment.systemPackages = [
+        pkgs.unstable.nodejs
+        pkgs.unstable.deno
+
+        pkgs.unstable.javascript-typescript-langserver
+        pkgs.unstable.tailwindcss-language-server
+
+        pkgs.unstable.svelte-language-server
+      ];
+    };
+
+    homeManager = {pkgs, ...}: {
+      programs.bun = {
+        enable = true;
+        package = pkgs.unstable.bun;
+
+        settings = {
+          telemetry = false;
+        };
+      };
+    };
+  };
+}

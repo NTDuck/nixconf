@@ -1,30 +1,31 @@
 {
-  nixConfig = {
-    extra-substituters = [
-      "https://attic.xuyh0120.win/lantian" # `xddxdd`'s CachyOS Kernel binary cache, Hydra CI
-      "https://cache.garnix.io" # `xddxdd`'s CachyOS Kernel binary cache, Garnix CI
-    ];
-    extra-trusted-public-keys = [
-      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" # `xddxdd`'s CachyOS Kernel binary cache, Hydra CI
-      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" # `xddxdd`'s CachyOS Kernel binary cache, Garnix CI
-    ];
-  };
+  outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./modules);
+  # outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree.matchNot ".*/private/.*" ./modules);
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    home-manager.url = "github:nix-community/home-manager/release-25.11";
+    home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # User Repository
     nur.url = "github:nix-community/NUR";
 
-    stylix.url = "github:nix-community/stylix/release-25.11";
+    stylix.url = "github:nix-community/stylix/release-26.05";
     stylix.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Hardware
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     # Kernel
     cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+
+    # Sugars
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    import-tree.url = "github:vic/import-tree";
+    den.url = "github:denful/den";
+    flake-file.url = "github:vic/flake-file";
 
     # Secrets
     agenix.url = "github:ryantm/agenix";
@@ -32,88 +33,45 @@
 
     # Formatter
     alejandra.url = "github:kamadorueda/alejandra/4.0.0";
-    alejandra.inputs.nixpkgs.follows = "nixpkgs";
+    alejandra.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
     # Rust
     rust-overlay.url = "github:oxalica/rust-overlay";
-    rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+    rust-overlay.inputs.nixpkgs.follows = "nixpkgs-unstable";
+
+    # Agentics
+    llm-agents.url = "github:numtide/llm-agents.nix";
+    llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
+
+    # Shell
+    noctalia.url = "github:noctalia-dev/noctalia/legacy-v4";
+    noctalia.inputs.nixpkgs.follows = "nixpkgs-unstable";
+
+    # Persist
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+    preservation.url = "github:nix-community/preservation";
   };
 
-  outputs = inputs @ {
-    self,
-    nixpkgs,
-    nixpkgs-unstable,
-    rust-overlay,
-    ...
-  }: let
-    mkHost = {
-      system,
-      hostname,
-      username,
-    }:
-      nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {
-          inherit
-            self
-            inputs
-            system
-            hostname
-            username
-            ;
-        };
+  # https://nix.dev/manual/nix/latest/command-ref/conf-file#available-settings
+  # https://codeberg.org/Adda/nixos-config/src/commit/826b5ec6f5733e4b6bc0771dc9639e2e074358b5/flake.nix
+  nixConfig = {
+    accept-flake-config = true;
+    allow-import-from-derivation = true;
+    auto-optimise-store = true;
 
-        modules = [
-          (
-            {...}: {
-              nixpkgs.config.allowUnfree = true;
-
-              nixpkgs.overlays = [
-                inputs.nur.overlays.default
-                rust-overlay.overlays.default
-
-                (final: prev: {
-                  unstable = import nixpkgs-unstable {
-                    inherit system;
-                    config.allowUnfree = true;
-                  };
-                })
-              ];
-            }
-          )
-
-          "${self}/targets/${hostname}" # default.nix
-
-          inputs.home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = "backup";
-
-            home-manager.extraSpecialArgs = {
-              inherit
-                self
-                inputs
-                system
-                hostname
-                username
-                ;
-            };
-            home-manager.users.${username} = import "${self}/users/${username}"; # default.nix
-          }
-        ];
-      };
-  in {
-    nixosConfigurations = rec {
-      default = dell-latitude-E7270-H836QF2;
-
-      dell-latitude-E7270-H836QF2 = mkHost {
-        system = "x86_64-linux";
-        hostname = "dell-latitude-E7270-H836QF2";
-        username = "ayin";
-      };
-    };
+    # TODO Verify
+    extra-substituters = [
+      "https://attic.xuyh0120.win/lantian" # `xddxdd`'s CachyOS Kernel binary cache, Hydra CI
+      "https://cache.garnix.io" # `xddxdd`'s CachyOS Kernel binary cache, Garnix CI
+      "https://cache.lix.systems"
+      "https://chaotic-nyx.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" # `xddxdd`'s CachyOS Kernel binary cache, Hydra CI
+      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" # `xddxdd`'s CachyOS Kernel binary cache, Garnix CI
+      "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o="
+      "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="
+    ];
   };
 }
-# 528491
-

@@ -42,11 +42,6 @@ nix run github:ryantm/agenix -- -e my-secret.age
 agenix -e my-secret.age
 ```
 
-## TODOs
-- Add support for HDMI (work?)
-
-- Make bamboo not show gui when switching language input - disable underlining
-
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
 ```
