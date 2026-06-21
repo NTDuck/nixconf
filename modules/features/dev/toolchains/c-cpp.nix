@@ -9,7 +9,7 @@
 
         pkgs.unstable.cmake
         pkgs.unstable.gcc
-        pkgs.unstable.mingw-w64
+        # pkgs.unstable.mingw-w64
         pkgs.unstable.llvm
       ];
     };

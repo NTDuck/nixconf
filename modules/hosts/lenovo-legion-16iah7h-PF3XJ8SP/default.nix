@@ -33,6 +33,7 @@
       den.aspects.helix
       den.aspects.imv
       den.aspects.kanshi
+      den.aspects.lenovo-legion
       den.aspects.lix
       den.aspects.locale
       den.aspects.mpv
