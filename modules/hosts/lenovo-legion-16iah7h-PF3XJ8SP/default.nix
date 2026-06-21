@@ -2,7 +2,19 @@
   den.hosts.x86_64-linux.lenovo-legion-16iah7h-PF3XJ8SP = {
     users.ayin = {
       includes = [
-        (den.batteries.user-shell "nushell")
+        den.batteries.primary-user
+        (den.batteries.user-shell "zsh")
+
+        ({den, ...}: {
+          den.aspects.lenovo-legion-16iah7h-PF3XJ8SP-git = {
+            homeManager = {
+              programs.git.settings.user = {
+                name = "NTDuck";
+                email = "nguyentuduck@gmail.com";
+              };
+            };
+          };
+        })
       ];
     };
   };

@@ -4,6 +4,17 @@
       includes = [
         den.batteries.primary-user
         (den.batteries.user-shell "zsh")
+
+        ({den, ...}: {
+          den.aspects.dell-latitude-E7270-H836QF2-git = {
+            homeManager = {
+              programs.git.settings.user = {
+                name = "NTDuck";
+                email = "nguyentuduck@gmail.com";
+              };
+            };
+          };
+        })
       ];
     };
   };
