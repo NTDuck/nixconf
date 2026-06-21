@@ -1,15 +1,6 @@
 {den, ...}: {
   den.aspects.gtklock = {
-    nixos = {
-      config,
-      lib,
-      pkgs,
-      ...
-    }: let
-      self = den.inputs.self;
-      colors = config.lib.stylix.colors.withHashtag;
-      fonts = config.stylix.fonts;
-    in {
+    nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.adwaita-icon-theme
       ];
@@ -24,11 +15,7 @@
           };
         };
 
-        style = let
-          clockFontSize = toString (config.stylix.fonts.sizes.applications * 7);
-          entryFontSize = toString (config.stylix.fonts.sizes.applications * 1.8);
-          warningFontSize = toString (config.stylix.fonts.sizes.applications * 1.6);
-        in ''
+        style = ''
           window {
             background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url("''${self}/assets/wallpapers/girls-last-tour-library.jpg");
             background-size: cover;
