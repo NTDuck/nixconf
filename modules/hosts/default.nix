@@ -21,15 +21,18 @@
   den.default.homeManager = {
     config.home = {
       stateVersion = "26.05";
-      useGlobalPkgs = true;
-      useUserPackages = true;
-      backupFileExtension = "backup";
     };
   };
 
   den.default.nixos = {
-    config.system = {
-      stateVersion = "26.05";
+    config = {
+      system.stateVersion = "26.05";
+
+      home-manager = {
+        useGlobalPkgs = true;
+        useUserPackages = true;
+        backupFileExtension = "backup";
+      };
     };
   };
 }
