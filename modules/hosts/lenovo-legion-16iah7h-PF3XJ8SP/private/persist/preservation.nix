@@ -1,12 +1,15 @@
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP-persist = {
     nixos = {
+      boot.tmp.cleanOnBoot = true;
+
       preservation = {
         enable = true;
 
         preserveAt."/persistent" = {
           directories = [
             "/etc/nixos"
+            "/tmp"
             "/var/lib/bluetooth"
             {
               directory = "/var/lib/nixos";
