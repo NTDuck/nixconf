@@ -67,9 +67,12 @@ $ git clone https://github.com/NTDuck/nixconf && nixconf
 $ sudo nixos-generate-config --show-hardware-config --no-filesystems > ./modules/hosts/${hostname}/private/hardware/default.nix
 $ sudo nix --extra-experimental-features "nix-command flakes" run github:nix-community/disko/latest#disko-install -- --flake .#${hostname} --disk main /dev/${diskname}
 
+$ ...
+$ git add .
+
 $ lsblk # to determine ${diskpartition}
 $ sudo mount -o subvol=persistent /dev/${diskpartition} /mnt
 $ sudo cp ~/nixconf/* /mnt/etc/nixconf
 
-sudo chroot /mnt passwd
+$ sudo chroot /mnt passwd
 ```
