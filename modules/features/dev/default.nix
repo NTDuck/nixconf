@@ -7,8 +7,12 @@
       den.aspects.virtualizations
 
       den.aspects.cloudflare-warp
+      den.aspects.p7zip
+      den.aspects.pandoc
       den.aspects.speedtest-cli
       den.aspects.ripgrep
+      den.aspects.rufus
+      den.aspects.texlive
     ];
   };
 }

@@ -1,5 +1,9 @@
 {den, ...}: {
   den.aspects.gallery-dl = {
-    homeManager = {pkgs, ...}: {home.packages = [pkgs.unstable.gallery-dl];};
+    nixos = {pkgs, ...}: {
+      environment.systemPackages = [
+        pkgs.unstable.gallery-dl
+      ];
+    };
   };
 }

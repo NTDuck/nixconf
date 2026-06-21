@@ -4,6 +4,7 @@
       den.aspects.android
       den.aspects.c-cpp
       den.aspects.docker
+      den.aspects.go
       den.aspects.java-kotlin
       den.aspects.javascript-typescript
       den.aspects.lua

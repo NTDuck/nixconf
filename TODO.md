@@ -1,6 +1,3 @@
-- dendritic! + lix (1st)
-- lenovo (2nd)
-
 - Virtual Machine that runs Windows
 - Convenient method for SSH
 - Hyprland + Noctalia-shell + wezterm

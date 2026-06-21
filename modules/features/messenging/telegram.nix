@@ -1,5 +1,5 @@
 {den, ...}: {
   den.aspects.telegram = {
-    homeManager = {pkgs, ...}: {home.packages = [pkgs.unstable.telegram-desktop];};
+    nixos = {pkgs, ...}: {environment.systemPackages = [pkgs.unstable.telegram-desktop];};
   };
 }

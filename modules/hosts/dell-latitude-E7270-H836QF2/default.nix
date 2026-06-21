@@ -43,10 +43,8 @@
       den.aspects.mpv
       den.aspects.network
       den.aspects.nh
-      den.aspects.nodejs
       den.aspects.nur
       den.aspects.openssh
-      den.aspects.p7zip
       den.aspects.pear-desktop
       den.aspects.pipewire
       den.aspects.steam
@@ -57,7 +55,6 @@
       den.aspects.tofi
       den.aspects.vesktop
       den.aspects.waybar
-      den.aspects.waydroid
       den.aspects.yazi
       den.aspects.zalo
       den.aspects.zathura

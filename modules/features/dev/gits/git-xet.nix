@@ -1,9 +1,8 @@
 {den, ...}: {
-  den.aspects.vortex = {
+  den.aspects.git-xet = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.unstable.bottles
-        pkgs.unstable.bottles-unwrapped
+        pkgs.unstable.git-xet
       ];
     };
   };

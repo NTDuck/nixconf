@@ -1,9 +1,9 @@
 {den, ...}: {
-  den.aspects.pandoc = {
+  den.aspects.go = {
     homeManager = {pkgs, ...}: {
-      programs.pandoc = {
+      programs.go = {
         enable = true;
-        package = pkgs.unstable.pandoc;
+        package = pkgs.unstable.go;
       };
     };
   };

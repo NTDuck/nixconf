@@ -2,6 +2,7 @@
   den.aspects.javascript-typescript = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
+        pkgs.unstable.nodejs
         pkgs.unstable.deno
 
         pkgs.unstable.javascript-typescript-langserver
