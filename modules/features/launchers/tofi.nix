@@ -10,17 +10,27 @@
         package = pkgs.unstable.tofi;
 
         settings = {
-          width = lib.mkForce "100%";
-          height = lib.mkForce "100%";
-          border-width = lib.mkForce 0;
-          outline-width = lib.mkForce 0;
-          padding-left = lib.mkForce "35%";
-          padding-top = lib.mkForce "35%";
-          result-spacing = lib.mkForce 25;
-          num-results = lib.mkForce 5;
-          font = lib.mkForce "Inter";
-          font-size = lib.mkForce 20;
-          background-color = lib.mkForce "#000A";
+          width = "50%";
+          height = "50%";
+
+          text-cursor-style = "block";
+          text-cursor = true;
+          matching-algorithm = "fuzzy";
+
+          prompt-text = "$";
+          prompt-padding = 10;
+
+          border-width = 2;
+          outline-width = 0;
+
+          selection-background = lib.mkForce "#00000000";
+          default-result-background = lib.mkForce "#00000000";
+          alternate-result-background = lib.mkForce "#00000000";
+
+          padding-top = 20;
+          padding-bottom = 20;
+          padding-left = 20;
+          padding-right = 20;
         };
       };
     };

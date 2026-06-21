@@ -3,6 +3,7 @@
     homeManager = {config, ...}: {
       programs.waybar = {
         enable = true;
+
         settings = {
           mainBar = {
             layer = "top";
@@ -39,26 +40,20 @@
             };
 
             "pulseaudio" = {
-              format = "VOL
-  {volume:03d}%";
-              format-muted = "MUT
-  {volume:03d}%";
+              format = "VOL\n{volume:03d}%";
+              format-muted = "MUT\n{volume:03d}%";
               tooltip = false;
             };
 
             "backlight" = {
-              format = "LGT
-  {percent:03d}%";
+              format = "LGT\n{percent:03d}%";
               tooltip = false;
             };
 
             "network" = {
-              format-wifi = "WIF
-  {signalStrength:03d}%";
-              format-ethernet = "ETH
-  100%";
-              format-disconnected = "NET
-  OFF";
+              format-wifi = "WIF\n{signalStrength:03d}%";
+              format-ethernet = "ETH\n100%";
+              format-disconnected = "NET\nOFF";
               tooltip = false;
             };
 
@@ -67,51 +62,38 @@
                 warning = 20;
                 critical = 10;
               };
-              format = "BAT
-  {capacity:03d}%";
-              format-charging = "CHR
-  {capacity:03d}%";
-              format-plugged = "PLG
-  {capacity:03d}%";
-              tooltip-format = "{power} W
-  {time}";
+              format = "BAT\n{capacity:03d}%";
+              format-charging = "CHR\n{capacity:03d}%";
+              format-plugged = "PLG\n{capacity:03d}%";
+              tooltip-format = "{power} W\n{time}";
             };
 
             "cpu" = {
-              format = "CPU
-  {usage:03d}%";
+              format = "CPU\n{usage:03d}%";
               interval = 10;
               tooltip = false;
             };
 
             "memory" = {
-              format = "RAM
-  {percentage:03d}%";
+              format = "RAM\n{percentage:03d}%";
               interval = 10;
               tooltip = false;
             };
 
             "temperature" = {
-              format = "TMP
-  {temperatureC:03d}°";
+              format = "TMP\n{temperatureC:03d}°";
               interval = 10;
               tooltip = false;
             };
 
             "clock" = {
-              format = "{:%d
-  %m
-  ──
-  %H
-  %M}"; # https://www.reddit.com/r/unixporn/comments/1op5brb/comment/nnb1ugx/
+              format = "{:%d\n%m\n──\n%H\n%M}"; # https://www.reddit.com/r/unixporn/comments/1op5brb/comment/nnb1ugx/
               tooltip = false;
             };
           };
         };
 
-        style = let
-          colors = config.lib.stylix.colors;
-        in ''
+        style = ''
           * {
             font-family: "${config.stylix.fonts.monospace.name}";
             font-size: ${toString config.stylix.fonts.sizes.desktop}px;
@@ -119,7 +101,7 @@
           }
 
           window#waybar {
-            background: alpha(${colors.withHashtag.base00}, 0.8);
+            background: alpha(@base00, 0.8);
             border-radius: 4px;
           }
 
@@ -131,16 +113,16 @@
           #temperature,
           #battery,
           #clock {
-            background: alpha(${colors.withHashtag.base02}, 0.8);
-            color: ${colors.withHashtag.base05};
+            background: alpha(@base02, 0.8);
+            color: @base05;
             border-radius: 2px;
             margin: 4px;
             padding: 2px 2px;
           }
 
           #pulseaudio.muted {
-            background: alpha(${colors.withHashtag.base02}, 0.8);
-            color: ${colors.withHashtag.base05};
+            background: alpha(@base02, 0.8);
+            color: @base05;
             border-radius: 2px;
             margin: 4px;
             padding: 2px 2px;
@@ -161,16 +143,16 @@
           #temperature:hover,
           #battery:hover,
           #clock:hover {
-            background: alpha(${colors.withHashtag.base03}, 0.8);
-            color: ${colors.withHashtag.base0D};
+            background: alpha(@base03, 0.8);
+            color: @base0D;
             transition: 0.2s;
           }
 
           window#waybar #workspaces button {
             padding: 4px 0px;
             margin-bottom: 4px;
-            color: ${colors.withHashtag.base04};
-            background: alpha(${colors.withHashtag.base02}, 0.8);
+            color: @base04;
+            background: alpha(@base02, 0.8);
             border-radius: 2px;
 
             border: none;
@@ -179,8 +161,8 @@
           }
 
           window#waybar #workspaces button.focused {
-            color: ${colors.withHashtag.base0D};
-            background: alpha(${colors.withHashtag.base03}, 0.8);
+            color: @base0D;
+            background: alpha(@base03, 0.8);
             border: none;
             border-bottom: 2px solid transparent;
 
@@ -191,8 +173,8 @@
           }
 
           window#waybar #workspaces button:hover {
-            background: alpha(${colors.withHashtag.base03}, 0.8);
-            color: ${colors.withHashtag.base05};
+            background: alpha(@base03, 0.8);
+            color: @base05;
             border-bottom: 2px solid transparent;
           }
         '';
