@@ -25,6 +25,14 @@
 
       den.aspects.lenovo-legion-16iah7h-PF3XJ8SP-persist
 
+      ({den, ...}: {
+        den.aspects.lenovo-legion-16iah7h-PF3XJ8SP-temp-initial-password = {
+          nixos = {
+            users.users.ayin.initialPassword = "root";
+          };
+        };
+      })
+
       den.aspects.agenix
       den.aspects.battery
       den.aspects.bichannel
