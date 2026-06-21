@@ -5,16 +5,16 @@
         den.batteries.primary-user
         (den.batteries.user-shell "zsh")
 
-        ({den, ...}: {
-          den.aspects.lenovo-legion-16iah7h-PF3XJ8SP-git = {
-            homeManager = {
-              programs.git.settings.user = {
-                name = "NTDuck";
-                email = "nguyentuduck@gmail.com";
-              };
-            };
-          };
-        })
+        # ({den, ...}: {
+        #   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP-git = {
+        #     homeManager = {
+        #       programs.git.settings.user = {
+        #         name = "NTDuck";
+        #         email = "nguyentuduck@gmail.com";
+        #       };
+        #     };
+        #   };
+        # })
       ];
     };
   };
@@ -22,6 +22,8 @@
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     includes = [
       den.batteries.primary-user
+
+      den.aspects.lenovo-legion-16iah7h-PF3XJ8SP-persist
 
       den.aspects.agenix
       den.aspects.battery
