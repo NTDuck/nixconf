@@ -1,6 +1,10 @@
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP-persist = {
-    nixos = {
+    nixos = {inputs, ...}: {
+      imports = [
+        inputs.preservation.nixosModules.default
+      ];
+
       boot.tmp.cleanOnBoot = true;
 
       preservation = {
