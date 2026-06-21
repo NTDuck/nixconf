@@ -19,12 +19,17 @@
   den.schema.user.classes = lib.mkDefault ["nixos" "homeManager"];
 
   den.default.homeManager = {
-    config.home.stateVersion = "26.05";
+    config.home = {
+      stateVersion = "26.05";
+      useGlobalPkgs = true;
+      useUserPackages = true;
+      backupFileExtension = "backup";
+    };
   };
 
   den.default.nixos = {
-    config.system.stateVersion = "26.05";
-    config.home-manager.useGlobalPkgs = true;
-    config.home-manager.useUserPackages = true;
+    config.system = {
+      stateVersion = "26.05";
+    };
   };
 }
