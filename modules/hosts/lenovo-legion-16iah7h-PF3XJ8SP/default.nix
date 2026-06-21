@@ -34,7 +34,7 @@
         };
       })
 
-      den.aspects.agenix
+      # den.aspects.agenix
       den.aspects.battery
       den.aspects.bichannel
       den.aspects.bluetooth
