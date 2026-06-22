@@ -31,6 +31,12 @@
           menu = "${pkgs.unstable.tofi}/bin/tofi-drun --drun-launch=true";
           bars = [{command = "${pkgs.unstable.waybar}/bin/waybar";}];
 
+          output = {
+            "eDP-1" = {
+              scale = "1.5"; # Adjust to "1.25" or "2" if 1.5 is too big/small
+            };
+          };
+
           startup = [
             {
               command = "fcitx5 -d -r";

@@ -35,7 +35,7 @@
       })
 
       # den.aspects.agenix
-      den.aspects.battery
+      # den.aspects.battery
       den.aspects.bichannel
       den.aspects.bluetooth
       den.aspects.bluetuith
@@ -78,6 +78,7 @@
       den.aspects.zalo
       den.aspects.zathura
       den.aspects.zed-editor
+      den.aspects.zen-browser
       den.aspects.zsh
     ];
   };
