@@ -1,24 +1,18 @@
-- Virtual Machine that runs Windows
-- Convenient method for SSH
+- nixvert
+- ssh
 - Hyprland + Noctalia-shell + wezterm
-- LLL: https://mynixos.com/nixpkgs/package/lenovo-legion
-- ashell?
 - https://nixos.wiki/wiki/Storage_optimization
 - monkeytype local
-- residue from windows-scoop: cmake, deno, docker, ffmpeg, gallery-dl, gcc,
-  git-xet, go, gradle, itch, llama, llvm, miktex, mingw, nodejs, notion,
-  obs-studio, ollama, opencode, openjdk, pandoc, poetry, protobuf, protonvpn,
-  python, rufus, telegram, virtualbox?, vivaldi, vortex, webtorrent, p7zip,
-  xmake, yt-dlp
-- disko for impermanance/preservation (vimjoyer)
+- disko for impermanance/preservation (vimjoyer) | now just preservation.
 - nix specialization for gaming/battery mode
-- hands-on docker proj
 - gh dash
 - https://github.com/hardikpandya/stop-slop
 - nix-gaming
-- spec-kit
 - https://github.com/nix-community/nixos-facter
-- afterburner but linux
+- airllm gemma fine-tune as opus
+- certain apps has home config file, find reproducible part and do it!
+- abandon gnome keyring?
+- zen browser
 
 - https://github.com/robbsbro69/nixos/blob/main/configuration.nix
 - https://www.reddit.com/r/unixporn/comments/1s85ebb/hyprland_my_first_hyprland_rice_on_cachyos/
@@ -26,7 +20,6 @@
 - a stable, conforming facade
 
 - https://github.com/skainguyen1412/antigravity-usage
-- agy main? + caveman
 - flake-file
 
 REFS

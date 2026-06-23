@@ -1,10 +1,6 @@
 {den, ...}: {
   den.aspects.sway = {
     nixos = {
-      # programs.sway.enable = true;
-      # environment.systemPackages = [
-      #   pkgs.unstable.sway
-      # ];
       security.polkit.enable = true;
       services.gnome.gnome-keyring.enable = true;
       programs.dconf.enable = true;
@@ -33,7 +29,8 @@
 
           output = {
             "eDP-1" = {
-              scale = "1.5"; # Adjust to "1.25" or "2" if 1.5 is too big/small
+              scale = "1.5";
+              mode = "2560x1600@165.019Hz";
             };
           };
 
