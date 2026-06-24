@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.zen-browser = {
+  den.aspects.browsers.zen-browser = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default

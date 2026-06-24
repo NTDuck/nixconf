@@ -47,8 +47,13 @@
     noctalia.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
     # Browser
-    zen-browser.url = "github:youwen5/zen-browser-flake";
-    zen-browser.inputs.nixpkgs.follows = "nixpkgs-unstable";
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs = {
+        nixpkgs.follows = "nixpkgs-unstable";
+        home-manager.follows = "home-manager";
+      };
+    };
 
     # Preservation
     preservation.url = "github:nix-community/preservation";
