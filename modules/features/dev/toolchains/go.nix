@@ -1,6 +1,6 @@
 {den, ...}: {
-  den.aspects.go = {
-    homeManager = {pkgs, ...}: {
+  den.aspects.dev.toolchains.go = {
+    home-manager = {pkgs, ...}: {
       programs.go = {
         enable = true;
         package = pkgs.unstable.go;

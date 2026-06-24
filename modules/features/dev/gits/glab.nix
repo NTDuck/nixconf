@@ -1,12 +1,12 @@
 {den, ...}: {
-  den.aspects.glab = {
+  den.aspects.dev.gits.glab = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.glab
       ];
     };
 
-    homeManager = {pkgs, ...}: {
+    home-manager = {pkgs, ...}: {
       programs.git.settings = {
         credential."https://gitlab.com".helper = "!${pkgs.unstable.glab}/bin/glab auth git-credential";
       };

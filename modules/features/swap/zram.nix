@@ -1,7 +1,7 @@
 {den, ...}: {
-  den.aspects.battery.powertop = {
+  den.aspects.swap.zram = {
     nixos = {
-      powerManagement.powertop = {
+      zramSwap = {
         enable = true;
       };
     };

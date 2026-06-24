@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.java-kotlin = {
+  den.aspects.dev.toolchains.java-kotlin = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         # pkgs.unstable.jdk21
@@ -18,7 +18,7 @@
       # };
     };
 
-    homeManager = {pkgs, ...}: {
+    home-manager = {pkgs, ...}: {
       programs.java = {
         enable = true;
         package = pkgs.unstable.jdk;

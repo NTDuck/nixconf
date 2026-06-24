@@ -1,12 +1,6 @@
 {den, ...}: {
   den.aspects.zathura = {
-    nixos = {pkgs, ...}: {
-      environment.systemPackages = [
-        pkgs.unstable.zathura
-      ];
-    };
-
-    homeManager = {
+    home-manager = {
       config,
       pkgs,
       ...

@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.bluetuith = {
-    homeManager = {pkgs, ...}: {
+    home-manager = {pkgs, ...}: {
       programs.bluetuith = {
         enable = true;
         package = pkgs.unstable.bluetuith;

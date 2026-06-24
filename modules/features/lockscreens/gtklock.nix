@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.gtklock = {
+  den.aspects.lockscreens.gtklock = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.adwaita-icon-theme

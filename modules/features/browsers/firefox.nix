@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.browsers.firefox = {
-    homeManager = {
+    home-manager = {
       user,
       pkgs,
       ...

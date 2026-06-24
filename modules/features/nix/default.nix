@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.bichannel = {
+  den.aspects.nix = {
     nixos = {pkgs, ...}: {
       nixpkgs.config.allowUnfree = true;
       nixpkgs.overlays = [

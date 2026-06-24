@@ -1,6 +1,6 @@
 {den, ...}: {
-  den.aspects.zed-editor = {
-    homeManager = {
+  den.aspects.editors.zed = {
+    home-manager = {
       pkgs,
       lib,
       ...

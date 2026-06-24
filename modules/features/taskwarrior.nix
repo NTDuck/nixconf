@@ -5,7 +5,8 @@
         pkgs.unstable.taskwarrior-tui
       ];
     };
-    homeManager = {pkgs, ...}: {
+
+    home-manager = {pkgs, ...}: {
       programs.taskwarrior = {
         enable = true;
         package = pkgs.unstable.taskwarrior3;

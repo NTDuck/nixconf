@@ -1,8 +1,8 @@
 {den, ...}: {
-  den.aspects.ffmpeg = {
+  den.aspects.gaming.itch = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.unstable.ffmpeg
+        pkgs.unstable.itch
       ];
     };
   };

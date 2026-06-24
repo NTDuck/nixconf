@@ -1,9 +1,8 @@
 {den, ...}: {
-  den.aspects.vortex = {
+  den.aspects.multimedia.gallery-dl = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.unstable.bottles
-        pkgs.unstable.bottles-unwrapped
+        pkgs.unstable.gallery-dl
       ];
     };
   };

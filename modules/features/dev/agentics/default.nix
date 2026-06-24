@@ -1,13 +1,13 @@
 {den, ...}: {
-  den.aspects.agentics = {
+  den.aspects.dev.agentics = {
     includes = [
-      den.aspects.agent-browser
-      den.aspects.antigravity-cli
-      den.aspects.claude-code
-      den.aspects.codex
-      den.aspects.ollama
-      den.aspects.qoder-cli
-      den.aspects.spec-kit
+      den.aspects.dev.agentics.agent-browser
+      den.aspects.dev.agentics.antigravity-cli
+      den.aspects.dev.agentics.claude-code
+      den.aspects.dev.agentics.codex
+      den.aspects.dev.agentics.ollama
+      den.aspects.dev.agentics.qoder-cli
+      den.aspects.dev.agentics.spec-kit
     ];
   };
 }

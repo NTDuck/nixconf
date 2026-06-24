@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.ripgrep = {
-    homeManager = {pkgs, ...}: {
+    home-manager = {pkgs, ...}: {
       programs.ripgrep = {
         enable = true;
         package = pkgs.unstable.ripgrep;

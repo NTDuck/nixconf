@@ -1,8 +1,8 @@
 {den, ...}: {
-  den.aspects.pear-desktop = {
+  den.aspects.multimedia.ffmpeg = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.unstable.pear-desktop
+        pkgs.unstable.ffmpeg
       ];
     };
   };

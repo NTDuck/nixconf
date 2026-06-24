@@ -1,6 +1,6 @@
 {den, ...}: {
-  den.aspects.claude-code = {
-    homeManager = {pkgs, ...}: {
+  den.aspects.dev.agentics.claude-code = {
+    home-manager = {pkgs, ...}: {
       programs.claude-code = {
         enable = true;
         package = pkgs.unstable.claude-code;

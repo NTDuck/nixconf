@@ -1,8 +1,10 @@
 {den, ...}: {
-  den.aspects.wezterm = {
-    homeManager = {pkgs, ...}: {
-      programs.wezterm.enable = true;
-      programs.wezterm.package = pkgs.unstable.wezterm;
+  den.aspects.terminals.wezterm = {
+    home-manager = {pkgs, ...}: {
+      programs.wezterm = {
+        enable = true;
+        package = pkgs.unstable.wezterm;
+      };
     };
   };
 }

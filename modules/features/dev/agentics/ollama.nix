@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.ollama = {
+  den.aspects.dev.agentics.ollama = {
     nixos = {
       lib,
       pkgs,

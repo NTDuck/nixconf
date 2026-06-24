@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.rtorrent = {
-    homeManager = {pkgs, ...}: {
+    home-manager = {pkgs, ...}: {
       programs.rtorrent = {
         enable = true;
         package = pkgs.unstable.rtorrent;

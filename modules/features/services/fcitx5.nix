@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.fcitx5 = {
+  den.aspects.services.fcitx5 = {
     nixos = {pkgs, ...}: {
       i18n.inputMethod = {
         enable = true;

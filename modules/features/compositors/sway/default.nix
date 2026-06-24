@@ -9,7 +9,7 @@
       security.pam.services.gtklock.enableGnomeKeyring = true;
     };
 
-    homeManager = {pkgs, ...}: let
+    home-manager = {pkgs, ...}: let
       modifier = "Mod4";
     in {
       wayland.windowManager.sway = {

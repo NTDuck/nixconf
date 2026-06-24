@@ -1,6 +1,6 @@
 {den, ...}: {
-  den.aspects.waybar = {
-    homeManager = {config, ...}: {
+  den.aspects.status-bars.waybar = {
+    home-manager = {config, ...}: {
       programs.waybar = {
         enable = true;
 

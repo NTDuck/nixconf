@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.protobuf = {
+  den.aspects.dev.toolchains.protobuf = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.protobuf

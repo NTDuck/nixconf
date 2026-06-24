@@ -1,10 +1,10 @@
 {den, ...}: {
-  den.aspects.gits = {
+  den.aspects.dev.gits = {
     includes = [
-      den.aspects.gh
-      den.aspects.git
-      den.aspects.git-xet
-      den.aspects.glab
+      den.aspects.dev.gits.gh
+      den.aspects.dev.gits.git
+      den.aspects.dev.gits.git-xet
+      den.aspects.dev.gits.glab
     ];
   };
 }

@@ -1,6 +1,7 @@
 {den, ...}: {
   den.aspects.fastfetch = {
-    homeManager = {pkgs, ...}: {
+    # TODO Better view
+    home-manager = {pkgs, ...}: {
       programs.fastfetch = {
         enable = true;
         package = pkgs.unstable.fastfetch;
@@ -135,7 +136,6 @@
       };
 
       home.shellAliases = {
-        # ff = "fastfetch";
         ff = "${pkgs.unstable.fastfetch}/bin/fastfetch";
       };
     };

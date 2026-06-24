@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.agenix = {
+  den.aspects.secrets.agenix = {
     nixos = {
       pkgs,
       config,
@@ -25,6 +25,7 @@
         !include ${config.age.secrets."github-token".path}
       '';
     };
+
     homeManager = args @ {...}: let
       user = args.user or {name = "ayin";};
     in {

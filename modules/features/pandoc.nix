@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.pandoc = {
-    homeManager = {pkgs, ...}: {
+    home-manager = {pkgs, ...}: {
       programs.pandoc = {
         enable = true;
         package = pkgs.unstable.pandoc;

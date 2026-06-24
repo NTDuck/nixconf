@@ -1,11 +1,11 @@
 {den, ...}: {
-  den.aspects.zsh = {
+  den.aspects.shells.zsh = {
     nixos = {pkgs, ...}: {
       programs.zsh.enable = true;
       users.defaultUserShell = pkgs.unstable.zsh;
     };
 
-    homeManager = {pkgs, ...}: {
+    home-manager = {pkgs, ...}: {
       programs.zsh = {
         enable = true;
         package = pkgs.unstable.zsh;
