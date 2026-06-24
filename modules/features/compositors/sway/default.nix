@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.sway = {
+  den.aspects.compositors.sway = {
     nixos = {
       security.polkit.enable = true;
       services.gnome.gnome-keyring.enable = true;

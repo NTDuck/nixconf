@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.hyprland = {
+  den.aspects.compositors.hyprland = {
     nixos = {pkgs, ...}: {
       programs.hyprland = {
         enable = true;

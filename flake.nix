@@ -8,14 +8,11 @@
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    # User Repository
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nur.url = "github:nix-community/NUR";
 
     stylix.url = "github:nix-community/stylix/release-26.05";
     stylix.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Hardware
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     # Kernel
     cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
@@ -55,7 +52,6 @@
       };
     };
 
-    # Preservation
     preservation.url = "github:nix-community/preservation";
   };
 
