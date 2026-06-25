@@ -14,6 +14,8 @@
           "gemma4:e2b"
           "gemma4:e4b"
           "mxbai-embed-large"
+          "deepseek-r1:32b"
+          "hf.co/kai-os/gemma4-31b-Opus-4.6-reasoning"
         ];
       };
 
