@@ -6,8 +6,9 @@
   den.aspects.nix = {
     nixos = {pkgs, ...}: let
       config = {
-        allowUnfree = true;
         allowBroken = false;
+        allowInsecure = true;
+        allowUnfree = true;
       };
     in {
       nixpkgs = {
