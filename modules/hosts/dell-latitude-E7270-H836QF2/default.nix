@@ -26,7 +26,8 @@
       den.aspects.gaming.mangohud
       den.aspects.gaming.steam
       den.aspects.greeters.tuigreet
-      den.aspects.kernels.cachyos-kernel
+      # `linux-cachyos-latest-7.1.1` conflicts with `broadcom-sta`
+      # den.aspects.kernels.cachyos-kernel
       den.aspects.launchers.tofi
       den.aspects.lockscreens.gtklock
       den.aspects.messenging.discord
