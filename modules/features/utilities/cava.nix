@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.cava = {
+  den.aspects.utilities.cava = {
     home-manager = {pkgs, ...}: {
       programs.cava = {
         enable = true;
