@@ -1,5 +1,9 @@
 {den, ...}: {
-  den.aspects.network = {
+  den.aspects.settings.networking = {
+    includes = [
+      den.aspects.services.resolved
+    ];
+
     nixos = {
       networking = {
         networkmanager = {
@@ -8,7 +12,6 @@
         };
         nameservers = ["8.8.8.8" "1.1.1.1"];
       };
-      services.resolved.enable = true;
     };
   };
 }

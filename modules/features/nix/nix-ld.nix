@@ -1,9 +1,9 @@
 {den, ...}: {
-  den.aspects.ripgrep = {
+  den.aspects.nix-ld = {
     home-manager = {pkgs, ...}: {
-      programs.ripgrep = {
+      programs.nix-ld = {
         enable = true;
-        package = pkgs.unstable.ripgrep;
+        package = pkgs.unstable.nix-ld;
       };
     };
   };

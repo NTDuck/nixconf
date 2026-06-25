@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.fastfetch = {
+  den.aspects.utilities.fastfetch = {
     # TODO Better view
     home-manager = {pkgs, ...}: {
       programs.fastfetch = {

@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.rtorrent = {
+  den.aspects.utilities.rtorrent = {
     home-manager = {pkgs, ...}: {
       programs.rtorrent = {
         enable = true;

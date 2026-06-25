@@ -29,11 +29,11 @@
 
           output = {
             "eDP-1" = {
-              scale = "1.5";
               mode = "2560x1600@165.019Hz";
             };
           };
 
+          # TODO if ...
           startup = [
             {
               command = "fcitx5 -d -r";
@@ -44,7 +44,6 @@
               always = true;
             }
             {
-              # command = "dbus-update-activation-environment --systemd --all; systemctl --user import-environment";
               command = "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all; ${pkgs.systemd}/bin/systemctl --user import-environment";
               always = true;
             }
@@ -121,17 +120,6 @@
           window = {
             titlebar = false;
             border = 2;
-
-            commands = [
-              {
-                criteria = {class = "Wine";};
-                command = "floating enable";
-              }
-              {
-                criteria = {class = "wine";};
-                command = "floating enable";
-              }
-            ];
           };
         };
       };

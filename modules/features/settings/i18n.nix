@@ -1,7 +1,6 @@
 {den, ...}: {
-  den.aspects.locale = {
+  den.aspects.settings.i18n = {
     nixos = {
-      time.timeZone = "Asia/Ho_Chi_Minh";
       i18n.defaultLocale = "en_US.UTF-8";
     };
   };
