@@ -1,19 +1,19 @@
 {den, ...}: {
   den.hosts.x86_64-linux.lenovo-legion-16iah7h-PF3XJ8SP = {
-    users.ayin.includes = [
-      den.aspects.users.ayin
-    ];
+    users.ayin = {};
   };
 
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     includes = [
+      den.aspects.users.ayin
       den.batteries.primary-user
 
       den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.firmware
       den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.hardware
       den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.compositors.sway
 
-      den.aspects.battery
+      den.aspects.battery.power-profiles-daemon
+      den.aspects.battery.upower
       den.aspects.bluetooth
       den.aspects.bootloaders.systemd
       den.aspects.browsers.firefox
