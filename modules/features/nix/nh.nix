@@ -1,10 +1,15 @@
 {den, ...}: {
   den.aspects.nh = {
-    nixos = {...}: {
+    nixos = {pkgs, ...}: {
       programs.nh = {
         enable = true;
-        clean.enable = true;
-        clean.extraArgs = "--keep-since 7d --keep 3";
+        package = pkgs.unstable.nh;
+
+        clean = {
+          enable = true;
+          dates = "daily";
+          extraArgs = "--keep-since 4d --keep 4";
+        };
       };
     };
   };

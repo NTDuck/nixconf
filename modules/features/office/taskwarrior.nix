@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.taskwarrior = {
+  den.aspects.office.taskwarrior = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.taskwarrior-tui

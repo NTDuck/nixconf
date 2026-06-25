@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.zathura = {
+  den.aspects.office.zathura = {
     home-manager = {
       config,
       pkgs,
