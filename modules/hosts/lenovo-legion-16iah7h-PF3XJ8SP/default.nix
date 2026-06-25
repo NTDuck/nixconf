@@ -32,7 +32,7 @@
       den.aspects.gaming.steam
       den.aspects.greeters.tuigreet
       den.aspects.kernels.cachyos-kernel
-      den.aspects.laucnhers.tofi
+      den.aspects.launchers.tofi
       den.aspects.lockscreens.gtklock
       den.aspects.messenging.discord
       den.aspects.messenging.telegram
