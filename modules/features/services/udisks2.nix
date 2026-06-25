@@ -1,7 +1,7 @@
 {den, ...}: {
-  den.aspects.file-managers.thunar = {
+  den.aspects.services.udisks2 = {
     nixos = {
-      programs.thunar = {
+      services.udisks2 = {
         enable = true;
       };
     };

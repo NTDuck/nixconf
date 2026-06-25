@@ -16,6 +16,7 @@
 
       programs.zen-browser = {
         enable = true;
+        package = pkgs.unstable.zen-beta;
 
         setAsDefaultBrowser = true;
 
