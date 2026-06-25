@@ -1,11 +1,8 @@
 {den, ...}: {
   den.hosts.x86_64-linux.dell-latitude-E7270-H836QF2 = {
-    users.ayin = {
-      includes = [
-        den.aspects.users.ayin
-        # den.batteries.primary-user
-      ];
-    };
+    users.ayin.includes = [
+      den.aspects.users.ayin
+    ];
   };
 
   den.aspects.dell-latitude-E7270-H836QF2 = {

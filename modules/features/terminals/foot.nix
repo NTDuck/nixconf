@@ -22,7 +22,6 @@
       };
 
       home.sessionVariables = {
-        # TERMINAL = "foot";
         TERMINAL = "${pkgs.unstable.foot}/bin/footclient";
       };
     };
