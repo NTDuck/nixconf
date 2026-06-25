@@ -9,21 +9,7 @@
     # inputs.flake-file.flakeModules.default
   ];
 
-  den = let
-    # den.denful.dev/guides/custom-classes/#example-alias-a-class-into-the-target-root
-    homeManager-alias = {
-      class,
-      aspect-chain,
-    }:
-      den.batteries.forward {
-        each = lib.singleton class;
-        fromClass = _: "homeManager";
-        intoClass = _: "homeManager";
-        intoPath = _: [];
-        fromAspect = _: lib.head aspect-chain;
-        adaptArgs = {config, ...}: {osConfig = config;};
-      };
-  in {
+  den = {
     default = {
       includes = [
         den.batteries.inputs'
@@ -31,15 +17,13 @@
 
         den.batteries.define-user
         den.batteries.hostname
-
-        homeManager-alias
       ];
 
       nixos = {
         config = {
           system.stateVersion = "26.05";
 
-          homeManager = {
+          home-manager = {
             useGlobalPkgs = true;
             useUserPackages = true;
             backupFileExtension = "backup";
