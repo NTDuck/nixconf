@@ -23,25 +23,24 @@
           menu = "${pkgs.unstable.tofi}/bin/tofi-drun --drun-launch=true";
           bars = [{command = "${pkgs.unstable.waybar}/bin/waybar";}];
 
-          startup =
-            [
-              {
-                command = "${pkgs.unstable.autotiling-rs}/bin/autotiling-rs";
-                always = true;
-              }
-            ]
-            ++ lib.optionals (config.inputMethod.enabled or false) [
-              {
-                command = "fcitx5 -d -r";
-                always = true;
-              }
-            ]
-            ++ lib.optionals (config.services.dbus.enable or false) [
-              {
-                command = "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all; ${pkgs.systemd}/bin/systemctl --user import-environment";
-                always = true;
-              }
-            ];
+          startup = [
+            {
+              command = "${pkgs.unstable.autotiling-rs}/bin/autotiling-rs";
+              always = true;
+            }
+            # ]
+            # ++ lib.optionals (config.inputMethod.enabled or false) [
+            {
+              command = "fcitx5 -d -r";
+              always = true;
+            }
+            # ]
+            # ++ lib.optionals (config.services.dbus.enable or false) [
+            {
+              command = "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all; ${pkgs.systemd}/bin/systemctl --user import-environment";
+              always = true;
+            }
+          ];
 
           keybindings = {
             "${modifier}+Return" = "exec ${pkgs.unstable.foot}/bin/footclient";
