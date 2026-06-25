@@ -1,7 +1,7 @@
 {den, ...}: {
   den.aspects.battery.thermald = {
-    nixos = {
-      services.thermald = {pkgs, ...}: {
+    nixos = {pkgs, ...}: {
+      services.thermald = {
         enable = true;
         package = pkgs.unstable.thermald;
       };

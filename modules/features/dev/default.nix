@@ -1,9 +1,9 @@
 {den, ...}: {
   den.aspects.dev = {
     includes = [
-      den.aspects.agentics
-      den.aspects.gits
-      den.aspects.toolchains
+      den.aspects.dev.agentics
+      den.aspects.dev.gits
+      den.aspects.dev.toolchains
     ];
   };
 }
