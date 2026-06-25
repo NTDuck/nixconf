@@ -2,6 +2,7 @@
   den.aspects.dev.agentics.ollama = {
     nixos = {
       lib,
+      config,
       pkgs,
       ...
     }: {
@@ -23,6 +24,7 @@
         after = [ "ollama.service" ];
         requires = [ "ollama.service" ];
         wantedBy = [ "multi-user.target" ];
+        environment = config.systemd.services.ollama.environment;
         path = [ pkgs.unstable.ollama pkgs.curl ];
         script = ''
           ADAPTER_DIR="/var/lib/ollama-adapters/gemma4-opus"
