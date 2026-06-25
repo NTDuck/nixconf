@@ -68,6 +68,7 @@
       den.aspects.terminals.wezterm
       den.aspects.utilities.cava
       den.aspects.utilities.fastfetch
+      den.aspects.utilities.flameshot
       den.aspects.utilities.rtorrent
       den.aspects.utilities.p7zip
       den.aspects.utilities.ripgrep
