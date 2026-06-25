@@ -1,5 +1,9 @@
 {den, ...}: {
   den.aspects.office.notion = {
-    nixos = {pkgs, ...}: {environment.systemPackage = [pkgs.unstable.notion-app-enhanced];};
+    nixos = {pkgs, ...}: {
+      environment.systemPackages = [
+        pkgs.unstable.notion-app-enhanced
+      ];
+    };
   };
 }
