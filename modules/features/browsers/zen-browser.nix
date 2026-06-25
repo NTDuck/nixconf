@@ -26,7 +26,7 @@
           DisablePocket = true;
         };
 
-        profiles.default = {
+        profiles.${user.name} = {
           settings = {
             "zen.workspaces.continue-where-left-off" = true;
             "zen.view.compact.hide-tabbar" = true;

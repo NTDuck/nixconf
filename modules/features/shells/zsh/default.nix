@@ -6,7 +6,7 @@
       ...
     }: {
       programs.zsh.enable = true;
-      users.users.${user.userName}.shell = pkgs.unstable.zsh;
+      users.users.${user.name}.shell = pkgs.unstable.zsh;
     };
 
     homeManager = {pkgs, ...}: {

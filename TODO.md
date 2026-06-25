@@ -5,21 +5,18 @@
 - monkeytype local
 - disko for impermanance/preservation (vimjoyer) | now just preservation.
 - nix specialization for gaming/battery mode
-- gh dash
 - https://github.com/hardikpandya/stop-slop
 - nix-gaming
 - https://github.com/nix-community/nixos-facter
 - airllm gemma fine-tune as opus
 - certain apps has home config file, find reproducible part and do it!
-- abandon gnome keyring?
-- zen browser
+- limine
 
 - https://github.com/robbsbro69/nixos/blob/main/configuration.nix
 - https://www.reddit.com/r/unixporn/comments/1s85ebb/hyprland_my_first_hyprland_rice_on_cachyos/
 
 - a stable, conforming facade
 
-- https://github.com/skainguyen1412/antigravity-usage
 - flake-file
 
 REFS
