@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.dev.agentics.codex = {
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.codex = {
         enable = true;
         package = pkgs.unstable.codex;

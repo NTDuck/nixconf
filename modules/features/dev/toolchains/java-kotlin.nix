@@ -18,7 +18,7 @@
       # };
     };
 
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.java = {
         enable = true;
         package = pkgs.unstable.jdk;

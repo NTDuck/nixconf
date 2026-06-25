@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.office.zathura = {
-    home-manager = {
+    homeManager = {
       config,
       pkgs,
       ...

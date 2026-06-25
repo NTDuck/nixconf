@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.utilities.cava = {
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.cava = {
         enable = true;
         package = pkgs.unstable.cava;

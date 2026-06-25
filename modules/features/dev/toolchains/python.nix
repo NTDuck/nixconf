@@ -8,7 +8,7 @@
       ];
     };
 
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.poetry = {
         enable = true;
         package = pkgs.unstable.poetry;

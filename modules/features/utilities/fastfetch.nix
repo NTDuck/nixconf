@@ -1,7 +1,7 @@
 {den, ...}: {
   den.aspects.utilities.fastfetch = {
     # TODO Better view
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.fastfetch = {
         enable = true;
         package = pkgs.unstable.fastfetch;

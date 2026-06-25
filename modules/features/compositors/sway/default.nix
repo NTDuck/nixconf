@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.compositors.sway = {
-    home-manager = {pkgs, ...}: let
+    homeManager = {pkgs, ...}: let
       modifier = "Mod4";
     in {
       wayland.windowManager.sway = {

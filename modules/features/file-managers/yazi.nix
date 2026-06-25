@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.file-managers.yazi = {
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.yazi = {
         enable = true;
         package = pkgs.unstable.yazi;

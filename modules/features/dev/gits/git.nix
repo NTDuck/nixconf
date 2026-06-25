@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.dev.gits.git = {
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.git = {
         enable = true;
         package = pkgs.unstable.git;

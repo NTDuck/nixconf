@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.multimedia.mpv = {
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.mpv = {
         enable = true;
         package = pkgs.unstable.mpv;

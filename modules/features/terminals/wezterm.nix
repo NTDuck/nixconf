@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.terminals.wezterm = {
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.wezterm = {
         enable = true;
         package = pkgs.unstable.wezterm;

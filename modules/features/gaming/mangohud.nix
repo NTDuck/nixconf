@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.gaming.mangohud = {
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.mangohud = {
         enable = true;
         package = pkgs.unstable.mangohud;

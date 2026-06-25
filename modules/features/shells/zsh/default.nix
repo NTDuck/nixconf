@@ -9,7 +9,7 @@
       users.users.${user.userName}.shell = pkgs.unstable.zsh;
     };
 
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.zsh = {
         enable = true;
         package = pkgs.unstable.zsh;

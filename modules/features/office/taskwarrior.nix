@@ -6,7 +6,7 @@
       ];
     };
 
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.taskwarrior = {
         enable = true;
         package = pkgs.unstable.taskwarrior3;

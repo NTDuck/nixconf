@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.editors.helix = {
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.helix = {
         enable = true;
         package = pkgs.unstable.helix;

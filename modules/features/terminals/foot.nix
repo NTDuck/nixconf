@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.terminals.foot = {
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.foot = {
         enable = true;
         package = pkgs.unstable.foot;

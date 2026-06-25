@@ -11,13 +11,13 @@
 
   den = let
     # den.denful.dev/guides/custom-classes/#example-alias-a-class-into-the-target-root
-    home-manager-alias = {
+    homeManager-alias = {
       class,
       aspect-chain,
     }:
       den.batteries.forward {
         each = lib.singleton class;
-        fromClass = _: "home-manager";
+        fromClass = _: "homeManager";
         intoClass = _: "homeManager";
         intoPath = _: [];
         fromAspect = _: lib.head aspect-chain;
@@ -32,14 +32,14 @@
         den.batteries.define-user
         den.batteries.hostname
 
-        home-manager-alias
+        homeManager-alias
       ];
 
       nixos = {
         config = {
           system.stateVersion = "26.05";
 
-          home-manager = {
+          homeManager = {
             useGlobalPkgs = true;
             useUserPackages = true;
             backupFileExtension = "backup";

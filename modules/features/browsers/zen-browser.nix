@@ -4,7 +4,7 @@
   ...
 }: {
   den.aspects.browsers.zen-browser = {
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       # https://zen-browser-flake.nshard.com/
       imports = [inputs.zen-browser.homeModules.beta];
 

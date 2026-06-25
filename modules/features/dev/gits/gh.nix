@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.dev.gits.gh = {
-    home-manager = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
       programs.gh = {
         enable = true;
         package = pkgs.unstable.gh;
