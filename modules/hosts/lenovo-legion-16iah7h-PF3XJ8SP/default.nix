@@ -3,7 +3,7 @@
     users.ayin = {
       includes = [
         den.aspects.users.ayin
-        den.batteries.primary-user
+        # den.batteries.primary-user
       ];
     };
   };

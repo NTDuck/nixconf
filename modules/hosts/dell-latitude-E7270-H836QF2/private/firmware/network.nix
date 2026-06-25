@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.dell-latitude-E7270-H836QF2-network-driver = {
+  den.aspects.dell-latitude-E7270-H836QF2.firmware.network = {
     nixos = {
       config,
       lib,

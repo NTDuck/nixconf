@@ -2,19 +2,8 @@
   den.hosts.x86_64-linux.dell-latitude-E7270-H836QF2 = {
     users.ayin = {
       includes = [
-        den.batteries.primary-user
-        (den.batteries.user-shell "zsh")
-
-        # ({den, ...}: {
-        #   den.aspects.dell-latitude-E7270-H836QF2-git = {
-        #     homeManager = {
-        #       programs.git.settings.user = {
-        #         name = "NTDuck";
-        #         email = "nguyentuduck@gmail.com";
-        #       };
-        #     };
-        #   };
-        # })
+        den.aspects.users.ayin
+        # den.batteries.primary-user
       ];
     };
   };
@@ -23,54 +12,65 @@
     includes = [
       den.batteries.primary-user
 
-      den.aspects.dell-latitude-E7270-H836QF2-bluetooth-driver
-      den.aspects.dell-latitude-E7270-H836QF2-hardware
-      den.aspects.dell-latitude-E7270-H836QF2-network-driver
+      den.aspects.dell-latitude-E7270-H836QF2.firmware
+      den.aspects.dell-latitude-E7270-H836QF2.hardware
 
-      den.aspects.agenix
       den.aspects.battery
-      den.aspects.bichannel
       den.aspects.bluetooth
-      den.aspects.bluetuith
-      den.aspects.boot
-      den.aspects.cachyos-kernel
-      den.aspects.cava
-      den.aspects.cliphist
+      den.aspects.bootloaders.systemd
+      den.aspects.browsers.firefox
+      den.aspects.browsers.zen-browser
+      den.aspects.compositors.sway
       den.aspects.dev
-      den.aspects.experimental-features
-      den.aspects.fastfetch
-      den.aspects.fcitx5
-      den.aspects.firefox
-      den.aspects.firmware
-      den.aspects.foot
-      den.aspects.gc
-      den.aspects.greetd
-      den.aspects.gtklock
-      den.aspects.helix
-      den.aspects.imv
-      den.aspects.kanshi
+      den.aspects.editors.helix
+      den.aspects.editors.zed-editor
+      den.aspects.file-managers.thunar
+      den.aspects.file-managers.yazi
+      den.aspects.gaming.itch
+      den.aspects.gaming.mangohud
+      den.aspects.gaming.steam
+      den.aspects.greeters.tuigreet
+      den.aspects.kernels.cachyos-kernel
+      den.aspects.laucnhers.tofi
+      den.aspects.lockscreens.gtklock
+      den.aspects.messenging.discord
+      den.aspects.messenging.telegram
+      den.aspects.multimedia.ffmpeg
+      den.aspects.multimedia.gallery-dl
+      den.aspects.multimedia.imv
+      den.aspects.multimedia.mpv
+      den.aspects.multimedia.obs-studio
+      den.aspects.multimedia.yt-dlp
+      den.aspects.music.youtube-music
+      den.aspects.nix
       den.aspects.lix
-      den.aspects.locale
-      den.aspects.mpv
-      den.aspects.network
       den.aspects.nh
+      den.aspects.nix-ld
       den.aspects.nur
-      den.aspects.openssh
-      den.aspects.pear-desktop
-      den.aspects.pipewire
-      den.aspects.steam
+      den.aspects.office.taskwarrior
+      den.aspects.office.zathura
+      den.aspects.services.cliphist.nix
+      den.aspects.services.fcitx5.nix
+      den.aspects.services.pipewire.nix
+      den.aspects.services.dconf.nix
+      den.aspects.services.gnome-keyring.nix
+      den.aspects.services.polkit.nix
+      den.aspects.services.cloudflare-warp.nix
+      den.aspects.services.nftables.nix
+      den.aspects.services.resolved.nix
+      den.aspects.settings
+      den.aspects.shells.zsh
+      den.aspects.status-bars.waybar
+      den.aspects.swap.zram
+      den.aspects.terminals.foot
+      den.aspects.utilities.cava.nix
+      den.aspects.utilities.fastfetch.nix
+      den.aspects.utilities.p7zip.nix
+      den.aspects.utilities.ripgrep.nix
+      den.aspects.utilities.speedtest-cli.nix
+      den.aspects.virtualizations.docker
+      den.aspects.virtualizations.waydroid
       den.aspects.stylix
-      den.aspects.swap
-      den.aspects.sway
-      den.aspects.taskwarrior
-      den.aspects.tofi
-      den.aspects.vesktop
-      den.aspects.waybar
-      den.aspects.yazi
-      den.aspects.zalo
-      den.aspects.zathura
-      den.aspects.zed-editor
-      den.aspects.zsh
     ];
   };
 }
