@@ -25,25 +25,24 @@
         requires = [ "ollama.service" ];
         wantedBy = [ "multi-user.target" ];
         environment = config.systemd.services.ollama.environment;
-        path = [ pkgs.unstable.ollama pkgs.curl ];
         script = ''
           ADAPTER_DIR="/var/lib/ollama-adapters/gemma4-opus"
           cd "$ADAPTER_DIR"
           
           if [ ! -f adapter_model.safetensors ]; then
             echo "Downloading adapter config..."
-            curl -s -L -o adapter_config.json https://huggingface.co/kai-os/gemma4-31b-Opus-4.6-reasoning/resolve/main/adapter_config.json
+            ${pkgs.curl}/bin/curl -s -L -o adapter_config.json https://huggingface.co/kai-os/gemma4-31b-Opus-4.6-reasoning/resolve/main/adapter_config.json
             echo "Downloading adapter model safetensors..."
-            curl -L -o adapter_model.safetensors https://huggingface.co/kai-os/gemma4-31b-Opus-4.6-reasoning/resolve/main/adapter_model.safetensors
+            ${pkgs.curl}/bin/curl -L -o adapter_model.safetensors https://huggingface.co/kai-os/gemma4-31b-Opus-4.6-reasoning/resolve/main/adapter_model.safetensors
           fi
           
           cat > Modelfile <<EOF
-          FROM google/gemma-4-31B-it
-          ADAPTER .
+          FROM hf.co/unsloth/gemma-4-31B-it-GGUF:Q4_K_M
+          ADAPTER ./adapter_model.safetensors
           EOF
           
-          echo "Building model gemma4-opus in Ollama..."
-          ollama create gemma4-opus -f Modelfile
+          echo "Building model gemma4-opus in Ollama (this will download ~18GB base model GGUF)..."
+          ${pkgs.unstable.ollama}/bin/ollama create gemma4-opus -f Modelfile
         '';
         serviceConfig = {
           Type = "oneshot";
@@ -51,6 +50,7 @@
           User = "ollama";
           Group = "ollama";
           StateDirectory = "ollama-adapters/gemma4-opus";
+          TimeoutStartSec = "infinity";
         };
       };
     };
