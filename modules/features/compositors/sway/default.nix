@@ -27,11 +27,11 @@
           menu = "${pkgs.unstable.tofi}/bin/tofi-drun --drun-launch=true";
           bars = [{command = "${pkgs.unstable.waybar}/bin/waybar";}];
 
-          output = {
-            "eDP-1" = {
-              mode = "2560x1600@165.019Hz";
-            };
-          };
+          # output = {
+          #   "eDP-1" = {
+          #     mode = "2560x1600@165.019Hz";
+          #   };
+          # };
 
           # TODO if ...
           startup = [
