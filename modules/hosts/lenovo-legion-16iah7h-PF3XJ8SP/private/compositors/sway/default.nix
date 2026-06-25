@@ -2,11 +2,10 @@
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.compositors.sway = {
     homeManager = {
       lib,
-      config,
+      host ? null,
       ...
     }:
-      lib.mkIf (config.networking.hostName == "lenovo-legion-16iah7h-
-      PF3XJ8SP") {
+      lib.mkIf (host != null && host.name == "lenovo-legion-16iah7h-PF3XJ8SP") {
         wayland.windowManager.sway.config = {
           output = {
             "eDP-1" = {
