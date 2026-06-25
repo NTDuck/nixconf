@@ -19,7 +19,6 @@
       den.aspects.bluetooth
       den.aspects.bootloaders.systemd
       den.aspects.browsers.firefox
-      den.aspects.browsers.zen-browser
       den.aspects.compositors.sway
       den.aspects.dev
       den.aspects.editors.helix

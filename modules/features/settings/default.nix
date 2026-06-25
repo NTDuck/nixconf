@@ -8,9 +8,7 @@
     ];
 
     nixos = {
-      # nix.settings.trusted-users = ["@wheel"];
       nix.settings.experimental-features = ["nix-command" "flakes"];
-
       security.sudo.extraConfig = "Defaults timestamp_timeout=-1\nDefaults timestamp_type=tty";
     };
   };
