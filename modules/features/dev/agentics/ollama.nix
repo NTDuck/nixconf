@@ -25,8 +25,7 @@
         wantedBy = [ "multi-user.target" ];
         path = [ pkgs.unstable.ollama pkgs.curl ];
         script = ''
-          ADAPTER_DIR="/var/lib/ollama/adapters/gemma4-opus"
-          mkdir -p "$ADAPTER_DIR"
+          ADAPTER_DIR="/var/lib/ollama-adapters/gemma4-opus"
           cd "$ADAPTER_DIR"
           
           if [ ! -f adapter_model.safetensors ]; then
@@ -49,6 +48,7 @@
           RemainAfterExit = true;
           User = "ollama";
           Group = "ollama";
+          StateDirectory = "ollama-adapters/gemma4-opus";
         };
       };
     };
