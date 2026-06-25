@@ -8,8 +8,7 @@
       den.aspects.users.ayin
       den.batteries.primary-user
 
-      den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.firmware.bluetooth
-      den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.firmware.network
+      den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.firmware
       den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.hardware
       den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.compositors.sway
 
