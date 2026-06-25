@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.virtualisations.waydroid = {
+  den.aspects.virtualization.waydroid = {
     includes = [
       den.aspects.services.nftables
     ];

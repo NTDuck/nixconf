@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.virtualizations.docker = {
+  den.aspects.virtualization.docker = {
     nixos = {
       user,
       pkgs,

@@ -75,8 +75,8 @@
       den.aspects.utilities.ripgrep
       den.aspects.utilities.speedtest-cli
       den.aspects.utilities.rufus
-      den.aspects.virtualizations.docker
-      den.aspects.virtualizations.waydroid
+      den.aspects.virtualization.docker
+      den.aspects.virtualization.waydroid
       den.aspects.stylix
     ];
   };
