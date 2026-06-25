@@ -6,7 +6,7 @@
 }: {
   imports = [
     inputs.den.flakeModules.default
-    inputs.flake-file.flakeModules.default
+    # inputs.flake-file.flakeModules.default
   ];
 
   den = {
@@ -29,7 +29,7 @@
               intoClass = _: "homeManager";
               intoPath = _: []; # merge into root of homeManager
               fromAspect = _: lib.head aspect-chain;
-              adaptArgs = {config, ...}: {osConfig = config;};
+              adaptArgs = {config, ...} @ args: {osConfig = config;} // args;
             }
         )
       ];
