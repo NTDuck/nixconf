@@ -4,7 +4,13 @@
   ...
 }: {
   den.aspects.browsers.zen-browser = {
-    homeManager = {pkgs, ...}: {
+    homeManager = {
+      user,
+      lib,
+      config,
+      pkgs,
+      ...
+    }: {
       # https://zen-browser-flake.nshard.com/
       imports = [inputs.zen-browser.homeModules.beta];
 
@@ -106,6 +112,9 @@
           # ];
         };
       };
+
+      stylix.targets.zen-browser.profileNames =
+        lib.optionalAttrs (config.stylix.enable or false) ["${user.name}"];
     };
   };
 }
