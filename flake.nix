@@ -61,10 +61,10 @@
 
     # Telegram fork
     ayugram = {
-      url = "https://github.com/ndfined-crp/ayugram-desktop/";
-      # type = "git";
+      # url = "https://github.com/ndfined-crp/ayugram-desktop/";
+      url = "github:ndfined-crp/ayugram-desktop/release";
       flake = true;
-      submodules = true;
+      # submodules = true;
     };
 
     preservation.url = "github:nix-community/preservation";
