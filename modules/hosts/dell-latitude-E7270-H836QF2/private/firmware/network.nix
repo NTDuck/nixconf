@@ -1,7 +1,12 @@
 {den, ...}: {
   den.aspects.dell-latitude-E7270-H836QF2.firmware.network = {
-    nixos = {config, ...}: {
-      nixpkgs.config.allowUnfreePredicate = pkg: pkg.pname == "broadcom-sta";
+    nixos = {
+      config,
+      lib,
+      ...
+    }: {
+      nixpkgs.config.allowUnfreePredicate = pkg:
+        builtins.elem (lib.getName pkg) ["broadcom-sta"];
 
       boot.kernelModules = ["wl"];
       boot.blacklistedKernelModules = ["b43" "bcma"];
