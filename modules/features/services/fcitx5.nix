@@ -9,7 +9,7 @@
           addons = [pkgs.unstable.fcitx5-bamboo];
 
           waylandFrontend = true;
-          ignoreUserConfig = true; # ignore `~/.config/fcitx5`
+          # ignoreUserConfig = true; # ignore `~/.config/fcitx5`
 
           settings = {
             addons = {

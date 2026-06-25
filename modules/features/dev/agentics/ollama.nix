@@ -18,8 +18,6 @@
           "hf.co/kai-os/gemma4-31b-Opus-4.6-reasoning"
         ];
       };
-
-      systemd.services.ollama.wantedBy = lib.mkForce []; # Prevents autostart
     };
   };
 }
