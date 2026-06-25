@@ -63,11 +63,11 @@
       den.aspects.status-bars.waybar
       den.aspects.swap.zram
       den.aspects.terminals.foot
-      den.aspects.utilities.cava.nix
-      den.aspects.utilities.fastfetch.nix
-      den.aspects.utilities.p7zip.nix
-      den.aspects.utilities.ripgrep.nix
-      den.aspects.utilities.speedtest-cli.nix
+      den.aspects.utilities.cava
+      den.aspects.utilities.fastfetch
+      den.aspects.utilities.p7zip
+      den.aspects.utilities.ripgrep
+      den.aspects.utilities.speedtest-cli
       den.aspects.virtualizations.docker
       den.aspects.virtualizations.waydroid
       den.aspects.stylix
