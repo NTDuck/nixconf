@@ -53,15 +53,15 @@
       den.aspects.office.taskwarrior
       den.aspects.office.texlive
       den.aspects.office.zathura
-      den.aspects.services.cliphist.nix
-      den.aspects.services.fcitx5.nix
-      den.aspects.services.pipewire.nix
-      den.aspects.services.dconf.nix
-      den.aspects.services.gnome-keyring.nix
-      den.aspects.services.polkit.nix
-      den.aspects.services.cloudflare-warp.nix
-      den.aspects.services.nftables.nix
-      den.aspects.services.resolved.nix
+      den.aspects.services.cliphist
+      den.aspects.services.fcitx5
+      den.aspects.services.pipewire
+      den.aspects.services.dconf
+      den.aspects.services.gnome-keyring
+      den.aspects.services.polkit
+      den.aspects.services.cloudflare-warp
+      den.aspects.services.nftables
+      den.aspects.services.resolved
       den.aspects.settings
       den.aspects.shells.zsh
       den.aspects.status-bars.waybar
