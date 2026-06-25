@@ -5,10 +5,10 @@
       den.aspects.services.udisks2
     ];
 
-    nixos = {
-      programs.nautilus = {
-        enable = true;
-      };
+    nixos = {pkgs, ...}: {
+      environment.systemPackages = [
+        pkgs.unstable.nautilus
+      ];
     };
   };
 }
