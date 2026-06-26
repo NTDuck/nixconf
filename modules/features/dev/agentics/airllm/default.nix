@@ -1,11 +1,6 @@
 {den, ...}: {
   den.aspects.dev.agentics.airllm = {
-    nixos = {
-      lib,
-      config,
-      pkgs,
-      ...
-    }: let
+    nixos = {pkgs, ...}: let
       airllmEnv = pkgs.python3.withPackages (ps: [
         (ps.buildPythonPackage rec {
           pname = "airllm";
@@ -31,7 +26,7 @@
         })
       ]);
     in {
-      environment.systemPackages = [ airllmEnv ];
+      environment.systemPackages = [airllmEnv];
     };
   };
 }

@@ -9,3 +9,5 @@ result-*
 secrets/secrets.nix
 
 .antigravitycli/
+
+.env
