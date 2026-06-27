@@ -4,13 +4,11 @@
   ...
 }: {
   den.aspects.dev.agentics.pi = {
-    nixos = {
-      nixpkgs.overlays = [
-        inputs.pi.overlays.default
-      ];
-    };
-
     homeManager = {pkgs, ...}: {
+      imports = [
+        inputs.pi.homeManagerModules.default
+      ];
+
       programs.pi-coding-agent = {
         enable = true;
         package = pkgs.pi;
