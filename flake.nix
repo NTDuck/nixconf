@@ -45,7 +45,7 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
-    pi.url = "github:oslamelon/pi-flake";
+    pi.url = "github:ChauDucToan/pi-flake";
 
     # Noctalia
     noctalia = {
