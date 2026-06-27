@@ -7,6 +7,7 @@
       den.aspects.dev.agentics.codex
       den.aspects.dev.agentics.goose-cli
       den.aspects.dev.agentics.ollama
+      den.aspects.dev.agentics.open-interpreter
       den.aspects.dev.agentics.opencode
       den.aspects.dev.agentics.spec-kit
     ];
