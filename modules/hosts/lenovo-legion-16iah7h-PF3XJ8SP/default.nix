@@ -8,9 +8,11 @@
       den.aspects.users.ayin
       den.batteries.primary-user
 
+      den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.compositors.sway
+      den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.dev.agentics.llama-cpp
+      den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.dev.agentics.pi
       den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.firmware
       den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.hardware
-      den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.compositors.sway
 
       den.aspects.battery.power-profiles-daemon
       den.aspects.battery.upower

@@ -3,7 +3,9 @@
   inputs,
   lib,
   ...
-}: {
+}: let
+  version = "26.05";
+in {
   imports = [
     inputs.den.flakeModules.default
     # inputs.flake-file.flakeModules.default
@@ -21,7 +23,7 @@
 
       nixos = {
         config = {
-          system.stateVersion = "26.05";
+          system.stateVersion = version;
 
           home-manager = {
             useGlobalPkgs = true;
@@ -31,22 +33,11 @@
         };
       };
 
-      homeManager = {
-        config.home = {
-          stateVersion = "26.05";
-        };
-      };
+      homeManager.config.home.stateVersion = version;
     };
 
     schema = {
-      host = {
-        includes = [
-          den.batteries.host-aspects
-        ];
-
-        classes = ["nixos"];
-      };
-
+      host.classes = ["nixos"];
       user.classes = lib.mkDefault ["nixos" "homeManager"];
     };
   };

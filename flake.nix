@@ -21,7 +21,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
     den.url = "github:denful/den";
-    flake-file.url = "github:vic/flake-file";
+    # flake-file.url = "github:vic/flake-file";
 
     # Secrets
     agenix.url = "github:ryantm/agenix";
@@ -45,6 +45,8 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
+    pi.url = "github:oslamelon/pi-flake";
+
     # Noctalia
     noctalia = {
       url = "github:noctalia-dev/noctalia";
@@ -67,10 +69,8 @@
 
     # Telegram fork
     ayugram = {
-      # url = "https://github.com/ndfined-crp/ayugram-desktop/";
       url = "github:ndfined-crp/ayugram-desktop/release";
       flake = true;
-      # submodules = true;
     };
 
     preservation.url = "github:nix-community/preservation";
