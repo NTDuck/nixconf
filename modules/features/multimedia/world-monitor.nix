@@ -2,7 +2,7 @@
   den.aspects.multimedia.world-monitor = {
     nixos = {pkgs, ...}: let
       world-monitor = pkgs.appimageTools.wrapType2 {
-        name = "world-monitor";
+        pname = "world-monitor";
         version = "2.5.23";
 
         src = pkgs.fetchurl {
