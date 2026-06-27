@@ -1,10 +1,14 @@
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.dev.agentics.llama-cpp = {
-    nixos = {pkgs, ...}: {
+    nixos = {
+      pkgs,
+      lib,
+      ...
+    }: {
       services.llama-cpp = {
-        package = pkgs.unstable.llama-cpp.override {
-          cudaSupport = true;
-        };
+        # package = lib.mkForce (pkgs.unstable.llama-cpp.override {
+        #   cudaSupport = true;
+        # });
 
         modelsPreset = {
           "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M" = {
