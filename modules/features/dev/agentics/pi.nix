@@ -4,6 +4,12 @@
   ...
 }: {
   den.aspects.dev.agentics.pi = {
+    nixos = {
+      nixpkgs.overlays = [
+        inputs.pi.overlays.default
+      ];
+    };
+
     homeManager = {
       imports = [
         inputs.pi.homeManagerModules.default
