@@ -35,7 +35,6 @@
       den.aspects.multimedia.imv
       den.aspects.multimedia.mpv
       den.aspects.multimedia.obs-studio
-      den.aspects.multimedia.world-monitor
       den.aspects.multimedia.yt-dlp
       den.aspects.music.youtube-music
       den.aspects.nix
