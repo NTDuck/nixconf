@@ -7,7 +7,7 @@
 
         src = pkgs.fetchurl {
           url = "https://worldmonitor.app/api/download?platform=linux-appimage";
-          hash = "sha256-404b8f80e5f50f49b4f2ea4fe78e0d2c2bf98d72e7ac7702453d532481ca358d";
+          hash = "";
         };
       };
     in {
