@@ -5,10 +5,9 @@
         name = "open-interpreter";
         src = pkgs.fetchurl {
           url = "https://openinterpreter.com/download/linux/appimage";
-          hash = "";
+          hash = "sha256-fJXSmrT/UaEjK+OUaqQt/jGkE/8gKXTi1qv9EOawQGk=";
           name = "Interpreter-latest.AppImage";
         };
-        # extraPkgs = pkgs: with pkgs; [];
       };
     in {
       environment.systemPackages = [open-interpreter];
