@@ -4,14 +4,13 @@
   ...
 }: {
   den.aspects.dev.agentics.pi = {
-    homeManager = {pkgs, ...}: {
+    homeManager = {
       imports = [
         inputs.pi.homeManagerModules.default
       ];
 
       programs.pi-coding-agent = {
         enable = true;
-        package = pkgs.pi;
 
         models = {
           # default = {
