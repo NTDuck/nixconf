@@ -2,7 +2,8 @@
   den.aspects.multimedia.world-monitor = {
     nixos = {pkgs, ...}: let
       world-monitor = pkgs.appimageTools.wrapType2 {
-        name = "world-monitor"; # Combines/replaces pname and version
+        name = "world-monitor";
+        version = "2.5.23";
 
         src = pkgs.fetchurl {
           url = "https://worldmonitor.app/api/download?platform=linux-appimage";
