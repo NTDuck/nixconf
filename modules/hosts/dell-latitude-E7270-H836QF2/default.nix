@@ -8,10 +8,6 @@
       den.aspects.users.ayin
       den.batteries.primary-user
 
-      den.aspects.dell-latitude-E7270-H836QF2.firmware.bluetooth
-      den.aspects.dell-latitude-E7270-H836QF2.firmware.network
-      den.aspects.dell-latitude-E7270-H836QF2.hardware
-
       den.aspects.battery
       den.aspects.bluetooth
       den.aspects.bootloaders.systemd

@@ -37,6 +37,13 @@ in {
     };
 
     schema = {
+      host.includes = [
+        # `homeManager` configurations are defined in host aspects
+        # and need to be defined to users
+        # DO NOT REMOVE
+        den.batteries.host-aspects
+      ];
+
       host.classes = ["nixos"];
       user.classes = lib.mkDefault ["nixos" "homeManager"];
     };

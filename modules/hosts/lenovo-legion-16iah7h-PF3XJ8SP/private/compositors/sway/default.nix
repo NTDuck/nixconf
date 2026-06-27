@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.compositors.sway = {
+  den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.provides.to-users = {user, ...}: {
     homeManager = {lib, ...}: {
       wayland.windowManager.sway.config = {
         output = {
