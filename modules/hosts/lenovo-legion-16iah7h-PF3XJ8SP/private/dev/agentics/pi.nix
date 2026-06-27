@@ -11,7 +11,7 @@
           (lib.mkIf (config.services.llama-cpp.enable or false) {
             default = {
               provider = "llama.cpp";
-              model = "opus-9b";
+              model = "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M";
             };
             providers = {
               "llama.cpp" = {
