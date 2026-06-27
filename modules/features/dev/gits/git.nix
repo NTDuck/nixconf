@@ -17,6 +17,10 @@
           };
         };
       };
+
+      home.extraActivationPath = [
+        pkgs.unstable.git
+      ];
     };
   };
 }
