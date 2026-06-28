@@ -183,22 +183,31 @@
             modifier = "SUPER";
             ipc = "qs -c noctalia-shell ipc call";
 
-            mkCmd = key: cmd: args:
-              mkBind key "hl.dsp.exec_cmd(\"${lib.strings.escape ["\"" "\\"] cmd}\")" args;
+            mkCmd = key: cmd:
+              mkBind key "hl.dsp.exec_cmd(\"${lib.strings.escape ["\"" "\\"] cmd}\")";
 
-            mkBind = key: expr: args: {
-              _args =
-                [
-                  key
-                  (lib.generators.mkLuaInline expr)
-                ]
-                ++ (lib.lists.optional (args != null) args);
+            mkBind = key: expr: {
+              _args = [
+                key
+                (lib.generators.mkLuaInline expr)
+              ];
+            };
+
+            mkFlaggedCmd = key: cmd: flags:
+              mkFlaggedBind key "hl.dsp.exec_cmd(\"${lib.strings.escape ["\"" "\\"] cmd}\")" flags;
+
+            mkFlaggedBind = key: expr: flags: {
+              _args = [
+                key
+                (lib.generators.mkLuaInline expr)
+                flags
+              ];
             };
 
             forEachWorkspace = fn: builtins.genList (i: fn builtins.toString i) 10;
           in
             [
-              (mkBind "${modifier} + Q" "hl.dsp.window.close()" {long_press = true;})
+              (mkFlaggedBind "${modifier} + Q" "hl.dsp.window.close()" {long_press = true;})
               (mkBind "${modifier} + F" "hl.dsp.window.fullscreen({ mode = \"fullscreen\", action = \"toggle\" })")
 
               (mkBind "${modifier} + H" "hl.dsp.focus({direction = \"l\"})")
@@ -217,41 +226,20 @@
               (mkCmd "${modifier} + D" "${ipc} launcher toggle")
               (mkCmd "${modifier} + CTRL + L" "${ipc} lockScreen lock")
 
-              # (mkCmd "XF86MonBrightnessDown" "${pkgs.brightnessctl}/bin/brightnessctl set 5%-" {
-              #   locked = true;
-              #   repeating = true;
-              # })
-              # (mkCmd "XF86MonBrightnessUp" "${pkgs.brightnessctl}/bin/brightnessctl set +5%" {
-              #   locked = true;
-              #   repeating = true;
-              # })
-              # (mkCmd "XF86AudioRaiseVolume" "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%" {
-              #   locked = true;
-              #   repeating = true;
-              # })
-              # (mkCmd "XF86AudioLowerVolume" "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%" {
-              #   locked = true;
-              #   repeating = true;
-              # })
-              # (mkCmd "XF86AudioMute" "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle" {
-              #   locked = true;
-              #   repeating = true;
-              # })
-
-              (mkCmd "XF86MonBrightnessDown" "${ipc} brightness decrease" {
+              (mkFlaggedCmd "XF86MonBrightnessDown" "${ipc} brightness decrease" {
                 locked = true;
                 repeating = true;
               })
-              (mkCmd "XF86MonBrightnessUp" "${ipc} brightness increase" {
+              (mkFlaggedCmd "XF86MonBrightnessUp" "${ipc} brightness increase" {
                 locked = true;
                 repeating = true;
               })
-              (mkCmd "XF86AudioMute" "${ipc} volume muteOutput" {locked = true;})
-              (mkCmd "XF86AudioLowerVolume" "${ipc} volume decrease" {
+              (mkFlaggedCmd "XF86AudioMute" "${ipc} volume muteOutput" {locked = true;})
+              (mkFlaggedCmd "XF86AudioLowerVolume" "${ipc} volume decrease" {
                 locked = true;
                 repeating = true;
               })
-              (mkCmd "XF86AudioRaiseVolume" "${ipc} volume increase" {
+              (mkFlaggedCmd "XF86AudioRaiseVolume" "${ipc} volume increase" {
                 locked = true;
                 repeating = true;
               })
