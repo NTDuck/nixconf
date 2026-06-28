@@ -25,7 +25,7 @@
       environment.systemPackages = [
         pkgs.unstable.libva
         pkgs.unstable.libva-utils
-        pkgs.unstable.libva-nvidia-driver
+        pkgs.unstable.libva-vdpau-driver
       ];
     };
   };
