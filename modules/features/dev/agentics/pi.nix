@@ -1,43 +1,27 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.dev.agentics.pi = {
-    nixos = {
-      nixpkgs.overlays = [
-        inputs.pi.overlays.default
-      ];
-    };
-
     homeManager = {
-      imports = [
-        inputs.pi.homeManagerModules.default
-      ];
-
-      programs.pi-coding-agent = {
+      programs.pi-coding-agent = {pkgs, ...}: {
         enable = true;
+        package = pkgs.unstable.pi-coding-agent;
 
-        models = {
-          # default = {
-          #   provider = "openai";
-          #   model = "gpt-4o";
-          #   apiKey = "$OPENAI_API_KEY"; # reference an env variable
-          # };
+        keybindings = {
+          "tui.editor.cursorDown" = [
+            "down"
+            "ctrl+n"
+          ];
+          "tui.editor.cursorUp" = [
+            "up"
+            "ctrl+p"
+          ];
         };
 
-        # keybindings = {
-        #   "mode:main:key:ctrl-p" = ["goto:chat"];
-        # };
-
-        extensions = [
-          "git:github.com/tmustier/pi-extensions"
-          "git:github.com/DietrichGebert/ponytail"
-        ];
-
-        # extraEnv = {
-        #   OPENAI_API_KEY = "sk-...";
-        # };
+        settings = {
+          packages = [
+            "git:github.com/tmustier/pi-extensions"
+            "git:github.com/DietrichGebert/ponytail"
+          ];
+        };
       };
     };
   };

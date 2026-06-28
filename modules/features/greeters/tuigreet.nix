@@ -13,13 +13,22 @@
           default_session = {
             command = ''
               ${pkgs.tuigreet}/bin/tuigreet \
-              --cmd sway --no-xsession-wrapper \
+              --cmd Hyprland --no-xsession-wrapper \
               --asterisks --asterisks-char '*' \
               --time --time-format '%Y-%m-%d %H:%M:%S' \
               --remember \
               --container-padding 2 \
               --theme "container=${colors.base00};border=${colors.base05};text=${colors.base05};prompt=${colors.base05};time=${colors.base05};action=${colors.base05};button=${colors.base05};input=${colors.base05}"
             '';
+            # command = ''
+            #   ${pkgs.tuigreet}/bin/tuigreet \
+            #   --cmd sway --no-xsession-wrapper \
+            #   --asterisks --asterisks-char '*' \
+            #   --time --time-format '%Y-%m-%d %H:%M:%S' \
+            #   --remember \
+            #   --container-padding 2 \
+            #   --theme "container=${colors.base00};border=${colors.base05};text=${colors.base05};prompt=${colors.base05};time=${colors.base05};action=${colors.base05};button=${colors.base05};input=${colors.base05}"
+            # '';
             user = "greeter";
           };
         };

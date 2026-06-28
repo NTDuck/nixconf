@@ -45,8 +45,6 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
-    pi.url = "github:ChauDucToan/pi-flake";
-
     # Noctalia
     noctalia = {
       url = "github:noctalia-dev/noctalia/legacy-v4";
