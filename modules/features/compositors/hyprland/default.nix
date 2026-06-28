@@ -63,7 +63,7 @@
 
             # https://wiki.hypr.land/Configuring/Basics/Variables/#decoration
             decoration = {
-              rounding = 12;
+              rounding = 24;
               rounding_power = 2.0;
               active_opacity = 1.0;
               inactive_opacity = 0.6;
@@ -73,7 +73,7 @@
               dim_strength = 0.4;
               dim_special = 0.2;
               dim_around = 0.4;
-              # screen_shader = "${inputs.self}/assets/shaders/github:zer0-sh/retro4.frags";
+              screen_shader = "${inputs.self}/assets/shaders/github:zer0-sh/retro4.frags";
               border_part_of_window = true;
 
               # https://wiki.hypr.land/Configuring/Basics/Variables/#blur
@@ -248,6 +248,15 @@
             ]
             ++ forEachWorkspace (idx: mkBind "${modifier} + ${idx}" "hl.dsp.focus({ workspace = \"${idx}\" })")
             ++ forEachWorkspace (idx: mkBind "${modifier} + SHIFT + ${idx}" "hl.dsp.window.move({ workspace = \"${idx}\", follow = false })");
+
+          # https://wiki.hypr.land/Configuring/Basics/Window-Rules/#layer-rules
+          # https://docs.noctalia.dev/v4/getting-started/compositor-settings/hyprland/
+          layer_rule = {
+            match.namespace = "noctalia-background-.*$";
+            ignore_alpha = 0.5;
+            blur = true;
+            blur_popups = true;
+          };
 
           # https://wiki.hypr.land/Configuring/Basics/Autostart/
           on = let
