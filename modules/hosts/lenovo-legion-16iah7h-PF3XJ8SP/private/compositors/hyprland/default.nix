@@ -8,9 +8,9 @@
         NIXOS_OZONE_WL = "1";
       };
 
-      environment.systemPackages = [
-        pkgs.unstable.xorg.xwayland
-      ];
+      # environment.systemPackages = [
+      #   pkgs.unstable.xorg.xwayland
+      # ];
     };
   };
 }
