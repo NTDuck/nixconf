@@ -95,7 +95,7 @@
         cursor = {
           package = pkgs.unstable.bibata-cursors;
           name = "Bibata-Modern-Classic";
-          size = 16;
+          size = 32; # 16
         };
 
         fonts = {
@@ -117,10 +117,15 @@
           };
 
           sizes = {
-            applications = 11;
-            terminal = 11;
-            desktop = 10;
-            popups = 10;
+            # applications = 11;
+            # terminal = 11;
+            # desktop = 10;
+            # popups = 10;
+
+            applications = 16;
+            terminal = 16;
+            desktop = 14;
+            popups = 14;
           };
         };
 

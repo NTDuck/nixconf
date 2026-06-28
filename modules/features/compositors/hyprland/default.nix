@@ -35,8 +35,6 @@
         configType = "lua";
 
         settings = {
-          "$mod" = "SUPER";
-
           # TODO Move to host-specific
           # TODO Change color
           # https://www.reddit.com/r/unixporn/s/fhb4wkagyy
@@ -111,10 +109,10 @@
               };
 
               # https://wiki.hypr.land/Configuring/Basics/Variables/#motion-blur
-              motion_blur = {
-                enabled = true;
-                samples = 10;
-              };
+              # motion_blur = {
+              #   enabled = true;
+              #   samples = 10;
+              # };
             };
 
             # https://wiki.hypr.land/Configuring/Basics/Variables/#animations
@@ -183,31 +181,34 @@
             modifier = "SUPER";
             ipc = "qs -c noctalia-shell ipc call";
 
-            mkCmd = key: cmd:
-              mkBind key "hl.dsp.exec_cmd(\"${lib.strings.escape ["\"" "\\"] cmd}\")";
+            mkCmd = key: expr:
+              mkBind key "hl.dsp.exec_cmd(\"${expr}\")";
 
             mkBind = key: expr: {
               _args = [
                 key
-                (lib.generators.mkLuaInline expr)
+                (mkLuaFn (escape expr))
               ];
             };
 
-            mkFlaggedCmd = key: cmd: flags:
-              mkFlaggedBind key "hl.dsp.exec_cmd(\"${lib.strings.escape ["\"" "\\"] cmd}\")" flags;
+            mkFlaggedCmd = key: expr: flags:
+              mkFlaggedBind key "hl.dsp.exec_cmd(\"${expr}\")" flags;
 
             mkFlaggedBind = key: expr: flags: {
               _args = [
                 key
-                (lib.generators.mkLuaInline expr)
+                (mkLuaFn (escape expr))
                 flags
               ];
             };
 
+            mkLuaFn = expr: lib.generators.mkLuaInline "function()\n  ${expr}\nend";
+            escape = expr: lib.strings.escape ["\"" "\\"] expr;
+
             forEachWorkspace = fn: builtins.genList (idx: fn (builtins.toString idx)) 10;
           in
             [
-              (mkFlaggedBind "${modifier} + Q" "hl.dsp.window.close()" {long_press = true;})
+              (mkFlaggedBind "${modifier} + Q" "hl.dsp.window.close()")
               (mkBind "${modifier} + F" "hl.dsp.window.fullscreen({ mode = \"fullscreen\", action = \"toggle\" })")
 
               (mkBind "${modifier} + H" "hl.dsp.focus({direction = \"l\"})")
@@ -249,16 +250,17 @@
 
           # https://wiki.hypr.land/Configuring/Basics/Autostart/
           on = let
-            mkOnEvent = event: cmds: {
+            mkOnEvent = event: exprs: {
               _args = [
                 event
-                (lib.generators.mkLuaInline ''
-                  function()
-                    ${builtins.concatStringsSep ";\n  " (map (lib.strings.escape ["\"" "\\"]) cmds)}
-                  end
-                '')
+                (mkLuaFn (builtins.concatStringsSep ";\n  " (
+                  map (cmd: "hl.dsp.exec_cmd(\"${escape cmd}\")") exprs
+                )))
               ];
             };
+
+            mkLuaFn = expr: lib.generators.mkLuaInline "function()\n  ${expr}\nend";
+            escape = expr: lib.strings.escape ["\"" "\\"] expr;
           in [
             (mkOnEvent "hyprland.start" [
               "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all"

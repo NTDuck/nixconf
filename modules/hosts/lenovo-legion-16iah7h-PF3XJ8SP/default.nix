@@ -12,7 +12,6 @@
       den.aspects.battery.upower
       den.aspects.bluetooth
       den.aspects.bootloaders.systemd
-      den.aspects.browsers.firefox
       den.aspects.browsers.vivaldi
       den.aspects.browsers.zen-browser
       den.aspects.compositors.hyprland
