@@ -11,6 +11,13 @@
 
         withUWSM = true;
       };
+
+      # https://wiki.hypr.land/Nix/Cachix/
+      nix.settings = {
+        extra-substituters = ["https://hyprland.cachix.org"];
+        extra-trusted-substituters = ["https://hyprland.cachix.org"];
+        extra-trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+      };
     };
 
     homeManager = {
@@ -33,6 +40,7 @@
           # TODO Move to host-specific
           # TODO Change color
           # https://www.reddit.com/r/unixporn/s/fhb4wkagyy
+          # https://wiki.hypr.land/Configuring/Basics/Variables/#syntax
           config = {
             # https://wiki.hypr.land/Configuring/Basics/Variables/#general
             general = {
@@ -153,10 +161,15 @@
 
             # https://wiki.hypr.land/Configuring/Basics/Variables/#opengl
             opengl.nvidia_anti_flicker = true;
+
+            # https://wiki.hypr.land/Configuring/Layouts/Dwindle-Layout/
+            dwindle = {
+              force_split = 2;
+            };
           };
 
           # https://wiki.hypr.land/Configuring/Basics/Monitors/
-          monitor._var = {
+          monitor = {
             output = "eDP-1";
             mode = "2560x1600@165.019";
             position = "0x0";
@@ -168,6 +181,7 @@
           # https://github.com/end-4/dots-hyprland/blob/main/dots/.config/hypr/hyprland/keybinds.lua
           bind = let
             modifier = "SUPER";
+            ipc = "qs -c noctalia-shell ipc call";
 
             mkCmd = key: cmd: args:
               mkBind key "hl.dsp.exec_cmd(\"${lib.strings.escape ["\"" "\\"] cmd}\")" args;
@@ -198,15 +212,49 @@
               (mkBind "${modifier} + SHIFT + L" "hl.dsp.window.move({direction = \"r\"})")
 
               (mkCmd "${modifier} + RETURN" "${pkgs.unstable.foot}/bin/footclient")
-              (mkCmd "${modifier} + D" "${pkgs.unstable.tofi}/bin/tofi-drun --drun-launch=true")
-              (mkCmd "${modifier} + CTRL + L" "${pkgs.unstable.gtklock}/bin/gtklock")
+              # (mkCmd "${modifier} + D" "${pkgs.unstable.tofi}/bin/tofi-drun --drun-launch=true")
+              # (mkCmd "${modifier} + CTRL + L" "${pkgs.unstable.gtklock}/bin/gtklock")
+              (mkCmd "${modifier} + D" "${ipc} launcher toggle")
+              (mkCmd "${modifier} + CTRL + L" "${ipc} lockScreen lock")
 
-              (mkCmd "XF86MonBrightnessDown" "${pkgs.brightnessctl}/bin/brightnessctl set 5%-")
-              (mkCmd "XF86MonBrightnessUp" "${pkgs.brightnessctl}/bin/brightnessctl set +5%")
+              # (mkCmd "XF86MonBrightnessDown" "${pkgs.brightnessctl}/bin/brightnessctl set 5%-" {
+              #   locked = true;
+              #   repeating = true;
+              # })
+              # (mkCmd "XF86MonBrightnessUp" "${pkgs.brightnessctl}/bin/brightnessctl set +5%" {
+              #   locked = true;
+              #   repeating = true;
+              # })
+              # (mkCmd "XF86AudioRaiseVolume" "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%" {
+              #   locked = true;
+              #   repeating = true;
+              # })
+              # (mkCmd "XF86AudioLowerVolume" "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%" {
+              #   locked = true;
+              #   repeating = true;
+              # })
+              # (mkCmd "XF86AudioMute" "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle" {
+              #   locked = true;
+              #   repeating = true;
+              # })
 
-              (mkCmd "XF86AudioRaiseVolume" "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%")
-              (mkCmd "XF86AudioLowerVolume" "${pkgs.pulseaudio}/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%")
-              (mkCmd "XF86AudioMute" "${pkgs.pulseaudio}/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle")
+              (mkCmd "XF86MonBrightnessDown" "${ipc} brightness decrease" {
+                locked = true;
+                repeating = true;
+              })
+              (mkCmd "XF86MonBrightnessUp" "${ipc} brightness increase" {
+                locked = true;
+                repeating = true;
+              })
+              (mkCmd "XF86AudioMute" "${ipc} volume muteOutput" {locked = true;})
+              (mkCmd "XF86AudioLowerVolume" "${ipc} volume decrease" {
+                locked = true;
+                repeating = true;
+              })
+              (mkCmd "XF86AudioRaiseVolume" "${ipc} volume increase" {
+                locked = true;
+                repeating = true;
+              })
             ]
             ++ forEachWorkspace (idx: mkBind "${modifier} + ${idx}" "hl.dsp.focus({ workspace = ${idx} })")
             ++ forEachWorkspace (idx: mkBind "${modifier} + SHIFT + ${idx}" "hl.dsp.window.move({ workspace = ${idx}, follow = false })");
@@ -227,6 +275,7 @@
             (mkOnEvent "hyprland.start" [
               "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all"
               "${pkgs.systemd}/bin/systemctl --user import-environment"
+              "qs -c noctalia-shell"
               "fcitx5 -d -r"
             ])
           ];

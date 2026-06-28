@@ -15,7 +15,7 @@
       den.aspects.browsers.firefox
       den.aspects.browsers.vivaldi
       den.aspects.browsers.zen-browser
-      den.aspects.compositors.sway
+      den.aspects.compositors.hyprland
       den.aspects.dev
       den.aspects.editors.helix
       den.aspects.editors.zed-editor
@@ -27,7 +27,7 @@
       den.aspects.greeters.tuigreet
       den.aspects.kernels.cachyos-kernel
       den.aspects.launchers.tofi
-      den.aspects.lockscreens.gtklock
+      # den.aspects.lockscreens.gtklock
       den.aspects.messenging.discord
       den.aspects.messenging.telegram
       den.aspects.multimedia.ffmpeg
@@ -58,7 +58,7 @@
       den.aspects.services.resolved
       den.aspects.settings
       den.aspects.shells.zsh
-      den.aspects.status-bars.waybar
+      # den.aspects.status-bars.waybar
       den.aspects.swap.zram
       den.aspects.terminals.foot
       den.aspects.terminals.wezterm
