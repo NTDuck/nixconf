@@ -6,9 +6,9 @@
       ...
     }: {
       services.llama-cpp = {
-        # package = lib.mkForce (pkgs.unstable.llama-cpp.override {
-        #   cudaSupport = true;
-        # });
+        package = lib.mkForce (pkgs.unstable.llama-cpp.override {
+          cudaSupport = true;
+        });
 
         modelsPreset = {
           "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M" = {
