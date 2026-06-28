@@ -5,38 +5,38 @@
       lib,
       ...
     }: {
-      programs.pi-coding-agent = {
-        models = lib.mkMerge [
-          {}
-          (lib.mkIf (config.services.llama-cpp.enable or false) {
-            # default = {
-            #   provider = "llama.cpp";
-            #   model = "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M";
-            # };
-            # providers = {
-            #   "llama.cpp" = {
-            #     baseUrl = let
-            #       host = config.services.llama-cpp.settings.host;
-            #       port = builtins.toString config.services.llama-cpp.settings.port;
-            #     in "http://${host}:${port}/v1";
-            #     api = "openai-completions";
-            #     apiKey = "llama-cpp";
-            #     compat = {
-            #       supportsDeveloperRole = false;
-            #       supportsReasoningEffort = false;
-            #     };
-            #     models = [
-            #       {
-            #         id = "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M";
-            #         name = "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M";
-            #         reasoning = true;
-            #       }
-            #     ];
-            #   };
-            # };
-          })
-        ];
-      };
+      # programs.pi-coding-agent = {
+      #   models = lib.mkMerge [
+      #     {}
+      #     (lib.mkIf (config.services.llama-cpp.enable or false) {
+      #       # default = {
+      #       #   provider = "llama.cpp";
+      #       #   model = "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M";
+      #       # };
+      #       # providers = {
+      #       #   "llama.cpp" = {
+      #       #     baseUrl = let
+      #       #       host = config.services.llama-cpp.settings.host;
+      #       #       port = builtins.toString config.services.llama-cpp.settings.port;
+      #       #     in "http://${host}:${port}/v1";
+      #       #     api = "openai-completions";
+      #       #     apiKey = "llama-cpp";
+      #       #     compat = {
+      #       #       supportsDeveloperRole = false;
+      #       #       supportsReasoningEffort = false;
+      #       #     };
+      #       #     models = [
+      #       #       {
+      #       #         id = "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M";
+      #       #         name = "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M";
+      #       #         reasoning = true;
+      #       #       }
+      #       #     ];
+      #       #   };
+      #       # };
+      #     })
+      #   ];
+      # };
     };
   };
 }
