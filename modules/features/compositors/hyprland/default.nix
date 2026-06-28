@@ -73,7 +73,7 @@
               dim_strength = 0.4;
               dim_special = 0.2;
               dim_around = 0.4;
-              screen_shader = "${inputs.self}/assets/shaders/github:zer0-sh/retro4.frags";
+              # screen_shader = "${inputs.self}/assets/shaders/github:zer0-sh/retro4.frags";
               border_part_of_window = true;
 
               # https://wiki.hypr.land/Configuring/Basics/Variables/#blur
@@ -187,7 +187,7 @@
             mkBind = key: expr: {
               _args = [
                 key
-                (mkLuaFn (escape expr))
+                (mkLuaFn expr)
               ];
             };
 
@@ -197,18 +197,18 @@
             mkFlaggedBind = key: expr: flags: {
               _args = [
                 key
-                (mkLuaFn (escape expr))
+                (mkLuaFn expr)
                 flags
               ];
             };
 
-            mkLuaFn = expr: lib.generators.mkLuaInline "function()\n  ${expr}\nend";
-            escape = expr: lib.strings.escape ["\"" "\\"] expr;
+            mkLuaFn = expr: lib.generators.mkLuaInline "${expr}";
+            # mkLuaFn = expr: lib.generators.mkLuaInline "function()\n  ${expr}\nend";
 
             forEachWorkspace = fn: builtins.genList (idx: fn (builtins.toString idx)) 10;
           in
             [
-              (mkFlaggedBind "${modifier} + Q" "hl.dsp.window.close()")
+              (mkBind "${modifier} + Q" "hl.dsp.window.close()")
               (mkBind "${modifier} + F" "hl.dsp.window.fullscreen({ mode = \"fullscreen\", action = \"toggle\" })")
 
               (mkBind "${modifier} + H" "hl.dsp.focus({direction = \"l\"})")
@@ -254,13 +254,12 @@
               _args = [
                 event
                 (mkLuaFn (builtins.concatStringsSep ";\n  " (
-                  map (cmd: "hl.dsp.exec_cmd(\"${escape cmd}\")") exprs
+                  map (cmd: "hl.exec_cmd(\"${cmd}\")") exprs
                 )))
               ];
             };
 
             mkLuaFn = expr: lib.generators.mkLuaInline "function()\n  ${expr}\nend";
-            escape = expr: lib.strings.escape ["\"" "\\"] expr;
           in [
             (mkOnEvent "hyprland.start" [
               "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all"
