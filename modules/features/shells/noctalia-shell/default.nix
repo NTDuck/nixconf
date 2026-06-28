@@ -20,12 +20,11 @@
       programs.noctalia-shell = {
         enable = true;
         settings = {
-        {
           settingsVersion = 59;
           bar = {
             barType = "framed";
             position = "left";
-            monitors = [ ];
+            monitors = [];
             density = "spacious";
             showOutline = false;
             showCapsule = false;
@@ -125,7 +124,7 @@
             rightClickAction = "controlCenter";
             rightClickFollowMouse = true;
             rightClickCommand = "";
-            screenOverrides = [ ];
+            screenOverrides = [];
           };
           general = {
             avatarImage = "/home/ayin/.face";
@@ -161,7 +160,7 @@
             clockStyle = "custom";
             clockFormat = "hh\nmm";
             passwordChars = false;
-            lockScreenMonitors = [ ];
+            lockScreenMonitors = [];
             lockScreenBlur = 0;
             lockScreenTint = 0;
             keybinds = {
@@ -241,7 +240,7 @@
             enabled = true;
             overviewEnabled = false;
             directory = "/home/ayin/Pictures/Wallpapers";
-            monitorDirectories = [ ];
+            monitorDirectories = [];
             enableMultiMonitorDirectories = false;
             showHiddenFiles = false;
             viewMode = "single";
@@ -282,7 +281,7 @@
             wallhavenResolutionWidth = "";
             wallhavenResolutionHeight = "";
             sortOrder = "name";
-            favorites = [ ];
+            favorites = [];
           };
           appLauncher = {
             enableClipboardHistory = false;
@@ -294,7 +293,7 @@
             clipboardWatchTextCommand = "wl-paste --type text --watch cliphist store";
             clipboardWatchImageCommand = "wl-paste --type image --watch cliphist store";
             position = "center";
-            pinnedApps = [ ];
+            pinnedApps = [];
             sortByMostUsed = true;
             terminalCommand = "alacritty -e";
             customLaunchPrefixEnabled = false;
@@ -407,8 +406,8 @@
             floatingRatio = 1;
             size = 1;
             onlySameOutput = true;
-            monitors = [ ];
-            pinnedApps = [ ];
+            monitors = [];
+            pinnedApps = [];
             colorizeIcons = false;
             showLauncherIcon = false;
             launcherPosition = "end";
@@ -489,7 +488,7 @@
             enabled = true;
             enableMarkdown = false;
             density = "default";
-            monitors = [ ];
+            monitors = [];
             location = "top_right";
             overlayLayer = true;
             backgroundOpacity = 0.8;
@@ -527,7 +526,7 @@
               1
               2
             ];
-            monitors = [ ];
+            monitors = [];
           };
           audio = {
             volumeStep = 5;
@@ -535,7 +534,7 @@
             spectrumFrameRate = 30;
             visualizerType = "linear";
             spectrumMirrored = true;
-            mprisBlacklist = [ ];
+            mprisBlacklist = [];
             preferredPlayer = "";
             volumeFeedback = false;
             volumeFeedbackSoundFile = "";
@@ -544,7 +543,7 @@
             brightnessStep = 5;
             enforceMinimum = true;
             enableDdcSupport = false;
-            backlightDeviceMappings = [ ];
+            backlightDeviceMappings = [];
           };
           colorSchemes = {
             useWallpaperColors = false;
@@ -558,7 +557,7 @@
             syncGsettings = true;
           };
           templates = {
-            activeTemplates = [ ];
+            activeTemplates = [];
             enableUserTheming = false;
           };
           nightLight = {
@@ -594,9 +593,8 @@
             overviewEnabled = true;
             gridSnap = false;
             gridSnapScale = false;
-            monitorWidgets = [ ];
+            monitorWidgets = [];
           };
-        }
         };
       };
     };
