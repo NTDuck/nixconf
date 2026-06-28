@@ -9,10 +9,10 @@
         inputs.nixos-hardware.nixosModules.lenovo-legion-16iah7h
       ];
 
-      hardware.opengl = {
-        enable = true;
-        driSupport = true;
-      };
+      # hardware.opengl = {
+      #   enable = true;
+      #   driSupport = true;
+      # };
 
       hardware.nvidia = {
         modesetting.enable = true;
