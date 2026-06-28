@@ -1,7 +1,7 @@
 {den, ...}: {
   den.aspects.dev.agentics.pi = {
-    homeManager = {
-      programs.pi-coding-agent = {pkgs, ...}: {
+    homeManager = {pkgs, ...}: {
+      programs.pi-coding-agent = {
         enable = true;
         package = pkgs.unstable.pi-coding-agent;
 
