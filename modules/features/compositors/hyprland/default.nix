@@ -126,7 +126,7 @@
               repeat_rate = 50;
               repeat_delay = 150;
               scroll_method = "2fg";
-              follow_mouse = 2;
+              follow_mouse = 1;
               focus_on_close = 2;
 
               # https://wiki.hypr.land/Configuring/Basics/Variables/#touchpad
@@ -202,9 +202,8 @@
               ];
             };
 
-            mkLuaFn = expr: lib.generators.mkLuaInline "${expr}";
-            # mkLuaFn = expr: lib.generators.mkLuaInline "function()\n  ${expr}\nend";
-
+            mkLuaFn = expr: lib.generators.mkLuaInline expr;
+            # mkLuaFn = expr: lib.generators.mkLuaInline "function()\n  hl.dispatch(${expr})\nend";
             forEachWorkspace = fn: builtins.genList (idx: fn (builtins.toString idx)) 10;
           in
             [
@@ -221,7 +220,9 @@
               (mkBind "${modifier} + SHIFT + K" "hl.dsp.window.move({direction = \"u\"})")
               (mkBind "${modifier} + SHIFT + L" "hl.dsp.window.move({direction = \"r\"})")
 
-              (mkCmd "${modifier} + RETURN" "${pkgs.unstable.foot}/bin/footclient")
+              (mkCmd "${modifier} + RETURN" "${pkgs.unstable.foot}/bin/foot")
+              (mkCmd "${modifier} + W" "${pkgs.unstable.wezterm}/bin/wezterm")
+              # (mkCmd "${modifier} + RETURN" "${pkgs.unstable.foot}/bin/footclient")
               # (mkCmd "${modifier} + D" "${pkgs.unstable.tofi}/bin/tofi-drun --drun-launch=true")
               # (mkCmd "${modifier} + CTRL + L" "${pkgs.unstable.gtklock}/bin/gtklock")
               (mkCmd "${modifier} + D" "${ipc} launcher toggle")
@@ -245,15 +246,15 @@
                 repeating = true;
               })
             ]
-            ++ forEachWorkspace (idx: mkBind "${modifier} + ${idx}" "hl.dsp.focus({ workspace = ${idx} })")
-            ++ forEachWorkspace (idx: mkBind "${modifier} + SHIFT + ${idx}" "hl.dsp.window.move({ workspace = ${idx}, follow = false })");
+            ++ forEachWorkspace (idx: mkBind "${modifier} + ${idx}" "hl.dsp.focus({ workspace = \"${idx}\" })")
+            ++ forEachWorkspace (idx: mkBind "${modifier} + SHIFT + ${idx}" "hl.dsp.window.move({ workspace = \"${idx}\", follow = false })");
 
           # https://wiki.hypr.land/Configuring/Basics/Autostart/
           on = let
             mkOnEvent = event: exprs: {
               _args = [
                 event
-                (mkLuaFn (builtins.concatStringsSep ";\n  " (
+                (mkLuaFn (builtins.concatStringsSep "\n  " (
                   map (cmd: "hl.exec_cmd(\"${cmd}\")") exprs
                 )))
               ];

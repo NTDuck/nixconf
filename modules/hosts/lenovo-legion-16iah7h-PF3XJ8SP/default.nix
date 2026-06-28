@@ -56,6 +56,7 @@
       den.aspects.services.nftables
       den.aspects.services.resolved
       den.aspects.settings
+      den.aspects.shells.noctalia-shell
       den.aspects.shells.zsh
       # den.aspects.status-bars.waybar
       den.aspects.swap.zram
