@@ -9,7 +9,6 @@
       config,
       ...
     }: let
-      self = inputs.self;
       posterize = {
         imgPath,
         intensity ? 1,
@@ -87,7 +86,7 @@
 
         image = pad {
           imgPath = posterize {
-            imgPath = "${self}/assets/wallpapers/shifting-tides.jpg";
+            imgPath = "${inputs.self}/assets/wallpapers/shifting-tides.jpg";
             intensity = 0.75;
           };
           heightRatio = 0.80;
