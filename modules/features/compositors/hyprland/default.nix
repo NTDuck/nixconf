@@ -204,7 +204,7 @@
               ];
             };
 
-            forEachWorkspace = fn: builtins.genList (i: fn builtins.toString i) 10;
+            forEachWorkspace = fn: builtins.genList (idx: fn (builtins.toString idx)) 10;
           in
             [
               (mkFlaggedBind "${modifier} + Q" "hl.dsp.window.close()" {long_press = true;})
