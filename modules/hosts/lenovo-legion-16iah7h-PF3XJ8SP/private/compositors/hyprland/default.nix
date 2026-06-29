@@ -16,8 +16,8 @@
         GDK_DPI_SCALE = "1";
 
         # # Scale factor for Qt apps (e.g., VLC, KeepassXC)
-        # QT_AUTO_SCREEN_SCALE_FACTOR = "1";
-        # QT_SCALE_FACTOR = "1.5";
+        QT_AUTO_SCREEN_SCALE_FACTOR = "1";
+        QT_SCALE_FACTOR = "1.5";
       };
 
       # environment.systemPackages = [

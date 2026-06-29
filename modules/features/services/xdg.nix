@@ -16,16 +16,16 @@
         # };
       };
 
-      environment.systemPackages = [
-        pkgs.unstable.xdg-utils
-      ];
+      # environment.systemPackages = [
+      #   pkgs.unstable.xdg-utils
+      # ];
     };
 
-    homeManager = {
-      xdg = {
-        enable = true;
-        userDirs.enable = true;
-      };
-    };
+    # homeManager = {
+    #   xdg = {
+    #     enable = true;
+    #     userDirs.enable = true;
+    #   };
+    # };
   };
 }
