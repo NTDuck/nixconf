@@ -122,10 +122,10 @@
             # desktop = 10;
             # popups = 10;
 
-            applications = 24;
-            terminal = 24;
-            desktop = 24;
-            popups = 24;
+            applications = 16;
+            terminal = 16;
+            desktop = 16;
+            popups = 16;
           };
         };
 

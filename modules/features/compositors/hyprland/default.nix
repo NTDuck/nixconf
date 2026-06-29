@@ -50,7 +50,8 @@
               layout = "dwindle";
               no_focus_fallback = false;
               resize_on_border = true;
-              extend_border_grab_area = 12;
+              extend_border_grab_area = 0; # SUS
+              # extend_border_grab_area = 12;
               hover_icon_on_border = true;
               allow_tearing = false;
               resize_corner = 0;
@@ -103,9 +104,10 @@
 
               # https://wiki.hypr.land/Configuring/Basics/Variables/#glow
               glow = {
-                enabled = true;
-                range = 4;
-                render_power = 1;
+                enabled = false;
+                # enabled = true;
+                # range = 24;
+                # render_power = 3;
               };
 
               # https://wiki.hypr.land/Configuring/Basics/Variables/#motion-blur
@@ -180,7 +182,8 @@
           bind = let
             modifier = "SUPER";
             # ipc = "qs -c noctalia-shell ipc call";
-            ipc = "${inputs.noctalia.packages.${pkgs.system}.default}/bin/qs -c noctalia-shell ipc call";
+            ipc = "${inputs.noctalia.packages.${pkgs.system}.default}/bin/noctalia-shell ipc call";
+            # ipc = "${inputs.noctalia.packages.${pkgs.system}.default}/bin/qs -c noctalia-shell ipc call";
 
             mkCmd = key: expr:
               mkBind key "hl.dsp.exec_cmd(\"${expr}\")";
@@ -308,7 +311,9 @@
             (mkOnEvent "hyprland.start" [
               "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all"
               "${pkgs.systemd}/bin/systemctl --user import-environment"
-              "${inputs.noctalia.packages.${pkgs.system}.default}/bin/qs -c noctalia-shell"
+              "${inputs.noctalia.packages.${pkgs.system}.default}/bin/noctalia-shell"
+              # "${inputs.noctalia.packages.${pkgs.system}.default}/bin/qs -c noctalia-shell"
+
               "fcitx5 -d -r"
             ])
           ];
