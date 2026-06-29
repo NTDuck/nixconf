@@ -17,8 +17,8 @@
 
         base16Scheme = let
           themes = {
-            light = "${pkgs.base16-schemes}/share/themes/flexoki-dark.yaml";
-            dark = "${pkgs.base16-schemes}/share/themes/flexoki-light.yaml";
+            light = "${pkgs.base16-schemes}/share/themes/flexoki-light.yaml";
+            dark = "${pkgs.base16-schemes}/share/themes/flexoki-dark.yaml";
           };
         in
           themes.${polarity};
