@@ -7,7 +7,6 @@
     includes = [
       den.aspects.services.cliphist # https://mangowm.github.io/docs/configuration/xdg-portals#clipboard-manager
       den.aspects.services.gnome-keyring # https://mangowm.github.io/docs/configuration/xdg-portals#gnome-keyring
-      den.aspects.services.xdg # https://mangowm.github.io/docs/configuration/xdg-portals#screen-sharing
     ];
 
     nixos = {pkgs, ...}: {

@@ -13,7 +13,8 @@
         enable = true;
 
         polarity = "dark";
-        base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
+        base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-pale.yaml";
+        # base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
 
         image = "${inputs.self}/assets/wallpapers/limbus-company.jpg";
 

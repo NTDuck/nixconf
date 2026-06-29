@@ -57,7 +57,6 @@
       den.aspects.services.polkit
       den.aspects.services.resolved
       den.aspects.services.udisks2
-      den.aspects.services.xdg
       den.aspects.settings
       den.aspects.shells.noctalia-shell
       den.aspects.shells.zsh
