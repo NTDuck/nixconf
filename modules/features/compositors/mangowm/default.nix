@@ -94,16 +94,11 @@
               "SUPER,d,${ipc} launcher toggle"
               "SUPER+CTRL,l,${ipc} lockScreen lock"
             ]
-            ++ dirs
-            |> lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}")
-            ++ dirs
-            |> lib.mapAttrsToList (key: dir: "SUPER+SHIFT,${key},exchange_client,${dir}")
-            ++ tags
-            |> lib.map (tag: "SUPER,${tag},view,${tag}")
-            ++ tags
-            |> lib.map (tag: "SUPER+SHIFT,${tag},tagsilent,${tag}")
-            ++ tags
-            |> lib.map (tag: "SUPER+ALT,${tag},tag,${tag}");
+            ++ (dirs |> lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}"))
+            ++ (dirs |> lib.mapAttrsToList (key: dir: "SUPER+SHIFT,${key},exchange_client,${dir}"))
+            ++ (tags |> lib.map (tag: "SUPER,${tag},view,${tag}"))
+            ++ (tags |> lib.map (tag: "SUPER+SHIFT,${tag},tagsilent,${tag}"))
+            ++ (tags |> lib.map (tag: "SUPER+ALT,${tag},tag,${tag}"));
 
           bindl = [
             "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness decrease"
