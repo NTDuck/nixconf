@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.xdg = {
+  den.aspects.services.xdg = {
     nixos = {pkgs, ...}: {
       xdg.portal = {
         enable = true;
