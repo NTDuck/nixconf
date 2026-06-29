@@ -44,7 +44,7 @@
             general = {
               border_size = 4;
               gaps_in = 8;
-              gaps_out = 0;
+              gaps_out = 8;
               float_gaps = 8;
               gaps_workspaces = 0;
               layout = "dwindle";
@@ -73,7 +73,7 @@
               dim_strength = 0.4;
               dim_special = 0.2;
               dim_around = 0.4;
-              screen_shader = "${inputs.self}/assets/shaders/github:zer0-sh/retro4.frags";
+              # screen_shader = "${inputs.self}/assets/shaders/github:zer0-sh/retro4.frags";
               border_part_of_window = true;
 
               # https://wiki.hypr.land/Configuring/Basics/Variables/#blur
@@ -179,7 +179,8 @@
           # https://github.com/end-4/dots-hyprland/blob/main/dots/.config/hypr/hyprland/keybinds.lua
           bind = let
             modifier = "SUPER";
-            ipc = "qs -c noctalia-shell ipc call";
+            # ipc = "qs -c noctalia-shell ipc call";
+            ipc = "${inputs.noctalia.packages.${pkgs.system}.default}/bin/qs -c noctalia-shell ipc call";
 
             mkCmd = key: expr:
               mkBind key "hl.dsp.exec_cmd(\"${expr}\")";
@@ -258,6 +259,39 @@
             blur_popups = true;
           };
 
+          # https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/#smart-gaps
+          workspace_rule = [
+            {
+              workspace = "w[tv1]s[false]";
+              gaps_out = 0;
+              gaps_in = 0;
+            }
+            {
+              workspace = "f[1]s[false]";
+              gaps_out = 0;
+              gaps_in = 0;
+            }
+          ];
+
+          window_rule = [
+            {
+              match = {
+                float = false;
+                workspace = "w[tv1]s[false]";
+              };
+              border_size = 0;
+              rounding = 0;
+            }
+            {
+              match = {
+                float = false;
+                workspace = "f[1]s[false]";
+              };
+              border_size = 0;
+              rounding = 0;
+            }
+          ];
+
           # https://wiki.hypr.land/Configuring/Basics/Autostart/
           on = let
             mkOnEvent = event: exprs: {
@@ -274,7 +308,7 @@
             (mkOnEvent "hyprland.start" [
               "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all"
               "${pkgs.systemd}/bin/systemctl --user import-environment"
-              "qs -c noctalia-shell"
+              "${inputs.noctalia.packages.${pkgs.system}.default}/bin/qs -c noctalia-shell"
               "fcitx5 -d -r"
             ])
           ];
