@@ -1,6 +1,7 @@
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.provides.to-users = {user, ...}: {
     nixos = {pkgs, ...}: {
+      # Somehow usable for mangowm ?
       environment.sessionVariables = {
         __GLX_VENDOR_LIBRARY_NAME = "nvidia";
         LIBVA_DRIVER_NAME = "nvidia";

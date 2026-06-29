@@ -14,7 +14,7 @@
       den.aspects.bootloaders.systemd
       den.aspects.browsers.vivaldi
       den.aspects.browsers.zen-browser
-      den.aspects.compositors.hyprland
+      den.aspects.compositors.mangowm
       den.aspects.dev
       den.aspects.editors.helix
       den.aspects.editors.zed-editor
@@ -25,7 +25,7 @@
       den.aspects.gaming.steam
       den.aspects.greeters.tuigreet
       den.aspects.kernels.cachyos-kernel
-      den.aspects.launchers.tofi
+      # den.aspects.launchers.tofi
       # den.aspects.lockscreens.gtklock
       den.aspects.messenging.discord
       den.aspects.messenging.telegram
@@ -47,14 +47,17 @@
       den.aspects.office.texlive
       den.aspects.office.zathura
       den.aspects.services.cliphist
-      den.aspects.services.fcitx5
-      den.aspects.services.pipewire
-      den.aspects.services.dconf
-      den.aspects.services.gnome-keyring
-      den.aspects.services.polkit
       den.aspects.services.cloudflare-warp
+      den.aspects.services.dconf
+      den.aspects.services.fcitx5
+      den.aspects.services.gnome-keyring
+      den.aspects.services.gvfs
       den.aspects.services.nftables
+      den.aspects.services.pipewire
+      den.aspects.services.polkit
       den.aspects.services.resolved
+      den.aspects.services.udisks2
+      den.aspects.services.xdg
       den.aspects.settings
       den.aspects.shells.noctalia-shell
       den.aspects.shells.zsh

@@ -13,7 +13,7 @@
           default_session = {
             command = ''
               ${pkgs.tuigreet}/bin/tuigreet \
-              --cmd start-hyprland --no-xsession-wrapper \
+              --cmd mango --no-xsession-wrapper \
               --asterisks --asterisks-char '*' \
               --time --time-format '%Y-%m-%d %H:%M:%S' \
               --remember \

@@ -27,6 +27,12 @@
     agenix.url = "github:ryantm/agenix";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Compositor
+    mangowm = {
+      url = "github:mangowm/mango";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
     # VM
     nix-vert = {
       url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
