@@ -29,7 +29,7 @@
       ...
     }: {
       imports = [
-        inputs.mangowm.homeModules.default
+        inputs.mangowm.hmModules.mango
       ];
 
       wayland.windowManager.mango = {
