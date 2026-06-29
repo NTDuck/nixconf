@@ -94,9 +94,9 @@
               "SUPER+SHIFT,f,togglefullscreen"
               "SUPER+SHIFT,e,quit"
 
-              "SUPER,Return,${pkgs.unstable.kitty}/bin/kitty"
-              "SUPER,d,${ipc} launcher toggle"
-              "SUPER+CTRL,l,${ipc} lockScreen lock"
+              "SUPER,Return,spawn,${pkgs.unstable.kitty}/bin/kitty"
+              "SUPER,d,spawn,${ipc} launcher toggle"
+              "SUPER+CTRL,l,spawn,${ipc} lockScreen lock"
             ]
             ++ (dirs |> lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}"))
             ++ (dirs |> lib.mapAttrsToList (key: dir: "SUPER+SHIFT,${key},exchange_client,${dir}"))
