@@ -112,6 +112,22 @@
           #     disabled = true;
           #   }
           # ];
+
+          userChrome = ''
+            /* Target Zen Browser's vertical tab sidebar layout specifically */
+            #zen-sidebar-web-pages,
+            .sidebar-panel,
+            #sidebar-box,
+            #zen-tabs-container {
+              font-size: 11px !important; /* Adjust this lower or higher to match your taste */
+            }
+
+            /* Optional: Make the sidebar icons shrink slightly to match the smaller text */
+            #zen-tabs-container .tab-icon-image,
+            #zen-sidebar-web-pages .sidebar-icon {
+              transform: scale(0.85) !important;
+            }
+          '';
         };
       };
 
