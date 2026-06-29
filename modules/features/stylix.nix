@@ -9,12 +9,19 @@
         inputs.stylix.nixosModules.stylix
       ];
 
-      stylix = {
-        enable = true;
-
+      stylix = let
         polarity = "dark";
-        base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-pale.yaml";
-        # base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-dark.yaml";
+      in {
+        enable = true;
+        inherit polarity;
+
+        base16Scheme = let
+          themes = {
+            light = "${pkgs.base16-schemes}/share/themes/flexoki-dark.yaml";
+            dark = "${pkgs.base16-schemes}/share/themes/flexoki-light.yaml";
+          };
+        in
+          themes.${polarity};
 
         image = "${inputs.self}/assets/wallpapers/limbus-company.jpg";
 
