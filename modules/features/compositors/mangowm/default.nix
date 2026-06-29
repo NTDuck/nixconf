@@ -28,6 +28,10 @@
       lib,
       ...
     }: {
+      imports = [
+        inputs.mangowm.homeModules.default
+      ];
+
       wayland.windowManager.mango = {
         enable = true;
         package = inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango;
