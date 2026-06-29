@@ -63,8 +63,7 @@
       den.aspects.shells.zsh
       # den.aspects.status-bars.waybar
       den.aspects.swap.zram
-      den.aspects.terminals.foot
-      den.aspects.terminals.wezterm
+      den.aspects.terminals.kitty
       den.aspects.utilities.cava
       den.aspects.utilities.fastfetch
       den.aspects.utilities.flameshot

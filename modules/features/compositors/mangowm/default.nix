@@ -94,7 +94,7 @@
               "SUPER+SHIFT,f,togglefullscreen"
               "SUPER+SHIFT,e,quit"
 
-              "SUPER,Return,${pkgs.unstable.foot}/bin/footclient"
+              "SUPER,Return,${pkgs.unstable.kitty}/bin/kitty"
               "SUPER,d,${ipc} launcher toggle"
               "SUPER+CTRL,l,${ipc} lockScreen lock"
             ]
