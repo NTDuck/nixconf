@@ -87,7 +87,7 @@
 
           bind =
             [
-              "SUPER,s,switch_layout"
+              "SUPER,x,switch_layout"
               "SUPER,q,killclient"
               "SUPER,f,togglefakefullscreen"
               "SUPER+SHIFT,f,togglefullscreen"
