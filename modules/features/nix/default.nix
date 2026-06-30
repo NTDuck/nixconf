@@ -4,11 +4,20 @@
   ...
 }: {
   den.aspects.nix = {
-    nixos = {pkgs, ...}: let
+    nixos = {
+      pkgs,
+      lib,
+      ...
+    }: let
       config = {
         allowBroken = false;
         allowInsecure = true;
         allowUnfree = true;
+
+        allowInsecurePredicate = pkg:
+          pkg
+          |> lib.getName
+          |> (name: builtins.elem name ["pnpm"]);
       };
     in {
       nixpkgs = {

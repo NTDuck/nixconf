@@ -25,15 +25,6 @@ in {
         config = {
           system.stateVersion = version;
 
-          # TODO Refactor
-          # nixpkgs.config.allowInsecurePredicate = pkg:
-          #   pkg
-          #   |> lib.getName
-          #   |> (name: builtins.elem name ["pnpm"]);
-          nixpkgs.config.permittedInsecurePackages = [
-            "pnpm-10.29.2"
-          ];
-
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = true;
