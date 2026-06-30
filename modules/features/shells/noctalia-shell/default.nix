@@ -362,7 +362,7 @@
             favorites = [];
           };
           appLauncher = {
-            enableClipboardHistory = true;
+            enableClipboardHistory = false;
             autoPasteClipboard = false;
             enableClipPreview = true;
             clipboardWrapText = true;
@@ -373,7 +373,7 @@
             position = "bottom_center";
             pinnedApps = [];
             sortByMostUsed = true;
-            terminalCommand = "kitty -e";
+            terminalCommand = "";
             customLaunchPrefixEnabled = false;
             customLaunchPrefix = "";
             viewMode = "list";
@@ -701,8 +701,6 @@
           };
         };
       };
-
-      systemd.user.services.noctalia-shell.enableDefaultPath = false;
     };
   };
 }

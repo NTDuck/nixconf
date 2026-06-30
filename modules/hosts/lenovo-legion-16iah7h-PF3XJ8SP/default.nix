@@ -23,7 +23,8 @@
       den.aspects.gaming.itch
       den.aspects.gaming.mangohud
       den.aspects.gaming.steam
-      den.aspects.greeters.tuigreet
+      # den.aspects.greeters.tuigreet
+      den.aspects.greeters.noctalia-greeter
       den.aspects.kernels.cachyos-kernel
       # den.aspects.launchers.tofi
       # den.aspects.lockscreens.gtklock
