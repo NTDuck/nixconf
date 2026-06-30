@@ -17,8 +17,8 @@
 
         base16Scheme = let
           themes = {
-            light = "${pkgs.base16-schemes}/share/themes/flexoki-light.yaml";
-            dark = "${pkgs.base16-schemes}/share/themes/flexoki-dark.yaml";
+            light = "${pkgs.base16-schemes}/share/themes/gruvbox-material-light-medium.yaml";
+            dark = "${pkgs.base16-schemes}/share/themes/gruvbox-material-dark-hard.yaml";
           };
         in
           themes.${polarity};
