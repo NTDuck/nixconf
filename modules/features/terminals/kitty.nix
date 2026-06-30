@@ -20,9 +20,10 @@
           cursor_blink_interval = "0";
           cursor_trail = 100;
 
-          window_padding_width = "20 28";
+          window_padding_width = "10 14";
 
           shell_integration = "no-cursor";
+          scrollbar = "never";
         };
       };
     };

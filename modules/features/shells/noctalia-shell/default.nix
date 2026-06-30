@@ -105,18 +105,6 @@
                   middleClickCommand = "pwvucontrol || pavucontrol";
                   textColor = "none";
                 }
-                {
-                  id = "Spacer";
-                  width = 20;
-                }
-                {
-                  hideWhenZero = false;
-                  hideWhenZeroUnread = true;
-                  iconColor = "none";
-                  id = "NotificationHistory";
-                  showUnreadBadge = true;
-                  unreadBadgeColor = "primary";
-                }
               ];
               center = [
                 {
@@ -142,6 +130,18 @@
                 }
               ];
               right = [
+                {
+                  hideWhenZero = false;
+                  hideWhenZeroUnread = true;
+                  iconColor = "none";
+                  id = "NotificationHistory";
+                  showUnreadBadge = true;
+                  unreadBadgeColor = "primary";
+                }
+                {
+                  id = "Spacer";
+                  width = 20;
+                }
                 {
                   deviceNativePath = "__default__";
                   displayMode = "graphic-clean";
@@ -204,7 +204,7 @@
             screenOverrides = [];
           };
           general = {
-            avatarImage = "/home/ayin/projs/nixconf/assets/wallpapers/avatars/default.png";
+            avatarImage = "${inputs.self}/assets/wallpapers/avatars/default.png";
             dimmerOpacity = 0.2;
             showScreenCorners = false;
             forceBlackScreenCorners = false;
@@ -701,6 +701,8 @@
           };
         };
       };
+
+      systemd.user.services.noctalia-shell.enableDefaultPath = false;
     };
   };
 }

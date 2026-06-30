@@ -121,7 +121,7 @@
         autostart_sh = ''
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all
           ${pkgs.systemd}/bin/systemctl --user import-environment
-          ${pkgs.systemd}/bin/systemd-run --user --scope --unit=noctalia-shell ${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia-shell &
+          ${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia-shell &
           fcitx5 -d -r
         '';
 
