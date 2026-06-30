@@ -69,7 +69,7 @@
           blur_layer = 1;
           blur_params_radius = 8;
           blur_params_num_passes = 2;
-          border_radius = 24;
+          border_radius = 32;
 
           # no_radius_when_single = 1;
           # no_border_when_single = 1;
@@ -121,7 +121,7 @@
         autostart_sh = ''
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all
           ${pkgs.systemd}/bin/systemctl --user import-environment
-          ${inputs.noctalia.packages.${pkgs.system}.default}/bin/noctalia-shell &
+          ${pkgs.systemd}/bin/systemd-run --user --scope --unit=noctalia-shell ${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia-shell &
           fcitx5 -d -r
         '';
 

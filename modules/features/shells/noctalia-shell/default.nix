@@ -25,7 +25,7 @@
             barType = "framed";
             position = "left";
             monitors = [];
-            density = "spacious";
+            density = "default";
             showOutline = false;
             showCapsule = false;
             capsuleOpacity = 0.8;
@@ -38,7 +38,7 @@
             useSeparateOpacity = false;
             marginVertical = 4;
             marginHorizontal = 4;
-            frameThickness = 16;
+            frameThickness = 8;
             frameRadius = 24;
             outerCorners = true;
             hideOnOverview = false;
@@ -128,7 +128,7 @@
                   followFocusedScreen = false;
                   fontWeight = "bold";
                   groupedBorderOpacity = 1;
-                  hideUnoccupied = false;
+                  hideUnoccupied = true;
                   iconScale = 0.8;
                   id = "Workspace";
                   labelMode = "none";
@@ -239,7 +239,7 @@
                 mm";
             passwordChars = false;
             lockScreenMonitors = [];
-            lockScreenBlur = 0.08;
+            lockScreenBlur = 0.32;
             lockScreenTint = 0;
             keybinds = {
               keyUp = [
