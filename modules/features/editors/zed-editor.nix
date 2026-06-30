@@ -9,16 +9,16 @@
         enable = true;
 
         # https://github.com/zed-industries/zed/issues/32792
-        package = pkgs.symlinkJoin {
-          name = "zed";
-          paths = [pkgs.unstable.zed-editor];
-          buildInputs = [pkgs.makeWrapper];
-          postBuild = ''
-            wrapProgram $out/bin/zeditor \
-              --unset WAYLAND_DISPLAY
-          '';
-        };
-        # package = pkgs.unstable.zed-editor;
+        # package = pkgs.symlinkJoin {
+        #   name = "zed";
+        #   paths = [pkgs.unstable.zed-editor];
+        #   buildInputs = [pkgs.makeWrapper];
+        #   postBuild = ''
+        #     wrapProgram $out/bin/zeditor \
+        #       --unset WAYLAND_DISPLAY
+        #   '';
+        # };
+        package = pkgs.unstable.zed-editor;
 
         extensions = [
           # "catppuccin-blur"
