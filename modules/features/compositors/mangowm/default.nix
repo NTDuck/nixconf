@@ -44,7 +44,7 @@
             l = "down";
           };
 
-          ipc = "${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia-shell msg";
+          ipc = "${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia msg";
           # ipc = "${inputs.noctalia.packages.${pkgs.system}.default}/bin/noctalia-shell ipc call";
         in {
           monitorrule = "name:^eDP-1$,width:2560,height:1600,refresh:165.019,vrr:1";
@@ -122,7 +122,7 @@
         autostart_sh = ''
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all
           ${pkgs.systemd}/bin/systemctl --user import-environment
-          ${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia-shell &
+          ${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia &
           fcitx5 -d -r
         '';
 
