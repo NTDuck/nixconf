@@ -373,7 +373,7 @@
             position = "bottom_center";
             pinnedApps = [];
             sortByMostUsed = true;
-            terminalCommand = "";
+            terminalCommand = "kitty -e";
             customLaunchPrefixEnabled = false;
             customLaunchPrefix = "";
             viewMode = "list";
