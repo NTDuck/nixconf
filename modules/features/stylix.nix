@@ -17,8 +17,8 @@
 
         base16Scheme = let
           themes = {
-            light = "${pkgs.base16-schemes}/share/themes/boo-shnickle-light.yaml";
-            dark = "${pkgs.base16-schemes}/share/themes/boo-shnickle-dark.yaml";
+            light = "${pkgs.base16-schemes}/share/themes/ia-light.yaml";
+            dark = "${pkgs.base16-schemes}/share/themes/ia-dark.yaml";
           };
         in
           themes.${polarity};
