@@ -12,7 +12,7 @@
       };
     };
 
-    homeManager = {
+    homeManager = {pkgs, ...}: {
       imports = [
         inputs.noctalia.homeModules.default
       ];
@@ -373,7 +373,7 @@
             position = "bottom_center";
             pinnedApps = [];
             sortByMostUsed = true;
-            terminalCommand = "kitty -e";
+            terminalCommand = "${pkgs.unstable.kitty}/bin/kitty -e";
             customLaunchPrefixEnabled = false;
             customLaunchPrefix = "";
             viewMode = "list";
