@@ -59,7 +59,7 @@
       den.aspects.services.resolved
       den.aspects.services.udisks2
       den.aspects.settings
-      den.aspects.shells.noctalia-shell
+      den.aspects.shells.noctalia
       den.aspects.shells.zsh
       # den.aspects.status-bars.waybar
       den.aspects.swap.zram

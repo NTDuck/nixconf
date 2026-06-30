@@ -4,31 +4,27 @@
   ...
 }: {
   den.aspects.stylix = {
-    nixos = {pkgs, ...}: {
+    nixos = {
+      pkgs,
+      lib,
+      ...
+    }: {
       imports = [
         inputs.stylix.nixosModules.stylix
       ];
 
-      stylix = let
-        polarity = "dark";
-      in {
+      stylix = {
         enable = true;
-        inherit polarity;
 
-        base16Scheme = let
-          themes = {
-            light = "${pkgs.base16-schemes}/share/themes/ia-light.yaml";
-            dark = "${pkgs.base16-schemes}/share/themes/ia-dark.yaml";
-          };
-        in
-          themes.${polarity};
+        polarity = "dark";
+        base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa-dragon.yaml";
 
         image = "${inputs.self}/assets/wallpapers/girls-last-tour-library.jpg";
 
         cursor = {
           package = pkgs.unstable.bibata-cursors;
           name = "Bibata-Modern-Classic";
-          size = 24; # 16
+          size = 24;
         };
 
         fonts = {
@@ -69,7 +65,14 @@
           popups = 0.8;
         };
 
-        targets.console.enable = false;
+        # targets.console.enable = false;
+      };
+
+      specialisation.light-mode.configuration = {
+        stylix = {
+          polarity = lib.mkForce "light";
+          base16Scheme = lib.mkForce "${pkgs.base16-schemes}/share/themes/gruvbox-material-light-hard.yaml";
+        };
       };
     };
   };

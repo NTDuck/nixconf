@@ -47,7 +47,7 @@
           ipc = "${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia msg";
           # ipc = "${inputs.noctalia.packages.${pkgs.system}.default}/bin/noctalia-shell ipc call";
         in {
-          monitorrule = "name:^eDP-1$,width:2560,height:1600,refresh:165.019,vrr:1";
+          monitorrule = "name:^eDP-1$,width:2560,height:1600,refresh:165.019,scale:1.5,vrr:1";
           # TODO Others?
 
           repeat_rate = 50;
@@ -60,7 +60,7 @@
           drag_tile_to_tile = 1;
           drag_corner = 4;
 
-          borderpx = 0;
+          borderpx = 4;
           gappih = 8;
           gappiv = 8;
           gappoh = 8;
@@ -70,7 +70,7 @@
           blur_layer = 1;
           blur_params_radius = 8;
           blur_params_num_passes = 2;
-          border_radius = 32;
+          border_radius = 16;
 
           # no_radius_when_single = 1;
           # no_border_when_single = 1;
@@ -82,7 +82,7 @@
           # TODO Change curve
           # https://www.cssportal.com/css-cubic-bezier-generator/
 
-          smartgaps = 1;
+          # smartgaps = 1;
 
           circle_layout = "dwindle,scroller";
 
@@ -95,8 +95,11 @@
             [
               "SUPER,a,toggleoverview"
               "SUPER,s,switch_layout"
+              "SUPER,z,spawn,sudo /run/current-system/specialisation/light-mode/activate && ${ipc} theme-mode-set light"
+              "SUPER,x,spawn,sudo /nix/var/nix/profiles/system/bin/switch-to-configuration test && ${ipc} theme-mode-set dark"
               "SUPER,q,killclient"
-              "SUPER,f,togglefakefullscreen"
+              "SUPER,f,togglemaximizescreen"
+              # "SUPER,f,togglefakefullscreen"
               "SUPER+SHIFT,f,togglefullscreen"
               "SUPER+SHIFT,e,quit"
 
@@ -122,7 +125,13 @@
         autostart_sh = ''
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all
           ${pkgs.systemd}/bin/systemctl --user import-environment
+
+          # https://mangowm.github.io/docs/configuration/monitors#using-xwayland-satellite-to-prevent-blurry-xwayland-apps
+          export DISPLAY=:2
+          ${pkgs.unstable.xwayland-satellite}/bin/xwayland-satellite :2 &
+
           ${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia &
+
           fcitx5 -d -r
         '';
 

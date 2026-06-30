@@ -1,11 +1,15 @@
-{den, ...}: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.greeters.tuigreet = {
     nixos = {
       config,
       pkgs,
       ...
     }: let
-      colors = config.lib.stylix.colors.withHashtag;
+      # colors = config.lib.stylix.colors.withHashtag;
     in {
       services.greetd = {
         enable = true;
@@ -13,22 +17,13 @@
           default_session = {
             command = ''
               ${pkgs.tuigreet}/bin/tuigreet \
-              --cmd mango --no-xsession-wrapper \
+              --cmd ${inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango}/bin/mango --no-xsession-wrapper \
               --asterisks --asterisks-char '*' \
               --time --time-format '%Y-%m-%d %H:%M:%S' \
               --remember \
               --container-padding 2 \
-              --theme "container=${colors.base00};border=${colors.base05};text=${colors.base05};prompt=${colors.base05};time=${colors.base05};action=${colors.base05};button=${colors.base05};input=${colors.base05}"
             '';
-            # command = ''
-            #   ${pkgs.tuigreet}/bin/tuigreet \
-            #   --cmd sway --no-xsession-wrapper \
-            #   --asterisks --asterisks-char '*' \
-            #   --time --time-format '%Y-%m-%d %H:%M:%S' \
-            #   --remember \
-            #   --container-padding 2 \
-            #   --theme "container=${colors.base00};border=${colors.base05};text=${colors.base05};prompt=${colors.base05};time=${colors.base05};action=${colors.base05};button=${colors.base05};input=${colors.base05}"
-            # '';
+            # --theme "container=${colors.base00};border=${colors.base05};text=${colors.base05};prompt=${colors.base05};time=${colors.base05};action=${colors.base05};button=${colors.base05};input=${colors.base05}"
             user = "greeter";
           };
         };

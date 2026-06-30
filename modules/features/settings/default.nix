@@ -13,7 +13,28 @@
         trusted-users = ["@wheel"];
       };
 
-      security.sudo.extraConfig = "Defaults timestamp_timeout=-1\nDefaults timestamp_type=tty";
+      security.sudo = {
+        extraRules = [
+          {
+            users = ["ayin"];
+            commands = [
+              {
+                command = "/run/current-system/specialisation/light-mode/activate";
+                options = ["NOPASSWD"];
+              }
+              {
+                command = "/nix/var/nix/profiles/system/bin/switch-to-configuration";
+                options = ["NOPASSWD"];
+              }
+            ];
+          }
+        ];
+
+        extraConfig = ''
+          Defaults timestamp_timeout=-1
+          Defaults timestamp_type=tty
+        '';
+      };
     };
   };
 }
