@@ -76,8 +76,8 @@
           base_keymap = "VSCode";
           soft_wrap = "editor_width";
 
-          buffer_font_size = lib.mkForce 16;
-          ui_font_size = lib.mkForce 16;
+          # buffer_font_size = lib.mkForce 16;
+          # ui_font_size = lib.mkForce 16;
 
           # icon_theme = lib.mkForce "Catppuccin Latte";
         };
