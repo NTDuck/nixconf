@@ -44,7 +44,8 @@
             l = "down";
           };
 
-          ipc = "${inputs.noctalia.packages.${pkgs.system}.default}/bin/noctalia-shell ipc call";
+          ipc = "${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia-shell msg";
+          # ipc = "${inputs.noctalia.packages.${pkgs.system}.default}/bin/noctalia-shell ipc call";
         in {
           monitorrule = "name:^eDP-1$,width:2560,height:1600,refresh:165.019,vrr:1";
           # TODO Others?
@@ -100,8 +101,8 @@
               "SUPER+SHIFT,e,quit"
 
               "SUPER,Return,spawn,${pkgs.unstable.kitty}/bin/kitty"
-              "SUPER,d,spawn,${ipc} launcher toggle"
-              "SUPER+CTRL,l,spawn,${ipc} lockScreen lock"
+              "SUPER,d,spawn,${ipc} panel-toggle launcher"
+              "SUPER+CTRL,l,spawn,${ipc} session lock"
             ]
             ++ (dirs |> lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}"))
             ++ (dirs |> lib.mapAttrsToList (key: dir: "SUPER+SHIFT,${key},exchange_client,${dir}"))
@@ -110,11 +111,11 @@
             ++ (tags |> lib.map (tag: "SUPER+ALT,${tag},tag,${tag}"));
 
           bindl = [
-            "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness decrease"
-            "NONE,XF86MonBrightnessUp,spawn,${ipc} brightness increase"
-            "NONE,XF86AudioMute,spawn,${ipc} volume muteOutput"
-            "NONE,XF86AudioLowerVolume,spawn,${ipc} volume decrease"
-            "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume increase"
+            "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness-down"
+            "NONE,XF86MonBrightnessUp,spawn,${ipc} brightness-up"
+            "NONE,XF86AudioMute,spawn,${ipc} volume-mute"
+            "NONE,XF86AudioLowerVolume,spawn,${ipc} volume-down"
+            "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume-up"
           ];
         };
 
