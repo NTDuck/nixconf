@@ -25,6 +25,12 @@ in {
         config = {
           system.stateVersion = version;
 
+          # TODO Refactor
+          nixpkgs.config.allowInsecurePredicate = pkg:
+            pkg
+            |> lib.getName
+            |> (name: builtins.elem name ["pnpm"]);
+
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = true;

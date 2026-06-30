@@ -1,15 +1,6 @@
 {den, ...}: {
   den.aspects.dev.toolchains.javascript-typescript = {
-    nixos = {
-      pkgs,
-      lib,
-      ...
-    }: {
-      nixpkgs.config.allowInsecurePredicate = pkg:
-        pkg
-        |> lib.getName
-        |> (name: builtins.elem name ["pnpm"]);
-
+    nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.nodejs
         pkgs.unstable.deno
