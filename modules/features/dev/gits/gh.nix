@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.gh = {
+  den.aspects.dev.gits.gh = {
     homeManager = {pkgs, ...}: {
       programs.gh = {
         enable = true;

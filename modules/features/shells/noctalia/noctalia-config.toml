@@ -1,0 +1,167 @@
+[audio]
+enable_overdrive = true
+
+[bar.default]
+background_opacity = 0.79999998211860657
+border = "on_surface"
+border_width = 1.0
+capsule = true
+capsule_opacity = 0.79999998211860657
+capsule_thickness = 0.69999998807907104
+center = [ "workspaces" ]
+end = [ "notifications", "clipboard", "Spacer", "group:g1", "Spacer", "clock", "Spacer", "battery" ]
+layer = "overlay"
+margin_edge = 8
+margin_ends = 8
+padding = 8
+panel_overlap = 0
+position = "left"
+radius = 20
+scale = 1.2500000111758709
+shadow = false
+start = [ "control-center", "Spacer", "network", "bluetooth", "screenshot", "Spacer", "brightness", "volume" ]
+thickness = 48
+
+    [[bar.default.capsule_group]]
+    fill = "surface_variant"
+    id = "g1"
+    members = [ "cpu", "ram", "temp" ]
+    opacity = 1.0
+    padding = 6.0
+
+[calendar]
+enabled = true
+
+[desktop_widgets]
+enabled = false
+
+[idle]
+pre_action_fade_seconds = 0
+
+[location]
+auto_locate = true
+
+[lockscreen]
+wallpaper = "/home/ayin/projs/nixconf/assets/wallpapers/girls-last-tour-library.jpg"
+
+[lockscreen_widgets]
+enabled = false
+schema_version = 2
+widget_order = [ "lockscreen-login-box@eDP-1" ]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@eDP-1"]
+    box_height = 70.0
+    box_width = 400.0
+    cx = 1280.0
+    cy = 1481.0
+    output = "eDP-1"
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@eDP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        input_opacity = 1.0
+        input_radius = 6.0
+        show_login_button = true
+
+[notification]
+layer = "overlay"
+
+[shell]
+avatar_path = "/home/ayin/projs/nixconf/assets/wallpapers/avatars/default.png"
+font_family = "Inter"
+polkit_agent = true
+settings_show_advanced = true
+ui_scale = 1.350000012665987
+
+    [shell.greeter_sync]
+    auto_sync = true
+
+    [shell.panel]
+    open_near_click_control_center = true
+
+    [shell.shadow]
+    direction = "center"
+
+[system.monitor]
+cpu_poll_seconds = 4
+disk_poll_seconds = 4
+gpu_poll_seconds = 4
+memory_poll_seconds = 4
+network_poll_seconds = 4
+
+[theme]
+builtin = "Kanagawa"
+community_palette = "Monochrome"
+source = "builtin"
+wallpaper_scheme = "m3-content"
+
+    [theme.templates]
+    builtin_ids = [ "cava", "helix", "kitty", "mango" ]
+    enable_builtin_templates = false
+    enable_community_templates = false
+
+[wallpaper]
+directory = "/home/ayin/projs/nixconf/assets/wallpapers/"
+transition_on_startup = true
+
+    [wallpaper.automation]
+    recursive = false
+
+    [wallpaper.default]
+    path = "/home/ayin/projs/nixconf/assets/wallpapers/girls-last-tour-library.jpg"
+
+    [wallpaper.last]
+    path = "/home/ayin/projs/nixconf/assets/wallpapers/girls-last-tour-library.jpg"
+
+    [wallpaper.monitors.eDP-1]
+    path = "/home/ayin/projs/nixconf/assets/wallpapers/girls-last-tour-library.jpg"
+
+[weather]
+refresh_minutes = 5
+
+[widget.Spacer]
+type = "spacer"
+
+[widget.battery]
+display_mode = "graphic"
+
+[widget.brightness]
+show_label = false
+
+[widget.clock]
+format = "{:%H:%M:%S}"
+
+[widget.cpu]
+show_label = false
+
+[widget.network]
+show_label = false
+
+[widget.notifications]
+hide_when_no_unread = true
+
+[widget.ram]
+show_label = false
+stat = "ram_pct"
+
+[widget.sysmon]
+stat = "gpu_usage"
+
+[widget.temp]
+show_label = false
+
+[widget.volume]
+show_label = false
+
+[widget.workspaces]
+display = "none"
+hide_when_empty = true
+labels_only_when_occupied = true

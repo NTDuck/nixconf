@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.android = {
+  den.aspects.dev.toolchains.android = {
     nixos = {
       user,
       pkgs,

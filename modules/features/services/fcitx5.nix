@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.fcitx5 = {
+  den.aspects.services.fcitx5 = {
     nixos = {pkgs, ...}: {
       i18n.inputMethod = {
         enable = true;
@@ -9,7 +9,7 @@
           addons = [pkgs.unstable.fcitx5-bamboo];
 
           waylandFrontend = true;
-          ignoreUserConfig = true; # ignore `~/.config/fcitx5`
+          # ignoreUserConfig = true; # ignore `~/.config/fcitx5`
 
           settings = {
             addons = {
@@ -40,8 +40,6 @@
 
       environment.sessionVariables = {
         XMODIFIERS = "@im=fcitx";
-        QT_IM_MODULE = "fcitx";
-        GTK_IM_MODULE = "fcitx";
       };
     };
   };

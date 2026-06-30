@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.cliphist = {
+  den.aspects.services.cliphist = {
     homeManager = {pkgs, ...}: {
       services.cliphist = {
         enable = true;

@@ -13,6 +13,7 @@
 - Theme: [charcoal-dark](https://github.com/tinted-theming/schemes/blob/spec-0.11/base16/charcoal-dark.yaml)
 <!--- Wallpaper: [./assets/wallpapers/girls-last-tour-library.jpg](https://x.com/LeoLeonardK10/status/1465607483372699656)-->
 - Wallpaper: [./assets/wallpapers/shifting-tides.jpg](https://x.com/elfilter_a/status/2043948619460411476)
+<!--https://jp.pinterest.com/pin/1069112399050639591/-->
 
 ## Deployment
 ```cmd
@@ -44,4 +45,35 @@ agenix -e my-secret.age
 
 ```cmd
 $ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
+```
+
+### How to install on new machine
+```cmd
+# In case it shows something like "Virtual Terminal Stopped: Device memory is nearly full. Virtual terminal processes were using a lot of memory and were forced to stop."
+$ sudo dd if=/dev/zero of=/swapfile bs=1M count=8192
+$ sudo chmod 600 /swapfile
+$ sudo mkswap /swapfile
+$ sudo swapon /swapfile
+
+$ sudo rm -f /swapfile
+$ sudo modprobe zram
+$ echo 8G | sudo tee /sys/block/zram0/disksize
+$ sudo mkswap /dev/zram0
+$ sudo swapon /dev/zram0
+```
+
+```cmd
+$ git clone https://github.com/NTDuck/nixconf && nixconf
+
+$ sudo nixos-generate-config --show-hardware-config --no-filesystems > ./modules/hosts/${hostname}/private/hardware/default.nix
+$ sudo nix --extra-experimental-features "nix-command flakes" run github:nix-community/disko/latest#disko-install -- --flake .#${hostname} --disk main /dev/${diskname}
+
+$ ...
+$ git add .
+
+$ lsblk # to determine ${diskpartition}
+$ sudo mount -o subvol=persistent /dev/${diskpartition} /mnt
+$ sudo cp ~/nixconf/* /mnt/etc/nixconf
+
+$ sudo chroot /mnt passwd
 ```

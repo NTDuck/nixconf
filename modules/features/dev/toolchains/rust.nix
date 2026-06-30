@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.rust = {
+  den.aspects.dev.toolchains.rust = {
     nixos = {pkgs, ...}: {
       nixpkgs.overlays = [
         inputs.rust-overlay.overlays.default

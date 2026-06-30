@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.zed-editor = {
+  den.aspects.editors.zed-editor = {
     homeManager = {
       pkgs,
       lib,
@@ -9,15 +9,16 @@
         enable = true;
 
         # https://github.com/zed-industries/zed/issues/32792
-        package = pkgs.symlinkJoin {
-          name = "zed";
-          paths = [pkgs.unstable.zed-editor];
-          buildInputs = [pkgs.makeWrapper];
-          postBuild = ''
-            wrapProgram $out/bin/zeditor \
-              --unset WAYLAND_DISPLAY
-          '';
-        };
+        # package = pkgs.symlinkJoin {
+        #   name = "zed";
+        #   paths = [pkgs.unstable.zed-editor];
+        #   buildInputs = [pkgs.makeWrapper];
+        #   postBuild = ''
+        #     wrapProgram $out/bin/zeditor \
+        #       --unset WAYLAND_DISPLAY
+        #   '';
+        # };
+        package = pkgs.unstable.zed-editor;
 
         extensions = [
           # "catppuccin-blur"
@@ -75,8 +76,8 @@
           base_keymap = "VSCode";
           soft_wrap = "editor_width";
 
-          buffer_font_size = lib.mkForce 11;
-          ui_font_size = lib.mkForce 11;
+          # buffer_font_size = lib.mkForce 16;
+          # ui_font_size = lib.mkForce 16;
 
           # icon_theme = lib.mkForce "Catppuccin Latte";
         };

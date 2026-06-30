@@ -1,8 +1,16 @@
-{den, ...}: {
-  den.aspects.zsh = {
-    nixos = {pkgs, ...}: {
+{
+  den,
+  inputs,
+  ...
+}: {
+  den.aspects.shells.zsh = {
+    nixos = {
+      user,
+      pkgs,
+      ...
+    }: {
       programs.zsh.enable = true;
-      users.defaultUserShell = pkgs.unstable.zsh;
+      users.users.${user.name}.shell = pkgs.unstable.zsh;
     };
 
     homeManager = {pkgs, ...}: {
@@ -17,11 +25,9 @@
         initContent = ''
           source ${pkgs.unstable.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
 
-          [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+          [[ ! -f "${inputs.self}/modules/features/shells/zsh/.p10k.zsh" ]] || source "${inputs.self}/modules/features/shells/zsh/.p10k.zsh"
         '';
       };
-
-      home.file.".p10k.zsh".source = ./.p10k.zsh;
     };
   };
 }

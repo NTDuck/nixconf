@@ -1,7 +1,9 @@
 {den, ...}: {
-  den.aspects.firefox = {
+  den.aspects.browsers.firefox = {
     homeManager = {
       user,
+      lib,
+      config,
       pkgs,
       ...
     }: {
@@ -69,67 +71,12 @@
               "browser.newtabpage.activity-stream.section.highlights.includeVisited" = false;
               "browser.newtabpage.activity-stream.section.highlights.includeBookmarks" = false;
             };
-
-            # search = {
-            #   force = true;
-            #   default = "ddg";
-            #   order = [ "searxng" "nix-packages" "nixos-wiki" "ddg" ];
-
-            #   engines = {
-            #     searxng = {
-            #       urls = [
-            #         { template = "https://searx.org/search?q={searchTerms}"; }
-            #       ];
-            #       icon = "https://searx.org/favicon.ico";
-            #       updateInterval = 86400000; # 24h
-            #       definedAliases = [ "@searx" ];
-            #       suggestUrls = [
-            #         { template = "https://searx.org/autosuggest?q={searchTerms}"; }
-            #       ];
-            #     };
-
-            #     "nix-packages" = {
-            #       urls = [
-            #         {
-            #           template = "https://search.nixos.org/packages?type=packages&query={searchTerms}";
-            #           params = [
-            #             { name = "type"; value = "packages"; }
-            #             { name = "query"; value = "{searchTerms}"; }
-            #           ];
-            #         }
-            #       ];
-            #       icon = "https://nixos.wiki/favicon.png";
-            #       definedAliases = [ "@np" ];
-            #     };
-
-            #     "nixos-wiki" = {
-            #       urls = [
-            #         { template = "https://nixos.wiki/index.php?search={searchTerms}"; }
-            #       ];
-            #       icon = "https://nixos.wiki/favicon.png";
-            #       updateInterval = 86400000;
-            #       definedAliases = [ "@nw" ];
-            #     };
-
-            #     ddg = {
-            #       urls = [
-            #         { template = "https://duckduckgo.com/?q={searchTerms}"; }
-            #       ];
-            #       definedAliases = [ "@ddg" ];
-            #     };
-
-            #     # Hide Bing from the UI
-            #     bing.metaData.hidden = true;
-
-            #     # Give Google an alias
-            #     google.metaData.alias = "@g";
-            #   };
-            # };
           };
         };
       };
 
-      stylix.targets.firefox.profileNames = ["${user.name}"];
+      stylix.targets.firefox.profileNames =
+        lib.optionalAttrs (config.stylix.enable or false) ["${user.name}"];
     };
   };
 }

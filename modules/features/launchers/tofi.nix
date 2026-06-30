@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.tofi = {
+  den.aspects.launchers.tofi = {
     homeManager = {
       pkgs,
       lib,

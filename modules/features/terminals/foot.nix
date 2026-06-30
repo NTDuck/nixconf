@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.foot = {
+  den.aspects.terminals.foot = {
     homeManager = {pkgs, ...}: {
       programs.foot = {
         enable = true;
@@ -22,7 +22,6 @@
       };
 
       home.sessionVariables = {
-        # TERMINAL = "foot";
         TERMINAL = "${pkgs.unstable.foot}/bin/footclient";
       };
     };

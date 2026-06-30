@@ -1,19 +1,11 @@
 {den, ...}: {
-  den.aspects.sway = {
-    nixos = {
-      # programs.sway.enable = true;
-      # environment.systemPackages = [
-      #   pkgs.unstable.sway
-      # ];
-      security.polkit.enable = true;
-      services.gnome.gnome-keyring.enable = true;
-      programs.dconf.enable = true;
-      security.pam.services.sway.enableGnomeKeyring = true;
-      security.pam.services.greetd.enableGnomeKeyring = true;
-      security.pam.services.gtklock.enableGnomeKeyring = true;
-    };
-
-    homeManager = {pkgs, ...}: let
+  den.aspects.compositors.sway = {
+    homeManager = {
+      pkgs,
+      config,
+      lib,
+      ...
+    }: let
       modifier = "Mod4";
     in {
       wayland.windowManager.sway = {
@@ -33,15 +25,18 @@
 
           startup = [
             {
-              command = "fcitx5 -d -r";
-              always = true;
-            }
-            {
               command = "${pkgs.unstable.autotiling-rs}/bin/autotiling-rs";
               always = true;
             }
+            # ]
+            # ++ lib.optionals (config.inputMethod.enabled or false) [
             {
-              # command = "dbus-update-activation-environment --systemd --all; systemctl --user import-environment";
+              command = "fcitx5 -d -r";
+              always = true;
+            }
+            # ]
+            # ++ lib.optionals (config.services.dbus.enable or false) [
+            {
               command = "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all; ${pkgs.systemd}/bin/systemctl --user import-environment";
               always = true;
             }
@@ -118,17 +113,6 @@
           window = {
             titlebar = false;
             border = 2;
-
-            commands = [
-              {
-                criteria = {class = "Wine";};
-                command = "floating enable";
-              }
-              {
-                criteria = {class = "wine";};
-                command = "floating enable";
-              }
-            ];
           };
         };
       };

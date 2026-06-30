@@ -1,10 +1,11 @@
 {den, ...}: {
-  den.aspects.yazi = {
+  den.aspects.file-managers.yazi = {
     homeManager = {pkgs, ...}: {
       programs.yazi = {
         enable = true;
         package = pkgs.unstable.yazi;
 
+        # TODO Cond
         enableZshIntegration = true;
         shellWrapperName = "y";
 

@@ -1,0 +1,145 @@
+{
+  den,
+  inputs,
+  ...
+}: {
+  den.aspects.compositors.mangowm = {
+    includes = [
+      den.aspects.services.cliphist # https://mangowm.github.io/docs/configuration/xdg-portals#clipboard-manager
+      den.aspects.services.gnome-keyring # https://mangowm.github.io/docs/configuration/xdg-portals#gnome-keyring
+    ];
+
+    nixos = {pkgs, ...}: {
+      imports = [
+        inputs.mangowm.nixosModules.mango
+      ];
+
+      programs.mango = {
+        enable = true;
+        package = inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango;
+
+        addLoginEntry = true;
+      };
+    };
+
+    homeManager = {
+      pkgs,
+      lib,
+      ...
+    }: {
+      imports = [
+        inputs.mangowm.hmModules.mango
+      ];
+
+      wayland.windowManager.mango = {
+        enable = true;
+        package = inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango;
+
+        settings = let
+          tags = lib.range 1 9 |> map builtins.toString;
+          dirs = {
+            h = "left";
+            j = "right";
+            k = "up";
+            l = "down";
+          };
+
+          ipc = "${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia msg";
+          # ipc = "${inputs.noctalia.packages.${pkgs.system}.default}/bin/noctalia-shell ipc call";
+        in {
+          monitorrule = "name:^eDP-1$,width:2560,height:1600,refresh:165.019,scale:1.5,vrr:1";
+          # TODO Others?
+
+          repeat_rate = 50;
+          repeat_delay = 150;
+          trackpad_natural_scrolling = 1;
+          click_method = 2; # Clickfinger
+
+          syncobj_enable = 1;
+          allow_lock_transparent = 1;
+          drag_tile_to_tile = 1;
+          drag_corner = 4;
+
+          borderpx = 4;
+          gappih = 8;
+          gappiv = 8;
+          gappoh = 8;
+          gappov = 8;
+
+          blur = 1;
+          blur_layer = 1;
+          blur_params_radius = 8;
+          blur_params_num_passes = 2;
+          border_radius = 16;
+
+          # no_radius_when_single = 1;
+          # no_border_when_single = 1;
+          focused_opacity = 0.8;
+          unfocused_opacity = 0.6;
+
+          animation_type_open = "fade";
+          animation_type_close = "fade";
+          # TODO Change curve
+          # https://www.cssportal.com/css-cubic-bezier-generator/
+
+          # smartgaps = 1;
+
+          circle_layout = "dwindle,scroller";
+
+          tagrule = tags |> lib.map (tag: "id:${tag},layout_name:dwindle");
+
+          # TODO ifguard
+          layerrule = "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0";
+
+          bind =
+            [
+              "SUPER,a,toggleoverview"
+              "SUPER,s,switch_layout"
+              "SUPER,z,spawn,sudo /run/current-system/specialisation/light-mode/activate && ${ipc} theme-mode-set light"
+              "SUPER,x,spawn,sudo /nix/var/nix/profiles/system/bin/switch-to-configuration test && ${ipc} theme-mode-set dark"
+              "SUPER,q,killclient"
+              "SUPER,f,togglemaximizescreen"
+              # "SUPER,f,togglefakefullscreen"
+              "SUPER+SHIFT,f,togglefullscreen"
+              "SUPER+SHIFT,e,quit"
+
+              "SUPER,Return,spawn,${pkgs.unstable.kitty}/bin/kitty"
+              "SUPER,d,spawn,${ipc} panel-toggle launcher"
+              "SUPER+CTRL,l,spawn,${ipc} session lock"
+            ]
+            ++ (dirs |> lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}"))
+            ++ (dirs |> lib.mapAttrsToList (key: dir: "SUPER+SHIFT,${key},exchange_client,${dir}"))
+            ++ (tags |> lib.map (tag: "SUPER,${tag},view,${tag}"))
+            ++ (tags |> lib.map (tag: "SUPER+SHIFT,${tag},tagsilent,${tag}"))
+            ++ (tags |> lib.map (tag: "SUPER+ALT,${tag},tag,${tag}"));
+
+          bindl = [
+            "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness-down"
+            "NONE,XF86MonBrightnessUp,spawn,${ipc} brightness-up"
+            "NONE,XF86AudioMute,spawn,${ipc} volume-mute"
+            "NONE,XF86AudioLowerVolume,spawn,${ipc} volume-down"
+            "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume-up"
+          ];
+        };
+
+        autostart_sh = ''
+          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all
+          ${pkgs.systemd}/bin/systemctl --user import-environment
+
+          # https://mangowm.github.io/docs/configuration/monitors#using-xwayland-satellite-to-prevent-blurry-xwayland-apps
+          export DISPLAY=:2
+          ${pkgs.unstable.xwayland-satellite}/bin/xwayland-satellite :2 &
+
+          ${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia &
+
+          fcitx5 -d -r
+        '';
+
+        systemd = {
+          enable = true;
+          xdgAutostart = true;
+        };
+      };
+    };
+  };
+}

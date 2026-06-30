@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.javascript-typescript = {
+  den.aspects.dev.toolchains.javascript-typescript = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.nodejs

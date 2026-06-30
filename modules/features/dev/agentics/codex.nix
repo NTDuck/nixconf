@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.codex = {
+  den.aspects.dev.agentics.codex = {
     homeManager = {pkgs, ...}: {
       programs.codex = {
         enable = true;
