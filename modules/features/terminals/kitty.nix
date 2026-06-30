@@ -21,6 +21,8 @@
           cursor_trail = 100;
 
           window_padding_width = "20 28";
+
+          shell_integration = "no-cursor";
         };
       };
     };

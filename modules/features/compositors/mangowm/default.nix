@@ -69,16 +69,21 @@
           blur_layer = 1;
           blur_params_radius = 8;
           blur_params_num_passes = 2;
-          border_radius = 16;
-          no_radius_when_single = 1;
-          unfocused_opacity = 0.8;
+          border_radius = 24;
+
+          # no_radius_when_single = 1;
+          # no_border_when_single = 1;
+          focused_opacity = 0.8;
+          unfocused_opacity = 0.6;
 
           animation_type_open = "fade";
           animation_type_close = "fade";
           # TODO Change curve
           # https://www.cssportal.com/css-cubic-bezier-generator/
 
-          circle_layout = "dwindle,scroller,overview";
+          smartgaps = 1;
+
+          circle_layout = "dwindle,scroller";
 
           tagrule = tags |> lib.map (tag: "id:${tag},layout_name:dwindle");
 
@@ -87,7 +92,8 @@
 
           bind =
             [
-              "SUPER,x,switch_layout"
+              "SUPER,a,toggleoverview"
+              "SUPER,s,switch_layout"
               "SUPER,q,killclient"
               "SUPER,f,togglefakefullscreen"
               "SUPER+SHIFT,f,togglefullscreen"
@@ -113,8 +119,8 @@
         };
 
         autostart_sh = ''
-          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all &
-          ${pkgs.systemd}/bin/systemctl --user import-environment &
+          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all
+          ${pkgs.systemd}/bin/systemctl --user import-environment
           ${inputs.noctalia.packages.${pkgs.system}.default}/bin/noctalia-shell &
           fcitx5 -d -r
         '';
