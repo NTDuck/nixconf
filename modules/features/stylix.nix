@@ -23,7 +23,7 @@
         in
           themes.${polarity};
 
-        image = "${inputs.self}/assets/wallpapers/limbus-company.jpg";
+        image = "${inputs.self}/assets/wallpapers/girls-last-tour-library.jpg";
 
         cursor = {
           package = pkgs.unstable.bibata-cursors;

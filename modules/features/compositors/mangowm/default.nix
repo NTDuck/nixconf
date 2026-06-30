@@ -80,7 +80,7 @@
 
           circle_layout = "dwindle,scroller,overview";
 
-          tagrule = tags |> lib.map (tag: "id:${tag},layout_name:scroller");
+          tagrule = tags |> lib.map (tag: "id:${tag},layout_name:dwindle");
 
           # TODO ifguard
           layerrule = "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0";
