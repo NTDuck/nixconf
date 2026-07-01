@@ -11,17 +11,6 @@
         enableInstallTelemetry = false;
         defaultProjectTrust = "always";
 
-        llama-cpp = {
-          baseUrl = "http://127.0.0.1:8080/v1";
-          api = "openai-completions";
-          apiKey = "none";
-          models = [
-            {
-              id = "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M";
-            }
-          ];
-        };
-
         defaultProvider = "llama-cpp";
         defaultModel = "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M";
 
@@ -29,6 +18,33 @@
           "git:github.com/tmustier/pi-extensions"
           "git:github.com/DietrichGebert/ponytail"
         ];
+      };
+
+      home.file.".pi/agent/models.json".text = builtins.toJSON {
+        providers = {
+          llama-cpp = {
+            baseUrl = "http://127.0.0.1:8080/v1";
+            api = "openai-completions";
+            apiKey = "none";
+            models = [
+              {
+                id = "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M";
+              }
+              {
+                id = "Mirage-OpenReasoning-Nemotron-7B.Q4_K_M";
+              }
+              {
+                id = "Qwen3-4B-Function-Calling-Pro";
+              }
+              {
+                id = "IBM-Agentic-Nvidia-Q4_K_M";
+              }
+              {
+                id = "qwen3-4b-function-calling-xlam-unsloth.q4_k_m";
+              }
+            ];
+          };
+        };
       };
     };
   };

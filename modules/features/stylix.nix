@@ -46,15 +46,10 @@
           };
 
           sizes = {
-            # applications = 11;
-            # terminal = 11;
-            # desktop = 10;
-            # popups = 10;
-
-            applications = 16;
-            terminal = 16;
-            desktop = 16;
-            popups = 16;
+            applications = 11;
+            terminal = 11;
+            desktop = 10;
+            popups = 10;
           };
         };
 
@@ -66,13 +61,6 @@
         };
 
         # targets.console.enable = false;
-      };
-
-      specialisation.light-mode.configuration = {
-        stylix = {
-          polarity = lib.mkForce "light";
-          base16Scheme = lib.mkForce "${pkgs.base16-schemes}/share/themes/gruvbox-material-light-hard.yaml";
-        };
       };
     };
   };
