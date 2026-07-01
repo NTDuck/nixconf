@@ -50,8 +50,9 @@
             hf-repo = "Salesforce/xLAM-1b-fc-r-gguf";
             hf-file = "xLAM-1b-fc-r.Q4_K_M.gguf";
             n-gpu-layers = 35;
-            temperature = 0.7;
-            top-p = 0.95;
+            temperature = 0;
+            top-p = 1.0;
+            # ctx-size = 16384;
           };
         };
       };

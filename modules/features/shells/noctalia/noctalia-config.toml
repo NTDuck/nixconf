@@ -17,7 +17,6 @@ padding = 8
 panel_overlap = 0
 position = "left"
 radius = 20
-scale = 1.2500000111758709
 shadow = false
 start = [ "control-center", "Spacer", "network", "bluetooth", "screenshot", "Spacer", "brightness", "volume" ]
 thickness = 48
