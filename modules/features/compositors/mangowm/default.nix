@@ -95,8 +95,8 @@
             [
               "SUPER,a,toggleoverview"
               "SUPER,s,switch_layout"
-              "SUPER,z,spawn,sudo /run/current-system/specialisation/light-mode/activate && ${ipc} theme-mode-set light"
-              "SUPER,x,spawn,sudo /nix/var/nix/profiles/system/bin/switch-to-configuration test && ${ipc} theme-mode-set dark"
+              # "SUPER,z,spawn,sudo /run/current-system/specialisation/light-mode/activate && ${ipc} theme-mode-set light"
+              # "SUPER,x,spawn,sudo /nix/var/nix/profiles/system/bin/switch-to-configuration test && ${ipc} theme-mode-set dark"
               "SUPER,q,killclient"
               "SUPER,f,togglemaximizescreen"
               # "SUPER,f,togglefakefullscreen"

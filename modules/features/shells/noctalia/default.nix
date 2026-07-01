@@ -19,7 +19,7 @@
 
       programs.noctalia = {
         enable = true;
-        settings = "${inputs.self}/modules/features/shells/noctalia/noctalia-config.toml";
+        settings = builtins.readFile "${inputs.self}/modules/features/shells/noctalia/noctalia-config.toml";
       };
     };
   };
