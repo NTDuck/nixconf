@@ -42,6 +42,9 @@
               {
                 id = "qwen3-4b-function-calling-xlam-unsloth.q4_k_m";
               }
+              {
+                id = "xLAM-1b-fc-r.Q4_K_M";
+              }
             ];
           };
         };
