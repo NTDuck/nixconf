@@ -1,44 +1,7 @@
 {den, ...}: {
   den.aspects.dev.agentics.pi = {
-    # homeManager = {pkgs, ...}: {
-    #   programs.pi-coding-agent = {
-    #     enable = true;
-    #     package = pkgs.unstable.pi-coding-agent;
-
-    #     keybindings = {
-    #       "tui.editor.cursorDown" = [
-    #         "down"
-    #         "ctrl+n"
-    #       ];
-    #       "tui.editor.cursorUp" = [
-    #         "up"
-    #         "ctrl+p"
-    #       ];
-    #     };
-
-    #     settings = {
-    #       packages = [
-    #         "git:github.com/tmustier/pi-extensions"
-    #         "git:github.com/DietrichGebert/ponytail"
-    #       ];
-    #     };
-    #   };
-    # };
-
     nixos = {pkgs, ...}: {
       environment.systemPackages = [pkgs.unstable.pi-coding-agent];
-
-      foo = ''
-        {
-          "lastChangelogVersion": "0.80.2",
-          "theme": "dark",
-          "terminal": {
-            "showTerminalProgress": true
-          },
-          "enableInstallTelemetry": false,
-          "defaultProjectTrust": "always"
-        }
-      '';
     };
 
     homeManager = {
@@ -61,6 +24,11 @@
 
         defaultProvider = "llama-cpp";
         defaultModel = "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M";
+
+        packages = [
+          "git:github.com/tmustier/pi-extensions"
+          "git:github.com/DietrichGebert/ponytail"
+        ];
       };
     };
   };
