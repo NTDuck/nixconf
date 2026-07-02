@@ -57,6 +57,7 @@
       den.aspects.services.pipewire
       den.aspects.services.polkit
       den.aspects.services.resolved
+      den.aspects.services.ssh
       den.aspects.services.udisks2
       den.aspects.settings
       den.aspects.shells.noctalia
