@@ -55,7 +55,7 @@
           trackpad_natural_scrolling = 1;
           click_method = 2; # Clickfinger
 
-          syncobj_enable = 1;
+          # syncobj_enable = 1;
           allow_lock_transparent = 1;
           drag_tile_to_tile = 1;
           drag_corner = 4;
@@ -77,8 +77,10 @@
           focused_opacity = 0.8;
           unfocused_opacity = 0.6;
 
-          animation_type_open = "fade";
-          animation_type_close = "fade";
+          animation_type_open = "slide";
+          animation_type_close = "slide";
+          layer_animation_type_open = "fade";
+          layer_animation_type_close = "fade";
           # TODO Change curve
           # https://www.cssportal.com/css-cubic-bezier-generator/
 
@@ -104,6 +106,7 @@
               "SUPER+SHIFT,e,quit"
 
               "SUPER,Return,spawn,${pkgs.unstable.kitty}/bin/kitty"
+              # "SUPER,Return,spawn,${pkgs.unstable.foot}/bin/footclient"
               "SUPER,d,spawn,${ipc} panel-toggle launcher"
               "SUPER+CTRL,l,spawn,${ipc} session lock"
             ]
