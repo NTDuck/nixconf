@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.services.ssh = {
-    nixos = {
+    nixos = {pkgs, ...}: {
       services.openssh = {
         enable = true;
         settings = {
@@ -16,6 +16,10 @@
         enable = true;
         allowedTCPPorts = [22]; # Add 443 if using alternate port
       };
+
+      environment.systemPackages = [
+        pkgs.unstable.waypipe
+      ];
     };
   };
 }
