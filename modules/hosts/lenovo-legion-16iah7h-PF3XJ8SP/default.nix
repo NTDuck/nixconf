@@ -74,6 +74,7 @@
       den.aspects.utilities.speedtest-cli
       den.aspects.utilities.rufus
       den.aspects.virtualization.docker
+      den.aspects.virtualization.qemu
       den.aspects.virtualization.waydroid
       den.aspects.stylix
     ];
