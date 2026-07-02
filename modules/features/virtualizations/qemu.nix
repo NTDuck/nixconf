@@ -17,8 +17,8 @@
             # Enable TPM 2.0 support, required for Windows 11 [citation:2]
             swtpm.enable = true;
             # Enable UEFI support with OVMF [citation:2][citation:4]
-            ovmf.enable = true;
-            ovmf.packages = [pkgs.unstable.OVMFFull.fd];
+            # ovmf.enable = true;
+            # ovmf.packages = [pkgs.unstable.OVMFFull.fd];
           };
         };
         # Enables USB redirection support, which is helpful for peripherals [citation:4]
