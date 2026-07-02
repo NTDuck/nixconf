@@ -34,8 +34,8 @@
         pkgs.unstable.virt-viewer # For connecting to VM consoles
         pkgs.unstable.spice # SPICE protocol support
         pkgs.unstable.spice-gtk
-        pkgs.unstable.win-virtio # VirtIO drivers for Windows [citation:2]
-        pkgs.unstable.win-spice # SPICE guest tools for Windows [citation:2]
+        pkgs.unstable.virtio-win # VirtIO drivers for Windows [citation:2]
+        pkgs.unstable.spice-vdagent # SPICE guest tools for Windows [citation:2]
         # qemu is included as a dependency
       ];
 
