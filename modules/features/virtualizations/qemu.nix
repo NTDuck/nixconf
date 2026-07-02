@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.virtualizations.qemu = {
+  den.aspects.virtualization.qemu = {
     nixos = {
       config,
       pkgs,
