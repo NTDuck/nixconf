@@ -47,6 +47,24 @@
               }
             ];
           };
+          nvidia-nim = {
+            baseUrl = "https://integrate.api.nvidia.com/v1";
+            api = "openai-completions";
+            apiKey = "...";
+            compat = {
+              supportsDeveloperRole = false;
+              supportsStrictMode = false;
+            };
+            models = [
+              {
+                id = "z-ai/glm-5.2";
+                name = "GLM-5.2";
+                contextWindow = 128000;
+                maxTokens = 32000;
+                reasoning = true;
+              }
+            ];
+          };
         };
       };
     };

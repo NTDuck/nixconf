@@ -135,7 +135,9 @@
 
           ${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia &
 
-          fcitx5 -d -r
+          fcitx5 -d -r &
+
+          ${pkgs.xdg-desktop-portal-wlr}/bin/xdg-desktop-portal-wlr &
         '';
 
         systemd = {

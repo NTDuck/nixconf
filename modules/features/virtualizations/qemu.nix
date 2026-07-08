@@ -20,9 +20,28 @@
             # ovmf.enable = true;
             # ovmf.packages = [pkgs.unstable.OVMFFull.fd];
           };
+
+          # networks.default = {
+          #   enable = true;
+          #   autostart = true;
+          # };
         };
         # Enables USB redirection support, which is helpful for peripherals [citation:4]
         spiceUSBRedirection.enable = true;
+      };
+
+      # Seems like Legion-specific? This is to connect to internet
+      networking.firewall.interfaces.virbr0 = {
+        # DNS and DHCP from virtual machines to the host.
+        allowedUDPPorts = [
+          53
+          67
+        ];
+
+        # DNS can fall back to TCP.
+        allowedTCPPorts = [
+          53
+        ];
       };
 
       # Add your user to the 'libvirtd' group to manage VMs without sudo [citation:2][citation:4]
