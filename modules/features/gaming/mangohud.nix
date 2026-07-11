@@ -4,6 +4,8 @@
       programs.mangohud = {
         enable = true;
         package = pkgs.unstable.mangohud;
+
+        enableSessionWide = true;
       };
     };
   };

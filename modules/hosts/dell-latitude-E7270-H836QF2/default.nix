@@ -12,7 +12,7 @@
       den.aspects.bluetooth
       den.aspects.bootloaders.systemd
       den.aspects.browsers.firefox
-      den.aspects.compositors.sway
+      den.aspects.compositors.mangowm
       den.aspects.dev
       den.aspects.editors.helix
       den.aspects.editors.zed-editor
@@ -21,10 +21,9 @@
       den.aspects.gaming.itch
       den.aspects.gaming.mangohud
       den.aspects.gaming.steam
-      den.aspects.greeters.tuigreet
+      (den.aspects.greeters.tuigreet "${inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango}/bin/mango")
       # `linux-cachyos-latest-7.1.1` conflicts with `broadcom-sta`
       # den.aspects.kernels.cachyos-kernel
-      den.aspects.launchers.tofi
       den.aspects.lockscreens.gtklock
       den.aspects.messenging.discord
       den.aspects.messenging.telegram
@@ -53,7 +52,6 @@
       den.aspects.services.resolved
       den.aspects.settings
       den.aspects.shells.zsh
-      den.aspects.status-bars.waybar
       den.aspects.swap.zram
       den.aspects.terminals.foot
       den.aspects.utilities.cava

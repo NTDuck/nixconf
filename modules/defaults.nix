@@ -37,7 +37,8 @@ in {
     };
 
     schema = {
-      host.includes = [
+      user.includes = [
+        # host.includes = [
         # `homeManager` configurations are defined in host aspects
         # and need to be defined to users
         # DO NOT REMOVE

@@ -123,6 +123,8 @@
             "NONE,XF86AudioLowerVolume,spawn,${ipc} volume-down"
             "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume-up"
           ];
+
+          focus_on_activate = 0;
         };
 
         autostart_sh = ''

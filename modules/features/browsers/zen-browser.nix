@@ -3,7 +3,6 @@
   inputs,
   ...
 }: {
-  # TODO Set devPixelsPerPx
   den.aspects.browsers.zen-browser = {
     homeManager = {
       user,

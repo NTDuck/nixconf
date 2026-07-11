@@ -23,11 +23,8 @@
       den.aspects.gaming.itch
       den.aspects.gaming.mangohud
       den.aspects.gaming.steam
-      # den.aspects.greeters.tuigreet
-      den.aspects.greeters.noctalia-greeter
+      (den.aspects.greeters.tuigreet "${inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango}/bin/mango")
       den.aspects.kernels.cachyos-kernel
-      # den.aspects.launchers.tofi
-      # den.aspects.lockscreens.gtklock
       den.aspects.messenging.discord
       den.aspects.messenging.telegram
       den.aspects.multimedia.ffmpeg
@@ -42,11 +39,12 @@
       den.aspects.nh
       den.aspects.nix-ld
       den.aspects.nur
-      den.aspects.office.notion
       den.aspects.office.pandoc
-      den.aspects.office.taskwarrior
       den.aspects.office.texlive
       den.aspects.office.zathura
+      den.aspects.productivity.notion
+      den.aspects.productivity.obsidian
+      den.aspects.productivity.taskwarrior
       den.aspects.services.cliphist
       den.aspects.services.cloudflare-warp
       den.aspects.services.dconf
@@ -62,7 +60,6 @@
       den.aspects.settings
       den.aspects.shells.noctalia
       den.aspects.shells.zsh
-      # den.aspects.status-bars.waybar
       den.aspects.swap.zram
       den.aspects.terminals.kitty
       den.aspects.utilities.cava
