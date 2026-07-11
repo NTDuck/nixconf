@@ -1,6 +1,10 @@
-{den, ...}: {
+{
+  den,
+  pkgs,
+  ...
+}: {
   den.aspects.greeters.tuigreet = cmd: {
-    nixos = {pkgs, ...}: {
+    nixos = {
       services.greetd = {
         enable = true;
         settings = {

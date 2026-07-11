@@ -1,4 +1,9 @@
-{den, ...}: {
+{
+  den,
+  inputs,
+  pkgs,
+  ...
+}: {
   den.hosts.x86_64-linux.dell-latitude-E7270-H836QF2 = {
     users.ayin = {};
   };
@@ -39,8 +44,9 @@
       den.aspects.nh
       den.aspects.nix-ld
       den.aspects.nur
-      den.aspects.office.taskwarrior
       den.aspects.office.zathura
+      den.aspects.productivity.obsidian
+      den.aspects.productivity.taskwarrior
       den.aspects.services.cliphist
       den.aspects.services.fcitx5
       den.aspects.services.pipewire

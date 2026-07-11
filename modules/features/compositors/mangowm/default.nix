@@ -24,6 +24,7 @@
 
     homeManager = {
       pkgs,
+      config,
       lib,
       ...
     }: {
@@ -47,6 +48,7 @@
           ipc = "${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia msg";
           # ipc = "${inputs.noctalia.packages.${pkgs.system}.default}/bin/noctalia-shell ipc call";
         in {
+          env = "DISPLAY,:2";
           monitorrule = "name:^eDP-1$,width:2560,height:1600,refresh:165.019,scale:1.5,vrr:1";
           # TODO Others?
 
@@ -72,10 +74,8 @@
           blur_params_num_passes = 2;
           border_radius = 16;
 
-          # no_radius_when_single = 1;
-          # no_border_when_single = 1;
-          focused_opacity = 0.8;
-          unfocused_opacity = 0.6;
+          focused_opacity = config.stylix.opacity.applications;
+          unfocused_opacity = 0.8 * config.stylix.opacity.applications;
 
           animation_type_open = "slide";
           animation_type_close = "slide";
@@ -84,14 +84,15 @@
           # TODO Change curve
           # https://www.cssportal.com/css-cubic-bezier-generator/
 
-          # smartgaps = 1;
-
           circle_layout = "dwindle,scroller";
 
           tagrule = tags |> lib.map (tag: "id:${tag},layout_name:dwindle");
 
-          # TODO ifguard
-          layerrule = "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0";
+          layerrule =
+            []
+            ++ lib.optionalAttrs (config.programs.noctalia.enable or false) [
+              "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0"
+            ];
 
           bind =
             [
@@ -132,7 +133,6 @@
           ${pkgs.systemd}/bin/systemctl --user import-environment
 
           # https://mangowm.github.io/docs/configuration/monitors#using-xwayland-satellite-to-prevent-blurry-xwayland-apps
-          export DISPLAY=:2
           ${pkgs.unstable.xwayland-satellite}/bin/xwayland-satellite :2 &
 
           ${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia &
