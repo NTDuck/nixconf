@@ -5,7 +5,7 @@
         enable = true;
         package = pkgs.unstable.mangohud;
 
-        enableSessionWide = true;
+        # enableSessionWide = true;
       };
     };
   };

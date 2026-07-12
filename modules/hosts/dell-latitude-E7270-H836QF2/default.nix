@@ -1,7 +1,6 @@
 {
   den,
   inputs,
-  pkgs,
   ...
 }: {
   den.hosts.x86_64-linux.dell-latitude-E7270-H836QF2 = {
@@ -26,10 +25,11 @@
       den.aspects.gaming.itch
       den.aspects.gaming.mangohud
       den.aspects.gaming.steam
-      (den.aspects.greeters.tuigreet "${inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango}/bin/mango")
+      (den.aspects.greeters.tuigreet (
+        config: "${config.programs.mango.package}/bin/mango"
+      ))
       # `linux-cachyos-latest-7.1.1` conflicts with `broadcom-sta`
       # den.aspects.kernels.cachyos-kernel
-      den.aspects.lockscreens.gtklock
       den.aspects.messenging.discord
       den.aspects.messenging.telegram
       den.aspects.multimedia.ffmpeg

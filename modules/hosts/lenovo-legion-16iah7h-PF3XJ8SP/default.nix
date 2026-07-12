@@ -1,7 +1,6 @@
 {
   den,
   inputs,
-  pkgs,
   ...
 }: {
   den.hosts.x86_64-linux.lenovo-legion-16iah7h-PF3XJ8SP = {
@@ -28,7 +27,9 @@
       den.aspects.gaming.itch
       den.aspects.gaming.mangohud
       den.aspects.gaming.steam
-      (den.aspects.greeters.tuigreet "${inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango}/bin/mango")
+      (den.aspects.greeters.tuigreet (
+        config: "${config.programs.mango.package}/bin/mango"
+      ))
       den.aspects.kernels.cachyos-kernel
       den.aspects.messenging.discord
       den.aspects.messenging.telegram
@@ -50,6 +51,7 @@
       den.aspects.productivity.notion
       den.aspects.productivity.obsidian
       den.aspects.productivity.taskwarrior
+      den.aspects.productivity.world-monitor
       den.aspects.services.cliphist
       den.aspects.services.cloudflare-warp
       den.aspects.services.dconf
@@ -73,6 +75,7 @@
       den.aspects.utilities.rtorrent
       den.aspects.utilities.p7zip
       den.aspects.utilities.ripgrep
+      den.aspects.utilities.riptide
       den.aspects.utilities.speedtest-cli
       den.aspects.utilities.rufus
       den.aspects.virtualization.docker

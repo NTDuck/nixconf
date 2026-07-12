@@ -1,17 +1,17 @@
-{
-  den,
-  pkgs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.greeters.tuigreet = cmd: {
     nixos = {
+      pkgs,
+      config,
+      ...
+    }: {
       services.greetd = {
         enable = true;
         settings = {
           default_session = {
             command = ''
               ${pkgs.tuigreet}/bin/tuigreet \
-              --cmd ${cmd} --no-xsession-wrapper \
+              --cmd ${cmd config} --no-xsession-wrapper \
               --asterisks --asterisks-char '*' \
               --time --time-format '%Y-%m-%d %H:%M:%S' \
               --remember \

@@ -15,13 +15,15 @@
             addons = {
               classicui.globalSection = {
                 Theme = "stylix";
-                ShowInputMethodInformation = "False";
-                EnableInputMethodInformation = "False";
               };
             };
             globalOptions = {
-              "Hotkey/TriggerKeys" = {
-                "0" = "Super+space";
+              "Hotkey/TriggerKeys"."0" = "Super+space";
+
+              Behavior = {
+                ShowInputMethodInformation = false;
+                showInputMethodInformationWhenFocusIn = false;
+                ShowFirstInputMethodInformation = false;
               };
             };
             inputMethod = {
