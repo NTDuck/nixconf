@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.shells.zsh = {
     nixos = {
       user,
@@ -21,12 +17,6 @@
         enableCompletion = true;
         autosuggestion.enable = true;
         syntaxHighlighting.enable = true;
-
-        initContent = ''
-          source ${pkgs.unstable.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-
-          [[ ! -f "${inputs.self}/modules/features/shells/zsh/.p10k.zsh" ]] || source "${inputs.self}/modules/features/shells/zsh/.p10k.zsh"
-        '';
       };
     };
   };

@@ -40,6 +40,7 @@
       den.aspects.multimedia.yt-dlp
       den.aspects.music.youtube-music
       den.aspects.nix
+      den.aspects.noctalia
       # den.aspects.lix
       den.aspects.nh
       den.aspects.nix-ld
@@ -63,7 +64,7 @@
       den.aspects.services.ssh
       den.aspects.services.udisks2
       den.aspects.settings
-      den.aspects.shells.noctalia
+      den.aspects.shells.prompts.starship
       den.aspects.shells.zsh
       den.aspects.swap.zram
       den.aspects.terminals.kitty

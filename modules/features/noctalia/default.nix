@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.shells.noctalia = {
+  den.aspects.noctalia = {
     nixos = {
       nix.settings = {
         extra-substituters = ["https://noctalia.cachix.org"];
@@ -19,7 +19,7 @@
 
       programs.noctalia = {
         enable = true;
-        settings = builtins.readFile "${inputs.self}/modules/features/shells/noctalia/noctalia-config.toml";
+        settings = builtins.readFile "${inputs.self}/modules/features/noctalia/noctalia-config.toml";
       };
     };
   };

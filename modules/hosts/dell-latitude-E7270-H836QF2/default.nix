@@ -40,6 +40,7 @@
       den.aspects.multimedia.yt-dlp
       den.aspects.music.youtube-music
       den.aspects.nix
+      den.aspects.noctalia
       # den.aspects.lix
       den.aspects.nh
       den.aspects.nix-ld
@@ -57,6 +58,7 @@
       den.aspects.services.nftables
       den.aspects.services.resolved
       den.aspects.settings
+      den.aspects.shells.prompts.powerlevel10k
       den.aspects.shells.zsh
       den.aspects.swap.zram
       den.aspects.terminals.foot
