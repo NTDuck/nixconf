@@ -16,7 +16,6 @@
       den.aspects.battery.upower
       den.aspects.bluetooth
       den.aspects.bootloaders.systemd
-      den.aspects.browsers.vivaldi
       den.aspects.browsers.zen-browser
       den.aspects.compositors.mangowm
       den.aspects.dev
@@ -75,6 +74,7 @@
       den.aspects.utilities.p7zip
       den.aspects.utilities.ripgrep
       den.aspects.utilities.speedtest-cli
+      den.aspects.utilities.webtorrent
       den.aspects.utilities.rufus
       den.aspects.virtualization.docker
       den.aspects.virtualization.qemu
