@@ -67,15 +67,15 @@
       den.aspects.shells.zsh
       den.aspects.swap.zram
       den.aspects.terminals.kitty
-      den.aspects.utilities.torrents.nyaa
       den.aspects.utilities.cava
       den.aspects.utilities.fastfetch
       den.aspects.utilities.flameshot
-      den.aspects.utilities.rtorrent
       den.aspects.utilities.p7zip
       den.aspects.utilities.ripgrep
-      den.aspects.utilities.speedtest-cli
+      den.aspects.utilities.rtorrent
       den.aspects.utilities.rufus
+      den.aspects.utilities.speedtest-cli
+      den.aspects.utilities.torrent-tui
       den.aspects.virtualization.docker
       den.aspects.virtualization.qemu
       den.aspects.virtualization.waydroid
