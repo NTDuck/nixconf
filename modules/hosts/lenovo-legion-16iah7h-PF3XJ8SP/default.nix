@@ -76,6 +76,7 @@
       den.aspects.utilities.rufus
       den.aspects.utilities.speedtest-cli
       den.aspects.utilities.torrent-tui
+      den.aspects.utilities.webtorrent
       den.aspects.virtualization.docker
       den.aspects.virtualization.qemu
       den.aspects.virtualization.waydroid
