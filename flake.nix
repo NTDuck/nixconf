@@ -79,6 +79,12 @@
     };
 
     preservation.url = "github:nix-community/preservation";
+
+    # BitTorrent Client
+    nyaa = {
+      url = "github:Beastwick18/nyaa";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   # https://nix.dev/manual/nix/latest/command-ref/conf-file#available-settings
