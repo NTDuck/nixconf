@@ -74,7 +74,6 @@
       den.aspects.utilities.rtorrent
       den.aspects.utilities.p7zip
       den.aspects.utilities.ripgrep
-      den.aspects.utilities.riptide
       den.aspects.utilities.speedtest-cli
       den.aspects.utilities.rufus
       den.aspects.virtualization.docker

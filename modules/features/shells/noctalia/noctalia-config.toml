@@ -10,13 +10,14 @@ capsule_opacity = 0.79999998211860657
 capsule_thickness = 0.69999998807907104
 center = [ "workspaces" ]
 end = [ "notifications", "clipboard", "Spacer", "group:g1", "Spacer", "clock", "Spacer", "battery" ]
-layer = "overlay"
+layer = "top"
 margin_edge = 8
 margin_ends = 8
 padding = 8
 panel_overlap = 0
 position = "left"
 radius = 20
+scale = 1.0000000074505806
 shadow = false
 start = [ "control-center", "Spacer", "network", "bluetooth", "screenshot", "Spacer", "brightness", "volume" ]
 thickness = 48
@@ -24,7 +25,7 @@ thickness = 48
     [[bar.default.capsule_group]]
     fill = "surface_variant"
     id = "g1"
-    members = [ "cpu", "ram", "temp" ]
+    members = [ "cpu", "ram", "sysmon", "temp" ]
     opacity = 1.0
     padding = 6.0
 
@@ -78,23 +79,26 @@ avatar_path = "/home/ayin/projs/nixconf/assets/wallpapers/avatars/default.png"
 font_family = "Inter"
 polkit_agent = true
 settings_show_advanced = true
-ui_scale = 1.350000012665987
+ui_scale = 1.0000000074505806
 
     [shell.greeter_sync]
     auto_sync = true
 
     [shell.panel]
+    launcher_position = "bottom_center"
     open_near_click_control_center = true
+    transparency_mode = "glass"
 
     [shell.shadow]
+    alpha = 0.0
     direction = "center"
 
 [system.monitor]
-cpu_poll_seconds = 4
-disk_poll_seconds = 4
-gpu_poll_seconds = 4
-memory_poll_seconds = 4
-network_poll_seconds = 4
+cpu_poll_seconds = 1
+disk_poll_seconds = 1
+gpu_poll_seconds = 1
+memory_poll_seconds = 1
+network_poll_seconds = 1
 
 [theme]
 builtin = "Kanagawa"
@@ -115,13 +119,13 @@ transition_on_startup = true
     recursive = false
 
     [wallpaper.default]
-    path = "/home/ayin/projs/nixconf/assets/wallpapers/girls-last-tour-library.jpg"
+    path = "/home/ayin/projs/nixconf/assets/wallpapers/distort.jpg"
 
     [wallpaper.last]
-    path = "/home/ayin/projs/nixconf/assets/wallpapers/girls-last-tour-library.jpg"
+    path = "/home/ayin/projs/nixconf/assets/wallpapers/distort.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/ayin/projs/nixconf/assets/wallpapers/girls-last-tour-library.jpg"
+    path = "/home/ayin/projs/nixconf/assets/wallpapers/distort.jpg"
 
 [weather]
 refresh_minutes = 5
@@ -130,7 +134,7 @@ refresh_minutes = 5
 type = "spacer"
 
 [widget.battery]
-display_mode = "graphic"
+display_mode = "glyph"
 
 [widget.brightness]
 show_label = false
@@ -152,7 +156,7 @@ show_label = false
 stat = "ram_pct"
 
 [widget.sysmon]
-stat = "gpu_usage"
+stat = "gpu_vram"
 
 [widget.temp]
 show_label = false
