@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.provides.to-users = {user, ...}: {
     nixos = {
       environment.sessionVariables = {
@@ -14,10 +10,6 @@
     };
 
     homeManager = {
-      imports = [
-        inputs.mangowm.hmModules.mango
-      ];
-
       wayland.windowManager.mango.settings.monitorrule = "name:^eDP-1$,width:2560,height:1600,refresh:165.019,scale:1.5,vrr:1";
     };
   };
