@@ -9,8 +9,8 @@
       };
     };
 
-    homeManager = {
-      wayland.windowManager.mango.settings.monitorrule = "name:^eDP-1$,width:2560,height:1600,refresh:165.019,scale:1.5,vrr:1";
+    homeManager = {lib, ...}: {
+      wayland.windowManager.mango.settings.monitorrule = lib.mkForce "name:^eDP-1$,width:2560,height:1600,refresh:165.019,scale:1.5,vrr:1";
     };
   };
 }
