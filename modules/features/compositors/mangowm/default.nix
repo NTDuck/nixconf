@@ -19,7 +19,6 @@
         XDG_SESSION_DESKTOP = "mango";
         XDG_SESSION_TYPE = "wayland";
         MOZ_ENABLE_WAYLAND = "1";
-        DISPLAY = ":2";
       };
 
       programs.mango = {
@@ -138,6 +137,9 @@
 
           # https://mangowm.github.io/docs/configuration/monitors#using-xwayland-satellite-to-prevent-blurry-xwayland-apps
           ${pkgs.unstable.xwayland-satellite}/bin/xwayland-satellite :2 &
+          export DISPLAY=:2
+          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
+          ${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY
 
           ${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia &
 
