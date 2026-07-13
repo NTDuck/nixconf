@@ -1,0 +1,64 @@
+{
+  den,
+  inputs,
+  ...
+}: let
+  colibriPackage = pkgs: inputs.colibri.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  colibriServe = pkgs:
+    pkgs.writeShellApplication {
+      name = "colibri-serve";
+      runtimeInputs = [
+        (colibriPackage pkgs)
+        pkgs.unstable.python3Packages.huggingface-hub
+      ];
+      text = ''
+                model_dir="''${COLI_MODEL:-$HOME/.local/share/colibri/models/GLM-5.2-colibri-int4-with-int8-mtp}"
+
+                if [ ! -d "$model_dir" ]; then
+                  cat >&2 <<EOF
+        Colibri model directory not found:
+          $model_dir
+
+        Download the preconverted model, then retry:
+          huggingface-cli download mateogrgic/GLM-5.2-colibri-int4-with-int8-mtp --local-dir "$model_dir"
+
+        Or set COLI_MODEL to an existing GLM-5.2 Colibri model directory.
+        EOF
+                  exit 1
+                fi
+
+                export COLI_MODEL="$model_dir"
+                exec coli serve \
+                  --host "''${COLI_HOST:-127.0.0.1}" \
+                  --port "''${COLI_PORT:-8000}" \
+                  --model-id "''${COLI_MODEL_ID:-glm-5.2-colibri}" \
+                  --auto-tier \
+                  "$@"
+      '';
+    };
+in {
+  den.aspects.dev.agentics.colibri = {
+    nixos = {pkgs, ...}: {
+      environment.systemPackages = [
+        (colibriPackage pkgs)
+        (colibriServe pkgs)
+        pkgs.unstable.python3Packages.huggingface-hub
+      ];
+    };
+
+    homeManager = {pkgs, ...}: {
+      systemd.user.services.colibri = {
+        Unit = {
+          Description = "Colibri GLM-5.2 OpenAI-compatible local API";
+          Documentation = "https://github.com/JustVugg/colibri";
+        };
+
+        Service = {
+          ExecStart = "${colibriServe pkgs}/bin/colibri-serve";
+          Restart = "on-failure";
+          RestartSec = 5;
+        };
+      };
+    };
+  };
+}
