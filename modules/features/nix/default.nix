@@ -17,7 +17,11 @@
         allowInsecurePredicate = pkg:
           pkg
           |> lib.getName
-          |> (name: builtins.elem name ["pnpm"]);
+          |> (name:
+            builtins.elem name [
+              "pnpm"
+              "broadcom-sta"
+            ]);
       };
     in {
       nixpkgs = {

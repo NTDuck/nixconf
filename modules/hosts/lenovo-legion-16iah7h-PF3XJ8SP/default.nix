@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.hosts.x86_64-linux.lenovo-legion-16iah7h-PF3XJ8SP = {
     users.ayin = {};
   };
