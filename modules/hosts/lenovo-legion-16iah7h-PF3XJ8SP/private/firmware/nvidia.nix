@@ -17,7 +17,13 @@
       hardware.nvidia = {
         modesetting.enable = true;
         nvidiaSettings = true;
+        nvidiaPersistenced = true;
+        powerManagement.enable = true;
       };
+
+      services.xserver.deviceSection = ''
+        Option "Coolbits" "28"
+      '';
 
       boot.initrd.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm"];
       boot.kernelParams = ["nvidia.NVreg_PreserveVideoMemoryAllocations=1"];

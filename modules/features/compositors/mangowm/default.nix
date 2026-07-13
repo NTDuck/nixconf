@@ -14,6 +14,14 @@
         inputs.mangowm.nixosModules.mango
       ];
 
+      environment.sessionVariables = {
+        XDG_CURRENT_DESKTOP = "mango";
+        XDG_SESSION_DESKTOP = "mango";
+        XDG_SESSION_TYPE = "wayland";
+        MOZ_ENABLE_WAYLAND = "1";
+        DISPLAY = ":2";
+      };
+
       programs.mango = {
         enable = true;
         package = inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango;
@@ -45,13 +53,9 @@
             l = "down";
           };
 
+          # TODO Assuming noctalia, fix later
           ipc = "${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia msg";
-          # ipc = "${inputs.noctalia.packages.${pkgs.system}.default}/bin/noctalia-shell ipc call";
         in {
-          env = "DISPLAY,:2";
-          monitorrule = "name:^eDP-1$,width:2560,height:1600,refresh:165.019,scale:1.5,vrr:1";
-          # TODO Others?
-
           repeat_rate = 50;
           repeat_delay = 150;
           trackpad_natural_scrolling = 1;
