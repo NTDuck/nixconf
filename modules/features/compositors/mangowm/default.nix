@@ -23,7 +23,6 @@
         XDG_SESSION_DESKTOP = "mango";
         XDG_SESSION_TYPE = "wayland";
         MOZ_ENABLE_WAYLAND = "1";
-        DISPLAY = ":2";
       };
 
       programs.mango = {
@@ -142,6 +141,12 @@
 
           # https://mangowm.github.io/docs/configuration/monitors#using-xwayland-satellite-to-prevent-blurry-xwayland-apps
           ${pkgs.unstable.xwayland-satellite}/bin/xwayland-satellite :2 &
+          for _ in $(${pkgs.coreutils}/bin/seq 1 100); do
+            if ${pkgs.xset}/bin/xset -display :2 q >/dev/null 2>&1; then
+              break
+            fi
+            ${pkgs.coreutils}/bin/sleep 0.05
+          done
           export DISPLAY=:2
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
           ${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY
