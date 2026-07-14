@@ -2,7 +2,7 @@
   den.aspects.battery.tlp = {
     nixos = {pkgs, ...}: {
       services.tlp = {
-        enalble = true;
+        enable = true;
         package = pkgs.unstable.tlp;
 
         settings = {

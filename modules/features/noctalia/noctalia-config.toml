@@ -43,7 +43,7 @@ auto_locate = true
 
 [lockscreen]
 blurred_desktop = true
-wallpaper = "/home/ayin/projs/nixconf/assets/wallpapers/girls-last-tour-library.jpg"
+wallpaper = "@assetRoot@/wallpapers/girls-last-tour-library.jpg"
 
 [lockscreen_widgets]
 enabled = false
@@ -76,7 +76,7 @@ widget_order = [ "lockscreen-login-box@eDP-1" ]
 layer = "overlay"
 
 [shell]
-avatar_path = "/home/ayin/projs/nixconf/assets/wallpapers/avatars/default.png"
+avatar_path = "@assetRoot@/wallpapers/avatars/default.png"
 font_family = "Inter"
 polkit_agent = true
 settings_show_advanced = true
@@ -113,20 +113,20 @@ wallpaper_scheme = "m3-content"
     enable_community_templates = false
 
 [wallpaper]
-directory = "/home/ayin/projs/nixconf/assets/wallpapers/"
+directory = "@assetRoot@/wallpapers/"
 transition_on_startup = true
 
     [wallpaper.automation]
     recursive = false
 
     [wallpaper.default]
-    path = "/home/ayin/projs/nixconf/assets/wallpapers/distort.jpg"
+    path = "@assetRoot@/wallpapers/distort.jpg"
 
     [wallpaper.last]
-    path = "/home/ayin/projs/nixconf/assets/wallpapers/distort.jpg"
+    path = "@assetRoot@/wallpapers/distort.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/ayin/projs/nixconf/assets/wallpapers/distort.jpg"
+    path = "@assetRoot@/wallpapers/distort.jpg"
 
 [weather]
 refresh_minutes = 5

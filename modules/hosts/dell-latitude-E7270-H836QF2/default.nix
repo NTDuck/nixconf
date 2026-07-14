@@ -5,9 +5,6 @@
 
   den.aspects.dell-latitude-E7270-H836QF2 = {
     includes = [
-      den.aspects.users.ayin
-      den.batteries.primary-user
-
       den.aspects.battery
       den.aspects.bluetooth
       den.aspects.bootloaders.systemd

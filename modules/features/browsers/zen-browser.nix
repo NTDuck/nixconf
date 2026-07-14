@@ -131,7 +131,7 @@
       };
 
       stylix.targets.zen-browser.profileNames =
-        lib.optionalAttrs (config.stylix.enable or false) ["${user.name}"];
+        lib.optionals (config.stylix.enable or false) ["${user.name}"];
     };
   };
 }

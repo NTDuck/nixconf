@@ -1,19 +1,26 @@
 # nixos-cfg
 
 ## Overview
-- Compositor: [sway](https://github.com/swaywm/sway)
-- Bar: [waybar](https://github.com/Alexays/Waybar)
-- Terminal: [foot](https://codeberg.org/dnkl/foot)
-- Launcher: [tofi](https://github.com/philj56/tofi)
+- Framework: [Den](https://github.com/denful/den)
+- Compositor: [Mango](https://github.com/mangowm/mango)
+- Shell/bar/launcher: [Noctalia](https://github.com/noctalia-dev/noctalia)
+- Terminals: [Kitty](https://sw.kovidgoyal.net/kitty/) and [Foot](https://codeberg.org/dnkl/foot)
 - Fonts:
   JetBrainsMono Nerd Font - Monospace |
   Lora - Serif |
   Inter - Sans-serif |
   Noto Color Emoji - Emoji
-- Theme: [charcoal-dark](https://github.com/tinted-theming/schemes/blob/spec-0.11/base16/charcoal-dark.yaml)
+- Theme: Stylix and Noctalia
 <!--- Wallpaper: [./assets/wallpapers/girls-last-tour-library.jpg](https://x.com/LeoLeonardK10/status/1465607483372699656)-->
 - Wallpaper: [./assets/wallpapers/shifting-tides.jpg](https://x.com/elfilter_a/status/2043948619460411476)
 <!--https://jp.pinterest.com/pin/1069112399050639591/-->
+
+## Den model
+- Host entities live under `den.hosts.x86_64-linux.<hostname>`.
+- Host-owned NixOS configuration lives directly on `den.aspects.<hostname>.nixos`.
+- User entity aspects live at `den.aspects.<username>`. The Ayin user aspect includes `den.batteries.primary-user` and personal Git identity.
+- Cross-entity defaults use explicit providers. Host-specific Home Manager defaults use `provides.to-users.homeManager`; user-specific OS policy uses `provides.to-hosts.nixos`.
+- `den.batteries.host-aspects` remains enabled so host-wide Home Manager fragments selected by a host are visible to that host's users. Personal user aspects should not be included in host include lists.
 
 ## Deployment
 ```cmd
@@ -21,6 +28,17 @@ $ nix shell nixpkgs#git --extra-experimental-features "nix-command flakes"
 $ git clone https://github.com/NTDuck/nixos-cfg && cd nixos-cfg
 $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 ```
+
+## Validation
+```cmd
+$ alejandra modules flake.nix
+$ nix flake check
+```
+
+The configuration avoids Nix pipe-operator syntax, so evaluators only need the standard `nix-command` and `flakes` experimental features.
+
+## Adding a user
+Declare the user on each target host, then define the user's personal aspect at `den.aspects.<username>`. Do not include one user's aspect in a host include list; that would project personal Home Manager settings to every user on the host.
 
 ## Agenix lifecycle
 ### Public key generation - Target

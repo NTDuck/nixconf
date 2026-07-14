@@ -13,7 +13,7 @@
         inputs.agenix.nixosModules.default
       ];
 
-      environment.systemPackages = [inputs.agenix.packages.${pkgs.system}.default];
+      environment.systemPackages = [inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default];
 
       age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
@@ -26,14 +26,12 @@
       '';
     };
 
-    homeManager = args @ {...}: let
-      user = args.user or {name = "ayin";};
-    in {
+    homeManager = {config, ...}: {
       imports = [
         inputs.agenix.homeManagerModules.default
       ];
 
-      age.identityPaths = ["/home/${user.name}/.ssh/id_ed25519"];
+      age.identityPaths = ["${config.home.homeDirectory}/.ssh/id_ed25519"];
 
       age.secrets."gemini-default-token".file = "${inputs.self}/secrets/gemini-default-token.age";
       age.secrets."groq-default-token".file = "${inputs.self}/secrets/groq-default-token.age";

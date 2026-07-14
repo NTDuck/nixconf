@@ -45,8 +45,7 @@ in {
         den.batteries.host-aspects
       ];
 
-      host.classes = ["nixos"];
-      user.classes = lib.mkDefault ["nixos" "homeManager"];
+      user.classes = lib.mkDefault ["homeManager"];
     };
   };
 }

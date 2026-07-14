@@ -15,13 +15,10 @@
         allowUnfree = true;
 
         allowInsecurePredicate = pkg:
-          pkg
-          |> lib.getName
-          |> (name:
-            builtins.elem name [
-              "pnpm"
-              "broadcom-sta"
-            ]);
+          builtins.elem (lib.getName pkg) [
+            "pnpm"
+            "broadcom-sta"
+          ];
       };
     in {
       nixpkgs = {

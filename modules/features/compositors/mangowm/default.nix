@@ -5,8 +5,12 @@
 }: {
   den.aspects.compositors.mangowm = {
     includes = [
+      den.aspects.noctalia
       den.aspects.services.cliphist # https://mangowm.github.io/docs/configuration/xdg-portals#clipboard-manager
+      den.aspects.services.fcitx5
       den.aspects.services.gnome-keyring # https://mangowm.github.io/docs/configuration/xdg-portals#gnome-keyring
+      den.aspects.services.xdg
+      den.aspects.terminals.kitty
     ];
 
     nixos = {pkgs, ...}: {
@@ -44,7 +48,7 @@
         package = inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango;
 
         settings = let
-          tags = lib.range 1 9 |> map builtins.toString;
+          tags = map builtins.toString (lib.range 1 9);
           dirs = {
             h = "left";
             j = "right";
@@ -89,11 +93,11 @@
 
           circle_layout = "dwindle,scroller";
 
-          tagrule = tags |> lib.map (tag: "id:${tag},layout_name:dwindle");
+          tagrule = lib.map (tag: "id:${tag},layout_name:dwindle") tags;
 
           layerrule =
             []
-            ++ lib.optionalAttrs (config.programs.noctalia.enable or false) [
+            ++ lib.optionals (config.programs.noctalia.enable or false) [
               "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0"
             ];
 
@@ -114,11 +118,11 @@
               "SUPER,d,spawn,${ipc} panel-toggle launcher"
               "SUPER+CTRL,l,spawn,${ipc} session lock"
             ]
-            ++ (dirs |> lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}"))
-            ++ (dirs |> lib.mapAttrsToList (key: dir: "SUPER+SHIFT,${key},exchange_client,${dir}"))
-            ++ (tags |> lib.map (tag: "SUPER,${tag},view,${tag}"))
-            ++ (tags |> lib.map (tag: "SUPER+SHIFT,${tag},tagsilent,${tag}"))
-            ++ (tags |> lib.map (tag: "SUPER+ALT,${tag},tag,${tag}"));
+            ++ (lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}") dirs)
+            ++ (lib.mapAttrsToList (key: dir: "SUPER+SHIFT,${key},exchange_client,${dir}") dirs)
+            ++ (lib.map (tag: "SUPER,${tag},view,${tag}") tags)
+            ++ (lib.map (tag: "SUPER+SHIFT,${tag},tagsilent,${tag}") tags)
+            ++ (lib.map (tag: "SUPER+ALT,${tag},tag,${tag}") tags);
 
           bindl = [
             "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness-down"
@@ -141,11 +145,6 @@
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
           ${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY
 
-          ${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia &
-
-          fcitx5 -d -r &
-
-          ${pkgs.xdg-desktop-portal-wlr}/bin/xdg-desktop-portal-wlr &
         '';
 
         systemd = {

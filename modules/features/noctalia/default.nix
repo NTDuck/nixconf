@@ -12,14 +12,21 @@
       };
     };
 
-    homeManager = {
+    homeManager = let
+      assetRoot = "${inputs.self}/assets";
+      settings =
+        builtins.replaceStrings
+        ["@assetRoot@"]
+        [assetRoot]
+        (builtins.readFile "${inputs.self}/modules/features/noctalia/noctalia-config.toml");
+    in {
       imports = [
         inputs.noctalia.homeModules.default
       ];
 
       programs.noctalia = {
         enable = true;
-        settings = builtins.readFile "${inputs.self}/modules/features/noctalia/noctalia-config.toml";
+        inherit settings;
       };
     };
   };
