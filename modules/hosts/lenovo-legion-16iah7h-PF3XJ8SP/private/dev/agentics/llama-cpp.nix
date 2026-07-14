@@ -10,55 +10,64 @@
       });
 
       modelsPreset = {
-        "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M" = {
-          hf-repo = "mradermacher/OmniCoder-9B-Claude-Opus-High-Reasoning-Distill-GGUF";
-          hf-file = "OmniCoder-9B-Claude-Opus-High-Reasoning-Distill.Q4_K_M.gguf";
+        gemma-3-it-1b = {
+          alias = "Gemma 3 IT [1B]";
+          hf-repo = "google/gemma-3-1b-it-qat-q4_0-gguf";
+          hf-file = "gemma-3-1b-it-q4_0.gguf";
           ctx-size = 32768;
-          n-gpu-layers = 28;
-          temperature = 0.7;
-          top-p = 0.95;
+          n-gpu-layers = 999;
+          temp = "0.7";
+          top-p = "0.95";
         };
-        "Mirage-OpenReasoning-Nemotron-7B.Q4_K_M" = {
-          hf-repo = "mradermacher/Mirage-OpenReasoning-Nemotron-7B-GGUF";
-          hf-file = "Mirage-OpenReasoning-Nemotron-7B.Q4_K_M.gguf";
+        gemma-3-it-4b = {
+          alias = "Gemma 3 IT [4B]";
+          hf-repo = "google/gemma-3-4b-it-qat-q4_0-gguf";
+          hf-file = "gemma-3-4b-it-q4_0.gguf";
           ctx-size = 32768;
-          n-gpu-layers = 35;
-          temperature = 0.7;
-          top-p = 0.95;
+          n-gpu-layers = 999;
+          temp = "0.7";
+          top-p = "0.95";
         };
-        "Qwen3-4B-Function-Calling-Pro" = {
-          hf-repo = "Manojb/Qwen3-4B-toolcalling-gguf-codex";
-          hf-file = "Qwen3-4B-Function-Calling-Pro.gguf";
+        gemma-3-it-12b = {
+          alias = "Gemma 3 IT [12B]";
+          hf-repo = "google/gemma-3-12b-it-qat-q4_0-gguf";
+          hf-file = "gemma-3-12b-it-q4_0.gguf";
           ctx-size = 32768;
-          n-gpu-layers = 35;
-          temperature = 0.7;
-          top-p = 0.95;
+          n-gpu-layers = 0;
+          temp = "0.7";
+          top-p = "0.95";
         };
-        "IBM-Agentic-Nvidia-Q4_K_M" = {
-          hf-repo = "WithinUsAI/Nvidia.Agentic.Coder-4B-GGUF";
-          hf-file = "IBM-Agentic-Nvidia-Q4_K_M.gguf";
+        gemma-3-it-27b = {
+          alias = "Gemma 3 IT [27B]";
+          hf-repo = "google/gemma-3-27b-it-qat-q4_0-gguf";
+          hf-file = "gemma-3-27b-it-q4_0.gguf";
           ctx-size = 32768;
-          n-gpu-layers = 35;
-          temperature = 0.7;
-          top-p = 0.95;
+          n-gpu-layers = 0;
+          temp = "0.7";
+          top-p = "0.95";
         };
-        "qwen3-4b-function-calling-xlam-unsloth.q4_k_m" = {
-          hf-repo = "ermiaazarkhalili/Qwen3-4B-Function-Calling-xLAM-Unsloth-GGUF";
-          hf-file = "qwen3-4b-function-calling-xlam-unsloth.q4_k_m.gguf";
+        qwen3-thinking-30b-a3b = {
+          alias = "Qwen3 Thinking [30B]";
+          hf-repo = "unsloth/Qwen3-30B-A3B-Thinking-2507-GGUF";
+          hf-file = "Qwen3-30B-A3B-Thinking-2507-Q4_K_M.gguf";
           ctx-size = 32768;
-          n-gpu-layers = 35;
-          temperature = 0.7;
-          top-p = 0.95;
+          n-gpu-layers = 0;
+          temp = "0.6";
+          top-p = "0.95";
         };
-        "xLAM-1b-fc-r.Q4_K_M" = {
-          hf-repo = "Salesforce/xLAM-1b-fc-r-gguf";
-          hf-file = "xLAM-1b-fc-r.Q4_K_M.gguf";
+        qwen2_5-coder-3b = {
+          alias = "Qwen2.5 Coder [3B]";
+          hf-repo = "Qwen/Qwen2.5-Coder-3B-Instruct-GGUF";
+          hf-file = "qwen2.5-coder-3b-instruct-q4_k_m.gguf";
           ctx-size = 32768;
-          n-gpu-layers = 35;
-          temperature = 0;
-          top-p = 1.0;
+          n-gpu-layers = 999;
+          flash-attn = "on";
+          temp = "0.2";
+          top-p = "0.9";
         };
       };
     };
+
+    systemd.services.llama-cpp.serviceConfig.EnvironmentFile = "-/etc/llama-cpp/huggingface.env";
   };
 }

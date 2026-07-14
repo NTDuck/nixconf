@@ -16,21 +16,22 @@
           autoshare = false;
           autoupdate = false;
 
-          model = "colibri/glm-5.2-colibri";
-          small_model = "llama.cpp/Qwen3-4B-Function-Calling-Pro";
+          model = "colibri/GLM 5.2 [744B]";
+          small_model = "llama.cpp/Qwen2.5 Coder [3B]";
 
           provider = {
             colibri = {
               npm = "@ai-sdk/openai-compatible";
-              name = "Colibri GLM-5.2 (local)";
+              name = "colibri [local]";
               options = {
+                apiKey = "none";
                 baseURL = "http://127.0.0.1:8000/v1";
                 timeout = 1200000;
                 chunkTimeout = 120000;
               };
               models = {
-                "glm-5.2-colibri" = {
-                  name = "GLM-5.2 Colibri";
+                "GLM 5.2 [744B]" = {
+                  name = "GLM 5.2 [744B]";
                   limit = {
                     context = 131072;
                     output = 32768;
@@ -41,20 +42,12 @@
 
             "llama.cpp" = {
               npm = "@ai-sdk/openai-compatible";
-              name = "llama-server (local)";
+              name = "llama.cpp [local]";
               options = {
+                apiKey = "none";
                 baseURL = "http://127.0.0.1:8080/v1";
                 timeout = 600000;
                 chunkTimeout = 60000;
-              };
-              models = {
-                "Qwen3-4B-Function-Calling-Pro" = {
-                  name = "Qwen3 4B Function Calling Pro";
-                  limit = {
-                    context = 32768;
-                    output = 8192;
-                  };
-                };
               };
             };
           };
