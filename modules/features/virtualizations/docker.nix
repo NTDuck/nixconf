@@ -1,14 +1,8 @@
 {den, ...}: {
   den.aspects.virtualization.docker = {
-    nixos = {
-      user,
-      pkgs,
-      ...
-    }: {
+    nixos = {pkgs, ...}: {
       virtualisation.docker.enable = true;
       environment.systemPackages = [pkgs.unstable.docker-compose];
-
-      users.users.${user.name}.extraGroups = ["docker"];
     };
   };
 }

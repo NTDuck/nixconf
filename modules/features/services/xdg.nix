@@ -1,19 +1,23 @@
 {den, ...}: {
   den.aspects.services.xdg = {
-    nixos = {pkgs, ...}: let
+    nixos = {
+      lib,
+      pkgs,
+      ...
+    }: let
       wlrootsPortal = {
         default = ["gtk"];
 
         "org.freedesktop.impl.portal.ScreenCast" = ["wlr"];
         "org.freedesktop.impl.portal.Screenshot" = ["wlr"];
+        "org.freedesktop.impl.portal.Secret" = ["gnome-keyring"];
       };
     in {
       xdg.portal = {
         enable = true;
-        wlr.enable = true;
-
-        extraPortals = [
-          pkgs.unstable.xdg-desktop-portal-gtk
+        extraPortals = lib.mkForce [
+          pkgs.xdg-desktop-portal-wlr
+          pkgs.xdg-desktop-portal-gtk
         ];
 
         config = {

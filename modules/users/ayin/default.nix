@@ -5,7 +5,21 @@
       den.aspects.ayin.dev.gits.git
     ];
 
-    provides.to-hosts.nixos = {user, ...}: {
+    provides.to-hosts.nixos = {
+      pkgs,
+      user,
+      ...
+    }: {
+      users.users.${user.userName} = {
+        extraGroups = [
+          "adbusers"
+          "docker"
+          "kvm"
+          "libvirtd"
+        ];
+        shell = pkgs.unstable.zsh;
+      };
+
       security.sudo.extraRules = [
         {
           users = [user.userName];

@@ -38,6 +38,7 @@
       den.aspects.nh
       den.aspects.nix-ld
       den.aspects.nur
+      den.aspects.office.libreoffice
       den.aspects.office.zathura
       den.aspects.productivity.obsidian
       den.aspects.productivity.taskwarrior

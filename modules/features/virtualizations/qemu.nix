@@ -3,7 +3,6 @@
     nixos = {
       config,
       pkgs,
-      user,
       ...
     }: {
       # KVM kernel modules are often auto-detected, but you can ensure they are loaded
@@ -43,9 +42,6 @@
           53
         ];
       };
-
-      # Add your user to the 'libvirtd' group to manage VMs without sudo [citation:2][citation:4]
-      users.users.${user.name}.extraGroups = ["libvirtd"];
 
       # Install a graphical interface and necessary tools [citation:2][citation:4]
       environment.systemPackages = [

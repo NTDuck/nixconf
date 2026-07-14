@@ -39,6 +39,7 @@
       den.aspects.nix-ld
       den.aspects.nur
       den.aspects.office.pandoc
+      den.aspects.office.libreoffice
       den.aspects.office.texlive
       den.aspects.office.zathura
       den.aspects.productivity.obsidian
