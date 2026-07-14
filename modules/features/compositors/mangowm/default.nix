@@ -23,6 +23,7 @@
         XDG_SESSION_DESKTOP = "mango";
         XDG_SESSION_TYPE = "wayland";
         MOZ_ENABLE_WAYLAND = "1";
+        DISPLAY = ":2";
       };
 
       programs.mango = {
