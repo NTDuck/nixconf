@@ -10,7 +10,6 @@
       den.aspects.dev.agentics.goose-cli
       den.aspects.dev.agentics.llama-cpp
       den.aspects.dev.agentics.opencode
-      den.aspects.dev.agentics.pi
       den.aspects.dev.agentics.spec-kit
     ];
   };
