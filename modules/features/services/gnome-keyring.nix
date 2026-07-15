@@ -5,12 +5,17 @@
     ];
 
     nixos = {
-      services.gnome.gnome-keyring.enable = true;
-
-      security.pam.services = {
-        login.enableGnomeKeyring = true;
-        tuigreet.enableGnomeKeyring = true;
-      };
+      security.pam.services = let
+        gnome-keyring-enabled = den.aspects.services.gnome-keyring.enable or false;
+        services = builtins.attrNames (den.config.security.pam.services or {});
+      in
+        builtins.listToAttrs (map (service: {
+            name = service;
+            value = {
+              enableGnomeKeyring = gnome-keyring-enabled;
+            };
+          })
+          services);
     };
 
     homeManager = {pkgs, ...}: {
