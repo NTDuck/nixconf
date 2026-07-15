@@ -11,7 +11,6 @@
     }: let
       config = {
         allowBroken = false;
-        allowInsecure = true;
         allowUnfree = true;
 
         allowInsecurePredicate = pkg:

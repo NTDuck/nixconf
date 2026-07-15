@@ -13,9 +13,12 @@
       ];
       text = ''
         model_dir="''${COLI_MODEL:-$HOME/.local/share/colibri/models/GLM-5.2-colibri-int4-with-int8-mtp}"
+        marker="$model_dir/.download-complete"
 
-        if [ ! -d "$model_dir" ]; then
+        if [ ! -e "$marker" ]; then
+          mkdir -p "$model_dir"
           huggingface-cli download mateogrgic/GLM-5.2-colibri-int4-with-int8-mtp --local-dir "$model_dir"
+          touch "$marker"
         fi
 
         export COLI_MODEL="$model_dir"
@@ -44,12 +47,12 @@ in {
           Documentation = "https://github.com/JustVugg/colibri";
         };
 
-        Install.WantedBy = ["default.target"];
+        Install.WantedBy = [];
 
         Service = {
           ExecStart = "${colibriServe pkgs}/bin/colibri-serve";
           Restart = "on-failure";
-          RestartSec = 5;
+          RestartSec = 30;
         };
       };
     };

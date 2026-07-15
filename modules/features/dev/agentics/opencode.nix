@@ -16,7 +16,7 @@
           autoshare = false;
           autoupdate = false;
 
-          model = "colibri/GLM 5.2 [744B]";
+          model = "llama.cpp/Qwen2.5 Coder [3B]";
           small_model = "llama.cpp/Qwen2.5 Coder [3B]";
 
           provider = {
@@ -30,11 +30,11 @@
                 chunkTimeout = 120000;
               };
               models = {
-                "GLM 5.2 [744B]" = {
+                glm-5_2-colibri = {
                   name = "GLM 5.2 [744B]";
                   limit = {
-                    context = 131072;
-                    output = 32768;
+                    context = 4096;
+                    output = 1024;
                   };
                 };
               };

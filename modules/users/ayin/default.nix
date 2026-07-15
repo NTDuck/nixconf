@@ -2,14 +2,11 @@
   den.aspects.ayin = {
     includes = [
       den.batteries.primary-user
+      (den.batteries.user-shell "zsh")
       den.aspects.ayin.dev.gits.git
     ];
 
-    provides.to-hosts.nixos = {
-      pkgs,
-      user,
-      ...
-    }: {
+    provides.to-hosts.nixos = {user, ...}: {
       users.users.${user.userName} = {
         extraGroups = [
           "adbusers"
@@ -17,7 +14,6 @@
           "kvm"
           "libvirtd"
         ];
-        shell = pkgs.unstable.zsh;
       };
 
       security.sudo.extraRules = [
