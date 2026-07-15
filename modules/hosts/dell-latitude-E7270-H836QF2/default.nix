@@ -18,9 +18,9 @@
       den.aspects.gaming.itch
       den.aspects.gaming.mangohud
       den.aspects.gaming.steam
-      (den.aspects.greeters.tuigreet (
-        config: "${config.programs.mango.package}/bin/mango"
-      ))
+      (den.aspects.greeters.tuigreet {
+        command = config: "${config.programs.mango.package}/bin/mango";
+      })
       # `linux-cachyos-latest-7.1.1` conflicts with `broadcom-sta`
       # den.aspects.kernels.cachyos-kernel
       den.aspects.messenging.discord

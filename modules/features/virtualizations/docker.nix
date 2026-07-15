@@ -4,5 +4,9 @@
       virtualisation.docker.enable = true;
       environment.systemPackages = [pkgs.unstable.docker-compose];
     };
+
+    provides.to-users.nixos = {user, ...}: {
+      users.users.${user.userName}.extraGroups = ["docker"];
+    };
   };
 }

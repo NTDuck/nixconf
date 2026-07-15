@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.greeters.tuigreet = cmd: {
+  den.aspects.greeters.tuigreet = {command}: {
     nixos = {
       pkgs,
       config,
@@ -11,7 +11,7 @@
           default_session = {
             command = ''
               ${pkgs.tuigreet}/bin/tuigreet \
-              --cmd ${cmd config} --no-xsession-wrapper \
+              --cmd ${command config} --no-xsession-wrapper \
               --asterisks --asterisks-char '*' \
               --time --time-format '%Y-%m-%d %H:%M:%S' \
               --remember \

@@ -20,9 +20,9 @@
       den.aspects.gaming.itch
       den.aspects.gaming.mangohud
       den.aspects.gaming.steam
-      (den.aspects.greeters.tuigreet (
-        config: "${config.programs.mango.package}/bin/mango"
-      ))
+      (den.aspects.greeters.tuigreet {
+        command = config: "${config.programs.mango.package}/bin/mango";
+      })
       den.aspects.kernels.cachyos-kernel
       den.aspects.messenging.discord
       den.aspects.messenging.telegram

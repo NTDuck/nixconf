@@ -2,7 +2,16 @@
   den,
   inputs,
   ...
-}: {
+}: let
+  themeSwitchCommands = pkgs: {
+    light = pkgs.writeShellScriptBin "mango-theme-light-system" ''
+      exec /run/current-system/specialisation/light-mode/activate
+    '';
+    dark = pkgs.writeShellScriptBin "mango-theme-dark-system" ''
+      exec /nix/var/nix/profiles/system/bin/switch-to-configuration test
+    '';
+  };
+in {
   den.aspects.compositors.mangowm = {
     includes = [
       den.aspects.noctalia
@@ -33,6 +42,35 @@
       };
     };
 
+    provides.to-users.nixos = {
+      pkgs,
+      user,
+      ...
+    }: let
+      themeSwitch = themeSwitchCommands pkgs;
+    in {
+      environment.systemPackages = [
+        themeSwitch.light
+        themeSwitch.dark
+      ];
+
+      security.sudo.extraRules = [
+        {
+          users = [user.userName];
+          commands = [
+            {
+              command = "${themeSwitch.light}/bin/mango-theme-light-system";
+              options = ["NOPASSWD"];
+            }
+            {
+              command = "${themeSwitch.dark}/bin/mango-theme-dark-system";
+              options = ["NOPASSWD"];
+            }
+          ];
+        }
+      ];
+    };
+
     homeManager = {
       pkgs,
       config,
@@ -56,8 +94,20 @@
             l = "down";
           };
 
-          # TODO Assuming noctalia, fix later
           ipc = "${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia msg";
+          themeSwitch = themeSwitchCommands pkgs;
+          themeSwitchClient = {
+            light = pkgs.writeShellScriptBin "mango-theme-light-client" ''
+              set -e
+              sudo -n ${themeSwitch.light}/bin/mango-theme-light-system
+              ${ipc} theme-mode-set light
+            '';
+            dark = pkgs.writeShellScriptBin "mango-theme-dark-client" ''
+              set -e
+              sudo -n ${themeSwitch.dark}/bin/mango-theme-dark-system
+              ${ipc} theme-mode-set dark
+            '';
+          };
         in {
           repeat_rate = 50;
           repeat_delay = 150;
@@ -82,7 +132,7 @@
           border_radius = 16;
 
           focused_opacity = config.stylix.opacity.applications;
-          unfocused_opacity = 0.8 * config.stylix.opacity.applications;
+          unfocused_opacity = 0.72;
 
           animation_type_open = "slide";
           animation_type_close = "slide";
@@ -95,18 +145,16 @@
 
           tagrule = lib.map (tag: "id:${tag},layout_name:dwindle") tags;
 
-          layerrule =
-            []
-            ++ lib.optionals (config.programs.noctalia.enable or false) [
-              "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0"
-            ];
+          layerrule = [
+            "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0"
+          ];
 
           bind =
             [
               "SUPER,a,toggleoverview"
               "SUPER,s,switch_layout"
-              # "SUPER,z,spawn,sudo /run/current-system/specialisation/light-mode/activate && ${ipc} theme-mode-set light"
-              # "SUPER,x,spawn,sudo /nix/var/nix/profiles/system/bin/switch-to-configuration test && ${ipc} theme-mode-set dark"
+              "SUPER,z,spawn,${themeSwitchClient.light}/bin/mango-theme-light-client"
+              "SUPER,x,spawn,${themeSwitchClient.dark}/bin/mango-theme-dark-client"
               "SUPER,q,killclient"
               "SUPER,f,togglemaximizescreen"
               # "SUPER,f,togglefakefullscreen"

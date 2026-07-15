@@ -5,5 +5,9 @@
         pkgs.unstable.android-tools
       ];
     };
+
+    provides.to-users.nixos = {user, ...}: {
+      users.users.${user.userName}.extraGroups = ["adbusers"];
+    };
   };
 }

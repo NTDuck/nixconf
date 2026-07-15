@@ -1,5 +1,8 @@
 {
-  outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./modules);
+  outputs = inputs:
+    builtins.removeAttrs
+    (inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./modules))
+    ["denful"];
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";

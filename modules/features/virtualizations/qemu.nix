@@ -57,5 +57,12 @@
       # Allow dconf settings for virt-manager (optional)
       programs.dconf.enable = true;
     };
+
+    provides.to-users.nixos = {user, ...}: {
+      users.users.${user.userName}.extraGroups = [
+        "kvm"
+        "libvirtd"
+      ];
+    };
   };
 }

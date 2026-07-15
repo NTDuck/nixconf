@@ -62,6 +62,10 @@
 
         # targets.console.enable = false;
       };
+
+      specialisation.light-mode.configuration = {
+        stylix.polarity = lib.mkForce "light";
+      };
     };
   };
 }
