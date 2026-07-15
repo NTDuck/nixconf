@@ -14,6 +14,8 @@ in {
       modelsPreset = llamaModels;
     };
 
-    systemd.services.llama-cpp.serviceConfig.EnvironmentFile = "/etc/llama-cpp/huggingface.env";
+    # Gemma downloads still need HF_TOKEN here after accepting Google's terms,
+    # but a missing local secret must not make system activation fail.
+    systemd.services.llama-cpp.serviceConfig.EnvironmentFile = "-/etc/llama-cpp/huggingface.env";
   };
 }
