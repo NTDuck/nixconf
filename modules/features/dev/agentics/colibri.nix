@@ -3,7 +3,14 @@
   inputs,
   ...
 }: let
-  colibriPackage = pkgs: inputs.colibri.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  colibriPackage = pkgs:
+    inputs.colibri.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+      nativeBuildInputs =
+        (old.nativeBuildInputs or [])
+        ++ [
+          pkgs.python3
+        ];
+    });
   colibriServe = pkgs:
     pkgs.writeShellApplication {
       name = "colibri-serve";
