@@ -2,7 +2,16 @@
   den,
   inputs,
   ...
-}: {
+}: let
+  noctaliaPackage = pkgs:
+    inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+      mesonFlags =
+        (old.mesonFlags or [])
+        ++ [
+          "-Dtests=disabled"
+        ];
+    });
+in {
   den.aspects.noctalia = {
     nixos = {
       nix.settings = {
@@ -12,12 +21,11 @@
       };
     };
 
-    homeManager = let
-      assetRoot = "${inputs.self}/assets";
+    homeManager = {pkgs, ...}: let
       settings =
         builtins.replaceStrings
         ["@assetRoot@"]
-        [assetRoot]
+        ["${inputs.self}/assets"]
         (builtins.readFile "${inputs.self}/modules/features/noctalia/noctalia-config.toml");
     in {
       imports = [
@@ -26,6 +34,7 @@
 
       programs.noctalia = {
         enable = true;
+        package = noctaliaPackage pkgs;
         inherit settings;
       };
     };

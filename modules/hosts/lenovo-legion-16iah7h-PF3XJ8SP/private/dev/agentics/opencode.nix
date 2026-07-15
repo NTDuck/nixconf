@@ -5,9 +5,7 @@
 }: let
   llamaModels = import ./llama-models.expr;
 in {
-  den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.provides.to-users.homeManager = {...}: let
-    llamaCppModels = llamaModels;
-  in {
+  den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.provides.to-users.homeManager = {...}: {
     programs.opencode.settings = {
       model = lib.mkForce "llama.cpp/Qwen2.5 Coder [3B]";
       small_model = lib.mkForce "llama.cpp/Qwen2.5 Coder [3B]";
@@ -26,7 +24,7 @@ in {
               };
             };
           })
-          llamaCppModels);
+          llamaModels);
       };
     };
   };

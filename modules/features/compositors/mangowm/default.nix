@@ -94,7 +94,7 @@ in {
             l = "down";
           };
 
-          ipc = "${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia msg";
+          ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
           themeSwitch = themeSwitchCommands pkgs;
           themeSwitchClient = {
             light = pkgs.writeShellScriptBin "mango-theme-light-client" ''
@@ -199,7 +199,7 @@ in {
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
           ${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY
 
-          ${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia &
+          ${config.programs.noctalia.package}/bin/noctalia &
 
           fcitx5 -d -r &
 
