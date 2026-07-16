@@ -5,9 +5,9 @@
     ...
   }: {
     services.llama-cpp = {
-      # package = lib.mkForce (pkgs.unstable.llama-cpp.override {
-      #   cudaSupport = true;
-      # });
+      package = lib.mkForce (pkgs.unstable.llama-cpp.override {
+        cudaSupport = true;
+      });
 
       modelsPreset = import ./llama-models.expr;
     };
