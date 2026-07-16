@@ -1,17 +1,15 @@
-{den, ...}: let
-  llamaModels = import ./llama-models.expr;
-in {
+{den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.nixos = {
     pkgs,
     lib,
     ...
   }: {
     services.llama-cpp = {
-      package = lib.mkForce (pkgs.unstable.llama-cpp.override {
-        cudaSupport = true;
-      });
+      # package = lib.mkForce (pkgs.unstable.llama-cpp.override {
+      #   cudaSupport = true;
+      # });
 
-      modelsPreset = llamaModels;
+      modelsPreset = import ./llama-models.expr;
     };
 
     # Gemma downloads still need HF_TOKEN here after accepting Google's terms,

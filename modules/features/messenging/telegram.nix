@@ -22,7 +22,8 @@
       };
 
       environment.systemPackages = [
-        inputs.ayugram.packages.${pkgs.stdenv.hostPlatform.system}.ayugram-desktop
+        pkgs.unstable.telegram-desktop
+        # inputs.ayugram.packages.${pkgs.stdenv.hostPlatform.system}.ayugram-desktop
       ];
     };
   };
