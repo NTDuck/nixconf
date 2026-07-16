@@ -29,7 +29,7 @@
 in {
   den.aspects.hp-probook-450g3-5CD8132YC3 = {
     nixos = {lib, ...}: {
-      # The Dell is the low-end host; keep compositor and application opacity
+      # The HP is a low-end host; keep compositor and application opacity
       # fully opaque so Mango does less blending work.
       stylix.opacity.applications = lib.mkForce 1.0;
     };

@@ -2,7 +2,6 @@
   den.aspects.hp-probook-450g3-5CD8132YC3.nixos = {
     config,
     lib,
-    pkgs,
     modulesPath,
     ...
   }: {
@@ -36,6 +35,14 @@
     swapDevices = [
       {device = "/dev/disk/by-uuid/6561ae85-6ede-4b42-a200-a1fd04e26628";}
     ];
+
+    services.udev.extraHwdb = ''
+      # This host's internal keyboard has a faulty grave/backtick key that can
+      # fire uncontrollably. The rule is host-local, so the broad AT keyboard
+      # match is intentional and does not affect external hosts.
+      evdev:atkbd:dmi:*
+        KEYBOARD_KEY_29=reserved
+    '';
 
     nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
     hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

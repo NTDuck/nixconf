@@ -5,17 +5,18 @@
     ];
 
     nixos = {pkgs, ...}: let
-      nmHotspot = pkgs.writeShellApplication {
-        name = "nm-hotspot";
+      hotspotUp = pkgs.writeShellApplication {
+        name = "hotspot-up";
         runtimeInputs = [
           pkgs.coreutils
           pkgs.gawk
           pkgs.networkmanager
         ];
         text = ''
-          ssid="''${1:-ayin-hotspot}"
-          ifname="''${2:-}"
-          connection="hotspot-$ssid"
+          ssid="Hotto Doggo"
+          password="20041889"
+          connection="hotspot-hotto-doggo"
+          ifname="''${1:-}"
 
           if [ -z "$ifname" ]; then
             ifname="$(nmcli -t -f DEVICE,TYPE device | awk -F: '$2 == "wifi" { print $1; exit }')"
@@ -26,38 +27,34 @@
             exit 1
           fi
 
-          printf "Hotspot password for %s: " "$ssid" >&2
-          trap 'stty echo' EXIT
-          stty -echo
-          read -r password
-          stty echo
-          trap - EXIT
-          printf '\n' >&2
-
-          if [ "''${#password}" -lt 8 ]; then
-            echo "WPA hotspot password must be at least 8 characters." >&2
+          if ! nmcli -t -f DEVICE,TYPE,STATE device | awk -F: '$2 != "wifi" && $3 == "connected" { found = 1 } END { exit !found }'; then
+            echo "No connected non-Wi-Fi uplink found; refusing to turn the active Wi-Fi client into a hotspot." >&2
             exit 1
           fi
 
           nmcli radio wifi on
-          nmcli device wifi hotspot \
-            ifname "$ifname" \
-            con-name "$connection" \
-            ssid "$ssid" \
-            password "$password"
+          nmcli connection delete "$connection" >/dev/null 2>&1 || true
+          nmcli connection add type wifi ifname "$ifname" con-name "$connection" autoconnect no ssid "$ssid"
+          nmcli connection modify "$connection" \
+            802-11-wireless.mode ap \
+            802-11-wireless.band bg \
+            wifi-sec.key-mgmt wpa-psk \
+            wifi-sec.psk "$password" \
+            ipv4.method shared \
+            ipv6.method disabled
+          nmcli connection up "$connection"
 
-          nmcli connection modify "$connection" connection.autoconnect no
-          echo "Started hotspot '$ssid' on $ifname as NetworkManager connection '$connection'."
+          echo "Started 2.4 GHz hotspot '$ssid' on $ifname as NetworkManager connection '$connection'."
         '';
       };
 
-      nmHotspotDown = pkgs.writeShellApplication {
-        name = "nm-hotspot-down";
+      hotspotDown = pkgs.writeShellApplication {
+        name = "hotspot-down";
         runtimeInputs = [
           pkgs.networkmanager
         ];
         text = ''
-          connection="''${1:-hotspot-ayin-hotspot}"
+          connection="hotspot-hotto-doggo"
           nmcli connection down "$connection"
         '';
       };
@@ -71,8 +68,8 @@
       };
 
       environment.systemPackages = [
-        nmHotspot
-        nmHotspotDown
+        hotspotUp
+        hotspotDown
       ];
     };
   };

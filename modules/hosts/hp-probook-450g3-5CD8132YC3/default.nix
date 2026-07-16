@@ -21,7 +21,6 @@
       (den.aspects.greeters.tuigreet {
         command = config: "${config.programs.mango.package}/bin/mango";
       })
-      # `linux-cachyos-latest-7.1.1` conflicts with `broadcom-sta`
       # den.aspects.kernels.cachyos-kernel
       den.aspects.messenging.discord
       den.aspects.messenging.telegram
