@@ -16,8 +16,10 @@
           autoshare = false;
           autoupdate = false;
 
-          model = "llama.cpp/Qwen2.5 Coder [3B]";
-          small_model = "llama.cpp/Qwen2.5 Coder [3B]";
+          # Colibri is registered below for explicit text-only use, but
+          # OpenCode's normal agent loop needs a tool-capable backend.
+          model = "llama.cpp/Qwen2.5 Coder [General, 1.5B]";
+          small_model = "llama.cpp/Qwen2.5 Coder [General, 1.5B]";
 
           provider = {
             colibri = {

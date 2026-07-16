@@ -4,11 +4,7 @@
   ...
 }: {
   den.aspects.stylix = {
-    nixos = {
-      pkgs,
-      lib,
-      ...
-    }: {
+    nixos = {pkgs, ...}: {
       imports = [
         inputs.stylix.nixosModules.stylix
       ];
@@ -16,6 +12,9 @@
       stylix = {
         enable = true;
 
+        # The system is intentionally single-polarity now; the old runtime
+        # light/dark switch specialisation was removed because it made
+        # activation brittle and mixed system state with Noctalia IPC state.
         polarity = "dark";
         base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa-dragon.yaml";
 
@@ -61,10 +60,6 @@
         };
 
         # targets.console.enable = false;
-      };
-
-      specialisation.light-mode.configuration = {
-        stylix.polarity = lib.mkForce "light";
       };
     };
   };

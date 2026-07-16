@@ -85,6 +85,8 @@
     preservation.url = "github:nix-community/preservation";
   };
 
+  # Keep evaluator policy in the flake so `nh os switch` and CI see the same
+  # settings. References:
   # https://nix.dev/manual/nix/latest/command-ref/conf-file#available-settings
   # https://codeberg.org/Adda/nixos-config/src/commit/826b5ec6f5733e4b6bc0771dc9639e2e074358b5/flake.nix
   nixConfig = {

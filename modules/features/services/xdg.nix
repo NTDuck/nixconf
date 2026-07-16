@@ -5,6 +5,8 @@
       pkgs,
       ...
     }: let
+      # Mango is a wlroots compositor, so screen capture goes through
+      # xdg-desktop-portal-wlr while generic dialogs still fall back to GTK.
       wlrootsPortal = {
         default = ["gtk"];
 

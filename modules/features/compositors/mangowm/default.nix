@@ -2,24 +2,18 @@
   den,
   inputs,
   ...
-}: let
-  themeSwitchCommands = pkgs: {
-    light = pkgs.writeShellScriptBin "mango-theme-light-system" ''
-      exec /run/current-system/specialisation/light-mode/activate
-    '';
-    dark = pkgs.writeShellScriptBin "mango-theme-dark-system" ''
-      exec /nix/var/nix/profiles/system/bin/switch-to-configuration test
-    '';
-  };
-in {
+}: {
   den.aspects.compositors.mangowm = {
     includes = [
+      # Mango config and binds use Noctalia's IPC, and this session starts Noctalia
+      # explicitly so its bars/lock shell exist in the compositor-only login.
       den.aspects.noctalia
       den.aspects.services.cliphist # https://mangowm.github.io/docs/configuration/xdg-portals#clipboard-manager
+      # Mango is not a full desktop environment; start the input method inside
+      # the compositor session so Vietnamese input works after login/reload.
       den.aspects.services.fcitx5
       den.aspects.services.gnome-keyring # https://mangowm.github.io/docs/configuration/xdg-portals#gnome-keyring
       den.aspects.services.xdg
-      den.aspects.terminals.kitty
     ];
 
     nixos = {pkgs, ...}: {
@@ -40,35 +34,6 @@ in {
 
         addLoginEntry = true;
       };
-    };
-
-    provides.to-users.nixos = {
-      pkgs,
-      user,
-      ...
-    }: let
-      themeSwitch = themeSwitchCommands pkgs;
-    in {
-      environment.systemPackages = [
-        themeSwitch.light
-        themeSwitch.dark
-      ];
-
-      security.sudo.extraRules = [
-        {
-          users = [user.userName];
-          commands = [
-            {
-              command = "${themeSwitch.light}/bin/mango-theme-light-system";
-              options = ["NOPASSWD"];
-            }
-            {
-              command = "${themeSwitch.dark}/bin/mango-theme-dark-system";
-              options = ["NOPASSWD"];
-            }
-          ];
-        }
-      ];
     };
 
     homeManager = {
@@ -95,19 +60,6 @@ in {
           };
 
           ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
-          themeSwitch = themeSwitchCommands pkgs;
-          themeSwitchClient = {
-            light = pkgs.writeShellScriptBin "mango-theme-light-client" ''
-              set -e
-              sudo -n ${themeSwitch.light}/bin/mango-theme-light-system
-              ${ipc} theme-mode-set light
-            '';
-            dark = pkgs.writeShellScriptBin "mango-theme-dark-client" ''
-              set -e
-              sudo -n ${themeSwitch.dark}/bin/mango-theme-dark-system
-              ${ipc} theme-mode-set dark
-            '';
-          };
         in {
           repeat_rate = 50;
           repeat_delay = 150;
@@ -125,21 +77,22 @@ in {
           gappoh = 8;
           gappov = 8;
 
-          blur = 1;
-          blur_layer = 1;
-          blur_params_radius = 8;
-          blur_params_num_passes = 2;
-          border_radius = 16;
+          # Keep the shared compositor profile cheap; host aspects opt back
+          # into blur, opacity, animations, and terminal choice where hardware
+          # can afford it.
+          blur = 0;
+          blur_layer = 0;
+          border_radius = 8;
 
-          focused_opacity = config.stylix.opacity.applications;
-          unfocused_opacity = 0.72;
+          focused_opacity = 1.0;
+          unfocused_opacity = 1.0;
 
-          animation_type_open = "slide";
-          animation_type_close = "slide";
-          layer_animation_type_open = "fade";
-          layer_animation_type_close = "fade";
-          # TODO Change curve
-          # https://www.cssportal.com/css-cubic-bezier-generator/
+          animations = 0;
+          layer_animations = 0;
+          animation_type_open = "none";
+          animation_type_close = "none";
+          layer_animation_type_open = "none";
+          layer_animation_type_close = "none";
 
           circle_layout = "dwindle,scroller";
 
@@ -153,16 +106,12 @@ in {
             [
               "SUPER,a,toggleoverview"
               "SUPER,s,switch_layout"
-              "SUPER,z,spawn,${themeSwitchClient.light}/bin/mango-theme-light-client"
-              "SUPER,x,spawn,${themeSwitchClient.dark}/bin/mango-theme-dark-client"
               "SUPER,q,killclient"
               "SUPER,f,togglemaximizescreen"
               # "SUPER,f,togglefakefullscreen"
               "SUPER+SHIFT,f,togglefullscreen"
               "SUPER+SHIFT,e,quit"
 
-              "SUPER,Return,spawn,${pkgs.unstable.kitty}/bin/kitty"
-              # "SUPER,Return,spawn,${pkgs.unstable.foot}/bin/footclient"
               "SUPER,d,spawn,${ipc} panel-toggle launcher"
               "SUPER+CTRL,l,spawn,${ipc} session lock"
             ]
@@ -187,22 +136,12 @@ in {
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all
           ${pkgs.systemd}/bin/systemctl --user import-environment
 
-          # https://mangowm.github.io/docs/configuration/monitors#using-xwayland-satellite-to-prevent-blurry-xwayland-apps
-          ${pkgs.unstable.xwayland-satellite}/bin/xwayland-satellite :2 &
-          for _ in $(${pkgs.coreutils}/bin/seq 1 100); do
-            if ${pkgs.xset}/bin/xset -display :2 q >/dev/null 2>&1; then
-              break
-            fi
-            ${pkgs.coreutils}/bin/sleep 0.05
-          done
-          export DISPLAY=:2
-          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
-          ${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY
-
           ${config.programs.noctalia.package}/bin/noctalia &
 
           fcitx5 -d -r &
 
+          # Keep the portal backend in the compositor session. Without this,
+          # screen/clipboard portal requests can race systemd activation.
           ${pkgs.xdg-desktop-portal-wlr}/bin/xdg-desktop-portal-wlr &
         '';
 

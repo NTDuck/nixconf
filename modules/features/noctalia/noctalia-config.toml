@@ -43,7 +43,7 @@ auto_locate = true
 
 [lockscreen]
 blurred_desktop = true
-wallpaper = "@assetRoot@/wallpapers/girls-last-tour-library.jpg"
+wallpaper = "${inputs.self}/assets/wallpapers/girls-last-tour-library.jpg"
 
 [lockscreen_widgets]
 enabled = false
@@ -76,7 +76,7 @@ widget_order = [ "lockscreen-login-box@eDP-1" ]
 layer = "overlay"
 
 [shell]
-avatar_path = "@assetRoot@/wallpapers/avatars/default.png"
+avatar_path = "${inputs.self}/assets/wallpapers/avatars/default.png"
 font_family = "Inter"
 polkit_agent = true
 settings_show_advanced = true
@@ -113,20 +113,20 @@ wallpaper_scheme = "m3-content"
     enable_community_templates = false
 
 [wallpaper]
-directory = "@assetRoot@/wallpapers/"
+directory = "${inputs.self}/assets/wallpapers/"
 transition_on_startup = true
 
     [wallpaper.automation]
     recursive = false
 
     [wallpaper.default]
-    path = "@assetRoot@/wallpapers/distort.jpg"
+    path = "${inputs.self}/assets/wallpapers/distort.jpg"
 
     [wallpaper.last]
-    path = "@assetRoot@/wallpapers/distort.jpg"
+    path = "${inputs.self}/assets/wallpapers/distort.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "@assetRoot@/wallpapers/distort.jpg"
+    path = "${inputs.self}/assets/wallpapers/distort.jpg"
 
 [weather]
 refresh_minutes = 5

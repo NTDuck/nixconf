@@ -5,6 +5,8 @@
 }: {
   den.aspects.messenging.telegram = {
     nixos = {pkgs, ...}: {
+      # AyuGram publishes binary caches; without them `nh os switch` can spend
+      # a long time building the Telegram fork locally.
       # https://github.com/ndfined-crp/ayugram-desktop#--manual-binary-cache-setup
       nix.settings = {
         extra-substituters = [

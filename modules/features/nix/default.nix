@@ -11,6 +11,8 @@
     }: let
       config = {
         allowBroken = false;
+        # This repository still has several unfree desktop/driver packages.
+        # Keep the policy centralized until those exceptions move to aspects.
         allowUnfree = true;
 
         allowInsecurePredicate = pkg:

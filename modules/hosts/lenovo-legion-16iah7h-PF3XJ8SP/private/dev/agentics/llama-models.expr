@@ -1,66 +1,126 @@
-{
-  gemma-3-it-1b = {
-    alias = "Gemma 3 IT [1B]";
-    hf-repo = "google/gemma-3-1b-it-qat-q4_0-gguf";
-    hf-file = "gemma-3-1b-it-q4_0.gguf";
-    ctx-size = 16384;
-    n-predict = 4096;
-    n-gpu-layers = 999;
-    temp = "0.7";
-    top-p = "0.95";
-  };
-  gemma-3-it-4b = {
-    alias = "Gemma 3 IT [4B]";
-    hf-repo = "google/gemma-3-4b-it-qat-q4_0-gguf";
-    hf-file = "gemma-3-4b-it-q4_0.gguf";
-    ctx-size = 16384;
-    n-predict = 4096;
-    n-gpu-layers = 999;
-    temp = "0.7";
-    top-p = "0.95";
-  };
-  gemma-3-it-12b = {
-    alias = "Gemma 3 IT [12B]";
-    hf-repo = "google/gemma-3-12b-it-qat-q4_0-gguf";
-    hf-file = "gemma-3-12b-it-q4_0.gguf";
-    ctx-size = 8192;
-    n-predict = 4096;
-    fit = "on";
-    flash-attn = "on";
-    temp = "0.7";
-    top-p = "0.95";
-  };
-  gemma-3-it-27b = {
-    alias = "Gemma 3 IT [27B]";
-    hf-repo = "google/gemma-3-27b-it-qat-q4_0-gguf";
-    hf-file = "gemma-3-27b-it-q4_0.gguf";
-    ctx-size = 8192;
-    n-predict = 4096;
-    fit = "on";
-    flash-attn = "on";
-    temp = "0.7";
-    top-p = "0.95";
-  };
-  qwen3-thinking-30b-a3b = {
-    alias = "Qwen3 Thinking [30B]";
-    hf-repo = "unsloth/Qwen3-30B-A3B-Thinking-2507-GGUF";
-    hf-file = "Qwen3-30B-A3B-Thinking-2507-Q4_K_M.gguf";
-    ctx-size = 8192;
-    n-predict = 4096;
-    fit = "on";
-    flash-attn = "on";
-    temp = "0.6";
-    top-p = "0.95";
-  };
-  qwen2_5-coder-3b = {
-    alias = "Qwen2.5 Coder [3B]";
-    hf-repo = "Qwen/Qwen2.5-Coder-3B-Instruct-GGUF";
-    hf-file = "qwen2.5-coder-3b-instruct-q4_k_m.gguf";
-    ctx-size = 16384;
-    n-predict = 4096;
+let
+  cudaFast = {
     n-gpu-layers = 999;
     flash-attn = "on";
+  };
+
+  partialCuda = {
+    fit = "on";
+    flash-attn = "on";
+  };
+
+  qwenCoder1_5b = techStack: {
+    alias = "Qwen2.5 Coder [${techStack}, 1.5B]";
+    hf-repo = "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF";
+    hf-file = "qwen2.5-coder-1.5b-instruct-q4_k_m.gguf";
+    ctx-size = 16384;
+    n-predict = 2048;
     temp = "0.2";
     top-p = "0.9";
-  };
-}
+  } // cudaFast;
+
+  toolchainSlms = builtins.listToAttrs (map
+    (techStack: {
+      name = "qwen2_5-coder-1_5b-${techStack.slug}";
+      value = qwenCoder1_5b techStack.label;
+    }) [
+      {
+        slug = "android";
+        label = "Android";
+      }
+      {
+        slug = "c-cpp";
+        label = "C/C++";
+      }
+      {
+        slug = "go";
+        label = "Go";
+      }
+      {
+        slug = "java-kotlin";
+        label = "Java/Kotlin";
+      }
+      {
+        slug = "javascript-typescript";
+        label = "JavaScript/TypeScript";
+      }
+      {
+        slug = "lua";
+        label = "Lua";
+      }
+      {
+        slug = "nix";
+        label = "Nix";
+      }
+      {
+        slug = "protobuf";
+        label = "Protobuf";
+      }
+      {
+        slug = "python";
+        label = "Python";
+      }
+      {
+        slug = "rust";
+        label = "Rust";
+      }
+      {
+        slug = "topiary";
+        label = "Topiary/Nickel/Tree-sitter";
+      }
+    ]);
+in
+  {
+    qwen3-thinking-4b-planning = {
+      alias = "Qwen3 Thinking 2507 [Planning, 4B]";
+      hf-repo = "unsloth/Qwen3-4B-Thinking-2507-GGUF";
+      hf-file = "Qwen3-4B-Thinking-2507-Q4_K_M.gguf";
+      ctx-size = 16384;
+      n-predict = 4096;
+      temp = "0.6";
+      top-p = "0.95";
+    } // cudaFast;
+
+    phi4-mini-reasoning-system-design = {
+      alias = "Phi-4 Mini Reasoning [System Design, 3.8B]";
+      hf-repo = "unsloth/Phi-4-mini-reasoning-GGUF";
+      hf-file = "Phi-4-mini-reasoning-Q4_K_M.gguf";
+      ctx-size = 8192;
+      n-predict = 4096;
+      temp = "0.3";
+      top-p = "0.9";
+    } // cudaFast;
+
+    deepseek-r1-distill-qwen-7b-reasoning = {
+      alias = "DeepSeek R1 Distill Qwen [Reasoning, 7B]";
+      hf-repo = "unsloth/DeepSeek-R1-Distill-Qwen-7B-GGUF";
+      hf-file = "DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf";
+      ctx-size = 8192;
+      n-predict = 4096;
+      temp = "0.6";
+      top-p = "0.95";
+    } // partialCuda;
+
+    qwen3-coder-30b-a3b-system-design = {
+      alias = "Qwen3 Coder [System Design, 30B-A3B]";
+      hf-repo = "unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF";
+      hf-file = "Qwen3-Coder-30B-A3B-Instruct-UD-IQ2_XXS.gguf";
+      ctx-size = 8192;
+      n-predict = 2048;
+      temp = "0.2";
+      top-p = "0.9";
+    } // partialCuda;
+
+    qwen2_5-coder-1_5b-general = qwenCoder1_5b "General";
+
+    qwen2_5-coder-7b-general = {
+      alias = "Qwen2.5 Coder [General, 7B]";
+      hf-repo = "Qwen/Qwen2.5-Coder-7B-Instruct-GGUF";
+      hf-file = "qwen2.5-coder-7b-instruct-q4_k_m.gguf";
+      ctx-size = 16384;
+      n-predict = 4096;
+      temp = "0.2";
+      top-p = "0.9";
+    } // cudaFast;
+  }
+  // toolchainSlms

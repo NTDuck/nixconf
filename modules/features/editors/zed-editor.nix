@@ -8,6 +8,8 @@
       programs.zed-editor = {
         enable = true;
 
+        # Wrapper kept as a reference for the upstream Wayland regression; the
+        # current pin no longer needs forcing Zed onto X11.
         # https://github.com/zed-industries/zed/issues/32792
         # package = pkgs.symlinkJoin {
         #   name = "zed";

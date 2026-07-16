@@ -13,9 +13,10 @@
           enable = true;
           qemu = {
             package = pkgs.unstable.qemu_kvm;
-            # Enable TPM 2.0 support, required for Windows 11 [citation:2]
+            # Windows 11 guests require TPM 2.0.
             swtpm.enable = true;
-            # Enable UEFI support with OVMF [citation:2][citation:4]
+            # Keep OVMF nearby for Windows guests, but leave it disabled until
+            # a VM definition needs explicit firmware ownership.
             # ovmf.enable = true;
             # ovmf.packages = [pkgs.unstable.OVMFFull.fd];
           };
@@ -25,11 +26,12 @@
           #   autostart = true;
           # };
         };
-        # Enables USB redirection support, which is helpful for peripherals [citation:4]
+        # Enable SPICE USB redirection so guests can use attached peripherals.
         spiceUSBRedirection.enable = true;
       };
 
-      # Seems like Legion-specific? This is to connect to internet
+      # libvirt's default NAT network serves DHCP/DNS from virbr0. The firewall
+      # must allow those host-side services or guests boot without networking.
       networking.firewall.interfaces.virbr0 = {
         # DNS and DHCP from virtual machines to the host.
         allowedUDPPorts = [
@@ -43,14 +45,14 @@
         ];
       };
 
-      # Install a graphical interface and necessary tools [citation:2][citation:4]
+      # GUI management and Windows guest integration tools.
       environment.systemPackages = [
         pkgs.unstable.virt-manager # Main GUI for managing VMs
         pkgs.unstable.virt-viewer # For connecting to VM consoles
         pkgs.unstable.spice # SPICE protocol support
         pkgs.unstable.spice-gtk
-        pkgs.unstable.virtio-win # VirtIO drivers for Windows [citation:2]
-        pkgs.unstable.spice-vdagent # SPICE guest tools for Windows [citation:2]
+        pkgs.unstable.virtio-win # VirtIO drivers for Windows guests
+        pkgs.unstable.spice-vdagent # SPICE guest tools for Windows guests
         # qemu is included as a dependency
       ];
 

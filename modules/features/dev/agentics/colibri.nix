@@ -5,6 +5,8 @@
 }: let
   colibriPackage = pkgs:
     inputs.colibri.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+      # Upstream's `make test-c` invokes `python3 tools/run_tests.py`; the
+      # package did not declare Python, so checkPhase failed in the sandbox.
       nativeBuildInputs =
         (old.nativeBuildInputs or [])
         ++ [
@@ -22,6 +24,8 @@
         model_dir="''${COLI_MODEL:-$HOME/.local/share/colibri/models/GLM-5.2-colibri-int4-with-int8-mtp}"
         marker="$model_dir/.download-complete"
 
+        # The model is hundreds of GB. A marker avoids treating a partially
+        # created directory as a finished Hugging Face download.
         if [ ! -e "$marker" ]; then
           mkdir -p "$model_dir"
           huggingface-cli download mateogrgic/GLM-5.2-colibri-int4-with-int8-mtp --local-dir "$model_dir"
@@ -54,6 +58,8 @@ in {
           Documentation = "https://github.com/JustVugg/colibri";
         };
 
+        # Colibri is disk-streamed and very slow to cold-start; keep it
+        # explicit instead of starting a 744B model on every login.
         Install.WantedBy = [];
 
         Service = {
