@@ -19,6 +19,9 @@
           builtins.elem (lib.getName pkg) [
             "pnpm"
             "broadcom-sta"
+            # Vesktop 1.6.5 in the pinned unstable set validates against
+            # Electron 40 at build time; keep this exception narrow.
+            "electron"
           ];
       };
     in {
