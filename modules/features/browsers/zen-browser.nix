@@ -7,7 +7,20 @@
     DisableAppUpdate = true;
     DisableTelemetry = true;
     DisablePocket = true;
-    Permissions.ScreenShare.Allow = ["https://meet.google.com"];
+    Permissions.ScreenShare = {
+      BlockNewRequests = false;
+      Locked = true;
+    };
+    Preferences = {
+      # Global WebRTC permission bypass. Firefox's ScreenShare policy supports
+      # explicit origins, but not a documented wildcard allowlist; using the
+      # media permission switch keeps screen sharing origin-agnostic and lets
+      # the Wayland portal remain the interactive capture gate.
+      "media.navigator.permission.disabled" = {
+        Value = true;
+        Status = "locked";
+      };
+    };
   };
 in {
   den.aspects.browsers.zen-browser = {
