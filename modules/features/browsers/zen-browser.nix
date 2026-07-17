@@ -2,7 +2,14 @@
   den,
   inputs,
   ...
-}: {
+}: let
+  policies = {
+    DisableAppUpdate = true;
+    DisableTelemetry = true;
+    DisablePocket = true;
+    Permissions.ScreenShare.Allow = ["https://meet.google.com"];
+  };
+in {
   den.aspects.browsers.zen-browser = {
     homeManager = {
       user,
@@ -16,7 +23,15 @@
 
       programs.zen-browser = {
         enable = true;
-        # package = pkgs.unstable.zen-beta;
+
+        # The Zen Home Manager module evaluates `policies`, but its current
+        # package path wraps Zen with an empty final policies.json. Follow the
+        # flake's documented package override path so Zen itself reads the
+        # policy from the final wrapped package.
+        # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/03-policies-package-override.nix
+        package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.beta.override {
+          extraPolicies = policies;
+        };
 
         setAsDefaultBrowser = true;
 
@@ -31,11 +46,7 @@
         };
 
         # https://mozilla.github.io/policy-templates/
-        policies = {
-          DisableAppUpdate = true;
-          DisableTelemetry = true;
-          DisablePocket = true;
-        };
+        inherit policies;
 
         profiles.${user.name} = {
           settings = {
@@ -45,7 +56,11 @@
             # WebRTC screen sharing on wlroots compositors goes through
             # xdg-desktop-portal-wlr/PipeWire rather than X11 capture.
             "media.webrtc.capture.allow-pipewire" = true;
-            "media.webrtc.camera.allow-pipewire" = true;
+            # Firefox/Zen defaults this to false. Keeping it false avoids a
+            # Google Meet Linux/Wayland regression where Meet can fail device
+            # permission setup before reaching the screen-share portal prompt.
+            "media.webrtc.camera.allow-pipewire" = false;
+            "media.getusermedia.screensharing.enabled" = true;
             "widget.use-xdg-desktop-portal" = 1;
             "widget.use-xdg-desktop-portal.file-picker" = 1;
             "widget.use-xdg-desktop-portal.mime-handler" = 1;
