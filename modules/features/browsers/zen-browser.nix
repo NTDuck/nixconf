@@ -20,6 +20,16 @@
 
         setAsDefaultBrowser = true;
 
+        # The Zen flake exposes `env` specifically for launcher-level variables.
+        # Set Wayland/PipeWire here, not only in the compositor session, so
+        # WebRTC capture works from desktop entries and terminal launches alike.
+        # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/16-environment-variables.nix
+        env = {
+          GTK_USE_PORTAL = "1";
+          MOZ_ENABLE_WAYLAND = "1";
+          XDG_SESSION_TYPE = "wayland";
+        };
+
         # https://mozilla.github.io/policy-templates/
         policies = {
           DisableAppUpdate = true;
@@ -35,6 +45,8 @@
             # WebRTC screen sharing on wlroots compositors goes through
             # xdg-desktop-portal-wlr/PipeWire rather than X11 capture.
             "media.webrtc.capture.allow-pipewire" = true;
+            "media.webrtc.camera.allow-pipewire" = true;
+            "widget.use-xdg-desktop-portal" = 1;
             "widget.use-xdg-desktop-portal.file-picker" = 1;
             "widget.use-xdg-desktop-portal.mime-handler" = 1;
           };
