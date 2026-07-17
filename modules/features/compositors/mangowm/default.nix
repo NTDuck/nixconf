@@ -25,7 +25,9 @@
         XDG_CURRENT_DESKTOP = "mango";
         XDG_SESSION_DESKTOP = "mango";
         XDG_SESSION_TYPE = "wayland";
+        ELECTRON_OZONE_PLATFORM_HINT = "auto";
         MOZ_ENABLE_WAYLAND = "1";
+        NIXOS_OZONE_WL = "1";
       };
 
       programs.mango = {
@@ -133,16 +135,12 @@
         };
 
         autostart_sh = ''
-          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all
-          ${pkgs.systemd}/bin/systemctl --user import-environment
+          ${pkgs.unstable.dbus}/bin/dbus-update-activation-environment --systemd --all
+          ${pkgs.unstable.systemd}/bin/systemctl --user import-environment
 
           ${config.programs.noctalia.package}/bin/noctalia &
 
           fcitx5 -d -r &
-
-          # Keep the portal backend in the compositor session. Without this,
-          # screen/clipboard portal requests can race systemd activation.
-          ${pkgs.xdg-desktop-portal-wlr}/bin/xdg-desktop-portal-wlr &
         '';
 
         systemd = {

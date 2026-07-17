@@ -32,6 +32,11 @@
             "zen.workspaces.continue-where-left-off" = true;
             "zen.view.compact.hide-tabbar" = true;
             "zen.urlbar.behavior" = "float";
+            # WebRTC screen sharing on wlroots compositors goes through
+            # xdg-desktop-portal-wlr/PipeWire rather than X11 capture.
+            "media.webrtc.capture.allow-pipewire" = true;
+            "widget.use-xdg-desktop-portal.file-picker" = 1;
+            "widget.use-xdg-desktop-portal.mime-handler" = 1;
           };
 
           mods = [
