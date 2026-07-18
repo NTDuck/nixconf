@@ -30,7 +30,9 @@ in {
       config,
       pkgs,
       ...
-    }: {
+    }: let
+      firefox-addons = inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system};
+    in {
       # https://zen-browser-flake.nshard.com/
       imports = [inputs.zen-browser.homeModules.beta];
 
@@ -62,6 +64,14 @@ in {
         inherit policies;
 
         profiles.${user.name} = {
+          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/04b-extensions-rycee.nix
+          extensions = {
+            force = true;
+            packages = [
+              firefox-addons.ublock-origin
+            ];
+          };
+
           settings = {
             "zen.workspaces.continue-where-left-off" = true;
             "zen.view.compact.hide-tabbar" = true;
