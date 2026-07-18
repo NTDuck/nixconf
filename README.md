@@ -15,6 +15,11 @@
 - Wallpaper: [./assets/wallpapers/shifting-tides.jpg](https://x.com/elfilter_a/status/2043948619460411476)
 <!--https://jp.pinterest.com/pin/1069112399050639591/-->
 
+
+- https://not-a-number.io/2025/refactoring-my-infrastructure-as-code-configurations/
+- https://blog.decent.id/post/flake-parts-and-dendritic-nix/
+- https://simonshine.dk/articles/dendritic-nix-with-nixos-shell/
+
 ## Den model
 - Host entities live under `den.hosts.x86_64-linux.<hostname>`.
 - Host-owned NixOS configuration lives directly on `den.aspects.<hostname>.nixos`.
