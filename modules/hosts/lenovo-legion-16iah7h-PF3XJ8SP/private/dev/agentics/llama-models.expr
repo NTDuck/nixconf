@@ -23,8 +23,8 @@ let
     alias = "Qwen2.5 Coder Instruct [${techStack} 1.5B total]";
     hf-repo = "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF";
     hf-file = "qwen2.5-coder-1.5b-instruct-q4_k_m.gguf";
-    ctx-size = 16384;
-    n-predict = 2048;
+    ctx-size = 8192;
+    n-predict = 1024;
     temp = "0.2";
     top-p = "0.9";
   } // cudaFast;
@@ -84,7 +84,7 @@ in
     gpt-oss-20b-daily-reasoning = {
       alias = "GPT-OSS [Daily Reasoning 21B total 3.6B active]";
       hf-repo = "ggml-org/gpt-oss-20b-GGUF";
-      hf-file = "gpt-oss-20b-mxfp4.gguf";
+      hf-file = "gpt-oss-20b-MXFP4.gguf";
       ctx-size = 8192;
       n-predict = 4096;
       temp = "1.0";
@@ -118,7 +118,7 @@ in
     phi4-reasoning-14b-debugging = {
       alias = "Phi-4 Reasoning [Algorithms 14B total]";
       hf-repo = "Mungert/Phi-4-reasoning-GGUF";
-      hf-file = "Phi-4-reasoning-q4_k.gguf";
+      hf-file = "Phi-4-reasoning-q4_k_m.gguf";
       ctx-size = 8192;
       n-predict = 4096;
       temp = "0.3";
@@ -190,7 +190,7 @@ in
     qwen2_5-coder-1_5b-base-completion = {
       alias = "Qwen2.5 Coder Base [Inline Completion 1.5B total]";
       hf-repo = "tensorblock/Qwen2.5-Coder-1.5B-GGUF";
-      hf-file = "Qwen2.5-Coder-1.5B-Q4_K_M.gguf";
+      hf-file = "Qwen2.5-Coder-1.5B-Q3_K_M.gguf";
       ctx-size = 8192;
       n-predict = 1024;
       temp = "0.2";
@@ -201,8 +201,8 @@ in
       alias = "Qwen2.5 Coder Instruct [Implementation 3B total]";
       hf-repo = "Qwen/Qwen2.5-Coder-3B-Instruct-GGUF";
       hf-file = "qwen2.5-coder-3b-instruct-q4_k_m.gguf";
-      ctx-size = 16384;
-      n-predict = 2048;
+      ctx-size = 8192;
+      n-predict = 1024;
       temp = "0.2";
       top-p = "0.9";
     } // cudaFast;

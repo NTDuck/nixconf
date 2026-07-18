@@ -6,12 +6,11 @@
         package = pkgs.unstable.llama-cpp;
       };
 
-      # systemd.services.llama-cpp = {
-      #   environment = {
-      #     XDG_CACHE_HOME = "/var/cache/llama-cpp";
-      #     MESA_SHADER_CACHE_DIR = "/var/cache/llama-cpp";
-      #   };
-      # };
+      systemd.services.llama-cpp.environment = {
+        HF_HOME = "/var/cache/llama-cpp/huggingface";
+        HF_HUB_CACHE = "/var/cache/llama-cpp/huggingface/hub";
+        XDG_CACHE_HOME = "/var/cache/llama-cpp";
+      };
     };
   };
 }
