@@ -14,7 +14,6 @@
 
   den.aspects.dev.agentics.local-inference = {
     includes = [
-      den.aspects.dev.agentics.colibri
       den.aspects.dev.agentics.llama-cpp
     ];
   };
