@@ -2,30 +2,27 @@
   den,
   lib,
   ...
-}: let
-  llamaModels = import ./llama-models.expr;
-in {
-  den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.provides.to-users.homeManager = {...}: {
-    programs.opencode.settings = {
-      model = lib.mkForce "llama.cpp/GPT-OSS [Daily Reasoning 21B total 3.6B active]";
-      small_model = lib.mkForce "llama.cpp/Qwen2.5 Coder Instruct [General 1.5B total]";
+}: {
+  den.aspects.lenovo-legion-16iah7h-PF3XJ8SP.provides.to-users.homeManager = {osConfig, ...}:
+    lib.mkIf osConfig.services.ollama.enable {
+      programs.opencode.settings = {
+        model = lib.mkForce "ollama/${builtins.elemAt osConfig.services.ollama.loadModels 0}";
+        small_model = lib.mkForce "ollama/${builtins.elemAt osConfig.services.ollama.loadModels 1}";
 
-      provider."llama.cpp" = {
-        options.apiKey = lib.mkDefault "none";
-        models = builtins.listToAttrs (lib.mapAttrsToList (name: preset: let
-            modelName = preset.alias or name;
-          in {
-            name = modelName;
-            value = {
-              name = lib.mkDefault modelName;
-              limit = {
-                context = lib.mkDefault (preset."ctx-size" or 32768);
-                output = lib.mkDefault (preset."n-predict" or 8192);
-              };
-            };
-          })
-          llamaModels);
+        provider.ollama = {
+          npm = "@ai-sdk/openai-compatible";
+          name = "Ollama";
+          options.apiKey = "none";
+          options.baseURL = "http://${osConfig.services.ollama.host}:${toString osConfig.services.ollama.port}/v1";
+          options.timeout = 600000;
+          options.chunkTimeout = 60000;
+
+          models = builtins.listToAttrs (map (model: {
+              name = model;
+              value.name = model;
+            })
+            osConfig.services.ollama.loadModels);
+        };
       };
     };
-  };
 }
