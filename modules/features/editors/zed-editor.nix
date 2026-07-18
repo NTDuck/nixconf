@@ -1,25 +1,8 @@
 {den, ...}: {
   den.aspects.editors.zed-editor = {
-    homeManager = {
-      pkgs,
-      lib,
-      ...
-    }: {
+    homeManager = {pkgs, ...}: {
       programs.zed-editor = {
         enable = true;
-
-        # Wrapper kept as a reference for the upstream Wayland regression; the
-        # current pin no longer needs forcing Zed onto X11.
-        # https://github.com/zed-industries/zed/issues/32792
-        # package = pkgs.symlinkJoin {
-        #   name = "zed";
-        #   paths = [pkgs.unstable.zed-editor];
-        #   buildInputs = [pkgs.makeWrapper];
-        #   postBuild = ''
-        #     wrapProgram $out/bin/zeditor \
-        #       --unset WAYLAND_DISPLAY
-        #   '';
-        # };
         package = pkgs.unstable.zed-editor;
 
         extensions = [
@@ -39,7 +22,7 @@
           cli_default_open_behaviour = "new_window";
 
           project_panel = {
-            default_width = 60.0;
+            default_width = 240.0;
             entry_spacing = "standard";
             dock = "left";
           };
