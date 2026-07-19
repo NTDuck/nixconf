@@ -21,8 +21,8 @@
         wlr = {
           enable = true;
           settings.screencast = {
-            chooser_type = "simple";
-            chooser_cmd = "${pkgs.slurp}/bin/slurp -f 'Monitor: %o' -or";
+            chooser_type = "none";
+            output_name = "eDP-1";
             force_mod_linear = 1;
           };
         };

@@ -138,6 +138,10 @@
           ${pkgs.unstable.dbus}/bin/dbus-update-activation-environment --systemd --all
           ${pkgs.unstable.systemd}/bin/systemctl --user import-environment
 
+          ${pkgs.systemd}/bin/systemctl --user restart \
+            xdg-desktop-portal-wlr.service \
+            xdg-desktop-portal.service
+
           ${config.programs.noctalia.package}/bin/noctalia &
 
           fcitx5 -d -r &
