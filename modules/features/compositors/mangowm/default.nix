@@ -73,10 +73,6 @@
         inputs.mangowm.hmModules.mango
       ];
 
-      home.packages = [
-        pkgs.xdg-terminal-exec
-      ];
-
       systemd.user.services = {
         xwayland-satellite = {
           Unit = {
@@ -171,20 +167,21 @@
           gappoh = 8;
           gappov = 8;
 
-          # Keep the shared compositor profile cheap enough for every host.
-          blur = 0;
-          blur_layer = 0;
-          border_radius = 8;
+          blur = 1;
+          blur_layer = 1;
+          blur_params_radius = 8;
+          blur_params_num_passes = 2;
+          border_radius = 16;
 
-          focused_opacity = 1.0;
-          unfocused_opacity = 1.0;
+          focused_opacity = config.stylix.opacity.applications;
+          unfocused_opacity = 0.72;
 
-          animations = 0;
-          layer_animations = 0;
-          animation_type_open = "none";
-          animation_type_close = "none";
-          layer_animation_type_open = "none";
-          layer_animation_type_close = "none";
+          animations = 1;
+          layer_animations = 1;
+          animation_type_open = "slide";
+          animation_type_close = "slide";
+          layer_animation_type_open = "fade";
+          layer_animation_type_close = "fade";
 
           circle_layout = "dwindle,scroller";
 
@@ -207,7 +204,7 @@
               "SUPER,d,spawn,${ipc} panel-toggle launcher"
               "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
               "SUPER+CTRL,l,spawn,${ipc} session lock"
-              "SUPER,Return,spawn,${pkgs.xdg-terminal-exec}/bin/xdg-terminal-exec"
+              "SUPER,Return,spawn,${pkgs.unstable.kitty}/bin/kitty"
             ]
             ++ (lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}") dirs)
             ++ (lib.mapAttrsToList (key: dir: "SUPER+SHIFT,${key},exchange_client,${dir}") dirs)
