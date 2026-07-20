@@ -45,6 +45,7 @@
       den.aspects.office.libreoffice
       den.aspects.office.texlive
       den.aspects.office.zathura
+      den.aspects.productivity.mermaid
       den.aspects.productivity.obsidian
       den.aspects.productivity.taskwarrior
       den.aspects.productivity.world-monitor
