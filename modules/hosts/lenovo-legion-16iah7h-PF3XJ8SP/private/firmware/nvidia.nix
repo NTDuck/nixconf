@@ -32,5 +32,10 @@
       pkgs.unstable.libva-utils
       pkgs.unstable.libva-vdpau-driver
     ];
+
+    environment.sessionVariables = {
+      __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+      LIBVA_DRIVER_NAME = "nvidia";
+    };
   };
 }

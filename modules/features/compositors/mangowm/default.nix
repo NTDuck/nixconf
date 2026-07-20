@@ -43,10 +43,102 @@
       config,
       lib,
       ...
-    }: {
+    }: let
+      internalOutput = "eDP-1";
+      hdmiOutputs = ["HDMI-A-1" "HDMI-A-2" "HDMI-1" "HDMI-2"];
+      hdmiMirrorUnits = lib.concatMapStringsSep " " (output: "hdmi-mirror@${output}.service") hdmiOutputs;
+      stopHdmiMirrors = "${pkgs.systemd}/bin/systemctl --user stop ${hdmiMirrorUnits} || true";
+      hdmiMirrorProfile = output: {
+        profile = {
+          name = "hdmi-mirror-${output}";
+
+          outputs = [
+            {
+              criteria = internalOutput;
+              status = "enable";
+            }
+            {
+              criteria = output;
+              status = "enable";
+            }
+          ];
+
+          exec = [
+            "${pkgs.systemd}/bin/systemctl --user restart hdmi-mirror@${output}.service"
+          ];
+        };
+      };
+    in {
       imports = [
         inputs.mangowm.hmModules.mango
       ];
+
+      home.packages = [
+        pkgs.xdg-terminal-exec
+      ];
+
+      systemd.user.services = {
+        xwayland-satellite = {
+          Unit = {
+            Description = "Xwayland Satellite";
+            PartOf = [config.wayland.systemd.target];
+            After = [config.wayland.systemd.target];
+          };
+
+          Service = {
+            ExecStart = "${pkgs.unstable.xwayland-satellite}/bin/xwayland-satellite :2";
+            Restart = "on-failure";
+            RestartSec = 1;
+          };
+        };
+
+        "hdmi-mirror@" = {
+          Unit = {
+            Description = "Mirror ${internalOutput} onto %i";
+            After = [config.wayland.systemd.target];
+            PartOf = [config.wayland.systemd.target];
+            ConditionEnvironment = "WAYLAND_DISPLAY";
+          };
+
+          Service = {
+            Type = "simple";
+            ExecStart = ''
+              ${pkgs.unstable.wl-mirror}/bin/wl-mirror \
+                --fullscreen-output %i \
+                --scaling fit \
+                ${internalOutput}
+            '';
+            Restart = "on-failure";
+            RestartSec = "1s";
+          };
+        };
+      };
+
+      services.kanshi = {
+        enable = true;
+        package = pkgs.unstable.kanshi;
+
+        settings =
+          (map hdmiMirrorProfile hdmiOutputs)
+          ++ [
+            {
+              profile = {
+                name = "laptop";
+
+                outputs = [
+                  {
+                    criteria = internalOutput;
+                    status = "enable";
+                  }
+                ];
+
+                exec = [
+                  stopHdmiMirrors
+                ];
+              };
+            }
+          ];
+      };
 
       wayland.windowManager.mango = {
         enable = true;
@@ -79,9 +171,7 @@
           gappoh = 8;
           gappov = 8;
 
-          # Keep the shared compositor profile cheap; host aspects opt back
-          # into blur, opacity, animations, and terminal choice where hardware
-          # can afford it.
+          # Keep the shared compositor profile cheap enough for every host.
           blur = 0;
           blur_layer = 0;
           border_radius = 8;
@@ -117,6 +207,7 @@
               "SUPER,d,spawn,${ipc} panel-toggle launcher"
               "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
               "SUPER+CTRL,l,spawn,${ipc} session lock"
+              "SUPER,Return,spawn,${pkgs.xdg-terminal-exec}/bin/xdg-terminal-exec"
             ]
             ++ (lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}") dirs)
             ++ (lib.mapAttrsToList (key: dir: "SUPER+SHIFT,${key},exchange_client,${dir}") dirs)
@@ -140,15 +231,25 @@
             WAYLAND_DISPLAY \
             XDG_CURRENT_DESKTOP \
             XDG_SESSION_DESKTOP \
-            XDG_SESSION_TYPE \
-            DISPLAY
+            XDG_SESSION_TYPE
 
           ${pkgs.systemd}/bin/systemctl --user import-environment \
             WAYLAND_DISPLAY \
             XDG_CURRENT_DESKTOP \
             XDG_SESSION_DESKTOP \
-            XDG_SESSION_TYPE \
-            DISPLAY
+            XDG_SESSION_TYPE
+
+          ${pkgs.systemd}/bin/systemctl --user start xwayland-satellite.service
+
+          for _ in $(${pkgs.coreutils}/bin/seq 1 100); do
+            if ${pkgs.xset}/bin/xset -display :2 q >/dev/null 2>&1; then
+              break
+            fi
+            ${pkgs.coreutils}/bin/sleep 0.05
+          done
+          export DISPLAY=:2
+          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
+          ${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY
 
           ${config.programs.noctalia.package}/bin/noctalia &
 

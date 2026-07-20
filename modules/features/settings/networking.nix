@@ -34,16 +34,21 @@
 
           nmcli radio wifi on
           nmcli connection delete "$connection" >/dev/null 2>&1 || true
-          nmcli device wifi hotspot \
+          nmcli connection add \
+            type wifi \
             ifname "$ifname" \
             con-name "$connection" \
-            ssid "$ssid" \
-            password "$password"
+            autoconnect no \
+            ssid "$ssid"
           nmcli connection modify "$connection" \
             connection.autoconnect no \
+            connection.interface-name "$ifname" \
+            802-11-wireless.mode ap \
             802-11-wireless.band bg \
             802-11-wireless.channel 6 \
+            802-11-wireless.hidden no \
             802-11-wireless-security.key-mgmt wpa-psk \
+            802-11-wireless-security.auth-alg open \
             802-11-wireless-security.proto rsn \
             802-11-wireless-security.pairwise ccmp \
             802-11-wireless-security.group ccmp \
