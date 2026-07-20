@@ -76,14 +76,6 @@ in {
             "zen.workspaces.continue-where-left-off" = true;
             "zen.view.compact.hide-tabbar" = true;
             "zen.urlbar.behavior" = "float";
-            # WebRTC screen sharing on wlroots compositors goes through
-            # xdg-desktop-portal-wlr/PipeWire rather than X11 capture.
-            "media.webrtc.capture.allow-pipewire" = true;
-            # Firefox/Zen defaults this to false. Keeping it false avoids a
-            # Google Meet Linux/Wayland regression where Meet can fail device
-            # permission setup before reaching the screen-share portal prompt.
-            "media.webrtc.camera.allow-pipewire" = false;
-            "media.getusermedia.screensharing.enabled" = true;
             "widget.use-xdg-desktop-portal" = 1;
             "widget.use-xdg-desktop-portal.file-picker" = 1;
             "widget.use-xdg-desktop-portal.mime-handler" = 1;

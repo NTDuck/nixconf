@@ -13,6 +13,22 @@
       pkgs,
       ...
     }: {
+      systemd.user.services.xwayland-satellite = {
+        Unit = {
+          Description = "Xwayland Satellite";
+          PartOf = ["graphical-session.target"];
+          After = ["graphical-session.target"];
+        };
+
+        Service = {
+          ExecStart = "${pkgs.unstable.xwayland-satellite}/bin/xwayland-satellite :2";
+          Restart = "on-failure";
+          RestartSec = 1;
+        };
+
+        Install.WantedBy = ["graphical-session.target"];
+      };
+
       # Mango has no clone/mirror directive in monitorrule. Placing HDMI at
       # the same layout origin as the panel makes both outputs render the same
       # compositor scene, unlike wl-mirror which creates a regular client
@@ -49,7 +65,10 @@
           # Fractional scaling on the Legion panel uses Mango's recommended
           # Xwayland-satellite path to avoid blurry XWayland clients.
           # https://mangowm.github.io/docs/configuration/monitors#using-xwayland-satellite-to-prevent-blurry-xwayland-apps
-          ${pkgs.unstable.xwayland-satellite}/bin/xwayland-satellite :2 &
+          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY
+          ${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY
+          ${pkgs.systemd}/bin/systemctl --user start xwayland-satellite.service
+
           for _ in $(${pkgs.coreutils}/bin/seq 1 100); do
             if ${pkgs.xset}/bin/xset -display :2 q >/dev/null 2>&1; then
               break

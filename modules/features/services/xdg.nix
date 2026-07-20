@@ -21,9 +21,9 @@
         wlr = {
           enable = true;
           settings.screencast = {
-            chooser_type = "none";
-            output_name = "eDP-1";
-            force_mod_linear = 1;
+            chooser_type = "dmenu";
+            chooser_cmd = "${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt='Share screen: '";
+            max_fps = 30;
           };
         };
 

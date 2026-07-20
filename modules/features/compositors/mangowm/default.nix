@@ -135,12 +135,19 @@
         };
 
         autostart_sh = ''
-          ${pkgs.unstable.dbus}/bin/dbus-update-activation-environment --systemd --all
-          ${pkgs.unstable.systemd}/bin/systemctl --user import-environment
+          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd \
+            WAYLAND_DISPLAY \
+            XDG_CURRENT_DESKTOP \
+            XDG_SESSION_DESKTOP \
+            XDG_SESSION_TYPE \
+            DISPLAY
 
-          ${pkgs.systemd}/bin/systemctl --user restart \
-            xdg-desktop-portal-wlr.service \
-            xdg-desktop-portal.service
+          ${pkgs.systemd}/bin/systemctl --user import-environment \
+            WAYLAND_DISPLAY \
+            XDG_CURRENT_DESKTOP \
+            XDG_SESSION_DESKTOP \
+            XDG_SESSION_TYPE \
+            DISPLAY
 
           ${config.programs.noctalia.package}/bin/noctalia &
 

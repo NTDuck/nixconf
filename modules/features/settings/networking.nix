@@ -34,17 +34,17 @@
 
           nmcli radio wifi on
           nmcli connection delete "$connection" >/dev/null 2>&1 || true
-          nmcli connection add type wifi ifname "$ifname" con-name "$connection" autoconnect no ssid "$ssid"
+          nmcli device wifi hotspot \
+            ifname "$ifname" \
+            con-name "$connection" \
+            ssid "$ssid" \
+            password "$password"
           nmcli connection modify "$connection" \
-            802-11-wireless.mode ap \
-            802-11-wireless.band bg \
-            wifi-sec.key-mgmt wpa-psk \
-            wifi-sec.psk "$password" \
+            connection.autoconnect no \
             ipv4.method shared \
             ipv6.method disabled
-          nmcli connection up "$connection"
 
-          echo "Started 2.4 GHz hotspot '$ssid' on $ifname as NetworkManager connection '$connection'."
+          echo "Started hotspot '$ssid' on $ifname as NetworkManager connection '$connection'."
         '';
       };
 
