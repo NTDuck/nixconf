@@ -178,10 +178,10 @@
 
           animations = 1;
           layer_animations = 1;
-          animation_type_open = "slide";
-          animation_type_close = "slide";
-          layer_animation_type_open = "fade";
-          layer_animation_type_close = "fade";
+          animation_type_open = "zoom";
+          animation_type_close = "zoom";
+          layer_animation_type_open = "none";
+          layer_animation_type_close = "none";
 
           circle_layout = "dwindle,scroller";
 
