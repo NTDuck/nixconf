@@ -115,7 +115,7 @@
               "SUPER+SHIFT,e,quit"
 
               "SUPER,d,spawn,${ipc} panel-toggle launcher"
-              "SUPER+CTRL+s,spawn,${ipc} screenshot-fullscreen"
+              "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
               "SUPER+CTRL,l,spawn,${ipc} session lock"
             ]
             ++ (lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}") dirs)
