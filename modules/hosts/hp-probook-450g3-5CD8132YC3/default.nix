@@ -10,7 +10,7 @@
       den.aspects.bootloaders.systemd
       den.aspects.browsers.firefox
       (den.aspects.compositors.mangowm {
-        terminal = pkgs: "${pkgs.unstable.foot}/bin/footclient";
+        terminal = pkgs: "${pkgs.unstable.foot}/bin/foot";
       })
       den.aspects.dev
       den.aspects.editors.helix
