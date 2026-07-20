@@ -41,8 +41,18 @@
             password "$password"
           nmcli connection modify "$connection" \
             connection.autoconnect no \
+            802-11-wireless.band bg \
+            802-11-wireless.channel 6 \
+            802-11-wireless-security.key-mgmt wpa-psk \
+            802-11-wireless-security.proto rsn \
+            802-11-wireless-security.pairwise ccmp \
+            802-11-wireless-security.group ccmp \
+            802-11-wireless-security.pmf disable \
+            802-11-wireless-security.psk "$password" \
             ipv4.method shared \
             ipv6.method disabled
+          nmcli connection down "$connection" >/dev/null 2>&1 || true
+          nmcli connection up "$connection"
 
           echo "Started hotspot '$ssid' on $ifname as NetworkManager connection '$connection'."
         '';
