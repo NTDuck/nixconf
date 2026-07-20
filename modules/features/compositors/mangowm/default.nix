@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.compositors.mangowm = {
+  den.aspects.compositors.mangowm = {terminal}: {
     includes = [
       # Mango config and binds use Noctalia's IPC, and this session starts Noctalia
       # explicitly so its bars/lock shell exist in the compositor-only login.
@@ -204,7 +204,7 @@
               "SUPER,d,spawn,${ipc} panel-toggle launcher"
               "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
               "SUPER+CTRL,l,spawn,${ipc} session lock"
-              "SUPER,Return,spawn,${pkgs.unstable.kitty}/bin/kitty"
+              "SUPER,Return,spawn,${terminal pkgs}"
             ]
             ++ (lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}") dirs)
             ++ (lib.mapAttrsToList (key: dir: "SUPER+SHIFT,${key},exchange_client,${dir}") dirs)

@@ -9,7 +9,9 @@
       den.aspects.bluetooth
       den.aspects.bootloaders.systemd
       den.aspects.browsers.firefox
-      den.aspects.compositors.mangowm
+      (den.aspects.compositors.mangowm {
+        terminal = pkgs: "${pkgs.unstable.foot}/bin/footclient";
+      })
       den.aspects.dev
       den.aspects.editors.helix
       den.aspects.editors.zed-editor

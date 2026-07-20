@@ -10,7 +10,9 @@
       den.aspects.bluetooth
       den.aspects.bootloaders.systemd
       den.aspects.browsers.zen-browser
-      den.aspects.compositors.mangowm
+      (den.aspects.compositors.mangowm {
+        terminal = pkgs: "${pkgs.unstable.kitty}/bin/kitty";
+      })
       den.aspects.dev
       den.aspects.dev.agentics.local-inference
       den.aspects.editors.helix
