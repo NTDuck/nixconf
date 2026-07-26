@@ -2,51 +2,22 @@
   den,
   inputs,
   ...
-}: let
-  policies = {
-    DisableAppUpdate = true;
-    DisableTelemetry = true;
-    DisablePocket = true;
-    # Permissions.ScreenShare = {
-    #   BlockNewRequests = false;
-    #   Locked = true;
-    # };
-    # Preferences = {
-    #   # Global WebRTC permission bypass. Firefox's ScreenShare policy supports
-    #   # explicit origins, but not a documented wildcard allowlist; using the
-    #   # media permission switch keeps screen sharing origin-agnostic and lets
-    #   # the Wayland portal remain the interactive capture gate.
-    #   "media.navigator.permission.disabled" = {
-    #     Value = true;
-    #     Status = "locked";
-    #   };
-    # };
-  };
-in {
+}: {
   den.aspects.browsers.zen-browser = {
     homeManager = {
-      user,
-      lib,
       config,
+      lib,
       pkgs,
+      user,
       ...
-    }: let
-      firefox-addons = inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system};
-    in {
-      # https://zen-browser-flake.nshard.com/
-      imports = [inputs.zen-browser.homeModules.beta];
+    }: {
+      imports = [
+        inputs.zen-browser.homeModules.beta
+      ];
 
       programs.zen-browser = {
         enable = true;
-
-        # The Zen Home Manager module evaluates `policies`, but its current
-        # package path wraps Zen with an empty final policies.json. Follow the
-        # flake's documented package override path so Zen itself reads the
-        # policy from the final wrapped package.
-        # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/03-policies-package-override.nix
-        package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.beta.override {
-          extraPolicies = policies;
-        };
+        package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.beta;
 
         setAsDefaultBrowser = true;
 
@@ -60,18 +31,32 @@ in {
           XDG_SESSION_TYPE = "wayland";
         };
 
+        # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/02-policies-configuration.nix
         # https://mozilla.github.io/policy-templates/
-        inherit policies;
+        policies = {
+          DisableAppUpdate = true;
+          DisableTelemetry = true;
+          DisablePocket = true;
+        };
 
         profiles.${user.name} = {
+          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/01-basic-home-manager.nix
+          presets = {
+            betterfox.enable = true;
+            arkenfox.enable = true;
+          };
+
           # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/04b-extensions-rycee.nix
           extensions = {
             force = true;
             packages = [
-              firefox-addons.ublock-origin
+              inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}.firefox-addons.sponsorblock
+              inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}.firefox-addons.ublock-origin
             ];
           };
 
+          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/02b-settings-preferences.nix
+          # TODO Add more
           settings = {
             "zen.workspaces.continue-where-left-off" = true;
             "zen.view.compact.hide-tabbar" = true;
@@ -81,99 +66,231 @@ in {
             "widget.use-xdg-desktop-portal.mime-handler" = 1;
           };
 
+          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/05-mods-installation.nix
           mods = [
             "e122b5d9-d385-4bf8-9971-e137809097d0" # No Top Sites
             "253a3a74-0cc4-47b7-8b82-996a64f030d5" # Floating History
           ];
 
+          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/06-search-engines.nix
+          # TODO Add more
           search = {
             force = true;
             default = "ddg";
 
             engines = {
-              mynixos = {
-                name = "My NixOS";
+              nixos-refs = {
+                name = "MyNixOS";
+                definedAliases = ["@nx"];
+                icon = "${pkgs.unstable.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+
                 urls = [
                   {
-                    template = "https://mynixos.com/search?q={searchTerms}";
+                    template = "https://mynixos.com/search?q={query}";
                     params = [
                       {
                         name = "query";
-                        value = "searchTerms";
+                        value = "query";
                       }
                     ];
                   }
                 ];
-                icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-                definedAliases = ["@nx"];
               };
+
+              movie-tors = {
+                name = "WatchSoMuch";
+                icon = "${pkgs.unstable.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+                definedAliases = ["@nx"];
+
+                urls = [
+                  {
+                    template = "https://watchsomuch.to/Movies/{query}/";
+                    params = [
+                      {
+                        name = "query";
+                        value = "query";
+                      }
+                    ];
+                  }
+                ];
+              };
+              # https://watchsomuch.to/Movies/mentalist/
             };
           };
 
+          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/07-bookmarks.nix
           bookmarks = {
             force = true;
             settings = [];
           };
 
+          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/08-containers.nix
           containersForce = true;
-          containers = {};
 
-          spacesForce = true;
-          spaces = {
-            # "General" = {
-            #   id = "c6de089c-410d-4206-961d-ab11f988d40a";
-            #   position = 1000;
-            #   icon = "🏠";
-            # };
-            # "Work" = {
-            #   id = "cdd10fab-4fc5-494b-9041-325e5759195b";
-            #   position = 2000;
-            #   icon = "💼";
-            #   container = 1;
-            # };
+          containers = {
+            "master" = {
+              color = "yellow";
+              icon = "fingerprint";
+              id = 1;
+            };
+            "dev,edu,fut" = {
+              color = "dev";
+              icon = "briefcase";
+              id = 4;
+            };
+            "ddd" = {
+              color = "red";
+              icon = "vacation";
+              id = 6;
+            };
           };
+
+          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/09-spaces-themes.nix
+          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/10-pinned-tabs.nix
+          spacesForce = true;
 
           pinsForce = true;
           pinsForceAction = "demote";
-          pins = {
-            # "GitHub" = {
-            #   id = "48e8a119-5a14-4826-9545-91c8e8dd3bf6";
-            #   url = "https://github.com";
-            #   position = 101;
-            # };
+
+          spaces = {
+            "master" = {
+              id = "02d6e596-fe34-4ebc-8906-2dbb63a3800b";
+              position = 1000;
+              icon = "🐥";
+              container = 1; # <- `containers."master"`
+
+              pins = {
+                "Youtube" = {
+                  id = "7518af9c-745d-4b5b-bdce-3ba8e8cedeac";
+                  url = "https://www.youtube.com/";
+                  position = 101;
+                };
+                "Facebook" = {
+                  id = "2330b196-6224-49de-9149-fa5dd4260d57";
+                  url = "https://www.facebook.com/";
+                  position = 102;
+                };
+                "Instagram" = {
+                  id = "93195e70-17f2-4c5d-8278-ca1784aaa9c4";
+                  url = "https://www.instagram.com/";
+                  position = 103;
+                };
+              };
+            };
+            "dev" = {
+              id = "4f5be4a3-8a0c-4201-b85f-f4f70ea1d250";
+              position = 2000;
+              icon = "🌐";
+              container = 4; # <- `containers."dev,edu,fut"`
+
+              pins = {
+                "Guthib" = {
+                  id = "e0212ebe-07f1-405d-ba00-ab1b0cc5ca85";
+                  url = "https://github.com/NTDuck";
+                  position = 101;
+                };
+                "Agentics" = {
+                  id = "6f2844e6-35d9-499b-b670-19affdd00588";
+                  isFolderCollapsed = false;
+                  editedTitle = true;
+                  position = 200;
+                  folderIcon = "chrome://browser/skin/zen-icons/selectable/star.svg";
+
+                  pins = {
+                    "Claude" = {
+                      id = "8ccf07e6-d6e3-4fc8-82b8-2c75b2b5c3cf";
+                      url = "https://claude.ai/new";
+                      position = 201;
+                    };
+                    "ChatGPT" = {
+                      id = "6cd58133-b941-419a-a0d0-33258ed44062";
+                      url = "https://chatgpt.com/";
+                      position = 202;
+                    };
+                    "Gemini" = {
+                      id = "e10ba8f6-5473-4017-8dba-bb10b1172bdc";
+                      url = "https://gemini.google.com/app";
+                      position = 203;
+                    };
+                    "Deepseek" = {
+                      id = "74cfe18b-0a3b-4d7f-9adb-def0ef75753b";
+                      url = "https://chat.deepseek.com/";
+                      position = 204;
+                    };
+                  };
+                };
+              };
+            };
+            "edu" = {
+              id = "2d5331e2-a1e7-4b07-8261-e7436ae8043f";
+              position = 3000;
+              icon = "💼";
+              container = 4; # <- `containers."dev,edu,fut"`
+
+              pins = {
+                "Gmails" = {
+                  id = "3023387e-698b-4095-b584-742fb20dafed";
+                  isFolderCollapsed = false;
+                  editedTitle = true;
+                  position = 100;
+                  folderIcon = "chrome://browser/skin/zen-icons/selectable/mail.svg";
+
+                  pins = {
+                    "Gmail #0" = {
+                      id = "3d4b419a-d905-4d32-b94e-6b299d387b4d";
+                      url = "https://mail.google.com/mail/u/0/";
+                      position = 101;
+                    };
+                    "Gmail #1" = {
+                      id = "606ac3d9-4ebb-47ac-97b9-b7f4288eca84";
+                      url = "https://mail.google.com/mail/u/1/";
+                      position = 102;
+                    };
+                  };
+                };
+              };
+            };
+            "fut" = {
+              id = "b40c5a6d-879c-4257-9ef5-3082d1d19f84";
+              position = 4000;
+              icon = "💡";
+              container = 4; # <- `containers."dev,edu,fut"`
+            };
+            "ddd" = {
+              id = "c75e0fb9-9f36-409e-926c-674b0c03ae55";
+              position = 5000;
+              icon = "🔞";
+              container = 6; # <- `containers."ddd"`
+            };
+            "..." = {
+              id = "6e239929-a237-4f47-b5fd-1d988de4ae9b";
+              position = 6000;
+              icon = "…";
+              container = 1; # <- `containers."master"`
+            };
           };
 
-          # keyboardShortcutsVersion = 17;
-          # keyboardShortcuts = [
-          #   {
-          #     id = "zen-compact-mode-toggle";
-          #     key = "c";
-          #     modifiers = {
-          #       control = true;
-          #       alt = true;
-          #     };
+          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/12-userchrome-css.nix
+          # userChrome = ''
+          #   /* Target Zen Browser's vertical tab sidebar layout specifically */
+          #   #zen-sidebar-web-pages,
+          #   .sidebar-panel,
+          #   #sidebar-box,
+          #   #zen-tabs-container {
+          #     font-size: 11px !important; /* Adjust this lower or higher to match your taste */
           #   }
-          #   {
-          #     id = "key_quitApplication";
-          #     disabled = true;
+
+          #   /* Optional: Make the sidebar icons shrink slightly to match the smaller text */
+          #   #zen-tabs-container .tab-icon-image,
+          #   #zen-sidebar-web-pages .sidebar-icon {
+          #     transform: scale(0.85) !important;
           #   }
-          # ];
+          # '';
 
-          userChrome = ''
-            /* Target Zen Browser's vertical tab sidebar layout specifically */
-            #zen-sidebar-web-pages,
-            .sidebar-panel,
-            #sidebar-box,
-            #zen-tabs-container {
-              font-size: 11px !important; /* Adjust this lower or higher to match your taste */
-            }
-
-            /* Optional: Make the sidebar icons shrink slightly to match the smaller text */
-            #zen-tabs-container .tab-icon-image,
-            #zen-sidebar-web-pages .sidebar-icon {
-              transform: scale(0.85) !important;
-            }
-          '';
+          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/14-native-messaging.nix
+          nativeMessagingHosts = [
+            pkgs.unstable.firefoxpwa
+          ];
         };
       };
 
