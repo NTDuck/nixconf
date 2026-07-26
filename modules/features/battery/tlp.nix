@@ -5,15 +5,36 @@
         enable = true;
         package = pkgs.unstable.tlp;
 
+        # https://linrunner.de/tlp/
         settings = {
-          CPU_SCALING_GOVERNOR_ON_AC = "performance";
-          CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+          # Audio
+          SOUND_POWER_SAVE_ON_AC = 0;
+          SOUND_POWER_SAVE_ON_BAT = 1;
+          SOUND_POWER_SAVE_CONTROLLER = "Y";
+
+          # Kernel
+          NMI_WATCHDOG = 1;
+
+          # Networking
+          WIFI_PWR_ON_AC = "off";
+          WIFI_PWR_ON_BAT = "on";
+
+          # Platform
+          PLATFORM_PROFILE_ON_AC = "performance";
+          PLATFORM_PROFILE_ON_BAT = "low-power";
+
+          MEM_SLEEP_ON_AC = "s2idle";
+          MEM_SLEEP_ON_BAT = "deep";
+
+          # Processor
+          CPU_DRIVER_OPMODE_ON_AC = "active";
+          CPU_DRIVER_OPMODE_ON_BAT = "active";
+
+          CPU_SCALING_GOVERNOR_ON_AC = "performance"; # <- `CPU_DRIVER_OPMODE_ON_AC = "active"`
+          CPU_SCALING_GOVERNOR_ON_BAT = "powersave"; # <- `CPU_DRIVER_OPMODE_ON_BAT = "active"`
 
           CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
           CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-
-          CPU_BOOST_ON_AC = 1;
-          CPU_BOOST_ON_BAT = 0;
 
           CPU_MIN_PERF_ON_AC = 100;
           CPU_MIN_PERF_ON_BAT = 10;
@@ -21,39 +42,27 @@
           CPU_MAX_PERF_ON_AC = 100;
           CPU_MAX_PERF_ON_BAT = 60;
 
-          PLATFORM_PROFILE_ON_AC = "performance";
-          PLATFORM_PROFILE_ON_BAT = "low-power";
+          CPU_BOOST_ON_AC = 1;
+          CPU_BOOST_ON_BAT = 0;
 
-          PCIE_ASPM_ON_AC = "performance";
-          PCIE_ASPM_ON_BAT = "powersupersave";
+          CPU_HWP_DYN_BOOST_ON_AC = 1;
+          CPU_HWP_DYN_BOOST_ON_BAT = 1;
 
-          SATA_LINKPWR_ON_AC = "max_performance";
-          SATA_LINKPWR_ON_BAT = "min_power";
-
-          USB_AUTOSUSPEND_ON_AC = 0;
-          USB_AUTOSUSPEND_ON_BAT = 1;
-
-          WIFI_PWR_ON_AC = "off";
-          WIFI_PWR_ON_BAT = "on";
-
-          SOUND_POWER_SAVE_ON_AC = 0;
-          SOUND_POWER_SAVE_ON_BAT = 1;
-          SOUND_POWER_SAVE_CONTROLLER = "Y";
-
+          # PCIe Autosuspend and ASPM
           RUNTIME_PM_ON_AC = "on";
           RUNTIME_PM_ON_BAT = "auto";
 
-          BACKLIGHT_ON_AC = 80;
-          BACKLIGHT_ON_BAT = 15;
+          PCIE_ASPM_ON_AC = "default";
+          PCIE_ASPM_ON_BAT = "powersupersave";
 
-          CPU_HWP_ON_AC = "performance";
-          CPU_HWP_ON_BAT = "power";
+          # USB Autosuspend
+          USB_AUTOSUSPEND_ON_AC = 0;
+          USB_AUTOSUSPEND_ON_BAT = 1;
+        };
 
-          SCHED_POWERSAVE_ON_AC = 0;
-          SCHED_POWERSAVE_ON_BAT = 1;
-
-          # NMI_WATCHDOG_ON_AC = 0;
-          # NMI_WATCHDOG_ON_BAT = 0;
+        pd = {
+          enable = true;
+          package = pkgs.unstable.tlp-pd;
         };
       };
     };

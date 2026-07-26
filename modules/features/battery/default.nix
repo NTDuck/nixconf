@@ -5,7 +5,7 @@
     den.aspects.battery.powertop
     den.aspects.battery.thermald
     den.aspects.battery.throttled
-    # den.aspects.battery.tlp
+    den.aspects.battery.tlp
     den.aspects.battery.upower
   ];
 }
