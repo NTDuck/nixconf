@@ -50,8 +50,8 @@
           extensions = {
             force = true;
             packages = [
-              inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}.firefox-addons.sponsorblock
-              inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}.firefox-addons.ublock-origin
+              inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}.sponsorblock
+              inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}.ublock-origin
             ];
           };
 
@@ -134,7 +134,7 @@
               id = 1;
             };
             "dev,edu,fut" = {
-              color = "dev";
+              color = "blue";
               icon = "briefcase";
               id = 4;
             };

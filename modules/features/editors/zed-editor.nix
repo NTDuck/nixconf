@@ -73,7 +73,7 @@
       };
 
       home.shellAliases = {
-        zed = "${config.zed-editor.package}/bin/zeditor";
+        zed = "${config.programs.zed-editor.package}/bin/zeditor";
       };
     };
   };

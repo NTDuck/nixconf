@@ -140,7 +140,7 @@
       };
 
       home.shellAliases = {
-        ff = "${config.fastfetch.package}/bin/fastfetch";
+        ff = "${config.programs.fastfetch.package}/bin/fastfetch";
       };
     };
   };

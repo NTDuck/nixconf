@@ -22,8 +22,8 @@
             extensions.force = true;
 
             extensions.packages = [
-              inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}.firefox-addons.sponsorblock
-              inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}.firefox-addons.ublock-origin
+              inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}.sponsorblock
+              inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}.ublock-origin
             ];
 
             settings = {
