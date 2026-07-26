@@ -7,3 +7,4 @@ castalia design, ? switch to noctalia v4
 host-specific aspects not the same (do not provides-to-users?)
 add quick comamnd for flake.nix for nix develop
 some TUI for disk usage
+agenix - deepseek

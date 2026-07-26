@@ -32,3 +32,11 @@ ideas:
 - ref: [independent developability](https://www.engineering.fyi/article/backend-infrastructure-at-spotify)
 - ref: [how to read](https://dev.to/thegdsks/how-to-read-any-legacy-codebase-the-archaeology-playbook-19bh)
 - ref: [case study: COBOL -> Java](https://www.ibm.com/docs/en/watsonx/watsonx-code-assistant-4z/1.x?topic=transform-transforming-cobol-java-by-using-generative-ai)
+
+----
+## impl
+name: MAgHARCM
+ui [TUIs](https://gheat.net/#p/tuistore), extract?
+sandbox
+idempotency
+reproducibility

@@ -41,16 +41,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "llms.md",
+                "file": "nixconf.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "llms"
+              "title": "nixconf"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       },
       {
         "id": "c618a235fe75d6ba",
@@ -228,11 +227,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "c48ee93abc5679fb",
+  "active": "cf92863194e3d96a",
   "lastOpenFiles": [
-    "llms.md",
     "nixconf.md",
+    "res digest.md",
+    "this session.md",
     "lab thing.md",
+    "llms.md",
     "Welcome.md"
   ]
 }
