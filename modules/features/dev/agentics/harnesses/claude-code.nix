@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.dev.agentics.claude-code = {
+  den.aspects.dev.agentics.harnesses.claude-code = {
     homeManager = {pkgs, ...}: {
       programs.claude-code = {
         enable = true;

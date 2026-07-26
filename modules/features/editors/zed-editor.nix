@@ -1,6 +1,10 @@
 {den, ...}: {
   den.aspects.editors.zed-editor = {
-    homeManager = {pkgs, ...}: {
+    homeManager = {
+      config,
+      pkgs,
+      ...
+    }: {
       programs.zed-editor = {
         enable = true;
         package = pkgs.unstable.zed-editor;
@@ -69,8 +73,7 @@
       };
 
       home.shellAliases = {
-        zed = "zeditor";
-        # zed = "${pkgs.unstable.zed}/bin/zeditor";
+        zed = "${config.zed-editor.package}/bin/zeditor";
       };
     };
   };

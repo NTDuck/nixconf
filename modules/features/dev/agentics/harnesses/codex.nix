@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.dev.agentics.codex = {
+  den.aspects.dev.agentics.harnesses.codex = {
     homeManager = {
       pkgs,
       config,

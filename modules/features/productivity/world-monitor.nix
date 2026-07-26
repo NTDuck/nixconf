@@ -1,3 +1,4 @@
+# TODO Slop, check this guy
 {den, ...}: {
   den.aspects.productivity.world-monitor = {
     nixos = {

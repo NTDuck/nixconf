@@ -9,6 +9,7 @@
       den.aspects.battery.upower
       den.aspects.bluetooth
       den.aspects.bootloaders.systemd
+      den.aspects.browsers.chromium
       den.aspects.browsers.zen-browser
       (den.aspects.compositors.mangowm {
         terminal = pkgs: "${pkgs.unstable.kitty}/bin/kitty";

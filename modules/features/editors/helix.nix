@@ -1,6 +1,10 @@
 {den, ...}: {
   den.aspects.editors.helix = {
-    homeManager = {pkgs, ...}: {
+    homeManager = {
+      config,
+      pkgs,
+      ...
+    }: {
       programs.helix = {
         enable = true;
         package = pkgs.unstable.helix;
@@ -39,8 +43,9 @@
         };
       };
 
+      # TODO Redundant?
       home.sessionVariables = {
-        EDITOR = "hx";
+        EDITOR = "${config.programs.helix.package}/bin/hx";
       };
     };
   };
