@@ -12,9 +12,6 @@
       stylix = {
         enable = true;
 
-        # The system is intentionally single-polarity now; the old runtime
-        # light/dark switch specialisation was removed because it made
-        # activation brittle and mixed system state with Noctalia IPC state.
         polarity = "dark";
         base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa-dragon.yaml";
 
@@ -58,8 +55,6 @@
           desktop = 0.9;
           popups = 0.9;
         };
-
-        # targets.console.enable = false;
       };
     };
   };

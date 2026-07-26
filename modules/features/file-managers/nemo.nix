@@ -84,6 +84,7 @@
         };
       };
 
+      # TODO Decouple kitty
       home.file.".local/share/nemo/actions/open-kitty-here.nemo_action".text = ''
         [Nemo Action]
         Name=Open in Kitty

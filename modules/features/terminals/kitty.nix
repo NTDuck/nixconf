@@ -6,7 +6,11 @@
       ];
     };
 
-    homeManager = {pkgs, ...}: {
+    homeManager = {
+      config,
+      pkgs,
+      ...
+    }: {
       programs.kitty = {
         enable = true;
         package = pkgs.unstable.kitty;
@@ -25,6 +29,10 @@
           shell_integration = "no-cursor";
           scrollbar = "never";
         };
+      };
+
+      home.sessionVariables = {
+        TERMINAL = "${config.programs.kitty.package}/bin/kitty";
       };
     };
   };
