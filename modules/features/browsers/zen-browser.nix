@@ -286,12 +286,12 @@
           #     transform: scale(0.85) !important;
           #   }
           # '';
-
-          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/14-native-messaging.nix
-          nativeMessagingHosts = [
-            pkgs.unstable.firefoxpwa
-          ];
         };
+
+        # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/14-native-messaging.nix
+        nativeMessagingHosts = [
+          pkgs.unstable.firefoxpwa
+        ];
       };
 
       stylix.targets.zen-browser.profileNames =

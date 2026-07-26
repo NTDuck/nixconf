@@ -15,7 +15,6 @@
         terminal = pkgs: "${pkgs.unstable.kitty}/bin/kitty";
       })
       den.aspects.dev
-      den.aspects.dev.agentics.local-inference
       den.aspects.editors.helix
       den.aspects.editors.zed-editor
       den.aspects.file-managers.nemo
