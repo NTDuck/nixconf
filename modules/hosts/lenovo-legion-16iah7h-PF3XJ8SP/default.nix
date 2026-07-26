@@ -5,7 +5,8 @@
 
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     includes = [
-      den.aspects.battery
+      den.aspects.battery.power-profiles-daemon
+      den.aspects.battery.upower
       den.aspects.bluetooth
       den.aspects.bootloaders.systemd
       den.aspects.browsers.chromium
