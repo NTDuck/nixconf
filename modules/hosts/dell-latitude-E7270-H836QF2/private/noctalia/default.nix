@@ -32,7 +32,7 @@ in {
       stylix.opacity.applications = lib.mkForce 1.0;
     };
 
-    provides.to-users.homeManager = {lib, ...}: {
+    homeManager = {lib, ...}: {
       programs.noctalia.settings = lib.mkForce lowEndNoctaliaSettings;
     };
   };
