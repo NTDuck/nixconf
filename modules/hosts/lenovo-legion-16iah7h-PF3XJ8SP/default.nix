@@ -50,6 +50,7 @@
       den.aspects.productivity.obsidian
       den.aspects.productivity.taskwarrior
       den.aspects.productivity.world-monitor
+      den.aspects.secrets.agenix
       den.aspects.services.cliphist
       den.aspects.services.cloudflare-warp
       den.aspects.services.dconf

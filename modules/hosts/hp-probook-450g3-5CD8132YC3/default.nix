@@ -44,6 +44,7 @@
       den.aspects.productivity.mermaid
       den.aspects.productivity.obsidian
       den.aspects.productivity.taskwarrior
+      den.aspects.secrets.agenix
       den.aspects.services.cliphist
       den.aspects.services.fcitx5
       den.aspects.services.pipewire
