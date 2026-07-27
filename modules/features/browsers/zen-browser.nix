@@ -100,7 +100,7 @@
               movie-tors = {
                 name = "WatchSoMuch";
                 icon = "${pkgs.unstable.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-                definedAliases = ["@nx"];
+                definedAliases = ["@movtor"];
 
                 urls = [
                   {
