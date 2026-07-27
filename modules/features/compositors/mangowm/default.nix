@@ -149,7 +149,8 @@
             l = "down";
           };
 
-          ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
+          # ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
+          ipc = "${config.programs.quickshell.package}/bin/qs -c ${config.programs.noctalia-shell.package}/bin/noctalia-shell ipc call";
         in {
           repeat_rate = 50;
           repeat_delay = 150;
@@ -188,6 +189,7 @@
           tagrule = lib.map (tag: "id:${tag},layout_name:dwindle") tags;
 
           layerrule = [
+            # TODO Change this to fit v4
             "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0"
           ];
 
@@ -201,9 +203,12 @@
               "SUPER+SHIFT,f,togglefullscreen"
               "SUPER+SHIFT,e,quit"
 
-              "SUPER,d,spawn,${ipc} panel-toggle launcher"
-              "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
-              "SUPER+CTRL,l,spawn,${ipc} session lock"
+              # TODO Add Legion's Fn + Q
+              # "SUPER,d,spawn,${ipc} panel-toggle launcher"
+              # "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
+              # "SUPER+CTRL,l,spawn,${ipc} session lock"
+              "SUPER,d,spawn,${ipc} launcher toggle"
+              "SUPER+CTRL,l,spawn,${ipc} lockScreen lock"
               "SUPER,Return,spawn,${terminal pkgs}"
             ]
             ++ (lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}") dirs)
@@ -213,11 +218,16 @@
             ++ (lib.map (tag: "SUPER+ALT,${tag},tag,${tag}") tags);
 
           bindl = [
-            "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness-down"
-            "NONE,XF86MonBrightnessUp,spawn,${ipc} brightness-up"
-            "NONE,XF86AudioMute,spawn,${ipc} volume-mute"
-            "NONE,XF86AudioLowerVolume,spawn,${ipc} volume-down"
-            "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume-up"
+            # "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness-down"
+            # "NONE,XF86MonBrightnessUp,spawn,${ipc} brightness-up"
+            # "NONE,XF86AudioMute,spawn,${ipc} volume-mute"
+            # "NONE,XF86AudioLowerVolume,spawn,${ipc} volume-down"
+            # "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume-up"
+            "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness decrease"
+            "NONE,XF86MonBrightnessUp,spawn,${ipc} brightness increase"
+            "NONE,XF86AudioMute,spawn,${ipc} volume muteOutput"
+            "NONE,XF86AudioLowerVolume,spawn,${ipc} volume decrease"
+            "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume increase"
           ];
 
           focus_on_activate = 0;
@@ -248,7 +258,8 @@
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
           ${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY
 
-          ${config.programs.noctalia.package}/bin/noctalia &
+          # ${config.programs.noctalia.package}/bin/noctalia &
+          ${config.programs.quickshell.package}/bin/qs -c ${config.programs.noctalia-shell.package}/bin/noctalia-shell
 
           fcitx5 -d -r &
         '';
