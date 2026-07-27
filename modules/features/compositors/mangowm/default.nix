@@ -258,11 +258,11 @@
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
           ${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY
 
-          # ${config.programs.noctalia.package}/bin/noctalia &
           ${config.programs.quickshell.package}/bin/qs -c ${config.programs.noctalia-shell.package}/bin/noctalia-shell
 
           fcitx5 -d -r &
         '';
+        # ${config.programs.noctalia.package}/bin/noctalia &
 
         systemd = {
           enable = true;
