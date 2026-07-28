@@ -47,13 +47,35 @@
     #   };
     # };
 
-    homeManager = {
+    homeManager = {pkgs, ...}: {
       imports = [
         inputs.noctalia.homeModules.default
       ];
 
       programs.noctalia-shell = {
         enable = true;
+
+        package =
+          inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs
+          (old: {
+            postPatch =
+              (old.postPatch or "")
+              + ''
+                provider="Modules/Panels/Launcher/Providers/ApplicationsProvider.qml"
+
+                # Terminal applications.
+                substituteInPlace "$provider" \
+                  --replace-fail \
+                    'CompositorService.spawn(command);' \
+                    'Quickshell.execDetached(command);'
+
+                # Ordinary desktop applications.
+                substituteInPlace "$provider" \
+                  --replace-fail \
+                    'CompositorService.spawn(app.command);' \
+                    'Quickshell.execDetached(app.command);'
+              '';
+          });
 
         # TODO Settings
       };

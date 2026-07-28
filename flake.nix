@@ -57,7 +57,7 @@
     # Noctalia
     noctalia = {
       # url = "github:noctalia-dev/noctalia";
-      url = "github:noctalia-dev/noctalia/legacy-v4";
+      url = "github:noctalia-dev/noctalia/v4.7.7";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
