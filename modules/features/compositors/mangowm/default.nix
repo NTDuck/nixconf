@@ -150,7 +150,8 @@
           };
 
           # ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
-          ipc = "${config.programs.quickshell.package}/bin/qs -c ${config.programs.noctalia-shell.package}/bin/noctalia-shell ipc call";
+          # https://docs.noctalia.dev/v4/getting-started/keybinds/keybinds/#:~:text=Installation%2Dspecific%20commands
+          ipc = "${config.programs.noctalia-shell.package}/bin/noctalia-shell ipc call";
         in {
           repeat_rate = 50;
           repeat_delay = 150;
@@ -258,7 +259,7 @@
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
           ${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY
 
-          ${config.programs.quickshell.package}/bin/qs -c ${config.programs.noctalia-shell.package}/bin/noctalia-shell
+          ${config.programs.noctalia-shell.package}/bin/noctalia-shell
 
           fcitx5 -d -r &
         '';
