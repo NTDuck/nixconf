@@ -55,26 +55,32 @@
       programs.noctalia-shell = {
         enable = true;
 
-        # Fix launcher behaviour
         package =
           inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs
           (old: {
             postPatch =
               (old.postPatch or "")
               + ''
+                # Patch launcher behaviour
                 provider="Modules/Panels/Launcher/Providers/ApplicationsProvider.qml"
 
-                # Terminal applications.
                 substituteInPlace "$provider" \
                   --replace-fail \
                     'CompositorService.spawn(command);' \
                     'Quickshell.execDetached(command);'
 
-                # Ordinary desktop applications.
                 substituteInPlace "$provider" \
                   --replace-fail \
                     'CompositorService.spawn(app.command);' \
                     'Quickshell.execDetached(app.command);'
+
+                # Patch notification geometry behaviour
+                notification="Modules/Notification/Notification.qml"
+
+                substituteInPlace "$notification" \
+                  --replace-fail \
+                    'readonly property int shadowPadding: Style.shadowBlurMax + Style.marginL' \
+                    'readonly property int shadowPadding: 0'
               '';
           });
 

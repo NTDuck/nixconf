@@ -58,6 +58,9 @@
           # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/02b-settings-preferences.nix
           # TODO Add more
           settings = {
+            "browser.startup.page" = 3;
+            "browser.sessionstore.resume_from_crash" = true;
+
             # Prevent unwanted Arkenfox behaviour (logout on shutdown)
             "privacy.clearOnShutdown_v2.cookiesAndStorage" = false;
             "privacy.clearOnShutdown.cookies" = false;

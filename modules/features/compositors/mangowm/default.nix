@@ -201,8 +201,9 @@
           tagrule = lib.map (tag: "id:${tag},layout_name:dwindle") tags;
 
           layerrule = [
-            # TODO Change this to fit v4
+            # https://docs.noctalia.dev/v4/getting-started/compositor-settings/hyprland/#blur
             "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0"
+            "layer_name:noctalia-notifications-.*$,noblur:1,noanim:1,noshadow:1"
           ];
 
           smartgaps = 1;

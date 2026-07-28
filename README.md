@@ -13,6 +13,8 @@
 - Theme: Stylix and Noctalia
 <!--- Wallpaper: [./assets/wallpapers/girls-last-tour-library.jpg](https://x.com/LeoLeonardK10/status/1465607483372699656)-->
 - Wallpaper: [./assets/wallpapers/shifting-tides.jpg](https://x.com/elfilter_a/status/2043948619460411476)
+<!--last supper is https://www.reddit.com/r/wallpaper/s/jey24nWsDI;
+bulletin board until then is https://pin.it/5qFBaoi3g-->
 <!--https://jp.pinterest.com/pin/1069112399050639591/-->
 
 
