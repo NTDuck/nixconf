@@ -128,21 +128,21 @@
           containersForce = true;
 
           containers = {
-            "master" = {
-              color = "yellow";
-              icon = "fingerprint";
-              id = 1;
-            };
-            "dev,edu,fut" = {
-              color = "blue";
-              icon = "briefcase";
-              id = 4;
-            };
-            "ddd" = {
-              color = "red";
-              icon = "vacation";
-              id = 6;
-            };
+            # "master" = {
+            #   color = "yellow";
+            #   icon = "fingerprint";
+            #   id = 1;
+            # };
+            # "dev,edu,fut" = {
+            #   color = "blue";
+            #   icon = "briefcase";
+            #   id = 4;
+            # };
+            # "ddd" = {
+            #   color = "red";
+            #   icon = "vacation";
+            #   id = 6;
+            # };
           };
 
           # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/09-spaces-themes.nix
@@ -155,9 +155,9 @@
           spaces = {
             "master" = {
               id = "02d6e596-fe34-4ebc-8906-2dbb63a3800b";
-              position = 1000;
+              position = 6000;
               icon = "🐥";
-              container = 1; # <- `containers."master"`
+              # container = 1; # <- `containers."master"`
 
               pins = {
                 "Youtube" = {
@@ -179,9 +179,9 @@
             };
             "dev" = {
               id = "4f5be4a3-8a0c-4201-b85f-f4f70ea1d250";
-              position = 2000;
+              position = 5000;
               icon = "🌐";
-              container = 4; # <- `containers."dev,edu,fut"`
+              # container = 4; # <- `containers."dev,edu,fut"`
 
               pins = {
                 "Guthib" = {
@@ -223,9 +223,9 @@
             };
             "edu" = {
               id = "2d5331e2-a1e7-4b07-8261-e7436ae8043f";
-              position = 3000;
+              position = 4000;
               icon = "💼";
-              container = 4; # <- `containers."dev,edu,fut"`
+              # container = 4; # <- `containers."dev,edu,fut"`
 
               pins = {
                 "Gmails" = {
@@ -252,21 +252,21 @@
             };
             "fut" = {
               id = "b40c5a6d-879c-4257-9ef5-3082d1d19f84";
-              position = 4000;
+              position = 3000;
               icon = "💡";
-              container = 4; # <- `containers."dev,edu,fut"`
+              # container = 4; # <- `containers."dev,edu,fut"`
             };
             "ddd" = {
               id = "c75e0fb9-9f36-409e-926c-674b0c03ae55";
-              position = 5000;
+              position = 2000;
               icon = "🔞";
-              container = 6; # <- `containers."ddd"`
+              # container = 6; # <- `containers."ddd"`
             };
             "..." = {
               id = "6e239929-a237-4f47-b5fd-1d988de4ae9b";
-              position = 6000;
+              position = 1000;
               icon = "…";
-              container = 1; # <- `containers."master"`
+              # container = 1; # <- `containers."master"`
             };
           };
 
