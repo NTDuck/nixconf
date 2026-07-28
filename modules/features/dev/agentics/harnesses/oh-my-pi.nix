@@ -8,10 +8,6 @@
       environment.systemPackages = [
         inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp
       ];
-
-      environment.shellAliases = {
-        agy = "${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.antigravity-cli}/bin/agy --dangerously-skip-permissions";
-      };
     };
   };
 }
