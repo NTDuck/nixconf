@@ -23,30 +23,6 @@
       };
     };
 
-    # homeManager = {pkgs, ...}: {
-    #   imports = [
-    #     inputs.noctalia.homeModules.default
-    #   ];
-
-    #   programs.noctalia = {
-    #     enable = true;
-    #     package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
-    #       # The upstream package's test targets currently fail late in the Nix
-    #       # Meson build on this pin; Noctalia itself builds and runs without them.
-    #       mesonFlags =
-    #         (old.mesonFlags or [])
-    #         ++ [
-    #           "-Dtests=disabled"
-    #         ];
-    #     });
-    #     settings =
-    #       builtins.replaceStrings
-    #       ["\${inputs.self}"]
-    #       ["${inputs.self}"]
-    #       (builtins.readFile "${inputs.self}/modules/features/noctalia/noctalia-config.toml");
-    #   };
-    # };
-
     homeManager = {
       config,
       pkgs,
@@ -226,7 +202,7 @@
             screenOverrides = [];
           };
           general = {
-            avatarImage = "/home/ayin/projs/nixconf/assets/wallpapers/avatars/default.png";
+            avatarImage = "${inputs.self}/nixconf/assets/wallpapers/avatars/default.png";
             dimmerOpacity = 0.2;
             showScreenCorners = false;
             forceBlackScreenCorners = false;
@@ -339,7 +315,7 @@
           wallpaper = {
             enabled = true;
             overviewEnabled = false;
-            directory = "/home/ayin/projs/nixconf/assets/wallpapers";
+            directory = "${inputs.self}/nixconf/assets/wallpapers";
             monitorDirectories = [];
             enableMultiMonitorDirectories = false;
             showHiddenFiles = false;
@@ -680,24 +656,9 @@
           };
           nightLight = {
             enabled = false;
-            forced = false;
-            autoSchedule = true;
-            nightTemp = "4000";
-            dayTemp = "6500";
-            manualSunrise = "06:30";
-            manualSunset = "18:30";
           };
           hooks = {
             enabled = false;
-            wallpaperChange = "";
-            darkModeChange = "";
-            screenLock = "";
-            screenUnlock = "";
-            performanceModeEnabled = "";
-            performanceModeDisabled = "";
-            startup = "";
-            session = "";
-            colorGeneration = "";
           };
           plugins = {
             autoUpdate = false;
@@ -705,24 +666,9 @@
           };
           idle = {
             enabled = false;
-            screenOffTimeout = 600;
-            lockTimeout = 660;
-            suspendTimeout = 1800;
-            fadeDuration = 5;
-            screenOffCommand = "";
-            lockCommand = "";
-            suspendCommand = "";
-            resumeScreenOffCommand = "";
-            resumeLockCommand = "";
-            resumeSuspendCommand = "";
-            customCommands = "[]";
           };
           desktopWidgets = {
             enabled = false;
-            overviewEnabled = true;
-            gridSnap = false;
-            gridSnapScale = false;
-            monitorWidgets = [];
           };
         };
       };
