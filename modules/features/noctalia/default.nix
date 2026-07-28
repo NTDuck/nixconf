@@ -47,7 +47,11 @@
     #   };
     # };
 
-    homeManager = {pkgs, ...}: {
+    homeManager = {
+      config,
+      pkgs,
+      ...
+    }: {
       imports = [
         inputs.noctalia.homeModules.default
       ];
@@ -93,13 +97,13 @@
             density = "comfortable";
             showOutline = true;
             showCapsule = true;
-            capsuleOpacity = 0.9;
+            capsuleOpacity = config.stylix.opacity.applications;
             capsuleColorKey = "none";
             widgetSpacing = 6;
             contentPadding = 2;
             fontScale = 1;
             enableExclusionZoneInset = true;
-            backgroundOpacity = 0.9;
+            backgroundOpacity = config.stylix.opacity.applications;
             useSeparateOpacity = true;
             marginVertical = 4;
             marginHorizontal = 4;
@@ -294,7 +298,7 @@
             tooltipsEnabled = true;
             scrollbarAlwaysVisible = true;
             boxBorderEnabled = true;
-            panelBackgroundOpacity = 0.9;
+            panelBackgroundOpacity = config.stylix.opacity.applications;
             translucentWidgets = true;
             panelsAttachedToBar = true;
             settingsPanelMode = "attached";
@@ -495,7 +499,7 @@
             position = "bottom";
             displayMode = "auto_hide";
             dockType = "floating";
-            backgroundOpacity = 0.9;
+            backgroundOpacity = config.stylix.opacity.applications;
             floatingRatio = 1;
             size = 1;
             onlySameOutput = true;
@@ -605,7 +609,7 @@
             monitors = [];
             location = "top_right";
             overlayLayer = true;
-            backgroundOpacity = 0.9;
+            backgroundOpacity = config.stylix.opacity.applications;
             respectExpireTimeout = false;
             lowUrgencyDuration = 2;
             normalUrgencyDuration = 4;
@@ -634,7 +638,7 @@
             location = "top_right";
             autoHideMs = 2000;
             overlayLayer = true;
-            backgroundOpacity = 0.9;
+            backgroundOpacity = config.stylix.opacity.applications;
             enabledTypes = [
               0
               1
