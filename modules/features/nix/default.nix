@@ -22,6 +22,7 @@
             # Vesktop 1.6.5 in the pinned unstable set validates against
             # Electron 40 at build time; keep this exception narrow.
             "electron"
+            "idea-oss"
           ];
       };
     in {
