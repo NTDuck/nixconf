@@ -392,7 +392,7 @@
             enableClipboardChips = true;
             clipboardWatchTextCommand = "wl-paste --type text --watch cliphist store";
             clipboardWatchImageCommand = "wl-paste --type image --watch cliphist store";
-            position = "center";
+            position = "bottom_center";
             pinnedApps = [];
             sortByMostUsed = true;
             terminalCommand = "kitty -e";

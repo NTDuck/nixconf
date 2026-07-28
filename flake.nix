@@ -61,11 +61,6 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    noctalia-greeter = {
-      url = "github:noctalia-dev/noctalia-greeter";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-
     # Browser
     firefox-addons = {
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
@@ -85,8 +80,6 @@
       url = "github:ndfined-crp/ayugram-desktop/release";
       flake = true;
     };
-
-    preservation.url = "github:nix-community/preservation";
   };
 
   # Keep evaluator policy in the flake so `nh os switch` and CI see the same
