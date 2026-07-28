@@ -163,7 +163,7 @@
           drag_tile_to_tile = 1;
           drag_corner = 4;
 
-          borderpx = 1;
+          borderpx = 0;
           gappih = 8;
           gappiv = 8;
           gappoh = 8;
