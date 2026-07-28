@@ -1,9 +1,42 @@
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-    nixos = {pkgs, ...}: {
+    nixos = {pkgs, ...}: let
+      cudaPackages = pkgs.unstable.cudaPackages;
+
+      ollama-cuda-patched =
+        pkgs.unstable.ollama-cuda.overrideAttrs
+        (old: {
+          nativeBuildInputs =
+            (old.nativeBuildInputs or [])
+            ++ [
+              cudaPackages.cuda_nvcc
+            ];
+
+          # The updated CUDA setup hook gives the nested llama.cpp CMake
+          # project an invalid CUDAToolkit_ROOT. CMake then refuses to search
+          # PATH for nvcc. Remove that value and explicitly provide nvcc.
+          preBuild =
+            (old.preBuild or "")
+            + ''
+              unset CUDAToolkit_ROOT
+
+              export CUDACXX="${cudaPackages.cuda_nvcc}/bin/nvcc"
+              export PATH="${cudaPackages.cuda_nvcc}/bin:$PATH"
+
+              if [[ ! -x "$CUDACXX" ]]; then
+                echo "CUDA compiler does not exist: $CUDACXX" >&2
+                exit 1
+              fi
+
+              echo "Using CUDA compiler: $CUDACXX"
+              "$CUDACXX" --version
+            '';
+        });
+    in {
       services.ollama = {
         enable = true;
-        package = pkgs.unstable.ollama-cuda;
+        # package = pkgs.unstable.ollama-cuda;
+        package = ollama-cuda-patched;
 
         host = "127.0.0.1";
         port = 11434;
