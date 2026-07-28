@@ -61,6 +61,14 @@
             "browser.startup.page" = 3;
             "browser.sessionstore.resume_from_crash" = true;
 
+            # Download automatically to ~/Downloads instead of opening a
+            # GTK/XDG file chooser for every download.
+            "browser.download.useDownloadDir" = true;
+
+            # 2 means use the explicit browser.download.dir path.
+            "browser.download.folderList" = 2;
+            "browser.download.dir" = "${config.home.homeDirectory}/Downloads";
+
             # Prevent unwanted Arkenfox behaviour (logout on shutdown)
             "privacy.clearOnShutdown_v2.cookiesAndStorage" = false;
             "privacy.clearOnShutdown.cookies" = false;
