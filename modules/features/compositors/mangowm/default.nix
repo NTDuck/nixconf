@@ -176,14 +176,25 @@
           border_radius = 16;
 
           focused_opacity = config.stylix.opacity.applications;
-          unfocused_opacity = 0.72;
+          unfocused_opacity = 0.8 * config.stylix.opacity.applications;
 
+          # https://mangowm.github.io/docs/visuals/animations
           animations = 1;
           layer_animations = 1;
-          animation_type_open = "zoom";
-          animation_type_close = "zoom";
-          layer_animation_type_open = "none";
-          layer_animation_type_close = "none";
+
+          animation_type_open = "fade";
+          animation_type_close = "fade";
+          layer_animation_type_open = "fade";
+          layer_animation_type_close = "fade";
+
+          animation_fade_in = 1;
+          animation_fade_out = 1;
+          fadein_begin_opacity = 0.1;
+          fadeout_begin_opacity = 0.1;
+          animation_curve_opafadein = "0,0.55,0.45,1.0";
+          animation_curve_opafadeout = "0.55,0.5,1.0,0.45";
+
+          tag_animation_direction = 0;
 
           circle_layout = "dwindle,scroller";
 
@@ -193,6 +204,8 @@
             # TODO Change this to fit v4
             "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0"
           ];
+
+          smartgaps = 1;
 
           bind =
             [

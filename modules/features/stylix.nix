@@ -13,7 +13,11 @@
         enable = true;
 
         polarity = "dark";
-        base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa-dragon.yaml";
+
+        base16Scheme = "${pkgs.base16-schemes}/share/themes/grayscale-dark.yaml";
+        override = {
+          base08 = "e06c75";
+        };
 
         image = "${inputs.self}/assets/wallpapers/girls-last-tour-library.jpg";
 
