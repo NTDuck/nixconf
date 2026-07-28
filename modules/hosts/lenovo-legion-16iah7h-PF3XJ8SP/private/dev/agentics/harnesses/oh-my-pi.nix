@@ -65,7 +65,7 @@
       home.sessionVariables = {
         # OMP discovers Ollama automatically, but setting this explicitly makes
         # the host routing independent of future defaults.
-        OLLAMA_BASE_URL = "http://${config.services.ollama.port}:${config.services.ollama.host}";
+        OLLAMA_BASE_URL = "http://${config.services.ollama.port}:${builtins.toString config.services.ollama.host}";
 
         # Loaded after normal global/project settings. It does not replace
         # ~/.omp/agent/config.yml and does not interfere with agent.db.
