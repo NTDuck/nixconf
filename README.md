@@ -18,6 +18,15 @@ bulletin board until then is https://pin.it/5qFBaoi3g-->
 <!--https://jp.pinterest.com/pin/1069112399050639591/-->
 
 
+NIX_CONFIG="$(printf \
+  'access-tokens = github.com=%s\ncores = 16\nmax-jobs = 1\n' \
+  "$(gh auth token)"
+)" \
+nh os switch . \
+  -H lenovo-legion-16iah7h-PF3XJ8SP --update
+
+
+
 - https://not-a-number.io/2025/refactoring-my-infrastructure-as-code-configurations/
 - https://blog.decent.id/post/flake-parts-and-dendritic-nix/
 - https://simonshine.dk/articles/dendritic-nix-with-nixos-shell/

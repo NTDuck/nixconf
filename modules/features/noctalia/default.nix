@@ -5,7 +5,11 @@
 }: {
   den.aspects.noctalia = {
     includes = [
-      den.aspects.utilities.quickshell
+      # Required for `screen-shot-and-record` plugin
+      den.aspects.utilities.screenshots.satty
+
+      # Required for `slowbongo` plugin
+      den.aspects.utilities.evtest
 
       # https://docs.noctalia.dev/v4/getting-started/nixos/#:~:text=Caution
       den.aspects.settings.networking
@@ -103,14 +107,36 @@
                   id = "ControlCenter";
                   useDistroLogo = true;
                 }
+                {
+                  id = "Spacer";
+                  width = 10;
+                }
+                {
+                  defaultSettings = {
+                    enableCross = true;
+                    enableWindowsSelection = true;
+                    keepSourceScreenshot = false;
+                    recordingNotifications = true;
+                    recordingSavePath = "~/Videos";
+                    savePath = "~/Pictures/Screenshots";
+                    screenshotEditor = "swappy";
+                  };
+                  id = "plugin:screen-shot-and-record";
+                }
               ];
               center = [
                 {
                   defaultSettings = {
-                    hideBackground = false;
-                    minimumThreshold = 10;
+                    catColor = "default";
+                    catOffsetY = 0;
+                    catSize = 1;
+                    idleTimeout = 150;
+                    raveMode = false;
+                    tappyMode = false;
+                    useMprisFilter = false;
+                    waitingTimeout = 30000;
                   };
-                  id = "plugin:catwalk";
+                  id = "plugin:slowbongo";
                 }
               ];
               right = [
@@ -152,7 +178,7 @@
                   showDiskAvailable = false;
                   showDiskUsage = false;
                   showDiskUsageAsPercent = false;
-                  showGpuTemp = false;
+                  showGpuTemp = true;
                   showLoadAverage = false;
                   showMemoryAsPercent = true;
                   showMemoryUsage = true;
@@ -313,51 +339,7 @@
             ];
           };
           wallpaper = {
-            enabled = true;
-            overviewEnabled = false;
-            directory = "${inputs.self}/nixconf/assets/wallpapers";
-            monitorDirectories = [];
-            enableMultiMonitorDirectories = false;
-            showHiddenFiles = false;
-            viewMode = "single";
-            setWallpaperOnAllMonitors = true;
-            linkLightAndDarkWallpapers = true;
-            fillMode = "crop";
-            fillColor = "#000000";
-            useSolidColor = false;
-            solidColor = "#1a1a2e";
-            automationEnabled = false;
-            wallpaperChangeMode = "random";
-            randomIntervalSec = 300;
-            transitionDuration = 1500;
-            transitionType = [
-              "fade"
-              "disc"
-              "stripes"
-              "wipe"
-              "pixelate"
-              "honeycomb"
-            ];
-            skipStartupTransition = false;
-            transitionEdgeSmoothness = 0.05;
-            panelPosition = "top_center";
-            hideWallpaperFilenames = false;
-            useOriginalImages = false;
-            overviewBlur = 0.4;
-            overviewTint = 0.6;
-            useWallhaven = false;
-            wallhavenQuery = "";
-            wallhavenSorting = "relevance";
-            wallhavenOrder = "desc";
-            wallhavenCategories = "111";
-            wallhavenPurity = "100";
-            wallhavenRatios = "";
-            wallhavenApiKey = "";
-            wallhavenResolutionMode = "atleast";
-            wallhavenResolutionWidth = "";
-            wallhavenResolutionHeight = "";
-            sortOrder = "name";
-            favorites = [];
+            enabled = false;
           };
           appLauncher = {
             enableClipboardHistory = false;
@@ -396,9 +378,6 @@
                 }
                 {
                   id = "Bluetooth";
-                }
-                {
-                  id = "WallpaperSelector";
                 }
               ];
               right = [
@@ -449,7 +428,7 @@
             tempWarningThreshold = 80;
             tempCriticalThreshold = 100;
             gpuWarningThreshold = 80;
-            gpuCriticalThreshold = 90;
+            gpuCriticalThreshold = 100;
             memWarningThreshold = 80;
             memCriticalThreshold = 90;
             swapWarningThreshold = 80;
@@ -472,34 +451,6 @@
           };
           dock = {
             enabled = false;
-            position = "bottom";
-            displayMode = "auto_hide";
-            dockType = "floating";
-            backgroundOpacity = config.stylix.opacity.applications;
-            floatingRatio = 1;
-            size = 1;
-            onlySameOutput = true;
-            monitors = [];
-            pinnedApps = [];
-            colorizeIcons = false;
-            showLauncherIcon = false;
-            launcherPosition = "end";
-            launcherUseDistroLogo = false;
-            launcherIcon = "";
-            launcherIconColor = "none";
-            pinnedStatic = false;
-            inactiveIndicators = false;
-            groupApps = false;
-            groupContextMenuMode = "extended";
-            groupClickAction = "cycle";
-            groupIndicatorStyle = "dots";
-            deadOpacity = 0.6;
-            animationSpeed = 1;
-            sitOnFrame = false;
-            showDockIndicator = false;
-            indicatorThickness = 3;
-            indicatorColor = "primary";
-            indicatorOpacity = 0.6;
           };
           network = {
             bluetoothRssiPollingEnabled = false;
@@ -585,7 +536,8 @@
             monitors = [];
             location = "top_right";
             overlayLayer = true;
-            backgroundOpacity = config.stylix.opacity.applications;
+            # Patch notification geometry behaviour
+            backgroundOpacity = 1.0;
             respectExpireTimeout = false;
             lowUrgencyDuration = 2;
             normalUrgencyDuration = 4;

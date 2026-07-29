@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.utilities.flameshot = {
+  den.aspects.utilities.screenshots.flameshot = {
     homeManager = {pkgs, ...}: {
       services.flameshot = {
         enable = true;

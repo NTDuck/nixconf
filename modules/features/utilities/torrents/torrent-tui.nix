@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.utilities.torrent-tui = {
+  den.aspects.utilities.torrents.torrent-tui = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         (pkgs.writeShellApplication {
