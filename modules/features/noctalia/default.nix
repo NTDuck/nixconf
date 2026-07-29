@@ -47,25 +47,24 @@
               (old.postPatch or "")
               + ''
                 # Patch launcher behaviour
-                provider="Modules/Panels/Launcher/Providers/ApplicationsProvider.qml"
-
-                substituteInPlace "$provider" \
+                substituteInPlace "Modules/Panels/Launcher/Providers/ApplicationsProvider.qml" \
                   --replace-fail \
                     'CompositorService.spawn(command);' \
-                    'Quickshell.execDetached(command);'
-
-                substituteInPlace "$provider" \
+                    'Quickshell.execDetached(command);' \
                   --replace-fail \
                     'CompositorService.spawn(app.command);' \
                     'Quickshell.execDetached(app.command);'
 
                 # Patch notification geometry behaviour
-                notification="Modules/Notification/Notification.qml"
-
-                substituteInPlace "$notification" \
+                substituteInPlace "Modules/Notification/Notification.qml" \
                   --replace-fail \
                     'readonly property int shadowPadding: Style.shadowBlurMax + Style.marginL' \
                     'readonly property int shadowPadding: 0'
+
+                substituteInPlace "Modules/Toast/Toast.qml" \
+                  --replace-fail \
+                    'Settings.data.ui.panelBackgroundOpacity' \
+                    '1.0'
               '';
           });
 
@@ -424,6 +423,9 @@
                 {
                   id = "Bluetooth";
                 }
+                {
+                  id = "WallpaperSelector";
+                }
               ];
               right = [
                 {
@@ -611,7 +613,8 @@
             location = "top_right";
             autoHideMs = 2000;
             overlayLayer = true;
-            backgroundOpacity = config.stylix.opacity.applications;
+            # Patch notification geometry behaviour
+            backgroundOpacity = lib.mkForce 1.0;
             enabledTypes = [
               0
               1
