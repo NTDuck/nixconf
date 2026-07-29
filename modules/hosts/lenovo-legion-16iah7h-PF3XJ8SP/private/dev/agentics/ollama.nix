@@ -14,10 +14,9 @@
 
           # The updated CUDA setup hook gives the nested llama.cpp CMake
           # project an invalid CUDAToolkit_ROOT. CMake then refuses to search
-          # PATH for nvcc. Remove that value and explicitly provide nvcc.
-          preBuild =
-            (old.preBuild or "")
-            + ''
+          # PATH for nvcc. Remove that value and explicitly provide nvcc before
+          # ollama-cuda's preBuild runs its nested CMake build.
+          preBuild = ''
               unset CUDAToolkit_ROOT
 
               export CUDACXX="${cudaPackages.cuda_nvcc}/bin/nvcc"
@@ -29,8 +28,8 @@
               fi
 
               echo "Using CUDA compiler: $CUDACXX"
-              "$CUDACXX" --version
-            '';
+            ''
+            + (old.preBuild or "");
         });
     in {
       services.ollama = {
