@@ -2,19 +2,14 @@
 
 ## Overview
 - Compositor: [Mango](https://github.com/mangowm/mango)
-- Shell/bar/launcher: [Noctalia](https://github.com/noctalia-dev/noctalia)
-- Terminals: [Kitty](https://sw.kovidgoyal.net/kitty/) and [Foot](https://codeberg.org/dnkl/foot)
-- Fonts:
-  JetBrainsMono Nerd Font - Monospace |
-  Lora - Serif |
-  Inter - Sans-serif |
-  Noto Color Emoji - Emoji
-- Theme: Stylix and Noctalia
-<!--- Wallpaper: [./assets/wallpapers/girls-last-tour-library.jpg](https://x.com/LeoLeonardK10/status/1465607483372699656)-->
-- Wallpaper: [./assets/wallpapers/shifting-tides.jpg](https://x.com/elfilter_a/status/2043948619460411476)
-<!--last supper is https://www.reddit.com/r/wallpaper/s/jey24nWsDI;
-bulletin board until then is https://pin.it/5qFBaoi3g-->
-<!--https://jp.pinterest.com/pin/1069112399050639591/-->
+- Shell: [Noctalia v4.7.7](https://github.com/noctalia-dev/noctalia)
+- Terminals: [Kitty](https://sw.kovidgoyal.net/kitty/) & [Foot](https://codeberg.org/dnkl/foot)
+- Fonts: <PENDING>
+- Theme: [Grayscale Dark](https://tinted-theming.github.io/tinted-gallery/#base16-grayscale-dark), overriden
+- Wallpapers: 
+  - [./assets/wallpapers/girls-last-tour-library.jpg](https://x.com/LeoLeonardK10/status/1465607483372699656)
+  - [./assets/wallpapers/shifting-tides.jpg](https://x.com/elfilter_a/status/2043948619460411476)
+  - [./assets/wallpapers/rockman.png](https://gruvbox-wallpapers.pages.dev/wallpapers/mix/rockman.png)
 
 
 NIX_CONFIG="$(printf \
@@ -25,22 +20,15 @@ nh os switch . \
   -H lenovo-legion-16iah7h-PF3XJ8SP --update
 
 
-
+## References
 - https://not-a-number.io/2025/refactoring-my-infrastructure-as-code-configurations/
 - https://blog.decent.id/post/flake-parts-and-dendritic-nix/
 - https://simonshine.dk/articles/dendritic-nix-with-nixos-shell/
 
-## Den model
-- Host entities live under `den.hosts.x86_64-linux.<hostname>`.
-- Host-owned NixOS configuration lives directly on `den.aspects.<hostname>.nixos`.
-- User entity aspects live at `den.aspects.<username>`. The Ayin user aspect includes `den.batteries.primary-user` and personal Git identity.
-- Cross-entity defaults use explicit providers. Host-specific Home Manager defaults use `provides.to-users.homeManager`; user-specific OS policy uses `provides.to-hosts.nixos`.
-- `den.batteries.host-aspects` remains enabled so host-wide Home Manager fragments selected by a host are visible to that host's users. Personal user aspects should not be included in host include lists.
-
 ## Deployment
 ```cmd
-$ nix shell nixpkgs#git --extra-experimental-features "nix-command flakes"
-$ git clone https://github.com/NTDuck/nixos-cfg && cd nixos-cfg
+$ nix shell nixpkgs#git --extra-experimental-features "nix-command flakes pipe-operators"
+$ git clone https://github.com/NTDuck/nixconf && cd nixconf
 $ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
 ```
 
