@@ -1,7 +1,6 @@
 # nixos-cfg
 
 ## Overview
-- Framework: [Den](https://github.com/denful/den)
 - Compositor: [Mango](https://github.com/mangowm/mango)
 - Shell/bar/launcher: [Noctalia](https://github.com/noctalia-dev/noctalia)
 - Terminals: [Kitty](https://sw.kovidgoyal.net/kitty/) and [Foot](https://codeberg.org/dnkl/foot)

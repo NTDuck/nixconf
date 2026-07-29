@@ -29,6 +29,7 @@
 
     homeManager = {
       config,
+      lib,
       pkgs,
       ...
     }: {
@@ -537,7 +538,7 @@
             location = "top_right";
             overlayLayer = true;
             # Patch notification geometry behaviour
-            backgroundOpacity = 1.0;
+            backgroundOpacity = lib.mkForce 1.0;
             respectExpireTimeout = false;
             lowUrgencyDuration = 2;
             normalUrgencyDuration = 4;
