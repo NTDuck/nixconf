@@ -61,10 +61,10 @@
                     'readonly property int shadowPadding: Style.shadowBlurMax + Style.marginL' \
                     'readonly property int shadowPadding: 0'
 
-                substituteInPlace "Modules/Toast/Toast.qml" \
-                  --replace-fail \
-                    'Settings.data.ui.panelBackgroundOpacity' \
-                    '1.0'
+                # substituteInPlace "Modules/Toast/Toast.qml" \
+                #   --replace-fail \
+                #     'Settings.data.ui.panelBackgroundOpacity' \
+                #     '1.0'
               '';
           });
 

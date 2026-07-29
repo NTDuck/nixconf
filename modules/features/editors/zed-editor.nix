@@ -25,6 +25,7 @@
           cursor_blink = false;
           cursor_shape = "block";
           cli_default_open_behavior = "existing_window";
+          format_on_save = "on";
 
           project_panel = {
             default_width = 240.0;
