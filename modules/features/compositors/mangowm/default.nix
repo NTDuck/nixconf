@@ -190,9 +190,9 @@
           animation_fade_in = 1;
           animation_fade_out = 1;
           fadein_begin_opacity = 0.1;
-          fadeout_begin_opacity = 0.1;
-          animation_curve_opafadein = "0,0.55,0.45,1.0";
-          animation_curve_opafadeout = "0,0.55,0.45,1.0";
+          fadeout_begin_opacity = 0.9;
+          animation_curve_opafadein = "0.0,0.55,0.45,1.0";
+          animation_curve_opafadeout = "0.55,0.0,1.0,0.45";
 
           tag_animation_direction = 0;
 
@@ -223,6 +223,7 @@
               # "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
               # "SUPER+CTRL,l,spawn,${ipc} session lock"
               "SUPER,d,spawn,${ipc} launcher toggle"
+              "SUPER+CTRL,t,spawn,${ipc} darkMode toggle"
               "SUPER+CTRL,l,spawn,${ipc} lockScreen lock"
               "SUPER,Return,spawn,${terminal pkgs}"
             ]
