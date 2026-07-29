@@ -13,35 +13,37 @@ Wallpapers: [Rockman](https://gruvbox-wallpapers.pages.dev/wallpapers/mix/rockma
 
 ## Common Operations
 
-1. Installation
+### 1. Installation
 
 On new machines, I usually install NixOS using the Calamares installer with no DE/WM selected, then run:
 
 ```bash
 $ nix shell nixpkgs#git --extra-experimental-features "nix-command flakes"
 $ git clone https://github.com/NTDuck/nixconf && cd nixconf
-$ sudo nixos-rebuild switch --flake .#${hostname}
+$ sudo nixos-rebuild switch --flake .#${HOSTNAME} --extra-experimental-features "nix-command flakes"
 ```
 
 Current supported hosts are `dell-latitude-E7270-H836QF2` and `lenovo-legion-16iah7h-PF3XJ8SP`.
 
-2. Rebuild
+### 2. Rebuild
 
 ```bash
-NIX_CONFIG="$(printf \
-  'access-tokens = github.com=%s\ncores = %d\nmax-jobs = 1\n' \
-  "$(gh auth token)" \
-  "$(( $(nproc) * 80 / 100 > 0 ? $(nproc) * 80 / 100 : 1 ))"
-)" \
-nh os switch . -H ${hostname}
+$ nh os switch . -H ${HOSTNAME}
 ```
 
-3. Update
+### 3. Update
+
+Usually this involves recompiling heavy stuff so I apply certain limitations to avoid crashing.
 
 ```bash
-
+$ NIX_CONFIG="$(printf \
+  'access-tokens = github.com=%s\ncores = %d\nmax-jobs = 1\n' \
+  "$(gh auth token)" \
+  "$(( $(nproc) * 80 / 100 > 0 ))"
+)" \
+nh os switch . -H ${HOSTNAME} --update
 ```
 
 ## References
 
-different takes on the [Dendritic Pattern](https://discourse.nixos.org/t/the-dendritic-pattern/61271) from [Pol Dellaiera](https://not-a-number.io/2025/refactoring-my-infrastructure-as-code-configurations/), [Spencer Balogh](https://blog.decent.id/post/flake-parts-and-dendritic-nix/), and [Simon Shine](https://simonshine.dk/articles/dendritic-nix-with-nixos-shell/).
+Different takes on the [Dendritic Pattern](https://discourse.nixos.org/t/the-dendritic-pattern/61271) from [Pol Dellaiera](https://not-a-number.io/2025/refactoring-my-infrastructure-as-code-configurations/), [Spencer Balogh](https://blog.decent.id/post/flake-parts-and-dendritic-nix/), and [Simon Shine](https://simonshine.dk/articles/dendritic-nix-with-nixos-shell/).
