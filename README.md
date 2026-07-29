@@ -2,6 +2,7 @@
 
 ## Overview
 - Compositor: [Mango](https://github.com/mangowm/mango)
+- Shell: Zsh + starship / powerlevel10k
 - Shell: [Noctalia v4.7.7](https://github.com/noctalia-dev/noctalia)
 - Terminals: [Kitty](https://sw.kovidgoyal.net/kitty/) & [Foot](https://codeberg.org/dnkl/foot)
 - Fonts: <PENDING>
@@ -18,6 +19,9 @@ NIX_CONFIG="$(printf \
 )" \
 nh os switch . \
   -H lenovo-legion-16iah7h-PF3XJ8SP --update
+
+
+## Common Operations
 
 
 ## References

@@ -340,7 +340,7 @@
             ];
           };
           wallpaper = {
-            enabled = false;
+            enabled = true;
             overviewEnabled = false;
             directory = "${inputs.self}/assets/wallpapers";
             monitorDirectories = [];
