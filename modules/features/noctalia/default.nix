@@ -119,7 +119,7 @@
                     recordingNotifications = true;
                     recordingSavePath = "~/Videos";
                     savePath = "~/Pictures/Screenshots";
-                    screenshotEditor = "swappy";
+                    screenshotEditor = "satty";
                   };
                   id = "plugin:screen-shot-and-record";
                 }
@@ -131,8 +131,8 @@
                     catOffsetY = 0;
                     catSize = 1;
                     idleTimeout = 150;
-                    raveMode = false;
-                    tappyMode = false;
+                    raveMode = true;
+                    tappyMode = true;
                     useMprisFilter = false;
                     waitingTimeout = 30000;
                   };
