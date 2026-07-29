@@ -6,7 +6,7 @@
 
         (pkgs.makeDesktopItem {
           name = "youtube-music";
-          exec = "pear-desktop";
+          exec = "${pkgs.unstable.pear-desktop}/bin/pear-desktop";
           icon = "pear-desktop";
           desktopName = "YouTube Music";
           comment = "YouTube Music Desktop Client";

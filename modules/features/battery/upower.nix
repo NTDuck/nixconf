@@ -6,7 +6,7 @@
         package = pkgs.unstable.upower;
 
         usePercentageForPolicy = true;
-        # noPollBatteries = true; # TODO Depends on hardware
+        noPollBatteries = true;
 
         percentageLow = 10;
         percentageCritical = 5;

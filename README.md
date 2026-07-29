@@ -1,79 +1,49 @@
-# nixos-cfg
+# [NTDuck](https://github.com/NTDuck)'s nixconf
 
 ## Overview
-- Compositor: [sway](https://github.com/swaywm/sway)
-- Bar: [waybar](https://github.com/Alexays/Waybar)
-- Terminal: [foot](https://codeberg.org/dnkl/foot)
-- Launcher: [tofi](https://github.com/philj56/tofi)
-- Fonts:
-  JetBrainsMono Nerd Font - Monospace |
-  Lora - Serif |
-  Inter - Sans-serif |
-  Noto Color Emoji - Emoji
-- Theme: [charcoal-dark](https://github.com/tinted-theming/schemes/blob/spec-0.11/base16/charcoal-dark.yaml)
-<!--- Wallpaper: [./assets/wallpapers/girls-last-tour-library.jpg](https://x.com/LeoLeonardK10/status/1465607483372699656)-->
-- Wallpaper: [./assets/wallpapers/shifting-tides.jpg](https://x.com/elfilter_a/status/2043948619460411476)
-<!--https://jp.pinterest.com/pin/1069112399050639591/-->
 
-## Deployment
-```cmd
+OS: [NixOS 26.05 (Yarara)](https://nixos.org/blog/announcements/2026/nixos-2605/) <br>
+Compositor: [Mango](https://mangowm.github.io/) <br>
+Shell: [zsh](https://www.zsh.org/) 5.9.1, [starship](https://starship.rs/) / [Powerlevel10k](https://powerlevel10k.org/) <br>
+Other Shell: [Noctalia v4.7.7](https://github.com/noctalia-dev/noctalia) <br>
+Terminals: [Kitty](https://sw.kovidgoyal.net/kitty/) / [Foot](https://codeberg.org/dnkl/foot) <br>
+Fonts: [Inter](https://rsms.me/inter/), [Maple Mono](https://font.subf.dev/en/) <br>
+Theme: [Grayscale Dark](https://tinted-theming.github.io/tinted-gallery/#base16-grayscale-dark), overriden <br>
+Wallpapers: [Rockman](https://gruvbox-wallpapers.pages.dev/wallpapers/mix/rockman.png), [れおなるど's 図書館 \[\[Girls' Last Tour\]\]](https://x.com/LeoLeonardK10/status/1465607483372699656), [Anton Elfilter's Shifting Tides](https://x.com/elfilter_a/status/2043948619460411476)
+
+## Common Operations
+
+### 1. Installation
+
+On new machines, I usually install NixOS using the Calamares installer with no DE/WM selected, then run:
+
+```bash
 $ nix shell nixpkgs#git --extra-experimental-features "nix-command flakes"
-$ git clone https://github.com/NTDuck/nixos-cfg && cd nixos-cfg
-$ sudo nixos-rebuild switch --flake .#dell-latitude-E7270-H836QF2
+$ git clone https://github.com/NTDuck/nixconf && cd nixconf
+$ sudo nixos-rebuild switch --flake .#${HOSTNAME} --extra-experimental-features "nix-command flakes"
 ```
 
-## Agenix lifecycle
-### Public key generation - Target
-```cmd
-$ sudo mkdir -p /etc/ssh
-$ sudo ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ""
-$ cat /etc/ssh/ssh_host_ed25519_key.pub
+Current supported hosts are `dell-latitude-E7270-H836QF2` and `lenovo-legion-16iah7h-PF3XJ8SP`.
+
+### 2. Rebuild
+
+```bash
+$ nh os switch . -H ${HOSTNAME}
 ```
 
-### Public key generation - User
-```cmd
-$ ssh-keygen -t ed25519 -C "ayin@dell-latitude"
-$ cat ~/.ssh/id_ed25519.pub
+### 3. Update
+
+Usually this involves recompiling heavy stuff so I apply certain limitations to avoid crashing.
+
+```bash
+$ NIX_CONFIG="$(printf \
+  'access-tokens = github.com=%s\ncores = %d\nmax-jobs = 1\n' \
+  "$(gh auth token)" \
+  "$(( $(nproc) * 80 / 100 > 0 ))"
+)" \
+nh os switch . -H ${HOSTNAME} --update
 ```
 
-### Secret creation
-```cmd
-cd secrets
-nix run github:ryantm/agenix -- -e my-secret.age
-agenix -e my-secret.age
-```
+## References
 
-```cmd
-$ sudo nixos-generate-config --show-hardware-config > ./targets/dell-latitude-E7270-H836QF2/hardware.nix
-```
-
-### How to install on new machine
-```cmd
-# In case it shows something like "Virtual Terminal Stopped: Device memory is nearly full. Virtual terminal processes were using a lot of memory and were forced to stop."
-$ sudo dd if=/dev/zero of=/swapfile bs=1M count=8192
-$ sudo chmod 600 /swapfile
-$ sudo mkswap /swapfile
-$ sudo swapon /swapfile
-
-$ sudo rm -f /swapfile
-$ sudo modprobe zram
-$ echo 8G | sudo tee /sys/block/zram0/disksize
-$ sudo mkswap /dev/zram0
-$ sudo swapon /dev/zram0
-```
-
-```cmd
-$ git clone https://github.com/NTDuck/nixconf && nixconf
-
-$ sudo nixos-generate-config --show-hardware-config --no-filesystems > ./modules/hosts/${hostname}/private/hardware/default.nix
-$ sudo nix --extra-experimental-features "nix-command flakes" run github:nix-community/disko/latest#disko-install -- --flake .#${hostname} --disk main /dev/${diskname}
-
-$ ...
-$ git add .
-
-$ lsblk # to determine ${diskpartition}
-$ sudo mount -o subvol=persistent /dev/${diskpartition} /mnt
-$ sudo cp ~/nixconf/* /mnt/etc/nixconf
-
-$ sudo chroot /mnt passwd
-```
+Different takes on the [Dendritic Pattern](https://discourse.nixos.org/t/the-dendritic-pattern/61271) from [Pol Dellaiera](https://not-a-number.io/2025/refactoring-my-infrastructure-as-code-configurations/), [Spencer Balogh](https://blog.decent.id/post/flake-parts-and-dendritic-nix/), and [Simon Shine](https://simonshine.dk/articles/dendritic-nix-with-nixos-shell/).

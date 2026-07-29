@@ -3,12 +3,9 @@
   inputs,
   lib,
   ...
-}: let
-  version = "26.05";
-in {
+}: {
   imports = [
     inputs.den.flakeModules.default
-    # inputs.flake-file.flakeModules.default
   ];
 
   den = {
@@ -21,31 +18,23 @@ in {
         den.batteries.hostname
       ];
 
-      nixos = {
-        config = {
-          system.stateVersion = version;
+      nixos.config = {
+        system.stateVersion = "26.05";
 
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            backupFileExtension = "backup";
-          };
+        home-manager = {
+          useGlobalPkgs = true;
+          useUserPackages = true;
+          backupFileExtension = "backup";
         };
       };
 
-      homeManager.config.home.stateVersion = version;
+      homeManager.config.home.stateVersion = "26.05";
     };
 
-    schema = {
-      host.includes = [
-        # `homeManager` configurations are defined in host aspects
-        # and need to be defined to users
-        # DO NOT REMOVE
-        den.batteries.host-aspects
-      ];
-
-      host.classes = ["nixos"];
-      user.classes = lib.mkDefault ["nixos" "homeManager"];
+    schema.user = {
+      # `homeManager` configurations are defined in host aspects and need to be defined to users
+      includes = [den.batteries.host-aspects];
+      classes = lib.mkDefault ["homeManager"];
     };
   };
 }

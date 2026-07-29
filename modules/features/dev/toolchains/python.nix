@@ -11,7 +11,9 @@
     homeManager = {pkgs, ...}: {
       programs.poetry = {
         enable = true;
-        package = pkgs.unstable.poetry;
+        package = pkgs.unstable.poetry.overridePythonAttrs (_: {
+          doCheck = false;
+        });
       };
 
       programs.uv = {

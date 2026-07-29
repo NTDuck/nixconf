@@ -5,6 +5,8 @@
 }: {
   den.aspects.kernels.cachyos-kernel = {
     nixos = {pkgs, ...}: {
+      # CachyOS kernels are large and rebuild often; use the upstream binary
+      # caches recommended by nix-cachyos-kernel.
       # https://github.com/xddxdd/nix-cachyos-kernel#binary-cache
       nix.settings = {
         extra-substituters = [

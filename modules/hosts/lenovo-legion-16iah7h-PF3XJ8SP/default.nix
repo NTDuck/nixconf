@@ -5,29 +5,27 @@
 
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     includes = [
-      den.aspects.users.ayin
-      den.batteries.primary-user
-
       den.aspects.battery.power-profiles-daemon
       den.aspects.battery.upower
       den.aspects.bluetooth
       den.aspects.bootloaders.systemd
-      den.aspects.browsers.vivaldi
+      den.aspects.browsers.chromium
       den.aspects.browsers.zen-browser
-      den.aspects.compositors.mangowm
+      (den.aspects.compositors.mangowm {
+        terminal = pkgs: "${pkgs.unstable.kitty}/bin/kitty";
+      })
       den.aspects.dev
       den.aspects.editors.helix
       den.aspects.editors.zed-editor
-      den.aspects.file-managers.nautilus
+      den.aspects.file-managers.nemo
       den.aspects.file-managers.yazi
       den.aspects.gaming.itch
       den.aspects.gaming.mangohud
       den.aspects.gaming.steam
-      # den.aspects.greeters.tuigreet
-      den.aspects.greeters.noctalia-greeter
+      (den.aspects.greeters.tuigreet {
+        command = config: "${config.programs.mango.package}/bin/mango";
+      })
       den.aspects.kernels.cachyos-kernel
-      # den.aspects.launchers.tofi
-      # den.aspects.lockscreens.gtklock
       den.aspects.messenging.discord
       den.aspects.messenging.telegram
       den.aspects.multimedia.ffmpeg
@@ -38,15 +36,20 @@
       den.aspects.multimedia.yt-dlp
       den.aspects.music.youtube-music
       den.aspects.nix
+      den.aspects.noctalia
       # den.aspects.lix
       den.aspects.nh
       den.aspects.nix-ld
       den.aspects.nur
-      den.aspects.office.notion
       den.aspects.office.pandoc
-      den.aspects.office.taskwarrior
+      den.aspects.office.libreoffice
       den.aspects.office.texlive
       den.aspects.office.zathura
+      den.aspects.productivity.mermaid
+      den.aspects.productivity.obsidian
+      den.aspects.productivity.taskwarrior
+      den.aspects.productivity.world-monitor
+      den.aspects.secrets.agenix
       den.aspects.services.cliphist
       den.aspects.services.cloudflare-warp
       den.aspects.services.dconf
@@ -57,22 +60,26 @@
       den.aspects.services.pipewire
       den.aspects.services.polkit
       den.aspects.services.resolved
+      den.aspects.services.ssh
       den.aspects.services.udisks2
       den.aspects.settings
-      den.aspects.shells.noctalia
+      den.aspects.shells.prompts.starship
       den.aspects.shells.zsh
-      # den.aspects.status-bars.waybar
       den.aspects.swap.zram
       den.aspects.terminals.kitty
+      den.aspects.utilities.screenshots.flameshot
+      den.aspects.utilities.screenshots.satty
+      den.aspects.utilities.torrents.rtorrent
+      den.aspects.utilities.torrents.torrent-tui
+      den.aspects.utilities.torrents.webtorrent
       den.aspects.utilities.cava
       den.aspects.utilities.fastfetch
-      den.aspects.utilities.flameshot
-      den.aspects.utilities.rtorrent
       den.aspects.utilities.p7zip
       den.aspects.utilities.ripgrep
-      den.aspects.utilities.speedtest-cli
       den.aspects.utilities.rufus
+      den.aspects.utilities.speedtest-cli
       den.aspects.virtualization.docker
+      den.aspects.virtualization.qemu
       den.aspects.virtualization.waydroid
       den.aspects.stylix
     ];

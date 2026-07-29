@@ -1,5 +1,8 @@
 {
-  outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./modules);
+  outputs = inputs:
+    builtins.removeAttrs
+    (inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./modules))
+    ["denful"];
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
@@ -53,17 +56,17 @@
 
     # Noctalia
     noctalia = {
-      url = "github:noctalia-dev/noctalia";
-      # url = "github:noctalia-dev/noctalia/legacy-v4";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-
-    noctalia-greeter = {
-      url = "github:noctalia-dev/noctalia-greeter";
+      # url = "github:noctalia-dev/noctalia";
+      url = "github:noctalia-dev/noctalia/v4.7.7";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     # Browser
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs = {
@@ -77,10 +80,10 @@
       url = "github:ndfined-crp/ayugram-desktop/release";
       flake = true;
     };
-
-    preservation.url = "github:nix-community/preservation";
   };
 
+  # Keep evaluator policy in the flake so `nh os switch` and CI see the same
+  # settings. References:
   # https://nix.dev/manual/nix/latest/command-ref/conf-file#available-settings
   # https://codeberg.org/Adda/nixos-config/src/commit/826b5ec6f5733e4b6bc0771dc9639e2e074358b5/flake.nix
   nixConfig = {

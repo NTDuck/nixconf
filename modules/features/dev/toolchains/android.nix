@@ -1,15 +1,13 @@
 {den, ...}: {
   den.aspects.dev.toolchains.android = {
-    nixos = {
-      user,
-      pkgs,
-      ...
-    }: {
+    nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.android-tools
       ];
+    };
 
-      users.users.${user.name}.extraGroups = ["adbusers" "kvm"];
+    provides.to-users.nixos = {user, ...}: {
+      users.users.${user.userName}.extraGroups = ["adbusers"];
     };
   };
 }

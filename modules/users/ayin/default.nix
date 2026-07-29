@@ -1,7 +1,10 @@
 {den, ...}: {
-  den.aspects.users.ayin = {
+  den.aspects.ayin = {
     includes = [
-      den.aspects.users.ayin.dev.gits.git
+      den.batteries.primary-user
+      (den.batteries.user-shell "zsh")
+
+      den.aspects.ayin.dev.gits.git
     ];
   };
 }

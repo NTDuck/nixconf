@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.bluetuith = {
+  den.aspects.bluetooth.bluetuith = {
     homeManager = {pkgs, ...}: {
       programs.bluetuith = {
         enable = true;

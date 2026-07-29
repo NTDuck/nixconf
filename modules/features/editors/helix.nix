@@ -38,10 +38,6 @@
           ];
         };
       };
-
-      home.sessionVariables = {
-        EDITOR = "hx";
-      };
     };
   };
 }

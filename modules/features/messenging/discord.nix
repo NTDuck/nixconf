@@ -44,6 +44,10 @@
             onlyDefaultSpeakers = false;
           };
         };
+
+        vencord.settings = {
+          plugins.WebScreenShareFixes.enabled = true;
+        };
       };
     };
   };

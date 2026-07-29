@@ -1,25 +1,15 @@
 {den, ...}: {
   den.aspects.editors.zed-editor = {
     homeManager = {
+      config,
       pkgs,
-      lib,
       ...
     }: {
       programs.zed-editor = {
         enable = true;
-
-        # https://github.com/zed-industries/zed/issues/32792
-        # package = pkgs.symlinkJoin {
-        #   name = "zed";
-        #   paths = [pkgs.unstable.zed-editor];
-        #   buildInputs = [pkgs.makeWrapper];
-        #   postBuild = ''
-        #     wrapProgram $out/bin/zeditor \
-        #       --unset WAYLAND_DISPLAY
-        #   '';
-        # };
         package = pkgs.unstable.zed-editor;
 
+        # https://github.com/zed-industries/extensions/tree/main/extensions
         extensions = [
           # "catppuccin-blur"
           "catppuccin-icons"
@@ -29,15 +19,16 @@
           "toml"
           "rust"
           "crates"
-        ]; # https://github.com/zed-industries/extensions/tree/main/extensions
+        ];
 
         userSettings = {
           cursor_blink = false;
           cursor_shape = "block";
-          cli_default_open_behaviour = "new_window";
+          cli_default_open_behavior = "existing_window";
+          format_on_save = "on";
 
           project_panel = {
-            default_width = 60.0;
+            default_width = 240.0;
             entry_spacing = "standard";
             dock = "left";
           };
@@ -76,16 +67,12 @@
           base_keymap = "VSCode";
           soft_wrap = "editor_width";
 
-          # buffer_font_size = lib.mkForce 16;
-          # ui_font_size = lib.mkForce 16;
-
           # icon_theme = lib.mkForce "Catppuccin Latte";
         };
       };
 
       home.shellAliases = {
-        zed = "zeditor";
-        # zed = "${pkgs.unstable.zed}/bin/zeditor";
+        zed = "${config.programs.zed-editor.package}/bin/zeditor";
       };
     };
   };

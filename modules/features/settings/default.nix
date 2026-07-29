@@ -7,34 +7,21 @@
       den.aspects.settings.time
     ];
 
-    nixos = {
+    nixos = {config, ...}: {
       nix.settings = {
         experimental-features = ["nix-command" "flakes" "pipe-operators"];
         trusted-users = ["@wheel"];
       };
 
-      security.sudo = {
-        extraRules = [
-          {
-            users = ["ayin"];
-            commands = [
-              {
-                command = "/run/current-system/specialisation/light-mode/activate";
-                options = ["NOPASSWD"];
-              }
-              {
-                command = "/nix/var/nix/profiles/system/bin/switch-to-configuration";
-                options = ["NOPASSWD"];
-              }
-            ];
-          }
-        ];
+      # TODO Agenix
+      # nix.extraOptions = ''
+      #   !include ${config.age.secrets."github-token".path}
+      # '';
 
-        extraConfig = ''
-          Defaults timestamp_timeout=-1
-          Defaults timestamp_type=tty
-        '';
-      };
+      security.sudo.extraConfig = ''
+        Defaults timestamp_timeout=-1
+        Defaults timestamp_type=tty
+      '';
     };
   };
 }

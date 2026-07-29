@@ -1,7 +1,7 @@
 {den, ...}: {
   den.aspects.bluetooth = {
     includes = [
-      den.aspects.bluetuith
+      den.aspects.bluetooth.bluetuith
     ];
 
     nixos = {pkgs, ...}: {

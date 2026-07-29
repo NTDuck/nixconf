@@ -4,11 +4,7 @@
   ...
 }: {
   den.aspects.stylix = {
-    nixos = {
-      pkgs,
-      lib,
-      ...
-    }: {
+    nixos = {pkgs, ...}: {
       imports = [
         inputs.stylix.nixosModules.stylix
       ];
@@ -17,9 +13,13 @@
         enable = true;
 
         polarity = "dark";
-        base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa-dragon.yaml";
 
-        image = "${inputs.self}/assets/wallpapers/girls-last-tour-library.jpg";
+        base16Scheme = "${pkgs.base16-schemes}/share/themes/grayscale-dark.yaml";
+        override = {
+          base08 = "e06c75";
+        };
+
+        image = "${inputs.self}/assets/wallpapers/rockman.png";
 
         cursor = {
           package = pkgs.unstable.bibata-cursors;
@@ -46,32 +46,18 @@
           };
 
           sizes = {
-            # applications = 11;
-            # terminal = 11;
-            # desktop = 10;
-            # popups = 10;
-
-            applications = 16;
-            terminal = 16;
-            desktop = 16;
-            popups = 16;
+            applications = 11;
+            terminal = 11;
+            desktop = 10;
+            popups = 10;
           };
         };
 
         opacity = {
           applications = 0.8;
-          terminal = 0.8;
+          terminal = 0.75;
           desktop = 0.8;
           popups = 0.8;
-        };
-
-        # targets.console.enable = false;
-      };
-
-      specialisation.light-mode.configuration = {
-        stylix = {
-          polarity = lib.mkForce "light";
-          base16Scheme = lib.mkForce "${pkgs.base16-schemes}/share/themes/gruvbox-material-light-hard.yaml";
         };
       };
     };

@@ -1,23 +1,9 @@
 {den, ...}: {
   den.aspects.gaming.steam = {
-    nixos = {
-      lib,
-      pkgs,
-      ...
-    }: let
-      mangohud-enabled = den.aspects.services.gnome-keyring.enable or false;
-    in {
+    nixos = {pkgs, ...}: {
       programs.steam = {
         enable = true;
-
-        package = pkgs.unstable.steam.override {
-          extraEnv =
-            {
-              # OBS_VKCAPTURE = true;
-              # RADV_TEX_ANISO = 16;
-            }
-            // lib.optionalAttrs mangohud-enabled {MANGOHUD = true;};
-        };
+        package = pkgs.unstable.steam;
 
         extraCompatPackages = [
           pkgs.unstable.proton-ge-bin
