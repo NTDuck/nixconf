@@ -192,7 +192,7 @@
           fadein_begin_opacity = 0.1;
           fadeout_begin_opacity = 0.9;
           animation_curve_opafadein = "0.0,0.55,0.45,1.0";
-          animation_curve_opafadeout = "0.55,0.0,1.0,0.45";
+          animation_curve_opafadeout = "0.5,0.5,0.5,0.5";
 
           tag_animation_direction = 0;
 

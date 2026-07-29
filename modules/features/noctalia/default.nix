@@ -7,6 +7,7 @@
     includes = [
       # Required for `screen-shot-and-record` plugin
       den.aspects.utilities.screenshots.satty
+      den.aspects.utilities.screenshots.swappy
 
       # Required for `slowbongo` plugin
       den.aspects.utilities.evtest
