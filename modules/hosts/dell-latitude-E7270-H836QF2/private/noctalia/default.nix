@@ -116,53 +116,7 @@
           overviewLayer = false;
         };
 
-        controlCenter = {
-          shortcuts = {
-            left = [
-              {id = "Network";}
-              {id = "Bluetooth";}
-            ];
-
-            right = [
-              {id = "PowerProfile";}
-              {id = "KeepAwake";}
-            ];
-          };
-
-          cards = [
-            {
-              enabled = false;
-              id = "profile-card";
-            }
-            {
-              enabled = true;
-              id = "shortcuts-card";
-            }
-            {
-              enabled = true;
-              id = "audio-card";
-            }
-            {
-              enabled = false;
-              id = "brightness-card";
-            }
-            {
-              enabled = false;
-              id = "weather-card";
-            }
-            {
-              enabled = false;
-              id = "media-sysmon-card";
-            }
-          ];
-        };
-
         systemMonitor.enableDgpuMonitoring = false;
-
-        noctaliaPerformance = {
-          disableWallpaper = true;
-          disableDesktopWidgets = true;
-        };
 
         notifications = {
           backgroundOpacity = 1.0;
