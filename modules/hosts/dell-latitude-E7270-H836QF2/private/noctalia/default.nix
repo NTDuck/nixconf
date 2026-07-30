@@ -2,61 +2,6 @@
   den.aspects.dell-latitude-E7270-H836QF2 = {
     homeManager = {lib, ...}: {
       programs.noctalia-shell.settings = lib.mapAttrsRecursive (_: value: lib.mkForce value) {
-        bar = {
-          showOutline = false;
-          showCapsule = false;
-          capsuleOpacity = 1.0;
-          widgetSpacing = 2;
-          contentPadding = 0;
-          backgroundOpacity = 1.0;
-          useSeparateOpacity = false;
-          marginVertical = 0;
-          marginHorizontal = 0;
-          frameThickness = 0;
-          frameRadius = 0;
-          outerCorners = false;
-          showOnWorkspaceSwitch = false;
-
-          # Keep only continuously useful, inexpensive widgets.
-          widgets = {
-            left = [
-              {
-                colorizeDistroLogo = false;
-                colorizeSystemIcon = "none";
-                colorizeSystemText = "none";
-                customIconPath = "";
-                enableColorization = false;
-                icon = "noctalia";
-                id = "ControlCenter";
-                useDistroLogo = false;
-              }
-            ];
-
-            center = [];
-
-            right = [
-              {
-                clockColor = "none";
-                customFont = "Maple Mono";
-                formatHorizontal = "HH:mm";
-                formatVertical = "HH mm";
-                id = "Clock";
-                tooltipFormat = "HH:mm";
-                useCustomFont = true;
-              }
-              {
-                deviceNativePath = "__default__";
-                displayMode = "icon-only";
-                hideIfIdle = false;
-                hideIfNotDetected = false;
-                id = "Battery";
-                showNoctaliaPerformance = false;
-                showPowerProfiles = true;
-              }
-            ];
-          };
-        };
-
         general = {
           dimmerOpacity = 0.0;
           animationDisabled = true;
@@ -83,28 +28,6 @@
           showCalendarWeather = false;
           analogClockInCalendar = false;
           autoLocate = false;
-        };
-
-        calendar.cards = [
-          {
-            enabled = true;
-            id = "calendar-header-card";
-          }
-          {
-            enabled = true;
-            id = "calendar-month-card";
-          }
-          {
-            enabled = false;
-            id = "weather-card";
-          }
-        ];
-
-        wallpaper = {
-          enabled = false;
-          overviewEnabled = false;
-          automationEnabled = false;
-          skipStartupTransition = true;
         };
 
         appLauncher = {
