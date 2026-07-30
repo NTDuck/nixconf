@@ -299,7 +299,7 @@
             fontDefaultScale = 1;
             fontFixedScale = 1;
             tooltipsEnabled = true;
-            scrollbarAlwaysVisible = true;
+            scrollbarAlwaysVisible = false;
             boxBorderEnabled = true;
             panelBackgroundOpacity = config.stylix.opacity.applications;
             translucentWidgets = true;
