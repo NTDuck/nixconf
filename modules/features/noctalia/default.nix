@@ -132,7 +132,7 @@
                     catOffsetY = 0;
                     catSize = 1;
                     idleTimeout = 150;
-                    raveMode = true;
+                    raveMode = false;
                     tappyMode = true;
                     useMprisFilter = false;
                     waitingTimeout = 30000;
