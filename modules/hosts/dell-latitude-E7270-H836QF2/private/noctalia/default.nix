@@ -1,6 +1,7 @@
 {den, ...}: {
   den.aspects.dell-latitude-E7270-H836QF2 = {
     homeManager = {lib, ...}: {
+      # Override for performance
       programs.noctalia-shell.settings = lib.mapAttrsRecursive (_: value: lib.mkForce value) {
         general = {
           dimmerOpacity = 0.0;
