@@ -10,6 +10,11 @@
         package = pkgs.unstable.bluez;
 
         powerOnBoot = true;
+        settings = {
+          General = {
+            Experimental = true;
+          };
+        };
       };
     };
   };
