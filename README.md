@@ -44,6 +44,10 @@ $ NIX_CONFIG="$(printf \
 nh os switch . -H ${HOSTNAME} --update
 ```
 
+## Screenshots
+
+![sans.png](.github/assets/screenshots/sans.png)
+
 ## References
 
 Different takes on the [Dendritic Pattern](https://discourse.nixos.org/t/the-dendritic-pattern/61271) from [Pol Dellaiera](https://not-a-number.io/2025/refactoring-my-infrastructure-as-code-configurations/), [Spencer Balogh](https://blog.decent.id/post/flake-parts-and-dendritic-nix/), and [Simon Shine](https://simonshine.dk/articles/dendritic-nix-with-nixos-shell/).
