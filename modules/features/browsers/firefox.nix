@@ -38,6 +38,13 @@
             };
           };
         };
+
+        policies.ExtensionSettings = {
+          "betterdeepseek@goygoyengine.com" = {
+            installation_mode = "normal_installed";
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/betterdeepseek@goygoyengine.com/latest.xpi";
+          };
+        };
       };
 
       stylix.targets.firefox.profileNames =

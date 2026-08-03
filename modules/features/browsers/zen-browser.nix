@@ -12,12 +12,12 @@
       ...
     }: {
       imports = [
-        inputs.zen-browser.homeModules.beta
+        inputs.zen-browser.homeModules.twilight
       ];
 
       programs.zen-browser = {
         enable = true;
-        package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.beta;
+        package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.twilight;
 
         setAsDefaultBrowser = true;
 
@@ -37,6 +37,16 @@
           DisableAppUpdate = true;
           DisableTelemetry = true;
           DisablePocket = true;
+
+          ExtensionSettings =
+            # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/04-extensions.nix
+            builtins.mapAttrs (_: pluginId: {
+              install_url = "https://addons.mozilla.org/firefox/downloads/latest/${pluginId}/latest.xpi";
+              installation_mode = "force_installed";
+            }) {
+              # https://github.com/EdgeTypE/better-deepseek
+              "betterdeepseek@goygoyengine.com" = "betterdeepseek";
+            };
         };
 
         profiles.${user.name} = {
