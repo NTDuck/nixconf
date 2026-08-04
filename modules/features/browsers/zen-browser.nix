@@ -17,7 +17,9 @@
 
       programs.zen-browser = {
         enable = true;
-        package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.twilight;
+
+        # Do not set - would replace policy-aware package with prebuilt flake package
+        # package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.twilight;
 
         setAsDefaultBrowser = true;
 
@@ -45,7 +47,10 @@
               installation_mode = "force_installed";
             }) {
               # https://github.com/EdgeTypE/better-deepseek
-              "betterdeepseek@goygoyengine.com" = "betterdeepseek";
+              "betterdeepseek@goygoyengine.com" = "better-deepseek";
+
+              # https://github.com/saeedezzati/superpower-chatgpt
+              "cjiggdeafkdppmdmlcdpfigbalcgbkpg@fancydino.com" = "superpower-chatgpt";
             };
         };
 
