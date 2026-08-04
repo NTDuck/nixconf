@@ -39,12 +39,18 @@
           };
         };
 
-        policies.ExtensionSettings = {
-          "betterdeepseek@goygoyengine.com" = {
-            installation_mode = "normal_installed";
-            install_url = "https://addons.mozilla.org/firefox/downloads/latest/betterdeepseek@goygoyengine.com/latest.xpi";
+        policies.ExtensionSettings =
+          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/04-extensions.nix
+          builtins.mapAttrs (_: pluginId: {
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/${pluginId}/latest.xpi";
+            installation_mode = "force_installed";
+          }) {
+            # https://github.com/EdgeTypE/better-deepseek
+            "betterdeepseek@goygoyengine.com" = "better-deepseek";
+
+            # https://github.com/saeedezzati/superpower-chatgpt
+            "cjiggdeafkdppmdmlcdpfigbalcgbkpg@fancydino.com" = "superpower-chatgpt";
           };
-        };
       };
 
       stylix.targets.firefox.profileNames =
