@@ -5,6 +5,7 @@
       den.aspects.dev.agentics.harnesses.claude-code
       den.aspects.dev.agentics.harnesses.codex
       den.aspects.dev.agentics.harnesses.oh-my-pi
+      den.aspects.dev.agentics.harnesses.reasonix
     ];
   };
 }
