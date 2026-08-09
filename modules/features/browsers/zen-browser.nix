@@ -75,6 +75,7 @@
           settings = {
             "browser.startup.page" = 3;
             "browser.sessionstore.resume_from_crash" = true;
+            "browser.download.always_ask_before_handling_new_types" = false;
 
             # Download automatically to ~/Downloads instead of opening a
             # GTK/XDG file chooser for every download.
@@ -94,7 +95,7 @@
             "zen.workspaces.swipe-actions" = true;
             "zen.workspaces.wrap-around-navigation" = true;
             "zen.workspaces.natural-scroll" = true;
-            "zen.workspaces.scroll-modifier-key" = "none";
+            "zen.workspaces.scroll-modifier-key" = "ctrl";
 
             "zen.workspaces.continue-where-left-off" = true;
             "zen.view.compact.hide-tabbar" = true;

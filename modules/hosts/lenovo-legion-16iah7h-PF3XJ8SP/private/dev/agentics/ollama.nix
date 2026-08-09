@@ -55,6 +55,7 @@
           "hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL"
           "hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:Q5_K_M"
         ];
+        syncModels = true;
 
         environmentVariables = {
           OLLAMA_FLASH_ATTENTION = "1";
