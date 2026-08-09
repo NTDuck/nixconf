@@ -19,7 +19,7 @@
           base08 = "e06c75";
         };
 
-        image = "${inputs.self}/assets/wallpapers/rockman.png";
+        image = "${inputs.self}/assets/wallpapers/roaring.jpg";
 
         cursor = {
           package = pkgs.unstable.bibata-cursors;
