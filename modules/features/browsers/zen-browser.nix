@@ -94,7 +94,7 @@
             # Allow switching spaces when scrolling
             "zen.workspaces.swipe-actions" = true;
             "zen.workspaces.wrap-around-navigation" = true;
-            "zen.workspaces.natural-scroll" = true;
+            "zen.workspaces.natural-scroll" = false;
             "zen.workspaces.scroll-modifier-key" = "ctrl";
 
             "zen.workspaces.continue-where-left-off" = true;

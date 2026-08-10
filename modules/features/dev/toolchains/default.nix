@@ -1,6 +1,8 @@
 {den, ...}: {
   den.aspects.dev.toolchains = {
     includes = [
+      den.aspects.dev.sql
+
       den.aspects.dev.toolchains.android
       den.aspects.dev.toolchains.c-cpp
       den.aspects.dev.toolchains.go
