@@ -5,6 +5,8 @@
       den.aspects.dev.envs
       den.aspects.dev.gits
       den.aspects.dev.toolchains
+
+      den.aspects.dev.postman
     ];
   };
 }
