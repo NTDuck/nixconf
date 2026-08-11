@@ -22,7 +22,7 @@
       programs.java = {
         enable = true;
         # package = pkgs.unstable.jdk;
-        package = pkgs.unstable.jdk11_headless;
+        package = pkgs.unstable.jdk11;
       };
     };
   };
