@@ -48,12 +48,15 @@
           "deepseek-r1:7b" # creative, chat
           "yi:6b-200k-q3_K_S" # reading
 
-          # Base
+          # Dense, coding
           "qwen3.5:4b-q4_K_M"
-
-          # Fine-tuned, quantitized
           "hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL"
           "hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:Q5_K_M"
+
+          # MoE, reasoning
+          "lfm2.5:8b-a1b-q4_K_M"
+          "gpt-oss:20b"
+          "qwen3:30b"
         ];
         syncModels = true;
 

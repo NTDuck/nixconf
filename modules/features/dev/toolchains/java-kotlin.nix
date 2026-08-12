@@ -10,7 +10,7 @@
         pkgs.unstable.spring-boot-cli
         pkgs.unstable.jdt-language-server
 
-        pkgs.unstable.jetbrains.idea
+        pkgs.unstable.jetbrains.idea-oss
       ];
 
       # environment.sessionVariables = {
