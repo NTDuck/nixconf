@@ -56,7 +56,7 @@
           # MoE, reasoning
           "lfm2.5:8b-a1b-q4_K_M"
           "gpt-oss:20b"
-          "qwen3:30b"
+          "qwen3:30b-a3b-thinking-2507-q4_K_M"
         ];
         syncModels = true;
 
