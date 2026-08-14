@@ -6,6 +6,8 @@
       fanControlScript = pkgs.writeShellScriptBin "legion-fan-auto" ''
         set -euo pipefail
 
+        LAST_STATE=""
+
         update_fan_speed() {
           local is_ac=0
           for p in /sys/class/power_supply/*; do
@@ -27,6 +29,8 @@
             profile="$(tr -d '[:space:]' < /sys/firmware/acpi/platform_profile 2>/dev/null || true)"
           fi
 
+          local current_state="ac=''${is_ac}_profile=''${profile}"
+
           local fan_fullspeed=""
           for f in /sys/module/legion_laptop/drivers/platform:legion/*/fan_fullspeed; do
             if [ -f "$f" ]; then
@@ -35,16 +39,21 @@
             fi
           done
 
-          if [ "$is_ac" -eq 1 ] && [ "$profile" = "performance" ]; then
-            if [ -n "$fan_fullspeed" ]; then
-              echo 1 > "$fan_fullspeed" 2>/dev/null || true
+          if [ -n "$fan_fullspeed" ]; then
+            echo 0 > "$fan_fullspeed" 2>/dev/null || true
+          fi
+
+          if [ "$current_state" != "$LAST_STATE" ]; then
+            LAST_STATE="$current_state"
+            if [ "$is_ac" -eq 1 ] && [ "$profile" = "performance" ]; then
+              if [ -f /etc/legion_linux/performance-ac.yaml ]; then
+                ${legionPkg}/bin/legion_cli fancurve-write-file-to-hw /etc/legion_linux/performance-ac.yaml 2>/dev/null || true
+              else
+                ${legionPkg}/bin/legion_cli fancurve-write-preset-to-hw performance-ac 2>/dev/null || true
+              fi
+            else
+              ${legionPkg}/bin/legion_cli fancurve-write-preset-for-current-profile 2>/dev/null || true
             fi
-            ${legionPkg}/bin/legion_cli maximumfanspeed enable 2>/dev/null || true
-          else
-            if [ -n "$fan_fullspeed" ]; then
-              echo 0 > "$fan_fullspeed" 2>/dev/null || true
-            fi
-            ${legionPkg}/bin/legion_cli maximumfanspeed disable 2>/dev/null || true
           fi
         }
 
@@ -62,103 +71,103 @@
         name: performance-ac
         enable_minifancurve: false
         entries:
-        - fan1_speed: 5500
-          fan2_speed: 5500
+        - fan1_speed: 1800
+          fan2_speed: 1800
           cpu_lower_temp: 0
-          cpu_upper_temp: 127
+          cpu_upper_temp: 40
           gpu_lower_temp: 0
-          gpu_upper_temp: 127
+          gpu_upper_temp: 42
           ic_lower_temp: 0
+          ic_upper_temp: 35
+          acceleration: 3
+          deceleration: 3
+        - fan1_speed: 2200
+          fan2_speed: 2200
+          cpu_lower_temp: 40
+          cpu_upper_temp: 50
+          gpu_lower_temp: 42
+          gpu_upper_temp: 52
+          ic_lower_temp: 35
+          ic_upper_temp: 40
+          acceleration: 3
+          deceleration: 3
+        - fan1_speed: 2600
+          fan2_speed: 2600
+          cpu_lower_temp: 50
+          cpu_upper_temp: 58
+          gpu_lower_temp: 52
+          gpu_upper_temp: 60
+          ic_lower_temp: 40
+          ic_upper_temp: 45
+          acceleration: 3
+          deceleration: 3
+        - fan1_speed: 3000
+          fan2_speed: 3000
+          cpu_lower_temp: 58
+          cpu_upper_temp: 65
+          gpu_lower_temp: 60
+          gpu_upper_temp: 66
+          ic_lower_temp: 45
+          ic_upper_temp: 50
+          acceleration: 3
+          deceleration: 3
+        - fan1_speed: 3400
+          fan2_speed: 3400
+          cpu_lower_temp: 65
+          cpu_upper_temp: 72
+          gpu_lower_temp: 66
+          gpu_upper_temp: 72
+          ic_lower_temp: 50
+          ic_upper_temp: 55
+          acceleration: 2
+          deceleration: 2
+        - fan1_speed: 3800
+          fan2_speed: 3800
+          cpu_lower_temp: 72
+          cpu_upper_temp: 78
+          gpu_lower_temp: 72
+          gpu_upper_temp: 78
+          ic_lower_temp: 55
+          ic_upper_temp: 127
+          acceleration: 2
+          deceleration: 2
+        - fan1_speed: 4100
+          fan2_speed: 4100
+          cpu_lower_temp: 78
+          cpu_upper_temp: 84
+          gpu_lower_temp: 78
+          gpu_upper_temp: 84
+          ic_lower_temp: 127
+          ic_upper_temp: 127
+          acceleration: 2
+          deceleration: 2
+        - fan1_speed: 4300
+          fan2_speed: 4300
+          cpu_lower_temp: 84
+          cpu_upper_temp: 90
+          gpu_lower_temp: 84
+          gpu_upper_temp: 90
+          ic_lower_temp: 127
+          ic_upper_temp: 127
+          acceleration: 1
+          deceleration: 1
+        - fan1_speed: 4400
+          fan2_speed: 4400
+          cpu_lower_temp: 90
+          cpu_upper_temp: 95
+          gpu_lower_temp: 90
+          gpu_upper_temp: 95
+          ic_lower_temp: 127
           ic_upper_temp: 127
           acceleration: 1
           deceleration: 1
         - fan1_speed: 5500
           fan2_speed: 5500
-          cpu_lower_temp: 0
+          cpu_lower_temp: 95
           cpu_upper_temp: 127
-          gpu_lower_temp: 0
+          gpu_lower_temp: 95
           gpu_upper_temp: 127
-          ic_lower_temp: 0
-          ic_upper_temp: 127
-          acceleration: 1
-          deceleration: 1
-        - fan1_speed: 5500
-          fan2_speed: 5500
-          cpu_lower_temp: 0
-          cpu_upper_temp: 127
-          gpu_lower_temp: 0
-          gpu_upper_temp: 127
-          ic_lower_temp: 0
-          ic_upper_temp: 127
-          acceleration: 1
-          deceleration: 1
-        - fan1_speed: 5500
-          fan2_speed: 5500
-          cpu_lower_temp: 0
-          cpu_upper_temp: 127
-          gpu_lower_temp: 0
-          gpu_upper_temp: 127
-          ic_lower_temp: 0
-          ic_upper_temp: 127
-          acceleration: 1
-          deceleration: 1
-        - fan1_speed: 5500
-          fan2_speed: 5500
-          cpu_lower_temp: 0
-          cpu_upper_temp: 127
-          gpu_lower_temp: 0
-          gpu_upper_temp: 127
-          ic_lower_temp: 0
-          ic_upper_temp: 127
-          acceleration: 1
-          deceleration: 1
-        - fan1_speed: 5500
-          fan2_speed: 5500
-          cpu_lower_temp: 0
-          cpu_upper_temp: 127
-          gpu_lower_temp: 0
-          gpu_upper_temp: 127
-          ic_lower_temp: 0
-          ic_upper_temp: 127
-          acceleration: 1
-          deceleration: 1
-        - fan1_speed: 5500
-          fan2_speed: 5500
-          cpu_lower_temp: 0
-          cpu_upper_temp: 127
-          gpu_lower_temp: 0
-          gpu_upper_temp: 127
-          ic_lower_temp: 0
-          ic_upper_temp: 127
-          acceleration: 1
-          deceleration: 1
-        - fan1_speed: 5500
-          fan2_speed: 5500
-          cpu_lower_temp: 0
-          cpu_upper_temp: 127
-          gpu_lower_temp: 0
-          gpu_upper_temp: 127
-          ic_lower_temp: 0
-          ic_upper_temp: 127
-          acceleration: 1
-          deceleration: 1
-        - fan1_speed: 5500
-          fan2_speed: 5500
-          cpu_lower_temp: 0
-          cpu_upper_temp: 127
-          gpu_lower_temp: 0
-          gpu_upper_temp: 127
-          ic_lower_temp: 0
-          ic_upper_temp: 127
-          acceleration: 1
-          deceleration: 1
-        - fan1_speed: 5500
-          fan2_speed: 5500
-          cpu_lower_temp: 0
-          cpu_upper_temp: 127
-          gpu_lower_temp: 0
-          gpu_upper_temp: 127
-          ic_lower_temp: 0
+          ic_lower_temp: 127
           ic_upper_temp: 127
           acceleration: 1
           deceleration: 1
@@ -177,7 +186,7 @@
       '';
 
       systemd.services.legion-fan-control = {
-        description = "Lenovo Legion Automatic Max Fan Speed Control (Performance + AC)";
+        description = "Lenovo Legion Automatic Fan Curve Control (Performance + AC)";
         after = ["multi-user.target" "power-profiles-daemon.service"];
         wantedBy = ["multi-user.target"];
         serviceConfig = {
