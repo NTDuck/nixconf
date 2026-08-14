@@ -2,15 +2,6 @@
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     nixos = {
       networking = {
-        interfaces.enp49s0 = {
-          ipv4.addresses = [
-            {
-              address = "10.224.220.59";
-              prefixLength = 24;
-            }
-          ];
-        };
-
         networkmanager.ensureProfiles.profiles = {
           "ETH_VTIT_10.224.220.59" = {
             connection = {
