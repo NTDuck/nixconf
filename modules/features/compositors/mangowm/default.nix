@@ -78,10 +78,10 @@
           drag_corner = 4;
 
           borderpx = 0;
-          gappih = 4;
-          gappiv = 4;
-          gappoh = 4;
-          gappov = 4;
+          gappih = 6;
+          gappiv = 6;
+          gappoh = 6;
+          gappov = 6;
 
           blur = 1;
           blur_layer = 0;
@@ -116,9 +116,9 @@
 
           tag_animation_direction = 0;
 
-          circle_layout = "dwindle,scroller";
+          circle_layout = "scroller,dwindle";
 
-          tagrule = lib.map (tag: "id:${tag},layout_name:dwindle") tags;
+          tagrule = lib.map (tag: "id:${tag},layout_name:scroller") tags;
 
           layerrule = [
             # https://docs.noctalia.dev/v4/getting-started/compositor-settings/hyprland/#blur
