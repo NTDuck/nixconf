@@ -43,32 +43,7 @@
       config,
       lib,
       ...
-    }: let
-      internalOutput = "eDP-1";
-      hdmiOutputs = ["HDMI-A-1" "HDMI-A-2" "HDMI-1" "HDMI-2"];
-      hdmiMirrorUnits = lib.concatMapStringsSep " " (output: "hdmi-mirror@${output}.service") hdmiOutputs;
-      stopHdmiMirrors = "${pkgs.systemd}/bin/systemctl --user stop ${hdmiMirrorUnits} || true";
-      hdmiMirrorProfile = output: {
-        profile = {
-          name = "hdmi-mirror-${output}";
-
-          outputs = [
-            {
-              criteria = internalOutput;
-              status = "enable";
-            }
-            {
-              criteria = output;
-              status = "enable";
-            }
-          ];
-
-          exec = [
-            "${pkgs.systemd}/bin/systemctl --user restart hdmi-mirror@${output}.service"
-          ];
-        };
-      };
-    in {
+    }: {
       imports = [
         inputs.mangowm.hmModules.mango
       ];
@@ -151,7 +126,7 @@
 
           ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
         in {
-          repeat_rate = 0;
+          repeat_rate = 10;
           repeat_delay = 100;
           trackpad_natural_scrolling = 1;
           click_method = 2; # Clickfinger
