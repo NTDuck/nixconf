@@ -26,9 +26,8 @@
         XDG_SESSION_DESKTOP = "mango";
         XDG_SESSION_TYPE = "wayland";
 
-        # XWayland Satellite uses a dedicated X display.
-        # Mango itself uses :1, so use :2.
-        DISPLAY = ":2";
+        # DO NOT UNCOMMENT
+        # DISPLAY = ":2";
 
         ELECTRON_OZONE_PLATFORM_HINT = "auto";
         MOZ_ENABLE_WAYLAND = "1";

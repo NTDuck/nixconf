@@ -4,11 +4,14 @@
     externalOutputs,
   }: {
     homeManager = {pkgs, ...}: let
-      mirrorUnits = builtins.concatStringsSep " " (
-        map (output: "wl-mirror@${output}.service") externalOutputs
-      );
+      mirrorService = output: "wl-mirror@${output}.service";
 
-      stopMirrors = "${pkgs.systemd}/bin/systemctl --user stop ${mirrorUnits} || true";
+      mirrorServices =
+        map mirrorService externalOutputs;
+
+      stopMirrors = "${pkgs.systemd}/bin/systemctl --user stop ${
+        builtins.concatStringsSep " " mirrorServices
+      }";
 
       mirrorProfile = output: {
         profile = {
@@ -26,7 +29,7 @@
           ];
 
           exec = [
-            "${pkgs.systemd}/bin/systemctl --user restart wl-mirror@${output}.service"
+            "${pkgs.systemd}/bin/systemctl --user restart ${mirrorService output}"
           ];
         };
       };
@@ -34,8 +37,8 @@
       systemd.user.services."wl-mirror@" = {
         Unit = {
           Description = "Mirror ${internalOutput} onto %i";
-          After = ["graphical-session.target"];
           PartOf = ["graphical-session.target"];
+          After = ["graphical-session.target"];
           ConditionEnvironment = "WAYLAND_DISPLAY";
         };
 
@@ -59,7 +62,7 @@
         package = pkgs.unstable.kanshi;
 
         settings =
-          (map mirrorProfile externalOutputs)
+          map mirrorProfile externalOutputs
           ++ [
             {
               profile = {
@@ -72,9 +75,7 @@
                   }
                 ];
 
-                exec = [
-                  stopMirrors
-                ];
+                exec = [stopMirrors];
               };
             }
           ];
