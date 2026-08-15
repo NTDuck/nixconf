@@ -298,18 +298,18 @@
               icon = "💡";
               container = 4; # <- `containers."dev,edu,fut"`
             };
-            "ddd" = {
-              id = "c75e0fb9-9f36-409e-926c-674b0c03ae55";
-              position = 5000;
-              icon = "🔞";
-              container = 6; # <- `containers."ddd"`
-            };
-            "..." = {
-              id = "6e239929-a237-4f47-b5fd-1d988de4ae9b";
-              position = 6000;
-              icon = "…";
-              container = 1; # <- `containers."master"`
-            };
+            # "ddd" = {
+            #   id = "c75e0fb9-9f36-409e-926c-674b0c03ae55";
+            #   position = 5000;
+            #   icon = "🔞";
+            #   container = 6; # <- `containers."ddd"`
+            # };
+            # "..." = {
+            #   id = "6e239929-a237-4f47-b5fd-1d988de4ae9b";
+            #   position = 6000;
+            #   icon = "…";
+            #   container = 1; # <- `containers."master"`
+            # };
           };
 
           # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/12-userchrome-css.nix
