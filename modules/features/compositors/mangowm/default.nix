@@ -116,6 +116,7 @@
 
           tag_animation_direction = 0;
 
+          scroller_structs = 0;
           scroller_default_proportion = 1;
 
           circle_layout = "scroller,dwindle";
