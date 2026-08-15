@@ -116,6 +116,8 @@
 
           tag_animation_direction = 0;
 
+          scroller_default_proportion = 1;
+
           circle_layout = "scroller,dwindle";
 
           tagrule = lib.map (tag: "id:${tag},layout_name:scroller") tags;
