@@ -57,12 +57,25 @@
       den.aspects.services.fcitx5
       den.aspects.services.gnome-keyring
       den.aspects.services.gvfs
+      den.aspects.services.kanshi
+      {
+        internalOutput = "eDP-1";
+
+        externalOutputs = [
+          "HDMI-A-1"
+          "HDMI-A-2"
+          "HDMI-1"
+          "HDMI-2"
+        ];
+      }
       den.aspects.services.nftables
       den.aspects.services.pipewire
       den.aspects.services.polkit
       den.aspects.services.resolved
       den.aspects.services.ssh
       den.aspects.services.udisks2
+      den.aspects.services.xdg
+      den.aspects.services.xwayland-satellite
       den.aspects.settings
       den.aspects.shells.prompts.starship
       den.aspects.shells.zsh
