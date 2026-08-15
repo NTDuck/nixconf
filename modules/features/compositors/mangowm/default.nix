@@ -67,8 +67,8 @@
 
           ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
         in {
-          repeat_rate = 10;
-          repeat_delay = 100;
+          repeat_rate = 50;
+          repeat_delay = 150;
           trackpad_natural_scrolling = 1;
           click_method = 2; # Clickfinger
 
@@ -78,10 +78,10 @@
           drag_corner = 4;
 
           borderpx = 0;
-          gappih = 8;
-          gappiv = 8;
-          gappoh = 8;
-          gappov = 8;
+          gappih = 4;
+          gappiv = 4;
+          gappoh = 4;
+          gappov = 4;
 
           blur = 1;
           blur_layer = 0;
@@ -92,8 +92,9 @@
           blur_params_brightness = 0.9;
           blur_params_contrast = 0.9;
           blur_params_saturation = 1.0;
-          border_radius = 16;
 
+          border_radius = 0;
+          no_radius_when_single = 0;
           focused_opacity = config.stylix.opacity.applications;
           unfocused_opacity = 0.8 * config.stylix.opacity.applications;
 
