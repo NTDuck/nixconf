@@ -149,12 +149,10 @@
             l = "down";
           };
 
-          # ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
-          # https://docs.noctalia.dev/v4/getting-started/keybinds/keybinds/#:~:text=Installation%2Dspecific%20commands
-          ipc = "${config.programs.noctalia-shell.package}/bin/noctalia-shell ipc call";
+          ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
         in {
-          repeat_rate = 50;
-          repeat_delay = 150;
+          repeat_rate = 0;
+          repeat_delay = 100;
           trackpad_natural_scrolling = 1;
           click_method = 2; # Clickfinger
 
@@ -170,9 +168,14 @@
           gappov = 8;
 
           blur = 1;
-          blur_layer = 1;
+          blur_layer = 0;
+          blur_optimized = 1;
           blur_params_radius = 8;
           blur_params_num_passes = 2;
+          blur_params_noise = 0.02;
+          blur_params_brightness = 0.9;
+          blur_params_contrast = 0.9;
+          blur_params_saturation = 1.0;
           border_radius = 16;
 
           focused_opacity = config.stylix.opacity.applications;
@@ -180,7 +183,7 @@
 
           # https://mangowm.github.io/docs/visuals/animations
           animations = 1;
-          layer_animations = 1;
+          layer_animations = 0;
 
           animation_type_open = "fade";
           animation_type_close = "fade";
@@ -202,11 +205,9 @@
 
           layerrule = [
             # https://docs.noctalia.dev/v4/getting-started/compositor-settings/hyprland/#blur
-            "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0"
-            "layer_name:noctalia-notifications-.*$,noblur:1,noanim:1,noshadow:1"
+            # "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0"
+            # "layer_name:noctalia-notifications-.*$,noblur:1,noanim:1,noshadow:1"
           ];
-
-          smartgaps = 1;
 
           bind =
             [
@@ -214,17 +215,12 @@
               "SUPER,s,switch_layout"
               "SUPER,q,killclient"
               "SUPER,f,togglemaximizescreen"
-              # "SUPER,f,togglefakefullscreen"
               "SUPER+SHIFT,f,togglefullscreen"
               "SUPER+SHIFT,e,quit"
 
-              # TODO Add Legion's Fn + Q
-              # "SUPER,d,spawn,${ipc} panel-toggle launcher"
-              # "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
-              # "SUPER+CTRL,l,spawn,${ipc} session lock"
-              "SUPER,d,spawn,${ipc} launcher toggle"
-              "SUPER+CTRL,t,spawn,${ipc} darkMode toggle"
-              "SUPER+CTRL,l,spawn,${ipc} lockScreen lock"
+              "SUPER,d,spawn,${ipc} panel-toggle launcher"
+              "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
+              "SUPER+CTRL,l,spawn,${ipc} session lock"
               "SUPER,Return,spawn,${terminal pkgs}"
             ]
             ++ (lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}") dirs)
@@ -234,16 +230,11 @@
             ++ (lib.map (tag: "SUPER+ALT,${tag},tag,${tag}") tags);
 
           bindl = [
-            # "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness-down"
-            # "NONE,XF86MonBrightnessUp,spawn,${ipc} brightness-up"
-            # "NONE,XF86AudioMute,spawn,${ipc} volume-mute"
-            # "NONE,XF86AudioLowerVolume,spawn,${ipc} volume-down"
-            # "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume-up"
-            "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness decrease"
-            "NONE,XF86MonBrightnessUp,spawn,${ipc} brightness increase"
-            "NONE,XF86AudioMute,spawn,${ipc} volume muteOutput"
-            "NONE,XF86AudioLowerVolume,spawn,${ipc} volume decrease"
-            "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume increase"
+            "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness-down"
+            "NONE,XF86MonBrightnessUp,spawn,${ipc} brightness-up"
+            "NONE,XF86AudioMute,spawn,${ipc} volume-mute"
+            "NONE,XF86AudioLowerVolume,spawn,${ipc} volume-down"
+            "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume-up"
           ];
 
           focus_on_activate = 0;
@@ -274,11 +265,10 @@
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
           ${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY
 
-          ${config.programs.noctalia-shell.package}/bin/noctalia-shell
+          ${config.programs.noctalia.package}/bin/noctalia &
 
           fcitx5 -d -r &
         '';
-        # ${config.programs.noctalia.package}/bin/noctalia &
 
         systemd = {
           enable = true;

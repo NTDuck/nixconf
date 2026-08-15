@@ -48,6 +48,7 @@
       den.aspects.productivity.mermaid
       den.aspects.productivity.obsidian
       den.aspects.productivity.taskwarrior
+      den.aspects.productivity.tomato
       den.aspects.productivity.world-monitor
       den.aspects.secrets.agenix
       den.aspects.services.cliphist

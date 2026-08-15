@@ -56,8 +56,9 @@
 
     # Noctalia
     noctalia = {
-      # url = "github:noctalia-dev/noctalia";
-      url = "github:noctalia-dev/noctalia/v4.7.7";
+      # https://docs.noctalia.dev/noctalia/getting-started/nixos/?section=binary-cache#binary-cache:~:text=tracking%20main%20directly%20may%20pull%20in%20a%20commit%20that%20hasn%E2%80%99t%20been%20cached%20yet%20by%20CI
+      url = "github:noctalia-dev/noctalia/cachix";
+      # url = "github:noctalia-dev/noctalia/v4.7.7";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
