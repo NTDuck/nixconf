@@ -106,10 +106,10 @@
           animations = 1;
           layer_animations = 0;
 
-          animation_type_open = "fade";
-          animation_type_close = "fade";
-          layer_animation_type_open = "fade";
-          layer_animation_type_close = "fade";
+          animation_type_open = "slide";
+          animation_type_close = "slide";
+          layer_animation_type_open = "slide";
+          layer_animation_type_close = "slide";
 
           animation_fade_in = 1;
           animation_fade_out = 1;

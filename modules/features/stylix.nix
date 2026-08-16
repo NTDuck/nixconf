@@ -15,7 +15,7 @@
         polarity = "dark";
 
         base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa-dragon.yaml";
-        image = "${inputs.self}/assets/wallpapers/rockman.png";
+        image = "${inputs.self}/assets/wallpapers/神奈川沖浪裏.jpg";
 
         cursor = {
           package = pkgs.unstable.bibata-cursors;
