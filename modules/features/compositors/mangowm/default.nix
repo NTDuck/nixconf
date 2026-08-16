@@ -74,7 +74,7 @@
           repeat_rate = 50;
           repeat_delay = 150;
           trackpad_natural_scrolling = 1;
-          click_method = 2; # Clickfinger
+          mouse_click_method = 2; # Clickfinger
 
           # syncobj_enable = 1;
           allow_lock_transparent = 1;
@@ -120,11 +120,13 @@
 
           tag_animation_direction = 0;
 
-          scroller_structs = 6;
+          # scroller_structs = 6;
+          scroller_structs = 12;
           scroller_default_proportion = 1.0;
           scroller_prefer_overspread = 0;
           scroller_focus_center = 0;
-          scroller_prefer_center = 0;
+          # scroller_prefer_center = 0;
+          scroller_prefer_center = 1;
           edge_scroller_focus_allow_speed = 1.0;
           scroller_ignore_proportion_single = 0;
           scroller_default_proportion_single = 1.0;
