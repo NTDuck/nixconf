@@ -554,7 +554,7 @@
           };
           theme = {
             builtin = "Kanagawa";
-            community_palette = "Everforest";
+            community_palette = "Kanagawa Dragon";
             custom_palette = "";
             mode = "dark";
             pure_black_dark = false;
