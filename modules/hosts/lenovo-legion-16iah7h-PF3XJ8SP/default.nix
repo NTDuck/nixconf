@@ -12,7 +12,7 @@
       den.aspects.browsers.chromium
       den.aspects.browsers.zen-browser
       (den.aspects.compositors.mangowm {
-        terminal = pkgs: "${pkgs.unstable.kitty}/bin/kitty";
+        terminal = pkgs: "${pkgs.unstable.ghostty}/bin/ghostty";
       })
       den.aspects.dev
       den.aspects.editors.helix
@@ -80,7 +80,7 @@
       den.aspects.shells.prompts.starship
       den.aspects.shells.zsh
       den.aspects.swap.zram
-      den.aspects.terminals.kitty
+      den.aspects.terminals.ghostty
       den.aspects.utilities.screenshots.flameshot
       den.aspects.utilities.screenshots.satty
       den.aspects.utilities.torrents.rtorrent
