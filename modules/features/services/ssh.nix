@@ -18,7 +18,7 @@
       };
 
       environment.systemPackages = [
-        pkgs.unstable.waypipe
+        pkgs.waypipe
       ];
     };
   };
