@@ -21,15 +21,24 @@
         settings = {
           cursor-style = "block";
           cursor-style-blink = false;
-          custom-shader = "${inputs.self}/assets/shaders/github:sahaj-b/cursor_tail.glsl";
-          custom-shader-animation = "always";
           mouse-hide-while-typing = true;
+
           scrollbar = "never";
           window-padding-x = 14;
           window-padding-y = 10;
-          # window-vsync = true;
-          shell-integration-features = "no-cursor";
+
+          # `systemd` integration
           quit-after-last-window-closed = false;
+
+          # Kitty-like trailing cursor
+          custom-shader = "${inputs.self}/assets/shaders/github:sahaj-b/cursor_tail.glsl";
+          custom-shader-animation = "always";
+          shell-integration-features = "no-cursor";
+
+          # Prevent inheriting working directory
+          window-inherit-working-directory = false;
+          tab-inherit-working-directory = false;
+          split-inherit-working-directory = false;
         };
 
         systemd = {
