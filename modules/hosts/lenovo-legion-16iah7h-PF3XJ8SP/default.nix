@@ -82,7 +82,7 @@
       den.aspects.swap.zram
       den.aspects.terminals.ghostty
       den.aspects.utilities.screenshots.flameshot
-      den.aspects.utilities.screenshots.satty
+      den.aspects.utilities.screenshots.gpu-screen-recorder
       den.aspects.utilities.torrents.rtorrent
       den.aspects.utilities.torrents.torrent-tui
       den.aspects.utilities.torrents.webtorrent
