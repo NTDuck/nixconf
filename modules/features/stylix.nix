@@ -14,10 +14,7 @@
 
         polarity = "dark";
 
-        base16Scheme = "${pkgs.base16-schemes}/share/themes/grayscale-dark.yaml";
-        override = {
-          base08 = "e06c75";
-        };
+        base16Scheme = "${pkgs.base16-schemes}/share/themes/everforest.yaml";
 
         image = "${inputs.self}/assets/wallpapers/rockman.png";
 

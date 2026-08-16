@@ -5,8 +5,9 @@
 }: {
   den.aspects.compositors.mangowm = {terminal}: {
     includes = [
-      # Required by `bongo`
+      # Required by plugins
       den.aspects.utilities.evtest
+      den.aspects.utilities.screenshots.gpu-screen-recorder
 
       # Mango config and binds use Noctalia's IPC, and this session starts Noctalia
       # explicitly so its bars/lock shell exist in the compositor-only login.

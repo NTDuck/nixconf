@@ -27,16 +27,23 @@ order = [ "default" ]
     capsule_group = []
     capsule_opacity = 1.0
     capsule_padding = 6.0
+    capsule_radius = 0.0
     capsule_thickness = 0.75999999046325684
     center = [ "clock" ]
     concave_edge_corners = true
     contact_shadow = false
     enabled = true
     end = [
+        "cat",
+        "spacer_1",
         "notifications",
         "clipboard",
+        "bar",
+        "screenshot",
+        "recorder",
         "spacer_2",
         "cpu",
+        "network",
         "brightness",
         "volume",
         "spacer_3",
@@ -63,7 +70,7 @@ order = [ "default" ]
     shadow = false
     show_on_workspace_switch = true
     smart_auto_hide = false
-    start = [ "control-center", "spacer_5", "media", "audio_visualizer", "workspaces", "spacer_6" ]
+    start = [ "control-center", "spacer_5", "media", "spacer_6", "workspaces" ]
     thickness = 24
     widget_spacing = 6
 
@@ -93,7 +100,7 @@ width = 700
     [control_center.calendar]
     event_date_format = "%A %e %B"
     event_time_format = "%H:%M"
-    show_events_card = true
+    show_events_card = false
     show_week_numbers = true
 
     [[control_center.shortcuts]]
@@ -106,13 +113,13 @@ width = 700
     type = "caffeine"
 
     [[control_center.shortcuts]]
-    type = "nightlight"
-
-    [[control_center.shortcuts]]
     type = "notification"
 
     [[control_center.shortcuts]]
     type = "power_profile"
+
+    [[control_center.shortcuts]]
+    type = "noctalia/screen_recorder:toggle"
 
 [desktop_widgets]
 enabled = false
@@ -313,8 +320,8 @@ history_retention_hours = 0
 layer = "top"
 max_visible = 0
 monitors = []
-offset_x = 26
-offset_y = 6
+offset_x = 12
+offset_y = 12
 position = "top_right"
 scale = 1.0
 show_actions = true
@@ -325,8 +332,8 @@ background_opacity = 0.79999995231628418
 border = true
 enabled = true
 monitors = []
-offset_x = 26
-offset_y = 6
+offset_x = 12
+offset_y = 12
 orientation = "horizontal"
 position = "top_right"
 position_vertical = "top_right"
@@ -384,7 +391,7 @@ clipboard_enabled = true
 clipboard_history_max_entries = 100
 clipboard_image_action_command = ""
 clipboard_keep_from_closed_apps = true
-corner_radius_scale = 1.0
+corner_radius_scale = 0.0
 date_format = "%A, %x"
 disable_mipmaps = false
 external_ip_enabled = false
@@ -582,8 +589,8 @@ swap_pct_activity_threshold = 20.0
 swap_pct_critical_threshold = 80.0
 
 [theme]
-builtin = "Noctalia"
-community_palette = "Kemuri Susu"
+builtin = "Kanagawa"
+community_palette = "Everforest"
 custom_palette = ""
 mode = "dark"
 pure_black_dark = false
@@ -636,6 +643,10 @@ show_when_idle = true
 type = "audio_visualizer"
 width = 64
 
+[widget.bar]
+show_bar_value = false
+type = "yuuto/calculator:bar"
+
 [widget.battery]
 show_label = false
 type = "battery"
@@ -643,6 +654,9 @@ type = "battery"
 [widget.brightness]
 show_label = false
 type = "brightness"
+
+[widget.cat]
+type = "noctalia/bongocat:cat"
 
 [widget.control-center]
 glyph = "brand-powershell"
@@ -684,6 +698,11 @@ min_length = 80.0
 title_scroll = "none"
 type = "media"
 
+[widget.network]
+show_label = false
+type = "network"
+vpn_status = "both"
+
 [widget.network_rx]
 stat = "net_rx"
 type = "sysmon"
@@ -700,8 +719,15 @@ type = "volume"
 stat = "ram_used"
 type = "sysmon"
 
+[widget.recorder]
+type = "noctalia/screen_recorder:recorder"
+
 [widget.spacer]
 interactive = false
+type = "spacer"
+
+[widget.spacer_1]
+length = 16
 type = "spacer"
 
 [widget.spacer_2]
@@ -717,11 +743,11 @@ length = 16
 type = "spacer"
 
 [widget.spacer_5]
-length = 16
+length = 24
 type = "spacer"
 
 [widget.spacer_6]
-length = 16
+length = 24
 type = "spacer"
 
 [widget.sysmon]
@@ -747,4 +773,5 @@ type = "volume"
 
 [widget.workspaces]
 active_pill_size = 1.6000000000000001
+labels_only_when_occupied = true
 type = "workspaces"
