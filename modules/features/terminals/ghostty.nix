@@ -1,4 +1,8 @@
-{den, ...}: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.terminals.ghostty = {
     homeManager = {
       config,
@@ -16,12 +20,14 @@
 
         settings = {
           cursor-style = "block";
-          cursor-style-blink = "false";
-          mouse-hide-while-typing = "true";
-          srollbar = "never";
-          window-padding-x = "10";
-          window-padding-y = "14";
-          window-vsync = "true";
+          cursor-style-blink = false;
+          custom-shader = "${inputs.self}/assets/shaders/github:sahaj-b/cursor_tail.glsl";
+          custom-shader-animation = "always";
+          mouse-hide-while-typing = true;
+          scrollbar = "never";
+          window-padding-x = 14;
+          window-padding-y = 10;
+          # window-vsync = true;
           shell-integration-features = "no-cursor";
           quit-after-last-window-closed = false;
         };
