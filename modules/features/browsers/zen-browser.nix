@@ -111,6 +111,8 @@
           mods = [
             "e122b5d9-d385-4bf8-9971-e137809097d0" # No Top Sites
             "253a3a74-0cc4-47b7-8b82-996a64f030d5" # Floating History
+            "c6813222-6571-4ba6-8faf-58f3343324f6" # Disable Rounded Corners
+            "c01d3e22-1cee-45c1-a25e-53c0f180eea8" # Ghost Tabs
           ];
 
           # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/06-search-engines.nix
