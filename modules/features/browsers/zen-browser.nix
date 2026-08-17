@@ -49,8 +49,8 @@
               # https://github.com/EdgeTypE/better-deepseek
               "betterdeepseek@goygoyengine.com" = "better-deepseek";
 
-              # https://github.com/saeedezzati/superpower-chatgpt
-              "cjiggdeafkdppmdmlcdpfigbalcgbkpg@fancydino.com" = "superpower-chatgpt";
+              # # https://github.com/saeedezzati/superpower-chatgpt
+              # "cjiggdeafkdppmdmlcdpfigbalcgbkpg@fancydino.com" = "superpower-chatgpt";
             };
         };
 
@@ -313,23 +313,6 @@
             #   container = 1; # <- `containers."master"`
             # };
           };
-
-          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/12-userchrome-css.nix
-          # userChrome = ''
-          #   /* Target Zen Browser's vertical tab sidebar layout specifically */
-          #   #zen-sidebar-web-pages,
-          #   .sidebar-panel,
-          #   #sidebar-box,
-          #   #zen-tabs-container {
-          #     font-size: 11px !important; /* Adjust this lower or higher to match your taste */
-          #   }
-
-          #   /* Optional: Make the sidebar icons shrink slightly to match the smaller text */
-          #   #zen-tabs-container .tab-icon-image,
-          #   #zen-sidebar-web-pages .sidebar-icon {
-          #     transform: scale(0.85) !important;
-          #   }
-          # '';
         };
 
         # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/14-native-messaging.nix
