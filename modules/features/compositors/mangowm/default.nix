@@ -120,12 +120,12 @@
 
           tag_animation_direction = 0;
 
-          scroller_structs = 0;
+          scroller_structs = 9; # 1.5 * `gap`
           scroller_default_proportion = 1.0;
           scroller_prefer_overspread = 0;
           scroller_focus_center = 1;
           scroller_prefer_center = 1;
-          edge_scroller_focus_allow_speed = 1.0;
+          edge_scroller_focus_allow_speed = 0.0;
           scroller_ignore_proportion_single = 1;
 
           circle_layout = "scroller,dwindle";
