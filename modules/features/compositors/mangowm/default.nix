@@ -120,7 +120,7 @@
 
           tag_animation_direction = 0;
 
-          scroller_structs = 9; # 1.5 * `gap`
+          scroller_structs = 3; # 0.5 * `gap`
           scroller_default_proportion = 1.0;
           scroller_prefer_overspread = 0;
           scroller_focus_center = 1;
