@@ -146,6 +146,7 @@
               "SUPER,f,togglemaximizescreen"
               "SUPER+SHIFT,f,togglefullscreen"
               "SUPER+SHIFT,e,quit"
+              "SUPER+SHIFT,r,reload_config"
 
               "SUPER,d,spawn,${ipc} panel-toggle launcher"
               "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
