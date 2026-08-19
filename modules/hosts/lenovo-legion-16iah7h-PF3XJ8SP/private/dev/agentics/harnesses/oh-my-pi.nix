@@ -26,14 +26,7 @@
     #   # database while enforcing host-specific local-subagent routing.
     #   localSubagentConfig = yaml.generate "omp-local-subagents.yml" {
     #     modelRoles = {
-    #       # OMP can use this role for inexpensive fan-out and lightweight work.
-    #       smol = localModels.base;
-
-    #       # Fallback role for generic task workers.
-    #       task = localModels.quality;
-
-    #       # Used by design-oriented internal workflows.
-    #       designer = localModels.quality;
+    #       # default = ...;
     #     };
 
     #     task = {
