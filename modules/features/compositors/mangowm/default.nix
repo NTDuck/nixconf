@@ -148,8 +148,8 @@
               "SUPER+SHIFT,e,quit"
               "SUPER+SHIFT,r,reload_config"
 
-              "SUPER,F11,view_insert,prev"
-              "SUPER,F12,view_insert,next"
+              "SUPER,F11,viewtoright"
+              "SUPER,F12,viewtoleft"
 
               "SUPER,d,spawn,${ipc} panel-toggle launcher"
               "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
