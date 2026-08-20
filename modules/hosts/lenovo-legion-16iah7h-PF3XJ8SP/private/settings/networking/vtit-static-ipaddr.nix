@@ -1,7 +1,7 @@
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     nixos = {
-      specialisation."[[vtit]]".configuration = {
+      specialisation."<WORKPLACE_VTIT>".configuration = {
         networking.networkmanager.ensureProfiles.profiles = {
           "ETH_VTIT_10.224.220.59" = {
             connection = {
