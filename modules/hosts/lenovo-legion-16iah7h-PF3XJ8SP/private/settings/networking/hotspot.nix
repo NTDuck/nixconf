@@ -7,7 +7,7 @@
       wifiInterface = "wlp0s20f3";
       internetInterface = "enp49s0";
     in {
-      specialisation."<HOMELAB>".configuration = {
+      specialisation.HOMELAB.configuration = {
         services.create_ap = {
           enable = true;
 
