@@ -1,4 +1,3 @@
-# TODO Working?
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     nixos = let
@@ -41,8 +40,7 @@
             FREQ_BAND = "2.4";
             CHANNEL = 6;
 
-            # Start without HT/VHT/HE extensions while troubleshooting.
-            IEEE80211N = 0;
+            IEEE80211N = 1;
             IEEE80211AC = 0;
             IEEE80211AX = 0;
             HT_CAPAB = "";
@@ -52,10 +50,10 @@
 
             # Hotspot addressing, DHCP, and DNS.
             GATEWAY = "192.168.12.1";
-            DHCP_DNS = "gateway";
+            DHCP_DNS = "1.1.1.1,8.8.8.8";
             DHCP_HOSTS = "";
             ETC_HOSTS = 0;
-            NO_DNS = 0;
+            NO_DNS = 1;
             NO_DNSMASQ = 0;
 
             # Share enp49s0 through NAT.
@@ -78,6 +76,16 @@
             NO_HAVEGED = 1;
           };
         };
+
+        # NixOS native NAT and forwarding for the hotspot interface.
+        networking.nat = {
+          enable = true;
+          internalInterfaces = [wifiInterface];
+          externalInterface = internetInterface;
+        };
+
+        # Loose reverse-path filtering to prevent dropped forwarded packets.
+        networking.firewall.checkReversePath = "loose";
 
         # dnsmasq serves DHCP and DNS on the hotspot interface.
         networking.firewall.interfaces.${wifiInterface} = {
