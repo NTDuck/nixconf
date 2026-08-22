@@ -21,7 +21,7 @@
       };
     };
 
-    homeManager = {
+    homeManager = {config, ...}: {
       imports = [
         inputs.noctalia.homeModules.default
       ];
@@ -50,7 +50,7 @@
             order = ["default"];
             default = {
               auto_hide = false;
-              background_opacity = 0.7999999523162842;
+              background_opacity = config.stylix.opacity.desktop;
               border = "outline";
               border_width = 0.0;
               capsule = false;
@@ -64,7 +64,7 @@
               concave_edge_corners = true;
               contact_shadow = false;
               enabled = true;
-              end = ["cat" "spacer_1" "notifications" "clipboard" "bar" "screenshot" "recorder" "spacer_2" "cpu" "network" "brightness" "volume" "spacer_3" "tray" "spacer_4" "battery"];
+              end = ["spacer_1" "notifications" "clipboard" "bar" "screenshot" "recorder" "spacer_2" "cpu" "network" "toggle" "brightness" "volume" "spacer_3" "tray" "spacer_4" "battery"];
               font_weight = 500;
               hover_highlight = true;
               layer = "top";
@@ -148,8 +148,44 @@
             };
           };
           dock = {
+            active_monitor_only = false;
+            active_opacity = 1.0;
+            active_scale = 1.0;
+            auto_hide = false;
+            background_opacity = config.stylix.opacity.desktop;
+            border = "outline";
+            border_width = 0.0;
+            concave_edge_corners = true;
+            cross_axis_padding = 8;
             enabled = false;
+            icon_size = 48;
+            inactive_opacity = 0.8500000238418579;
+            inactive_scale = 0.8500000238418579;
+            item_spacing = 6;
+            launcher_custom_image = "";
+            launcher_custom_image_colorize = false;
+            launcher_icon = "grid-dots";
+            launcher_position = "none";
+            layer = "top";
+            magnification = true;
+            magnification_scale = 1.4500000476837158;
+            main_axis_padding = 16;
+            margin_edge = 0;
+            margin_ends = 0;
+            monitors = [];
+            pinned = [];
+            position = "bottom";
+            radius = 16;
+            radius_bottom_left = 16;
+            radius_bottom_right = 16;
+            radius_top_left = 16;
+            radius_top_right = 16;
+            reserve_space = true;
             shadow = false;
+            show_dots = false;
+            show_instance_count = true;
+            show_running = true;
+            smart_auto_hide = false;
           };
           hooks = {
             battery_charging = [];
@@ -195,9 +231,30 @@
             behavior_order = ["lock" "screen-off" "lock-and-suspend"];
             pre_action_fade_seconds = 0.0;
             behavior = {
-              lock.enabled = false;
-              lock-and-suspend.enabled = false;
-              screen-off.enabled = false;
+              lock = {
+                action = "";
+                command = "";
+                enabled = false;
+                locked_timeout = 0.0;
+                resume_command = "";
+                timeout = 0.0;
+              };
+              lock-and-suspend = {
+                action = "";
+                command = "";
+                enabled = false;
+                locked_timeout = 0.0;
+                resume_command = "";
+                timeout = 0.0;
+              };
+              screen-off = {
+                action = "";
+                command = "";
+                enabled = false;
+                locked_timeout = 0.0;
+                resume_command = "";
+                timeout = 0.0;
+              };
             };
           };
           keybinds = {
@@ -222,14 +279,14 @@
           };
           lockscreen = {
             allow_empty_password = false;
-            blur_intensity = 0.4399999976158142;
+            blur_intensity = 0.0;
             blurred_desktop = false;
             enabled = true;
             fingerprint = true;
             lock_before_suspend = true;
             monitors = [];
-            tint_intensity = 0.4399999976158142;
-            wallpaper = "";
+            tint_intensity = 0.0;
+            wallpaper = "${inputs.self}/assets/wallpapers/220826-1.png";
           };
           lockscreen_widgets = {
             enabled = false;
@@ -245,9 +302,11 @@
                 box_height = 196.0;
                 box_width = 810.0;
                 cx = 854.0;
-                cy = 885.0;
+                cy = 885.0000610351562;
                 enabled = true;
                 output = "eDP-1";
+                placement_height = 1067.0;
+                placement_width = 1707.0;
                 rotation = 0.0;
                 type = "login_box";
                 settings = {
@@ -276,7 +335,7 @@
             temperature_night = 4000;
           };
           notification = {
-            background_opacity = 0.7999999523162842;
+            background_opacity = config.stylix.opacity.popups;
             border = true;
             collapse_on_dismiss = true;
             enable_daemon = true;
@@ -292,7 +351,7 @@
             show_app_name = true;
           };
           osd = {
-            background_opacity = 0.7999999523162842;
+            background_opacity = config.stylix.opacity.popups;
             border = true;
             enabled = true;
             monitors = [];
@@ -323,8 +382,8 @@
           plugin_settings = {
           };
           plugins = {
-            auto_update = true;
-            enabled = ["coder/deepseek_usage" "noctalia/bongocat" "avivbintangaringga/nix-monitor" "yuuto/calculator" "noctalia/screen_recorder"];
+            auto_update = "all";
+            enabled = ["yuuto/calculator" "noctalia/screen_recorder"];
             source = [
               {
                 enabled = true;
@@ -391,6 +450,7 @@
               pinned = [];
               provider_prefix = "/";
               show_app_actions = false;
+              show_app_origin_indicator = true;
               show_icons = true;
               sort_by_usage = true;
               dmenu = {
@@ -419,7 +479,7 @@
               polkit_position = "center";
               session_placement = "attached";
               session_position = "auto";
-              shadow = false;
+              shadow = true;
               transparency_mode = "glass";
               wallpaper_placement = "attached";
               wallpaper_position = "auto";
@@ -562,7 +622,7 @@
             wallpaper_scheme = "m3-content";
             templates = {
               builtin_ids = [];
-              community_ids = [];
+              community_ids = ["zed"];
               enable_builtin_templates = true;
               enable_community_templates = true;
             };
@@ -578,7 +638,7 @@
             per_monitor_directories = false;
             transition = ["fade" "wipe" "disc" "stripes" "zoom" "honeycomb"];
             transition_duration = 1500.0;
-            transition_on_startup = false;
+            transition_on_startup = true;
             automation = {
               enabled = false;
               interval_seconds = 1800;
@@ -624,7 +684,7 @@
               type = "noctalia/bongocat:cat";
             };
             control-center = {
-              glyph = "brand-powershell";
+              glyph = "brand-taobao";
               scale = 1.2;
               type = "control-center";
             };
@@ -725,6 +785,9 @@
             temp = {
               stat = "cpu_temp";
               type = "sysmon";
+            };
+            toggle = {
+              type = "cleboost/hotspot:toggle";
             };
             tray = {
               capsule_opacity = 0.6;

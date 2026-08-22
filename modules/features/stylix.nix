@@ -15,7 +15,7 @@
         polarity = "dark";
 
         base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa-dragon.yaml";
-        image = "${inputs.self}/assets/wallpapers/神奈川沖浪裏.jpg";
+        image = "${inputs.self}/assets/wallpapers/220826-2.png";
 
         cursor = {
           package = pkgs.unstable.bibata-cursors;
@@ -50,9 +50,9 @@
         };
 
         opacity = {
-          applications = 0.8;
+          applications = 0.9;
           terminal = 0.75;
-          desktop = 0.8;
+          desktop = 0.9;
           popups = 0.8;
         };
       };
