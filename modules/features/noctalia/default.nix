@@ -159,8 +159,8 @@
             cross_axis_padding = 8;
             enabled = false;
             icon_size = 48;
-            inactive_opacity = 0.8500000238418579;
-            inactive_scale = 0.8500000238418579;
+            inactive_opacity = 0.8 * config.stylix.opacity.desktop;
+            inactive_scale = 0.8 * config.stylix.opacity.desktop;
             item_spacing = 6;
             launcher_custom_image = "";
             launcher_custom_image_colorize = false;
@@ -311,7 +311,7 @@
                 type = "login_box";
                 settings = {
                   background_color = "surface_variant";
-                  background_opacity = 0.88;
+                  background_opacity = 0.8 * config.stylix.opacity.popups;
                   background_radius = 12.0;
                   center_password_text = false;
                   input_opacity = 1.0;
@@ -790,7 +790,7 @@
               type = "cleboost/hotspot:toggle";
             };
             tray = {
-              capsule_opacity = 0.6;
+              capsule_opacity = 0.75 * config.stylix.opacity.popups;
               capsule_radius = 0;
               scale = 0.8;
               type = "tray";
