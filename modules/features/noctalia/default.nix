@@ -629,6 +629,7 @@
           };
           wallpaper = {
             directory = "${inputs.self}/assets/wallpapers";
+            default.path = config.stylix.image; # NOT AUTO GENERATED
             directory_dark = "";
             directory_light = "";
             edge_smoothness = 0.30000001192092896;
