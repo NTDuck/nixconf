@@ -286,7 +286,7 @@
             lock_before_suspend = true;
             monitors = [];
             tint_intensity = 0.0;
-            wallpaper = "${inputs.self}/assets/wallpapers/220826-1.png";
+            wallpaper = "${inputs.self}/assets/wallpapers/220826.png";
           };
           lockscreen_widgets = {
             enabled = false;
