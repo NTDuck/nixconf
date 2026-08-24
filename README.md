@@ -46,41 +46,55 @@ nh os switch . -H ${HOSTNAME} --update
 
 ### 4. Secrets Management (agenix)
 
-Secrets are encrypted using [agenix](https://github.com/ryantm/agenix) and decrypted automatically to `/run/agenix/` at system activation using SSH host keys (`/etc/ssh/ssh_host_ed25519_key`).
+Secrets are encrypted using [agenix](https://github.com/ryantm/agenix) via SSH key pairs. Secrets are automatically decrypted to `/run/agenix/` during NixOS system activation.
 
-#### Recipients Configuration
+#### 1. Configuring Recipients (`secrets/secrets.nix`)
 
-Public keys for hosts and users are configured in `secrets/secrets.nix`:
+In `agenix`, two types of SSH public keys are defined:
+- **User public keys** (e.g. `~/.ssh/id_ed25519.pub` or `https://github.com/<username>.keys`): Allows you to edit and decrypt secrets on your machine without `sudo`.
+- **System host public keys** (e.g. `/etc/ssh/ssh_host_ed25519_key.pub`): Allows target hosts to decrypt secrets into `/run/agenix/` upon system activation.
 
 ```nix
 let
+  # User keys (for local editing without root)
+  # ayin = "ssh-ed25519 AAA...";
+  # users = [ ayin ];
+
+  # Host keys (for system activation decryption)
   lenovo = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMN7o3pdJqi7fPs85aiOytP/VSnts8d8LHmIvxb9tj8j root@lenovo-legion-16iah7h-PF3XJ8SP";
+  systems = [ lenovo ];
 in {
-  "orca-key.age".publicKeys = [lenovo];
+  "orca-key.age".publicKeys = systems; # or users ++ systems
 }
 ```
 
-#### Encrypting / Editing Secrets (e.g. `ORCA_KEY`)
+#### 2. Creating / Editing Secrets (e.g. `ORCA_KEY`)
 
-To create or edit an encrypted secret (such as `ORCA_KEY` for Oh My Pi / OrcaRouter):
-
+**With a user SSH key (recommended by agenix):**
+Add your `~/.ssh/id_ed25519.pub` to `users` in `secrets/secrets.nix`, then edit secrets directly as a normal user:
 ```bash
-# Edit or create secrets/orca-key.age with an identity key (e.g. host SSH key)
-sudo agenix -e secrets/orca-key.age -i /etc/ssh/ssh_host_ed25519_key
-
-# Alternatively, encrypt directly with age:
-echo -n "YOUR_ORCA_ROUTER_API_KEY" | age -R /etc/ssh/ssh_host_ed25519_key.pub -o secrets/orca-key.age
-
-# Rekey all secrets after updating public keys in secrets/secrets.nix
-sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key
+agenix -e secrets/orca-key.age
 ```
 
-Remember to stage the modified `.age` files in git before rebuilding:
+**With the host SSH key directly:**
+If no user key is configured yet, use the host's private key with `sudo -E` (so `$EDITOR` is preserved):
+```bash
+sudo -E agenix -e secrets/orca-key.age -i /etc/ssh/ssh_host_ed25519_key
+```
 
+#### 3. Rekeying & Deploying
+
+After updating keys in `secrets/secrets.nix`:
+```bash
+agenix -r
+# Or if using host key: sudo -E agenix -r -i /etc/ssh/ssh_host_ed25519_key
+```
+
+Stage changes and switch configuration:
 ```bash
 git add secrets/
+nh os switch . -H lenovo-legion-16iah7h-PF3XJ8SP
 ```
-
 ## Screenshots
 
 ![sans.png](.github/assets/screenshots/sans.png)

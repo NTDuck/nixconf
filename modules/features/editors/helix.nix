@@ -1,4 +1,4 @@
-{den, ...}: {
+{...}: {
   den.aspects.editors.helix = {
     homeManager = {pkgs, ...}: {
       programs.helix = {

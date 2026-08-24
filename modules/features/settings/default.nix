@@ -7,7 +7,7 @@
       den.aspects.settings.time
     ];
 
-    nixos = {config, ...}: {
+    nixos = {...}: {
       nix.settings = {
         experimental-features = ["nix-command" "flakes" "pipe-operators"];
         trusted-users = ["@wheel"];
