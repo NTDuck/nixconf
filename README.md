@@ -44,6 +44,26 @@ $ NIX_CONFIG="$(printf \
 nh os switch . -H ${HOSTNAME} --update
 ```
 
+### 4. cool `nmcli` trick
+
+```
+$ nmcli connection add \
+  type ethernet \
+  con-name "ETH_VTIT_10.224.220.59" \
+  ifname enp49s0 \
+  autoconnect yes \
+  connection.autoconnect-priority 100 \
+  ip4 10.224.220.59/24 \
+  gw4 10.224.220.1 \
+  ipv4.dns "10.10.101.212 10.10.101.211" \
+  ipv4.method manual \
+  ipv6.method auto \
+  proxy.method auto \
+  proxy.pac-url "http://10.10.101.208/proxy.pac"
+
+$ nmcli connection delete ETH_VTIT_10.224.220.59
+```
+
 ### 4. Secrets Management (agenix)
 
 Secrets are encrypted using [agenix](https://github.com/ryantm/agenix) via SSH key pairs. Secrets are automatically decrypted to `/run/agenix/` during NixOS system activation.
@@ -51,6 +71,7 @@ Secrets are encrypted using [agenix](https://github.com/ryantm/agenix) via SSH k
 #### 1. Configuring Recipients (`secrets/secrets.nix`)
 
 In `agenix`, two types of SSH public keys are defined:
+
 - **User public keys** (e.g. `~/.ssh/id_ed25519.pub` or `https://github.com/<username>.keys`): Allows you to edit and decrypt secrets on your machine without `sudo`.
 - **System host public keys** (e.g. `/etc/ssh/ssh_host_ed25519_key.pub`): Allows target hosts to decrypt secrets into `/run/agenix/` upon system activation.
 
@@ -72,12 +93,14 @@ in {
 
 **With a user SSH key (recommended by agenix):**
 Add your `~/.ssh/id_ed25519.pub` to `users` in `secrets/secrets.nix`, then edit secrets directly as a normal user:
+
 ```bash
 agenix -e secrets/orca-key.age
 ```
 
 **With the host SSH key directly:**
 If no user key is configured yet, use the host's private key with `sudo -E` (so `$EDITOR` is preserved):
+
 ```bash
 sudo -E agenix -e secrets/orca-key.age -i /etc/ssh/ssh_host_ed25519_key
 ```
@@ -85,16 +108,19 @@ sudo -E agenix -e secrets/orca-key.age -i /etc/ssh/ssh_host_ed25519_key
 #### 3. Rekeying & Deploying
 
 After updating keys in `secrets/secrets.nix`:
+
 ```bash
 agenix -r
 # Or if using host key: sudo -E agenix -r -i /etc/ssh/ssh_host_ed25519_key
 ```
 
 Stage changes and switch configuration:
+
 ```bash
 git add secrets/
 nh os switch . -H lenovo-legion-16iah7h-PF3XJ8SP
 ```
+
 ## Screenshots
 
 ![sans.png](.github/assets/screenshots/sans.png)
