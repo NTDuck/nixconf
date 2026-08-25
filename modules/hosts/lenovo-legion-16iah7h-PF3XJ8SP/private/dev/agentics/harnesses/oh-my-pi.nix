@@ -19,7 +19,7 @@
             authHeader: true
             models:
               - id: orcarouter/auto
-                name: OrcaRouter Auto
+                name: OrcaRouter
                 reasoning: false
                 input: [text]
                 contextWindow: 200000
@@ -41,7 +41,7 @@
                 maxTokens: 8192
 
               - id: claude-opus-5-thinking
-                name: Claude Opus 5 Thinking
+                name: Claude Opus 5 (Thinking)
                 contextWindow: 200000
                 maxTokens: 8192
 
@@ -51,7 +51,7 @@
                 maxTokens: 8192
 
               - id: claude-opus-4-8-thinking
-                name: Claude Opus 4.8 Thinking
+                name: Claude Opus 4.8 (Thinking)
                 contextWindow: 200000
                 maxTokens: 8192
 
