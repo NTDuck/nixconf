@@ -61,7 +61,7 @@
           ORCAROUTER_API_KEY="$(cat ${osConfig.age.secrets."orcarouter-api-key".path})" \
           OPENCODE_API_KEY="$(cat ${osConfig.age.secrets."opencode-api-key".path})" \
           OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."openrouter-api-key".path})" \
-          TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabitoken-api-key".path})" \
+          TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path})" \
           ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp'';
       };
     };
