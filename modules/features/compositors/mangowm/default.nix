@@ -76,7 +76,7 @@
           trackpad_natural_scrolling = 1;
           mouse_click_method = 2; # Clickfinger
 
-          xwayland_ignore_scale = 1;
+          xwayland_ignore_scale = 1; # DO_NOT_REMOVE otherwise XWayland apps suffer from low resolution
           # syncobj_enable = 1;
           allow_lock_transparent = 1;
           drag_tile_to_tile = 1;

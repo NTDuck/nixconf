@@ -37,7 +37,7 @@
       den.aspects.music.youtube-music
       den.aspects.nix
       den.aspects.noctalia
-      # den.aspects.lix
+      den.aspects.lix
       den.aspects.nh
       den.aspects.nix-ld
       den.aspects.nur
