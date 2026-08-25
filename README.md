@@ -44,26 +44,6 @@ $ NIX_CONFIG="$(printf \
 nh os switch . -H ${HOSTNAME} --update
 ```
 
-### 4. cool `nmcli` trick
-
-```
-$ nmcli connection add \
-  type ethernet \
-  con-name "ETH_VTIT_10.224.220.59" \
-  ifname enp49s0 \
-  autoconnect yes \
-  connection.autoconnect-priority 100 \
-  ip4 10.224.220.59/24 \
-  gw4 10.224.220.1 \
-  ipv4.dns "10.10.101.212 10.10.101.211" \
-  ipv4.method manual \
-  ipv6.method auto \
-  proxy.method auto \
-  proxy.pac-url "http://10.10.101.208/proxy.pac"
-
-$ nmcli connection delete ETH_VTIT_10.224.220.59
-```
-
 ### 4. Secrets Management (agenix)
 
 Secrets are encrypted using [agenix](https://github.com/ryantm/agenix) via SSH key pairs. Secrets are automatically decrypted to `/run/agenix/` during NixOS system activation.
@@ -77,34 +57,34 @@ In `agenix`, two types of SSH public keys are defined:
 
 ```nix
 let
-  # User keys (for local editing without root)
-  # ayin = "ssh-ed25519 AAA...";
-  # users = [ ayin ];
+  # User keys (allows editing secrets with `agenix -e` without sudo)
+  ayin = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ8xCluYgGb8Zn8LEa+5EnMaqCw1hHV9nNmwdJbDAB1X ayin@lenovo-legion-16iah7h-PF3XJ8SP";
+  users = [ ayin ];
 
   # Host keys (for system activation decryption)
-  lenovo = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMN7o3pdJqi7fPs85aiOytP/VSnts8d8LHmIvxb9tj8j root@lenovo-legion-16iah7h-PF3XJ8SP";
-  systems = [ lenovo ];
+  "lenovo-legion-16iah7h-PF3XJ8SP" = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMN7o3pdJqi7fPs85aiOytP/VSnts8d8LHmIvxb9tj8j root@lenovo-legion-16iah7h-PF3XJ8SP";
+  systems = [ lenovo-legion-16iah7h-PF3XJ8SP ];
 in {
-  "orca-key.age".publicKeys = systems; # or users ++ systems
+  "orcarouter-api-key.age".publicKeys = users ++ systems;
+  "secrets/orcarouter-api-key.age".publicKeys = users ++ systems;
 }
 ```
 
-#### 2. Creating / Editing Secrets (e.g. `ORCA_KEY`)
+#### 2. Creating / Editing Secrets (e.g. `ORCAROUTER_API_KEY`)
 
 **With a user SSH key (recommended by agenix):**
-Add your `~/.ssh/id_ed25519.pub` to `users` in `secrets/secrets.nix`, then edit secrets directly as a normal user:
+With your `~/.ssh/id_ed25519` added to `users` in `secrets/secrets.nix`, edit secrets directly as a normal user:
 
 ```bash
-agenix -e secrets/orca-key.age
+agenix -e secrets/orcarouter-api-key.age
 ```
 
 **With the host SSH key directly:**
-If no user key is configured yet, use the host's private key with `sudo -E` (so `$EDITOR` is preserved):
+If running on a host without a configured user key, use the host's private key with `sudo -E` (so `$EDITOR` is preserved):
 
 ```bash
-sudo -E agenix -e secrets/orca-key.age -i /etc/ssh/ssh_host_ed25519_key
+sudo -E agenix -e secrets/orcarouter-api-key.age -i /etc/ssh/ssh_host_ed25519_key
 ```
-
 #### 3. Rekeying & Deploying
 
 After updating keys in `secrets/secrets.nix`:

@@ -15,19 +15,11 @@
 
       age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
-      # age.secrets."gemini-default-token".file = "${inputs.self}/secrets/gemini-default-token.age";
-      # age.secrets."github-token".file = "${inputs.self}/secrets/github-token.age";
+      age.secrets."orcarouter-api-key" = {
+        file = "${inputs.self}/secrets/orcarouter-api-key.age";
+        owner = "ayin";
+        mode = "0400";
+      };
     };
-
-    # homeManager = {config, ...}: {
-    #   imports = [
-    #     inputs.agenix.homeManagerModules.default
-    #   ];
-
-    #   age.identityPaths = ["${config.home.homeDirectory}/.ssh/id_ed25519"];
-
-    #   age.secrets."gemini-default-token".file = "${inputs.self}/secrets/gemini-default-token.age";
-    #   age.secrets."groq-default-token".file = "${inputs.self}/secrets/groq-default-token.age";
-    # };
   };
 }
