@@ -64,7 +64,7 @@
             authHeader: true
             models:
               - id: MiniMax/MiniMax-M3
-                name: MiniMax M3 via CoDev
+                name: MiniMax M3 (NetMind)
                 contextWindow: 196608
                 maxTokens: 65536
       '';
