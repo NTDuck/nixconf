@@ -14,5 +14,7 @@ let
   };
 in
   builtins.listToAttrs [
+    (mkSecret "opencode-api-key")
+    (mkSecret "openrouter-api-key")
     (mkSecret "orcarouter-api-key")
   ]

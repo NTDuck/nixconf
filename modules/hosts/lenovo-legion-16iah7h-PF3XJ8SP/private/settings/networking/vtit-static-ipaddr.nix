@@ -29,7 +29,7 @@
 
       # Apparently the above doesn't work as intended
       environment.shellAliases = {
-        eth-vtit-on = ''
+        eth-vtit-up = ''
           ${pkgs.networkmanager}/bin/nmcli connection add \
             type ethernet \
             con-name "ETH_VTIT_10.224.220.59" \
@@ -43,9 +43,13 @@
             ipv6.method auto \
             proxy.method auto \
             proxy.pac-url "http://10.10.101.208/proxy.pac"
+
+            ${pkgs.networkmanager}/bin/nmcli connection up \
+              "ETH_VTIT_10.224.220.59" \
+              ifname enp49s0
         '';
 
-        eth-vtit-off = "${pkgs.networkmanager}/bin/nmcli connection delete ETH_VTIT_10.224.220.59";
+        eth-vtit-down = "${pkgs.networkmanager}/bin/nmcli connection delete ETH_VTIT_10.224.220.59";
       };
     };
   };
