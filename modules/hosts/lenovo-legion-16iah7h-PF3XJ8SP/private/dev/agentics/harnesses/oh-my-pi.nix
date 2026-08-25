@@ -6,12 +6,6 @@
         owner = "ayin";
         mode = "0400";
       };
-
-      environment.extraInit = ''
-        if [ -r /run/agenix/orca-key ]; then
-          export ORCA_KEY="$(cat /run/agenix/orca-key)"
-        fi
-      '';
     };
 
     homeManager = {...}: {
@@ -20,7 +14,7 @@
           orcarouter:
             baseUrl: https://api.orcarouter.ai/v1
             api: openai-completions
-            apiKey: ORCA_KEY
+            apiKey: ORCAROUTER_API_KEY
             authHeader: true
             models:
               - id: orcarouter/auto
@@ -34,11 +28,9 @@
                   maxTokensField: max_tokens
       '';
 
-      programs.zsh.initContent = ''
-        if [ -r /run/agenix/orca-key ]; then
-          export ORCA_KEY="$(cat /run/agenix/orca-key)"
-        fi
-      '';
+      home.shellAliases = {
+        omp = ''ORCAROUTER_API_KEY="$(cat /run/agenix/orca-key 2>/dev/null)" OPENCODE_API_KEY="$(cat /run/agenix/orca-key 2>/dev/null)" OPENROUTER_API_KEY="$(cat /run/agenix/orca-key 2>/dev/null)" omp'';
+      };
     };
   };
 }
