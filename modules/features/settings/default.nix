@@ -7,16 +7,15 @@
       den.aspects.settings.time
     ];
 
-    nixos = {...}: {
+    nixos = {config, ...}: {
       nix.settings = {
         experimental-features = ["nix-command" "flakes" "pipe-operators"];
         trusted-users = ["@wheel"];
       };
 
-      # TODO Agenix
-      # nix.extraOptions = ''
-      #   !include ${config.age.secrets."github-token".path}
-      # '';
+      nix.extraOptions = ''
+        !include ${config.age.secrets."github-personalaccesstoken".path}
+      '';
 
       security.sudo.extraConfig = ''
         Defaults timestamp_timeout=-1

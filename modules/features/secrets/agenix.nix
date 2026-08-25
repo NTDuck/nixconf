@@ -33,6 +33,7 @@
 
       age.secrets =
         lib.genAttrs [
+          "github-personalaccesstoken"
           "opencode-api-key"
           "openrouter-api-key"
           "orcarouter-api-key"
