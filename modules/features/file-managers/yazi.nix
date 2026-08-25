@@ -1,12 +1,19 @@
 {den, ...}: {
   den.aspects.file-managers.yazi = {
-    homeManager = {pkgs, ...}: {
+    homeManager = {
+      config,
+      lib,
+      pkgs,
+      ...
+    }: {
       programs.yazi = {
         enable = true;
         package = pkgs.unstable.yazi;
 
-        # TODO Cond
-        enableZshIntegration = true;
+        enableBashIntegration = lib.mkIf config.programs.bash.enable true;
+        enableZshIntegration = lib.mkIf config.programs.zsh.enable true;
+        enableFishIntegration = lib.mkIf config.programs.fish.enable true;
+
         shellWrapperName = "y";
 
         settings = {
