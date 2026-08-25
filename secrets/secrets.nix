@@ -18,4 +18,6 @@ in
     (mkSecret "opencode-api-key")
     (mkSecret "openrouter-api-key")
     (mkSecret "orcarouter-api-key")
+    (mkSecret "tabiai-api-key")
+    # sk-4m1JIciMBOltWFtRux48HGF7mM6sndD2Fp445PimN75hX7lc
   ]

@@ -33,7 +33,7 @@
         omp = ''
           ORCAROUTER_API_KEY="$(cat ${osConfig.age.secrets."orcarouter-api-key".path} 2>/dev/null)" \
           OPENCODE_API_KEY="$(cat ${osConfig.age.secrets."orcarouter-api-key".path} 2>/dev/null)" \
-          OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."orcarouter-api-key".path} 2>/dev/null)"\
+          OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."orcarouter-api-key".path} 2>/dev/null)" \
           ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}'';
       };
     };

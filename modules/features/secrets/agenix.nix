@@ -37,6 +37,7 @@
           "opencode-api-key"
           "openrouter-api-key"
           "orcarouter-api-key"
+          "tabiai-api-key"
         ]
         mkSecret;
     };
