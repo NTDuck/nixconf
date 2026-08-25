@@ -7,6 +7,12 @@ let
   "lenovo-legion-16iah7h-PF3XJ8SP" = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMN7o3pdJqi7fPs85aiOytP/VSnts8d8LHmIvxb9tj8j root@lenovo-legion-16iah7h-PF3XJ8SP";
   # "dell-latitude-E7270-H836QF2" = "...";
   systems = [lenovo-legion-16iah7h-PF3XJ8SP];
-in {
-  "orcarouter-api-key.age".publicKeys = users ++ systems;
-}
+
+  mkSecret = secret: {
+    name = "${secret}.age";
+    value.publicKeys = users ++ systems;
+  };
+in
+  builtins.listToAttrs [
+    (mkSecret "orcarouter-api-key")
+  ]

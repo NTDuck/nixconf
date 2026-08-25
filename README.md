@@ -31,73 +31,97 @@ Current supported hosts are `dell-latitude-E7270-H836QF2` and `lenovo-legion-16i
 $ nh os switch . -H ${HOSTNAME}
 ```
 
+Sometimes `--no-net` works, but in most cases you would get cryptic error messages doing so.
+
 ### 3. Update
 
-Usually this involves recompiling heavy stuff so I apply certain limitations to avoid crashing.
+There was a period when I went 4 years without cleaning my laptop or replacing its thermal paste.
+I therefore limit resource usage to avoid crashing.
 
 ```bash
 $ NIX_CONFIG="$(printf \
   'access-tokens = github.com=%s\ncores = %d\nmax-jobs = 1\n' \
   "$(gh auth token)" \
-  "$(( $(nproc) * 80 / 100 > 0 ))"
+  "$(( $(nproc) * 80 / 100 ))"
 )" \
 nh os switch . -H ${HOSTNAME} --update
 ```
 
-### 4. Secrets Management (agenix)
+Now that everything is in order, I simply allow full potential (which is faster).
 
-Secrets are encrypted using [agenix](https://github.com/ryantm/agenix) via SSH key pairs. Secrets are automatically decrypted to `/run/agenix/` during NixOS system activation.
+```bash
+$ nh os switch . -H ${HOSTNAME} --update
+```
 
-#### 1. Configuring Recipients (`secrets/secrets.nix`)
+### 4. Secrets Management with [agenix](https://github.com/ryantm/agenix)
 
-In `agenix`, two types of SSH public keys are defined:
+#### 4.1. Configuring Recipients
 
-- **User public keys** (e.g. `~/.ssh/id_ed25519.pub` or `https://github.com/<username>.keys`): Allows you to edit and decrypt secrets on your machine without `sudo`.
-- **System host public keys** (e.g. `/etc/ssh/ssh_host_ed25519_key.pub`): Allows target hosts to decrypt secrets into `/run/agenix/` upon system activation.
+`agenix` uses 2 types of public keys. _User public keys_ (e.g. `~/.ssh/id_ed25519.pub`, `https://github.com/${USERNAME}.keys`) allows editing and decrypting secrets without `sudo`. _Host public keys_ (e.g. `/etc/ssh/ssh_host_ed25519_key.pub`) allows target hosts to decrypt secrets into `/run/agenix/` upon system activation.
 
 ```nix
-let
-  # User keys (allows editing secrets with `agenix -e` without sudo)
-  ayin = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ8xCluYgGb8Zn8LEa+5EnMaqCw1hHV9nNmwdJbDAB1X ayin@lenovo-legion-16iah7h-PF3XJ8SP";
-  users = [ ayin ];
+# ./secrets/secrets.nix
 
-  # Host keys (for system activation decryption)
-  "lenovo-legion-16iah7h-PF3XJ8SP" = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMN7o3pdJqi7fPs85aiOytP/VSnts8d8LHmIvxb9tj8j root@lenovo-legion-16iah7h-PF3XJ8SP";
-  systems = [ lenovo-legion-16iah7h-PF3XJ8SP ];
+let
+  "${USERNAME}" = "ssh-ed25519 <...>";
+  users = [ "${USERNAME}" <...> ];
+
+  "${HOSTNAME}" = "ssh-ed25519 <...>";
+  systems = [ "${HOSTNAME}" <...> ];
 in {
-  "orcarouter-api-key.age".publicKeys = users ++ systems;
+  "${SECRET}.age".publicKeys = users ++ systems;
 }
 ```
 
-#### 2. Creating / Editing Secrets (e.g. `ORCAROUTER_API_KEY`)
+#### 4.2. Adding a Secret
 
-**With a user SSH key (recommended by agenix):**
-With your `~/.ssh/id_ed25519` added to `users` in `secrets/secrets.nix`, edit secrets directly as a normal user:
+First encrypt that secret to a file:
 
 ```bash
-cd secrets && agenix -e orcarouter-api-key.age
+$ (cd secrets && agenix --edit ${SECRET}.age)
 ```
 
-**With the host SSH key directly:**
-If running on a host without a configured user key, use the host's private key with `sudo -E` (so `$EDITOR` is preserved):
+Then register the secret in both places:
 
-```bash
-cd secrets && sudo -E agenix -e orcarouter-api-key.age -i /etc/ssh/ssh_host_ed25519_key
+```nix
+# ./secrets/secrets.nix
+
+let
+  ...
+in
+  builtins.listToAttrs [
+    ...
+    (mkSecret "${SECRET}")
+  ]
 ```
-#### 3. Rekeying & Deploying
 
-After updating keys in `secrets/secrets.nix`:
+```nix
+# ./modules/features/secrets/agenix.nix
 
-```bash
-cd secrets && agenix -r
-# Or if using host key: cd secrets && sudo -E agenix -r -i /etc/ssh/ssh_host_ed25519_key
+{...}: {
+  den.aspects.secrets.agenix = {
+    nixos = {...}: let
+      ...
+    in {
+      ...
+
+      age.secrets =
+        lib.genAttrs [
+          ...
+          "${SECRET}"
+        ]
+        mkSecret;
+    };
+  };
+}
 ```
 
-Stage changes and switch configuration:
+#### 4.3. [Rekeying](https://github.com/ryantm/agenix/#rekeying)
+
+You should absolutely do this whenever recipients change.
 
 ```bash
-git add secrets/
-nh os switch . -H lenovo-legion-16iah7h-PF3XJ8SP
+cd secrets && agenix --rekey
 ```
 
 ## Screenshots
