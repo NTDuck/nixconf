@@ -66,7 +66,6 @@ let
   systems = [ lenovo-legion-16iah7h-PF3XJ8SP ];
 in {
   "orcarouter-api-key.age".publicKeys = users ++ systems;
-  "secrets/orcarouter-api-key.age".publicKeys = users ++ systems;
 }
 ```
 
@@ -76,22 +75,22 @@ in {
 With your `~/.ssh/id_ed25519` added to `users` in `secrets/secrets.nix`, edit secrets directly as a normal user:
 
 ```bash
-agenix -e secrets/orcarouter-api-key.age
+cd secrets && agenix -e orcarouter-api-key.age
 ```
 
 **With the host SSH key directly:**
 If running on a host without a configured user key, use the host's private key with `sudo -E` (so `$EDITOR` is preserved):
 
 ```bash
-sudo -E agenix -e secrets/orcarouter-api-key.age -i /etc/ssh/ssh_host_ed25519_key
+cd secrets && sudo -E agenix -e orcarouter-api-key.age -i /etc/ssh/ssh_host_ed25519_key
 ```
 #### 3. Rekeying & Deploying
 
 After updating keys in `secrets/secrets.nix`:
 
 ```bash
-agenix -r
-# Or if using host key: sudo -E agenix -r -i /etc/ssh/ssh_host_ed25519_key
+cd secrets && agenix -r
+# Or if using host key: cd secrets && sudo -E agenix -r -i /etc/ssh/ssh_host_ed25519_key
 ```
 
 Stage changes and switch configuration:
