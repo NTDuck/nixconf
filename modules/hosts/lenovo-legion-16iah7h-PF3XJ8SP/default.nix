@@ -12,7 +12,7 @@
       den.aspects.browsers.chromium
       den.aspects.browsers.zen-browser
       (den.aspects.compositors.mangowm {
-        terminal = pkgs: "${pkgs.unstable.kitty}/bin/kitty";
+        terminal = pkgs: "${pkgs.unstable.ghostty}/bin/ghostty";
       })
       den.aspects.dev
       den.aspects.editors.helix
@@ -37,7 +37,7 @@
       den.aspects.music.youtube-music
       den.aspects.nix
       den.aspects.noctalia
-      # den.aspects.lix
+      den.aspects.lix
       den.aspects.nh
       den.aspects.nix-ld
       den.aspects.nur
@@ -48,6 +48,7 @@
       den.aspects.productivity.mermaid
       den.aspects.productivity.obsidian
       den.aspects.productivity.taskwarrior
+      den.aspects.productivity.tomato
       den.aspects.productivity.world-monitor
       den.aspects.secrets.agenix
       den.aspects.services.cliphist
@@ -56,19 +57,31 @@
       den.aspects.services.fcitx5
       den.aspects.services.gnome-keyring
       den.aspects.services.gvfs
+      den.aspects.services.kanshi
+      {
+        internalOutput = "eDP-1";
+
+        externalOutputs = [
+          "HDMI-A-1"
+          "HDMI-A-2"
+          "HDMI-1"
+          "HDMI-2"
+        ];
+      }
       den.aspects.services.nftables
       den.aspects.services.pipewire
       den.aspects.services.polkit
       den.aspects.services.resolved
       den.aspects.services.ssh
       den.aspects.services.udisks2
+      den.aspects.services.xdg
       den.aspects.settings
       den.aspects.shells.prompts.starship
       den.aspects.shells.zsh
       den.aspects.swap.zram
-      den.aspects.terminals.kitty
+      den.aspects.terminals.ghostty
       den.aspects.utilities.screenshots.flameshot
-      den.aspects.utilities.screenshots.satty
+      den.aspects.utilities.screenshots.gpu-screen-recorder
       den.aspects.utilities.torrents.rtorrent
       den.aspects.utilities.torrents.torrent-tui
       den.aspects.utilities.torrents.webtorrent

@@ -85,15 +85,15 @@
       };
 
       # TODO Decouple kitty
-      home.file.".local/share/nemo/actions/open-kitty-here.nemo_action".text = ''
-        [Nemo Action]
-        Name=Open in Kitty
-        Comment=Open a terminal in this folder
-        Exec=${lib.getExe pkgs.unstable.kitty} --directory %F
-        Icon-Name=utilities-terminal
-        Selection=none
-        Extensions=dir;
-      '';
+      # home.file.".local/share/nemo/actions/open-kitty-here.nemo_action".text = ''
+      #   [Nemo Action]
+      #   Name=Open in Kitty
+      #   Comment=Open a terminal in this folder
+      #   Exec=${lib.getExe pkgs.unstable.kitty} --directory %F
+      #   Icon-Name=utilities-terminal
+      #   Selection=none
+      #   Extensions=dir;
+      # '';
     };
   };
 }

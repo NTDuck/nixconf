@@ -1,9 +1,14 @@
 {den, ...}: {
   den.aspects.multimedia.gallery-dl = {
-    nixos = {pkgs, ...}: {
-      environment.systemPackages = [
-        pkgs.unstable.gallery-dl
-      ];
+    homeManager = {pkgs, ...}: {
+      programs.gallery-dl = {
+        enable = true;
+        package = pkgs.unstable.gallery-dl;
+
+        settings = {
+          extractor.base-directory = "~/Downloads";
+        };
+      };
     };
   };
 }

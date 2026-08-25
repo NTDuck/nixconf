@@ -45,6 +45,7 @@
       den.aspects.productivity.mermaid
       den.aspects.productivity.obsidian
       den.aspects.productivity.taskwarrior
+      den.aspects.productivity.tomato
       den.aspects.secrets.agenix
       den.aspects.services.cliphist
       den.aspects.services.fcitx5
@@ -61,7 +62,6 @@
       den.aspects.swap.zram
       den.aspects.terminals.foot
       den.aspects.utilities.screenshots.flameshot
-      den.aspects.utilities.screenshots.satty
       den.aspects.utilities.cava
       den.aspects.utilities.fastfetch
       den.aspects.utilities.p7zip

@@ -1,9 +1,9 @@
 {den, ...}: {
   den.aspects.shells.prompts.starship = {
     homeManager = {
-      pkgs,
       config,
       lib,
+      pkgs,
       ...
     }: {
       programs.starship = {

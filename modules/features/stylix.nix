@@ -14,12 +14,8 @@
 
         polarity = "dark";
 
-        base16Scheme = "${pkgs.base16-schemes}/share/themes/grayscale-dark.yaml";
-        override = {
-          base08 = "e06c75";
-        };
-
-        image = "${inputs.self}/assets/wallpapers/rockman.png";
+        base16Scheme = "${pkgs.base16-schemes}/share/themes/kanagawa-dragon.yaml";
+        image = "${inputs.self}/assets/wallpapers/230826-2.png";
 
         cursor = {
           package = pkgs.unstable.bibata-cursors;
@@ -54,9 +50,9 @@
         };
 
         opacity = {
-          applications = 0.8;
+          applications = 0.85;
           terminal = 0.75;
-          desktop = 0.8;
+          desktop = 0.85;
           popups = 0.8;
         };
       };

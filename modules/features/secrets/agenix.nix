@@ -4,30 +4,47 @@
   ...
 }: {
   den.aspects.secrets.agenix = {
-    nixos = {pkgs, ...}: {
+    nixos = {
+      lib,
+      pkgs,
+      ...
+    }: let
+      mkSecret = secret: {
+        file = "${inputs.self}/secrets/${secret}.age";
+        owner = "root";
+        group = "secrets";
+        mode = "0440"; # Readable only by owner and group members
+      };
+    in {
       imports = [
         inputs.agenix.nixosModules.default
       ];
 
       environment.systemPackages = [
-        inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+        (inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
+          # https://github.com/ryantm/agenix/#overriding-age-binary
+          ageBin = "${pkgs.unstable.rage}/bin/rage";
+        })
       ];
+
+      users.groups.secrets = {};
 
       age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
-      # age.secrets."gemini-default-token".file = "${inputs.self}/secrets/gemini-default-token.age";
-      # age.secrets."github-token".file = "${inputs.self}/secrets/github-token.age";
+      age.secrets =
+        lib.genAttrs [
+          "codev-api-key"
+          "github-personalaccesstoken"
+          "opencode-api-key"
+          "openrouter-api-key"
+          "orcarouter-api-key"
+          "tabiai-api-key"
+        ]
+        mkSecret;
     };
 
-    # homeManager = {config, ...}: {
-    #   imports = [
-    #     inputs.agenix.homeManagerModules.default
-    #   ];
-
-    #   age.identityPaths = ["${config.home.homeDirectory}/.ssh/id_ed25519"];
-
-    #   age.secrets."gemini-default-token".file = "${inputs.self}/secrets/gemini-default-token.age";
-    #   age.secrets."groq-default-token".file = "${inputs.self}/secrets/groq-default-token.age";
-    # };
+    provides.to-users.nixos = {user, ...}: {
+      users.users.${user.userName}.extraGroups = ["secrets"];
+    };
   };
 }

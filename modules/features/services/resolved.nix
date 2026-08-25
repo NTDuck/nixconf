@@ -4,9 +4,9 @@
       services.resolved = {
         enable = true;
 
-        settings.Resolve = {
-          DNSOverTLS = true;
-        };
+        # settings.Resolve = {
+        #   DNSOverTLS = true;
+        # };
       };
     };
   };

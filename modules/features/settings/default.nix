@@ -7,15 +7,15 @@
       den.aspects.settings.time
     ];
 
-    nixos = {config, ...}: {
+    nixos = {
       nix.settings = {
-        experimental-features = ["nix-command" "flakes" "pipe-operators"];
+        experimental-features = ["nix-command" "flakes"];
+        # experimental-features = ["nix-command" "flakes" "pipe-operators"];
         trusted-users = ["@wheel"];
       };
 
-      # TODO Agenix
       # nix.extraOptions = ''
-      #   !include ${config.age.secrets."github-token".path}
+      #   !include ${config.age.secrets."github-personalaccesstoken".path}
       # '';
 
       security.sudo.extraConfig = ''

@@ -20,6 +20,19 @@
     # Kernel
     cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
+    # Lix
+    # https://wiki.lix.systems/books/contributing/page/running-lix-main
+    # lix = {
+    #   url = "https://git.lix.systems/lix-project/lix/archive/main.tar.gz";
+    #   flake = false;
+    # };
+
+    # lix-module = {
+    #   url = "https://git.lix.systems/lix-project/nixos-module/archive/main.tar.gz";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    #   inputs.lix.follows = "lix";
+    # };
+
     # Sugars
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
@@ -56,8 +69,9 @@
 
     # Noctalia
     noctalia = {
-      # url = "github:noctalia-dev/noctalia";
-      url = "github:noctalia-dev/noctalia/v4.7.7";
+      # https://docs.noctalia.dev/noctalia/getting-started/nixos/?section=binary-cache#binary-cache:~:text=tracking%20main%20directly%20may%20pull%20in%20a%20commit%20that%20hasn%E2%80%99t%20been%20cached%20yet%20by%20CI
+      url = "github:noctalia-dev/noctalia/cachix";
+      # url = "github:noctalia-dev/noctalia/v4.7.7";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
@@ -76,14 +90,13 @@
     };
 
     # Telegram fork
-    ayugram = {
-      url = "github:ndfined-crp/ayugram-desktop/release";
-      flake = true;
-    };
+    # ayugram = {
+    #   url = "github:ndfined-crp/ayugram-desktop/release";
+    #   flake = true;
+    # };
   };
 
-  # Keep evaluator policy in the flake so `nh os switch` and CI see the same
-  # settings. References:
+  # Keep evaluator policy in the flake so `nh os switch` and CI see the same settings
   # https://nix.dev/manual/nix/latest/command-ref/conf-file#available-settings
   # https://codeberg.org/Adda/nixos-config/src/commit/826b5ec6f5733e4b6bc0771dc9639e2e074358b5/flake.nix
   nixConfig = {

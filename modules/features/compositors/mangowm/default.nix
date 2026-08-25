@@ -5,6 +5,10 @@
 }: {
   den.aspects.compositors.mangowm = {terminal}: {
     includes = [
+      # Required by plugins
+      den.aspects.utilities.evtest
+      den.aspects.utilities.screenshots.gpu-screen-recorder
+
       # Mango config and binds use Noctalia's IPC, and this session starts Noctalia
       # explicitly so its bars/lock shell exist in the compositor-only login.
       den.aspects.noctalia
@@ -25,6 +29,10 @@
         XDG_CURRENT_DESKTOP = "mango";
         XDG_SESSION_DESKTOP = "mango";
         XDG_SESSION_TYPE = "wayland";
+
+        # DO NOT UNCOMMENT
+        # DISPLAY = ":2";
+
         ELECTRON_OZONE_PLATFORM_HINT = "auto";
         MOZ_ENABLE_WAYLAND = "1";
         NIXOS_OZONE_WL = "1";
@@ -43,98 +51,10 @@
       config,
       lib,
       ...
-    }: let
-      internalOutput = "eDP-1";
-      hdmiOutputs = ["HDMI-A-1" "HDMI-A-2" "HDMI-1" "HDMI-2"];
-      hdmiMirrorUnits = lib.concatMapStringsSep " " (output: "hdmi-mirror@${output}.service") hdmiOutputs;
-      stopHdmiMirrors = "${pkgs.systemd}/bin/systemctl --user stop ${hdmiMirrorUnits} || true";
-      hdmiMirrorProfile = output: {
-        profile = {
-          name = "hdmi-mirror-${output}";
-
-          outputs = [
-            {
-              criteria = internalOutput;
-              status = "enable";
-            }
-            {
-              criteria = output;
-              status = "enable";
-            }
-          ];
-
-          exec = [
-            "${pkgs.systemd}/bin/systemctl --user restart hdmi-mirror@${output}.service"
-          ];
-        };
-      };
-    in {
+    }: {
       imports = [
         inputs.mangowm.hmModules.mango
       ];
-
-      systemd.user.services = {
-        xwayland-satellite = {
-          Unit = {
-            Description = "Xwayland Satellite";
-            PartOf = [config.wayland.systemd.target];
-            After = [config.wayland.systemd.target];
-          };
-
-          Service = {
-            ExecStart = "${pkgs.unstable.xwayland-satellite}/bin/xwayland-satellite :2";
-            Restart = "on-failure";
-            RestartSec = 1;
-          };
-        };
-
-        "hdmi-mirror@" = {
-          Unit = {
-            Description = "Mirror ${internalOutput} onto %i";
-            After = [config.wayland.systemd.target];
-            PartOf = [config.wayland.systemd.target];
-            ConditionEnvironment = "WAYLAND_DISPLAY";
-          };
-
-          Service = {
-            Type = "simple";
-            ExecStart = ''
-              ${pkgs.unstable.wl-mirror}/bin/wl-mirror \
-                --fullscreen-output %i \
-                --scaling fit \
-                ${internalOutput}
-            '';
-            Restart = "on-failure";
-            RestartSec = "1s";
-          };
-        };
-      };
-
-      services.kanshi = {
-        enable = true;
-        package = pkgs.unstable.kanshi;
-
-        settings =
-          (map hdmiMirrorProfile hdmiOutputs)
-          ++ [
-            {
-              profile = {
-                name = "laptop";
-
-                outputs = [
-                  {
-                    criteria = internalOutput;
-                    status = "enable";
-                  }
-                ];
-
-                exec = [
-                  stopHdmiMirrors
-                ];
-              };
-            }
-          ];
-      };
 
       wayland.windowManager.mango = {
         enable = true;
@@ -149,81 +69,106 @@
             l = "down";
           };
 
-          # ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
-          # https://docs.noctalia.dev/v4/getting-started/keybinds/keybinds/#:~:text=Installation%2Dspecific%20commands
-          ipc = "${config.programs.noctalia-shell.package}/bin/noctalia-shell ipc call";
+          ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
         in {
           repeat_rate = 50;
           repeat_delay = 150;
           trackpad_natural_scrolling = 1;
-          click_method = 2; # Clickfinger
+          mouse_click_method = 2; # Clickfinger
 
+          xwayland_ignore_scale = 1; # DO_NOT_REMOVE otherwise XWayland apps suffer from low resolution
           # syncobj_enable = 1;
           allow_lock_transparent = 1;
           drag_tile_to_tile = 1;
           drag_corner = 4;
 
           borderpx = 0;
-          gappih = 8;
-          gappiv = 8;
-          gappoh = 8;
-          gappov = 8;
+          gappih = 6;
+          gappiv = 6;
+          gappoh = 6;
+          gappov = 6;
 
           blur = 1;
-          blur_layer = 1;
+          blur_layer = 0;
+          blur_optimized = 1;
           blur_params_radius = 8;
           blur_params_num_passes = 2;
-          border_radius = 16;
+          blur_params_noise = 0.02;
+          blur_params_brightness = 0.9;
+          blur_params_contrast = 0.9;
+          blur_params_saturation = 1.0;
 
+          border_radius = 0;
+          no_radius_when_single = 0;
           focused_opacity = config.stylix.opacity.applications;
           unfocused_opacity = 0.8 * config.stylix.opacity.applications;
 
           # https://mangowm.github.io/docs/visuals/animations
           animations = 1;
-          layer_animations = 1;
+          layer_animations = 0;
 
-          animation_type_open = "fade";
-          animation_type_close = "fade";
-          layer_animation_type_open = "fade";
-          layer_animation_type_close = "fade";
+          animation_type_open = "slide";
+          animation_type_close = "slide";
+          layer_animation_type_open = "slide";
+          layer_animation_type_close = "slide";
 
           animation_fade_in = 1;
           animation_fade_out = 1;
           fadein_begin_opacity = 0.1;
-          fadeout_begin_opacity = 0.1;
-          animation_curve_opafadein = "0,0.55,0.45,1.0";
-          animation_curve_opafadeout = "0.55,0.5,1.0,0.45";
+          fadeout_begin_opacity = 0.9;
+          animation_curve_opafadein = "0.0,0.55,0.45,1.0";
+          animation_curve_opafadeout = "0.5,0.5,0.5,0.5";
 
           tag_animation_direction = 0;
 
-          circle_layout = "dwindle,scroller";
+          scroller_structs = 3; # 0.5 * `gap`
+          scroller_default_proportion = 1.0;
+          scroller_prefer_overspread = 0;
+          scroller_focus_center = 1;
+          scroller_prefer_center = 1;
+          edge_scroller_focus_allow_speed = 0.0;
+          scroller_ignore_proportion_single = 1;
 
-          tagrule = lib.map (tag: "id:${tag},layout_name:dwindle") tags;
+          circle_layout = "scroller,dwindle";
+
+          tagrule =
+            lib.map (tag: "id:${tag},layout_name:${
+              if tag == "1"
+              then "deck"
+              else "scroller"
+            }")
+            tags;
 
           layerrule = [
             # https://docs.noctalia.dev/v4/getting-started/compositor-settings/hyprland/#blur
-            "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0"
-            "layer_name:noctalia-notifications-.*$,noblur:1,noanim:1,noshadow:1"
+            # "layer_name:noctalia-background-.*$,noblur:1,noanim:1,noshadow:0"
+            # "layer_name:noctalia-notifications-.*$,noblur:1,noanim:1,noshadow:1"
           ];
 
-          smartgaps = 1;
-
-          bind =
+          bind = let
+            switchlayout = pkgs.writeShellScript "mangowm-switchlayout" ''
+              if ${config.wayland.windowManager.mango.package}/bin/mmsg get all-monitors | ${pkgs.unstable.jq}/bin/jq -e '.monitors[] | select(.active) | .active_tags | index(1)' >/dev/null 2>&1; then
+                exit 0
+              else
+                ${config.wayland.windowManager.mango.package}/bin/mmsg dispatch switch_layout
+              fi
+            '';
+          in
             [
               "SUPER,a,toggleoverview"
-              "SUPER,s,switch_layout"
+              "SUPER,s,spawn,${switchlayout}"
               "SUPER,q,killclient"
               "SUPER,f,togglemaximizescreen"
-              # "SUPER,f,togglefakefullscreen"
               "SUPER+SHIFT,f,togglefullscreen"
               "SUPER+SHIFT,e,quit"
+              "SUPER+SHIFT,r,reload_config"
 
-              # TODO Add Legion's Fn + Q
-              # "SUPER,d,spawn,${ipc} panel-toggle launcher"
-              # "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
-              # "SUPER+CTRL,l,spawn,${ipc} session lock"
-              "SUPER,d,spawn,${ipc} launcher toggle"
-              "SUPER+CTRL,l,spawn,${ipc} lockScreen lock"
+              "SUPER,F11,viewtoright"
+              "SUPER,F12,viewtoleft"
+
+              "SUPER,d,spawn,${ipc} panel-toggle launcher"
+              "SUPER+SHIFT,s,spawn,${ipc} screenshot-fullscreen"
+              "SUPER+CTRL,l,spawn,${ipc} session lock"
               "SUPER,Return,spawn,${terminal pkgs}"
             ]
             ++ (lib.mapAttrsToList (key: dir: "SUPER,${key},focusdir,${dir}") dirs)
@@ -233,16 +178,11 @@
             ++ (lib.map (tag: "SUPER+ALT,${tag},tag,${tag}") tags);
 
           bindl = [
-            # "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness-down"
-            # "NONE,XF86MonBrightnessUp,spawn,${ipc} brightness-up"
-            # "NONE,XF86AudioMute,spawn,${ipc} volume-mute"
-            # "NONE,XF86AudioLowerVolume,spawn,${ipc} volume-down"
-            # "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume-up"
-            "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness decrease"
-            "NONE,XF86MonBrightnessUp,spawn,${ipc} brightness increase"
-            "NONE,XF86AudioMute,spawn,${ipc} volume muteOutput"
-            "NONE,XF86AudioLowerVolume,spawn,${ipc} volume decrease"
-            "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume increase"
+            "NONE,XF86MonBrightnessDown,spawn,${ipc} brightness-down"
+            "NONE,XF86MonBrightnessUp,spawn,${ipc} brightness-up"
+            "NONE,XF86AudioMute,spawn,${ipc} volume-mute"
+            "NONE,XF86AudioLowerVolume,spawn,${ipc} volume-down"
+            "NONE,XF86AudioRaiseVolume,spawn,${ipc} volume-up"
           ];
 
           focus_on_activate = 0;
@@ -251,33 +191,24 @@
         autostart_sh = ''
           ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd \
             WAYLAND_DISPLAY \
+            DISPLAY \
             XDG_CURRENT_DESKTOP \
             XDG_SESSION_DESKTOP \
             XDG_SESSION_TYPE
 
           ${pkgs.systemd}/bin/systemctl --user import-environment \
             WAYLAND_DISPLAY \
+            DISPLAY \
             XDG_CURRENT_DESKTOP \
             XDG_SESSION_DESKTOP \
             XDG_SESSION_TYPE
 
-          ${pkgs.systemd}/bin/systemctl --user start xwayland-satellite.service
+          ${pkgs.xrdb}/bin/xrdb -merge ~/.Xresources || true
 
-          for _ in $(${pkgs.coreutils}/bin/seq 1 100); do
-            if ${pkgs.xset}/bin/xset -display :2 q >/dev/null 2>&1; then
-              break
-            fi
-            ${pkgs.coreutils}/bin/sleep 0.05
-          done
-          export DISPLAY=:2
-          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd DISPLAY
-          ${pkgs.systemd}/bin/systemctl --user import-environment DISPLAY
-
-          ${config.programs.noctalia-shell.package}/bin/noctalia-shell
+          ${config.programs.noctalia.package}/bin/noctalia &
 
           fcitx5 -d -r &
         '';
-        # ${config.programs.noctalia.package}/bin/noctalia &
 
         systemd = {
           enable = true;

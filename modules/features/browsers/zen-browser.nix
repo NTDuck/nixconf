@@ -12,12 +12,14 @@
       ...
     }: {
       imports = [
-        inputs.zen-browser.homeModules.beta
+        inputs.zen-browser.homeModules.twilight
       ];
 
       programs.zen-browser = {
         enable = true;
-        package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.beta;
+
+        # Do not set - would replace policy-aware package with prebuilt flake package
+        # package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.twilight;
 
         setAsDefaultBrowser = true;
 
@@ -37,6 +39,19 @@
           DisableAppUpdate = true;
           DisableTelemetry = true;
           DisablePocket = true;
+
+          ExtensionSettings =
+            # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/04-extensions.nix
+            builtins.mapAttrs (_: pluginId: {
+              install_url = "https://addons.mozilla.org/firefox/downloads/latest/${pluginId}/latest.xpi";
+              installation_mode = "force_installed";
+            }) {
+              # https://github.com/EdgeTypE/better-deepseek
+              "betterdeepseek@goygoyengine.com" = "better-deepseek";
+
+              # # https://github.com/saeedezzati/superpower-chatgpt
+              # "cjiggdeafkdppmdmlcdpfigbalcgbkpg@fancydino.com" = "superpower-chatgpt";
+            };
         };
 
         profiles.${user.name} = {
@@ -60,6 +75,7 @@
           settings = {
             "browser.startup.page" = 3;
             "browser.sessionstore.resume_from_crash" = true;
+            "browser.download.always_ask_before_handling_new_types" = false;
 
             # Download automatically to ~/Downloads instead of opening a
             # GTK/XDG file chooser for every download.
@@ -78,8 +94,8 @@
             # Allow switching spaces when scrolling
             "zen.workspaces.swipe-actions" = true;
             "zen.workspaces.wrap-around-navigation" = true;
-            "zen.workspaces.natural-scroll" = true;
-            "zen.workspaces.scroll-modifier-key" = "none";
+            "zen.workspaces.natural-scroll" = false;
+            "zen.workspaces.scroll-modifier-key" = "ctrl";
 
             "zen.workspaces.continue-where-left-off" = true;
             "zen.view.compact.hide-tabbar" = true;
@@ -95,6 +111,8 @@
           mods = [
             "e122b5d9-d385-4bf8-9971-e137809097d0" # No Top Sites
             "253a3a74-0cc4-47b7-8b82-996a64f030d5" # Floating History
+            "c6813222-6571-4ba6-8faf-58f3343324f6" # Disable Rounded Corners
+            "c01d3e22-1cee-45c1-a25e-53c0f180eea8" # Ghost Tabs
           ];
 
           # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/06-search-engines.nix
@@ -282,36 +300,19 @@
               icon = "💡";
               container = 4; # <- `containers."dev,edu,fut"`
             };
-            "ddd" = {
-              id = "c75e0fb9-9f36-409e-926c-674b0c03ae55";
-              position = 5000;
-              icon = "🔞";
-              container = 6; # <- `containers."ddd"`
-            };
-            "..." = {
-              id = "6e239929-a237-4f47-b5fd-1d988de4ae9b";
-              position = 6000;
-              icon = "…";
-              container = 1; # <- `containers."master"`
-            };
+            # "ddd" = {
+            #   id = "c75e0fb9-9f36-409e-926c-674b0c03ae55";
+            #   position = 5000;
+            #   icon = "🔞";
+            #   container = 6; # <- `containers."ddd"`
+            # };
+            # "..." = {
+            #   id = "6e239929-a237-4f47-b5fd-1d988de4ae9b";
+            #   position = 6000;
+            #   icon = "…";
+            #   container = 1; # <- `containers."master"`
+            # };
           };
-
-          # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/12-userchrome-css.nix
-          # userChrome = ''
-          #   /* Target Zen Browser's vertical tab sidebar layout specifically */
-          #   #zen-sidebar-web-pages,
-          #   .sidebar-panel,
-          #   #sidebar-box,
-          #   #zen-tabs-container {
-          #     font-size: 11px !important; /* Adjust this lower or higher to match your taste */
-          #   }
-
-          #   /* Optional: Make the sidebar icons shrink slightly to match the smaller text */
-          #   #zen-tabs-container .tab-icon-image,
-          #   #zen-sidebar-web-pages .sidebar-icon {
-          #     transform: scale(0.85) !important;
-          #   }
-          # '';
         };
 
         # https://github.com/0xc000022070/zen-browser-flake/blob/main/examples/14-native-messaging.nix

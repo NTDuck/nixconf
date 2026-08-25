@@ -6,10 +6,10 @@ OS: [NixOS 26.05 (Yarara)](https://nixos.org/blog/announcements/2026/nixos-2605/
 Compositor: [Mango](https://mangowm.github.io/) <br>
 Shell: [zsh](https://www.zsh.org/) 5.9.1, [starship](https://starship.rs/) / [Powerlevel10k](https://powerlevel10k.org/) <br>
 Other Shell: [Noctalia v4.7.7](https://github.com/noctalia-dev/noctalia) <br>
-Terminals: [Kitty](https://sw.kovidgoyal.net/kitty/) / [Foot](https://codeberg.org/dnkl/foot) <br>
+Terminals: [Ghostty](https://ghostty.org/) / [Foot](https://codeberg.org/dnkl/foot) <br>
 Fonts: [Inter](https://rsms.me/inter/), [Maple Mono](https://font.subf.dev/en/) <br>
 Theme: [Grayscale Dark](https://tinted-theming.github.io/tinted-gallery/#base16-grayscale-dark), overriden <br>
-Wallpapers: [Rockman](https://gruvbox-wallpapers.pages.dev/wallpapers/mix/rockman.png), [れおなるど's 図書館 \[\[Girls' Last Tour\]\]](https://x.com/LeoLeonardK10/status/1465607483372699656), [Anton Elfilter's Shifting Tides](https://x.com/elfilter_a/status/2043948619460411476)
+Wallpapers: [葛飾 北斎's 神奈川沖浪裏 \[\[The Great Wave off Kanagawa\]\]](https://en.wikipedia.org/wiki/The_Great_Wave_off_Kanagawa) [Rockman](https://gruvbox-wallpapers.pages.dev/wallpapers/mix/rockman.png), [れおなるど's 図書館 \[\[Girls' Last Tour\]\]](https://x.com/LeoLeonardK10/status/1465607483372699656), [Anton Elfilter's Shifting Tides](https://x.com/elfilter_a/status/2043948619460411476), [nitrovu's ROARING GROUPCHAT](https://www.instagram.com/p/DM58MumtMC3/), [nyancat](https://whvn.cc/j8kgpw)
 
 ## Common Operations
 
@@ -31,18 +31,102 @@ Current supported hosts are `dell-latitude-E7270-H836QF2` and `lenovo-legion-16i
 $ nh os switch . -H ${HOSTNAME}
 ```
 
+Sometimes `--no-net` works, but in most cases you would get cryptic error messages doing so.
+
 ### 3. Update
 
-Usually this involves recompiling heavy stuff so I apply certain limitations to avoid crashing.
+There was a period when I went 4 years without cleaning my laptop or replacing its thermal paste.
+I therefore limit resource usage to avoid crashing.
 
 ```bash
 $ NIX_CONFIG="$(printf \
   'access-tokens = github.com=%s\ncores = %d\nmax-jobs = 1\n' \
   "$(gh auth token)" \
-  "$(( $(nproc) * 80 / 100 > 0 ))"
+  "$(( $(nproc) * 80 / 100 ))"
 )" \
 nh os switch . -H ${HOSTNAME} --update
 ```
+
+Now that everything is in order, I simply allow full potential (which is faster).
+
+```bash
+$ nh os switch . -H ${HOSTNAME} --update
+```
+
+### 4. Secrets Management with [agenix](https://github.com/ryantm/agenix)
+
+#### 4.1. Configuring Recipients
+
+`agenix` uses 2 types of public keys. _User public keys_ (e.g. `~/.ssh/id_ed25519.pub`, `https://github.com/${USERNAME}.keys`) allows editing and decrypting secrets without `sudo`. _Host public keys_ (e.g. `/etc/ssh/ssh_host_ed25519_key.pub`) allows target hosts to decrypt secrets into `/run/agenix/` upon system activation.
+
+```nix
+# ./secrets/secrets.nix
+
+let
+  "${USERNAME}" = "ssh-ed25519 <...>";
+  users = [ "${USERNAME}" <...> ];
+
+  "${HOSTNAME}" = "ssh-ed25519 <...>";
+  systems = [ "${HOSTNAME}" <...> ];
+in {
+  "${SECRET}.age".publicKeys = users ++ systems;
+}
+```
+
+#### 4.2. Adding a Secret
+
+First encrypt that secret to a file:
+
+```bash
+$ (cd secrets && agenix --edit ${SECRET}.age)
+```
+
+Then register the secret in both places:
+
+```nix
+# ./secrets/secrets.nix
+
+let
+  ...
+in
+  builtins.listToAttrs [
+    ...
+    (mkSecret "${SECRET}")
+  ]
+```
+
+```nix
+# ./modules/features/secrets/agenix.nix
+
+{...}: {
+  den.aspects.secrets.agenix = {
+    nixos = {...}: let
+      ...
+    in {
+      ...
+
+      age.secrets =
+        lib.genAttrs [
+          ...
+          "${SECRET}"
+        ]
+        mkSecret;
+    };
+  };
+}
+```
+
+#### 4.3. [Rekeying](https://github.com/ryantm/agenix/#rekeying)
+
+You should absolutely do this whenever recipients change.
+
+```bash
+cd secrets && agenix --rekey
+```
+
+## Screenshots
+
+![sans.png](.github/assets/screenshots/sans.png)
 
 ## References
 
