@@ -54,10 +54,24 @@
                 name: Claude Opus 4.8 Thinking
                 contextWindow: 200000
                 maxTokens: 8192
+
+        # https://netmind.viettel.vn/codev/vi/docs/hub/installation#install-sso
+        providers:
+          codev:
+            baseUrl: https://netmind.viettel.vn/gateway/v1
+            api: openai-completions
+            apiKey: CODEV_API_KEY
+            authHeader: true
+            models:
+              - id: MiniMax/MiniMax-M3
+                name: MiniMax M3 via CoDev
+                contextWindow: 196608
+                maxTokens: 65536
       '';
 
       home.shellAliases = {
         omp = ''
+          CODEV_API_KEY="$(cat ${osConfig.age.secrets."codev-api-key".path})" \
           ORCAROUTER_API_KEY="$(cat ${osConfig.age.secrets."orcarouter-api-key".path})" \
           OPENCODE_API_KEY="$(cat ${osConfig.age.secrets."opencode-api-key".path})" \
           OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."openrouter-api-key".path})" \

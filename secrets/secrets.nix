@@ -14,6 +14,7 @@ let
   };
 in
   builtins.listToAttrs [
+    (mkSecret "codev-api-key")
     (mkSecret "github-personalaccesstoken")
     (mkSecret "opencode-api-key")
     (mkSecret "openrouter-api-key")

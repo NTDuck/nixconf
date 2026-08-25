@@ -33,6 +33,7 @@
 
       age.secrets =
         lib.genAttrs [
+          "codev-api-key"
           "github-personalaccesstoken"
           "opencode-api-key"
           "openrouter-api-key"

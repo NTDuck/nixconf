@@ -1,4 +1,8 @@
-{...}: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.dev.agentics.harnesses.codev = {
     nixos = {
       pkgs,
@@ -74,8 +78,8 @@
         };
 
         postPatch = ''
-          cp ${./codev-package-lock.json} package-lock.json
-          ${pkgs.jq}/bin/jq '.scripts = {}' package.json > package.json.tmp && mv package.json.tmp package.json
+          cp ${inputs.self}/modules/features/dev/agentics/harnesses/codev/package-lock.json package-lock.json
+          ${pkgs.unstable.jq}/bin/jq '.scripts = {}' package.json > package.json.tmp && mv package.json.tmp package.json
         '';
 
         npmDepsHash = "sha256-9UN9A0piPO+gX8Lpq2ULXRyPl4Q8XDoAmcDJVVgQllc=";
@@ -91,7 +95,7 @@
         '';
 
         meta = {
-          description = "CoDev — AI Coding Agent Hub. Install, configure, and manage multiple AI coding agents";
+          description = "CoDev, Internal LLM";
           homepage = "https://github.com/mnguyencuny/codev";
           license = lib.licenses.mit;
           mainProgram = "codevhub";
