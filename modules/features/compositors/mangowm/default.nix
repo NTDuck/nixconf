@@ -131,7 +131,13 @@
 
           circle_layout = "scroller,dwindle";
 
-          tagrule = lib.map (tag: "id:${tag},layout_name:scroller") tags;
+          tagrule =
+            lib.map (tag: "id:${tag},layout_name:${
+              if tag == "1"
+              then "deck"
+              else "scroller"
+            }")
+            tags;
 
           layerrule = [
             # https://docs.noctalia.dev/v4/getting-started/compositor-settings/hyprland/#blur
@@ -139,10 +145,18 @@
             # "layer_name:noctalia-notifications-.*$,noblur:1,noanim:1,noshadow:1"
           ];
 
-          bind =
+          bind = let
+            switchlayout = pkgs.writeShellScript "mangowm-switchlayout" ''
+              if ${config.wayland.windowManager.mango.package}/bin/mmsg get all-monitors | ${pkgs.unstable.jq}/bin/jq -e '.monitors[] | select(.active) | .active_tags | index(1)' >/dev/null 2>&1; then
+                exit 0
+              else
+                ${config.wayland.windowManager.mango.package}/bin/mmsg dispatch switch_layout
+              fi
+            '';
+          in
             [
               "SUPER,a,toggleoverview"
-              "SUPER,s,switch_layout"
+              "SUPER,s,spawn,${switchlayout}"
               "SUPER,q,killclient"
               "SUPER,f,togglemaximizescreen"
               "SUPER+SHIFT,f,togglefullscreen"
