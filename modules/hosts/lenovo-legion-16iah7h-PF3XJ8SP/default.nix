@@ -75,7 +75,6 @@
       den.aspects.services.ssh
       den.aspects.services.udisks2
       den.aspects.services.xdg
-      den.aspects.services.xwayland-satellite
       den.aspects.settings
       den.aspects.shells.prompts.starship
       den.aspects.shells.zsh

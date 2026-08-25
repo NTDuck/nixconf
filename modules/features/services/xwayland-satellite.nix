@@ -29,7 +29,7 @@
             # Systemd does not use a shell for ExecStartPost entries, so wrap
             # in bash. Use echo | xrdb (not a here-string) to avoid nested
             # quoting issues between Nix strings and bash.
-            "${pkgs.bash}/bin/bash -c 'echo Xft.dpi:144 | ${pkgs.xorg.xrdb}/bin/xrdb -merge -display :2'"
+            "${pkgs.bash}/bin/bash -c 'echo Xft.dpi:144 | ${pkgs.xrdb}/bin/xrdb -merge -display :2'"
           ];
 
           StandardOutput = "journal";

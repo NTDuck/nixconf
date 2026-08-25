@@ -76,6 +76,7 @@
           trackpad_natural_scrolling = 1;
           mouse_click_method = 2; # Clickfinger
 
+          xwayland_ignore_scale = 1;
           # syncobj_enable = 1;
           allow_lock_transparent = 1;
           drag_tile_to_tile = 1;
@@ -187,6 +188,8 @@
             XDG_CURRENT_DESKTOP \
             XDG_SESSION_DESKTOP \
             XDG_SESSION_TYPE
+
+          ${pkgs.xrdb}/bin/xrdb -merge ~/.Xresources || true
 
           ${config.programs.noctalia.package}/bin/noctalia &
 

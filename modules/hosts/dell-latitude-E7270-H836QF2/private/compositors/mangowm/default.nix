@@ -1,6 +1,10 @@
 {den, ...}: {
   den.aspects.dell-latitude-E7270-H836QF2 = {
     homeManager = {lib, ...}: {
+      xresources.properties = {
+        "Xft.dpi" = 96;
+      };
+
       # Override for performance
       wayland.windowManager.mango.settings = lib.mapAttrs (_: value: lib.mkForce value) {
         monitorrule = [
