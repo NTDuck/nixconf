@@ -92,6 +92,7 @@
       den.aspects.utilities.rufus
       den.aspects.utilities.speedtest-cli
       den.aspects.virtualization.docker
+      den.aspects.virtualization.kubernetes
       den.aspects.virtualization.qemu
       den.aspects.virtualization.waydroid
       den.aspects.stylix
