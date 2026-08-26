@@ -3,6 +3,7 @@
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.terraform
+        pkgs.unstable.tenv
       ];
     };
   };
