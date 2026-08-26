@@ -6,6 +6,7 @@
       den.aspects.dev.gits
       den.aspects.dev.toolchains
 
+      den.aspects.dev.google-cloud-sdk
       den.aspects.dev.postman
     ];
   };
