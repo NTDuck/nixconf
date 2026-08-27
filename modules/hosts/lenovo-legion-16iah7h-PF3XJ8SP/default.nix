@@ -90,7 +90,7 @@
       den.aspects.utilities.p7zip
       den.aspects.utilities.ripgrep
       den.aspects.utilities.rufus
-      den.aspects.utilities.speedtest-cli
+      den.aspects.utilities.zoxide
       den.aspects.virtualization.docker
       den.aspects.virtualization.kubernetes
       den.aspects.virtualization.qemu
