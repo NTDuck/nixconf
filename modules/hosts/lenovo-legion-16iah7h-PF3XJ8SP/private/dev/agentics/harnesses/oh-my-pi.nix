@@ -76,6 +76,8 @@
           OPENCODE_API_KEY="$(cat ${osConfig.age.secrets."opencode-api-key".path})" \
           OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."openrouter-api-key".path})" \
           TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path})" \
+          REASONIX_SCAVENGE=1 \
+          REASONIX_RESULT_CAP_TOKENS=3000 \
           ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp'';
       };
     };
