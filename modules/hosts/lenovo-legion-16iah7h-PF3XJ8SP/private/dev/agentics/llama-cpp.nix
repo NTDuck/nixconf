@@ -1,6 +1,10 @@
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-    nixos = {pkgs, ...}: {
+    nixos = {
+      config,
+      pkgs,
+      ...
+    }: {
       services.llama-cpp = {
         enable = true;
         package = pkgs.unstable.llama-cpp.override {cudaSupport = true;};
@@ -105,6 +109,13 @@
           };
         };
       };
+
+      environment.systemPackages = [
+        config.services.llama-cpp.package
+        (pkgs.writeShellScriptBin "llama-cpp" ''
+          exec ${config.services.llama-cpp.package}/bin/llama-cli "$@"
+        '')
+      ];
     };
   };
 }
