@@ -5,7 +5,7 @@
       services.hardware.bolt = {
         enable = true;
         package = pkgs.bolt;
-      }
+      };
     };
   };
 }
