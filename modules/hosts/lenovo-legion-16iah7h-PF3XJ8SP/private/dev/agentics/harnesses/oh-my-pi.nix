@@ -81,8 +81,22 @@
                 contextWindow: 131072
                 maxTokens: 8192
 
+              - id: Qwen/Qwen3.5-35B-A3B
+                name: Qwen3.5 35B A3B (FreeToken)
+                reasoning: true
+                input: [text]
+                contextWindow: 131072
+                maxTokens: 8192
+
               - id: openai/gpt-oss-20b
                 name: GPT-OSS 20B (FreeToken)
+                reasoning: true
+                input: [text]
+                contextWindow: 131072
+                maxTokens: 8192
+
+              - id: openai/gpt-oss-120b
+                name: GPT-OSS 120B (FreeToken)
                 reasoning: true
                 input: [text]
                 contextWindow: 131072
@@ -109,8 +123,22 @@
                 contextWindow: 131072
                 maxTokens: 8192
 
+              - id: nvidia/GLM-4.7-NVFP4
+                name: GLM 4.7 NVFP4 (FreeToken)
+                reasoning: true
+                input: [text]
+                contextWindow: 131072
+                maxTokens: 8192
+
               - id: nvidia/MiniMax-M2.5-NVFP4
                 name: MiniMax M2.5 NVFP4 (FreeToken)
+                reasoning: true
+                input: [text]
+                contextWindow: 131072
+                maxTokens: 8192
+
+              - id: meta-models/Muse-Glimmer-30B
+                name: Muse Glimmer 30B (FreeToken)
                 reasoning: true
                 input: [text]
                 contextWindow: 131072

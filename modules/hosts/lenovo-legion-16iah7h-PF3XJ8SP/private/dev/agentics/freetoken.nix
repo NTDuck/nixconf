@@ -199,7 +199,7 @@
             WorkingDirectory = "/var/lib/freetoken";
             Restart = "on-failure";
             RestartSec = 5;
-            ExecStart = "${freetokenWrapper}/bin/ft serve --model ${cfg.defaultModel} --host ${cfg.host} --port ${toString cfg.port} --moe-backend ${cfg.moeBackend} ${lib.escapeShellArgs cfg.extraArgs}";
+            ExecStart = "${freetokenWrapper}/bin/ft serve --model ${cfg.defaultModel} --served-model-name ${cfg.defaultModel} --host ${cfg.host} --port ${toString cfg.port} --moe-backend ${cfg.moeBackend} ${lib.escapeShellArgs cfg.extraArgs}";
           };
         };
 
