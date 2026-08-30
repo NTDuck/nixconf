@@ -1,5 +1,4 @@
 {
-  den,
   inputs,
   ...
 }: {
@@ -65,6 +64,61 @@
                 name: MiniMax M3 (NetMind)
                 contextWindow: 196608
                 maxTokens: 65536
+
+          # FreeToken local edge-native MoE server (http://127.0.0.1:1919)
+          freetoken:
+            baseUrl: http://127.0.0.1:1919/v1
+            api: openai-completions
+            apiKey: freetoken
+            models:
+              - id: Qwen/Qwen3-30B-A3B
+                name: Qwen3 30B A3B (FreeToken)
+                reasoning: true
+                input: [text]
+                contextWindow: 131072
+                maxTokens: 8192
+
+              - id: Qwen/Qwen3.6-35B-A3B
+                name: Qwen3.6 35B A3B (FreeToken)
+                reasoning: true
+                input: [text]
+                contextWindow: 131072
+                maxTokens: 8192
+
+              - id: openai/gpt-oss-20b
+                name: GPT-OSS 20B (FreeToken)
+                reasoning: true
+                input: [text]
+                contextWindow: 131072
+                maxTokens: 8192
+
+              - id: deepseek-ai/DeepSeek-V4-Flash-0731
+                name: DeepSeek V4 Flash (FreeToken)
+                reasoning: true
+                input: [text]
+                contextWindow: 131072
+                maxTokens: 8192
+
+              - id: google/gemma-4-26B-A4B-it
+                name: Gemma 4 26B A4B (FreeToken)
+                reasoning: true
+                input: [text]
+                contextWindow: 131072
+                maxTokens: 8192
+
+              - id: nvidia/GLM-5.2-NVFP4
+                name: GLM 5.2 NVFP4 (FreeToken)
+                reasoning: true
+                input: [text]
+                contextWindow: 131072
+                maxTokens: 8192
+
+              - id: nvidia/MiniMax-M2.5-NVFP4
+                name: MiniMax M2.5 NVFP4 (FreeToken)
+                reasoning: true
+                input: [text]
+                contextWindow: 131072
+                maxTokens: 8192
       '';
 
       home.shellAliases = {

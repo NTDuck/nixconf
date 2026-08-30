@@ -7,7 +7,9 @@
     }: {
       services.llama-cpp = {
         enable = true;
-        package = pkgs.unstable.llama-cpp.override {cudaSupport = true;};
+        package = pkgs.unstable.llama-cpp.override {
+          cudaSupport = true;
+        };
 
         host = "127.0.0.1";
         port = 8080;
@@ -88,19 +90,6 @@
             hf-file = "LFM2.5-8B-A1B-Q4_K_M.gguf";
             alias = "lfm2.5:8b-a1b-q4_K_M";
           };
-
-          "gpt-oss:20b" = {
-            hf-repo = "unsloth/gpt-oss-20b-GGUF";
-            hf-file = "gpt-oss-20b-Q4_K_M.gguf";
-            alias = "gpt-oss:20b";
-          };
-
-          "qwen3:30b-a3b-thinking-2507-q4_K_M" = {
-            hf-repo = "unsloth/Qwen3-30B-A3B-Thinking-2507-GGUF";
-            hf-file = "Qwen3-30B-A3B-Thinking-2507-Q4_K_M.gguf";
-            alias = "qwen3:30b-a3b-thinking-2507-q4_K_M";
-          };
-
           # eGPU
           "qwen3.8:27b" = {
             hf-repo = "unsloth/Qwen3.8-27B-GGUF";
