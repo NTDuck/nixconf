@@ -1,7 +1,4 @@
-{
-  inputs,
-  ...
-}: {
+{inputs, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     homeManager = {
       osConfig,
@@ -65,7 +62,6 @@
                 contextWindow: 196608
                 maxTokens: 65536
 
-          # FreeToken local edge-native MoE server (http://127.0.0.1:1919)
           freetoken:
             baseUrl: http://127.0.0.1:1919/v1
             api: openai-completions

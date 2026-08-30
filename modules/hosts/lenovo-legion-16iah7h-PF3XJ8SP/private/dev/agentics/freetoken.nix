@@ -11,15 +11,24 @@
       cudaNvcc = pkgs.cudaPackages.cuda_nvcc;
       cudaCudart = pkgs.cudaPackages.cuda_cudart;
 
+      freetokenLibs = [
+        pkgs.stdenv.cc.cc.lib
+        pkgs.zlib
+        cudaToolkit
+        cudaCudart
+      ];
+
       freetokenWrapper = pkgs.writeShellScriptBin "ft" ''
         export CUDA_HOME="''${CUDA_HOME:-${cudaToolkit}}"
-        export PATH="${lib.makeBinPath [pkgs.unstable.uv pkgs.unstable.python3 cudaNvcc cudaToolkit pkgs.stdenv.cc pkgs.git]}:$PATH"
-        export LD_LIBRARY_PATH="/run/opengl-driver/lib:/run/opengl-driver-32/lib:${cudaToolkit}/lib64:${cudaCudart}/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-        exec ${pkgs.unstable.uv}/bin/uv tool run --with "freetoken[accel]" ft "$@"
+        export FREETOKEN_ALLOW_CUDA_MISMATCH="''${FREETOKEN_ALLOW_CUDA_MISMATCH:-1}"
+        export PATH="${lib.makeBinPath [pkgs.unstable.uv pkgs.unstable.python3 cudaNvcc cudaToolkit pkgs.stdenv.cc pkgs.git pkgs.ninja pkgs.which pkgs.coreutils]}:$PATH"
+        export LD_LIBRARY_PATH="${lib.makeLibraryPath freetokenLibs}:/run/opengl-driver/lib:/run/opengl-driver-32/lib:${cudaToolkit}/lib64:${cudaToolkit}/lib:${cudaCudart}/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+        exec ${pkgs.unstable.uv}/bin/uv tool run --from "freetoken[accel]" ft "$@"
       '';
     in {
       options.services.freetoken = {
-        enable = lib.mkEnableOption "FreeToken edge-native MoE inference server";
+        # https://arxiv.org/abs/2608.16157
+        enable = lib.mkEnableOption "FreeToken: Efficient Edge-Native MoE Serving with Bandwidth-Adaptive Execution";
 
         host = lib.mkOption {
           type = lib.types.str;
@@ -168,6 +177,8 @@
             cudaNvcc
             cudaToolkit
             pkgs.stdenv.cc
+            pkgs.ninja
+            pkgs.which
             pkgs.bash
             pkgs.coreutils
             pkgs.git
@@ -175,7 +186,8 @@
 
           environment = {
             CUDA_HOME = "${cudaToolkit}";
-            LD_LIBRARY_PATH = "/run/opengl-driver/lib:/run/opengl-driver-32/lib:${cudaToolkit}/lib64:${cudaCudart}/lib";
+            FREETOKEN_ALLOW_CUDA_MISMATCH = "1";
+            LD_LIBRARY_PATH = "${lib.makeLibraryPath freetokenLibs}:/run/opengl-driver/lib:/run/opengl-driver-32/lib:${cudaToolkit}/lib64:${cudaToolkit}/lib:${cudaCudart}/lib";
             HOME = "/var/lib/freetoken";
             HF_HOME = "/var/lib/freetoken/huggingface";
             UV_CACHE_DIR = "/var/lib/freetoken/.cache/uv";
