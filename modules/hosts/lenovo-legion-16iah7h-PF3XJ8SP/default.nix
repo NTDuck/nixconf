@@ -24,6 +24,7 @@
       den.aspects.gaming.steam
       den.aspects.gaming.wine
       den.aspects.gaming.wlib
+      den.aspects.gaming.rpgmakermlinux-cicpoffs
       (den.aspects.greeters.tuigreet {
         command = config: "${config.programs.mango.package}/bin/mango";
       })

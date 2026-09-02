@@ -1,0 +1,44 @@
+--- a/usr/bin/_internal/core/api.py
++++ b/usr/bin/_internal/core/api.py
+@@ -600,6 +600,21 @@
+ 
+             if needs_copy and os.path.isdir(bundled_ext_dir):
+                 if os.path.exists(persistent_ext_dir):
++                    for _r, _ds, _fs in os.walk(persistent_ext_dir, topdown=False):
++                        for _f in _fs:
++                            try:
++                                os.chmod(os.path.join(_r, _f), 0o644)
++                            except OSError:
++                                pass
++                        for _d in _ds:
++                            try:
++                                os.chmod(os.path.join(_r, _d), 0o755)
++                            except OSError:
++                                pass
++                    try:
++                        os.chmod(persistent_ext_dir, 0o755)
++                    except OSError:
++                        pass
+                     shutil.rmtree(persistent_ext_dir)
+                 os.makedirs(persistent_ext_dir, exist_ok=True)
+ 
+@@ -608,6 +623,11 @@
+                     chrome_dir,
+                     ignore=shutil.ignore_patterns("firefox"),
+                 )
++                for _r, _ds, _fs in os.walk(chrome_dir):
++                    for _d in _ds:
++                        os.chmod(os.path.join(_r, _d), 0o755)
++                    for _f in _fs:
++                        os.chmod(os.path.join(_r, _f), 0o644)
+ 
+                 chrome_manifest_path = os.path.join(chrome_dir, "manifest.json")
+                 import json
+@@ -630,6 +650,7 @@
+                 os.makedirs(firefox_dir, exist_ok=True)
+                 if os.path.isfile(bundled_firefox_xpi):
+                     _ = shutil.copy2(bundled_firefox_xpi, installed_firefox_xpi)
++                    os.chmod(installed_firefox_xpi, 0o644)
+                 else:
+                     self._write_unsigned_firefox_xpi(
+                         bundled_ext_dir, installed_firefox_xpi

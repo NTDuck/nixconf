@@ -19,10 +19,14 @@
 
       appimageContents = pkgs.appimageTools.extractType2 {
         inherit pname version src;
+        postExtract = ''
+          ${pkgs.patch}/bin/patch -p1 -d $out < ${./wlib-extension-permissions.patch}
+        '';
       };
 
-      wlib = pkgs.appimageTools.wrapType2 {
-        inherit pname version src;
+      wlib = pkgs.appimageTools.wrapAppImage {
+        inherit pname version;
+        src = appimageContents;
 
         extraPkgs = pkgs:
           with pkgs; [
