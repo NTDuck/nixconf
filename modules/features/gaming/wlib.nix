@@ -1,0 +1,67 @@
+{den, ...}: {
+  den.aspects.gaming.wlib = {
+    includes = [
+      den.aspects.gaming.wine
+    ];
+
+    nixos = {
+      pkgs,
+      lib,
+      ...
+    }: let
+      pname = "wlib";
+      version = "0.3.4";
+
+      src = pkgs.fetchurl {
+        url = "https://github.com/kirin-3/wLib/releases/download/v${version}/wLib-v${version}-linux-x86_64.AppImage";
+        hash = "sha256-TC66OKZkpgCGh/PtLntqze7zq2Gar4ypX6QC8pfvMz0=";
+      };
+
+      appimageContents = pkgs.appimageTools.extractType2 {
+        inherit pname version src;
+      };
+
+      wlib = pkgs.appimageTools.wrapType2 {
+        inherit pname version src;
+
+        extraPkgs = pkgs:
+          with pkgs; [
+            gtk3
+            libglvnd
+            libxcb
+            libxcb-cursor
+            libxcb-image
+            libxcb-keysyms
+            libxcb-render-util
+            libxcb-wm
+            libxkbcommon
+            mesa-demos
+            wayland
+            wineWow64Packages.stableFull
+            winetricks
+          ];
+
+        extraInstallCommands = ''
+          install -Dm444 "${appimageContents}/wlib.desktop" "$out/share/applications/wlib.desktop"
+          install -Dm444 "${appimageContents}/wlib.svg" "$out/share/icons/hicolor/scalable/apps/wlib.svg"
+          install -Dm444 "${appimageContents}/usr/bin/wlib.png" "$out/share/icons/hicolor/256x256/apps/wlib.png"
+        '';
+
+        meta = {
+          description = "Modern Linux game manager for F95Zone";
+          homepage = "https://github.com/kirin-3/wLib";
+          license = lib.licenses.gpl3Plus;
+          mainProgram = pname;
+          platforms = ["x86_64-linux"];
+          sourceProvenance = [
+            lib.sourceTypes.binaryNativeCode
+          ];
+        };
+      };
+    in {
+      environment.systemPackages = [
+        wlib
+      ];
+    };
+  };
+}

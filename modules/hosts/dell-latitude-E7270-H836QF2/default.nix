@@ -20,6 +20,7 @@
       den.aspects.gaming.itch
       den.aspects.gaming.mangohud
       den.aspects.gaming.steam
+      den.aspects.gaming.wlib
       (den.aspects.greeters.tuigreet {
         command = config: "${config.programs.mango.package}/bin/mango";
       })
