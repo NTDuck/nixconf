@@ -30,6 +30,7 @@
 
         extraPkgs = pkgs:
           with pkgs; [
+            cabextract
             gtk3
             libglvnd
             libxcb
@@ -40,6 +41,8 @@
             libxcb-wm
             libxkbcommon
             mesa-demos
+            p7zip
+            unzip
             wayland
             wineWow64Packages.stableFull
             winetricks

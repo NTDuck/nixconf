@@ -1,44 +1,53 @@
---- a/usr/bin/_internal/core/api.py
-+++ b/usr/bin/_internal/core/api.py
-@@ -600,6 +600,21 @@
+--- a/usr/bin/_internal/core/api.py	2026-09-02 20:55:46.699308773 +0700
++++ b/usr/bin/_internal/core/api.py	2026-09-02 20:55:46.700520485 +0700
+@@ -164,6 +164,41 @@
+ RTP_DOWNLOADS_PAGE_URL = "https://www.rpgmakerweb.com/run-time-package"
+ KOMODO_RTP_DOWNLOAD_HOSTS = {"dl.komodo.jp"}
+ KOMODO_SECTIGO_INTERMEDIATE_CERT_PEM = """-----BEGIN CERTIFICATE-----
++MIIGTDCCBDSgAwIBAgIQOXpmzCdWNi4NqofKbqvjsTANBgkqhkiG9w0BAQwFADBf
++MQswCQYDVQQGEwJHQjEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMTYwNAYDVQQD
++Ey1TZWN0aWdvIFB1YmxpYyBTZXJ2ZXIgQXV0aGVudGljYXRpb24gUm9vdCBSNDYw
++HhcNMjEwMzIyMDAwMDAwWhcNMzYwMzIxMjM1OTU5WjBgMQswCQYDVQQGEwJHQjEY
++MBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMTcwNQYDVQQDEy5TZWN0aWdvIFB1Ymxp
++YyBTZXJ2ZXIgQXV0aGVudGljYXRpb24gQ0EgRFYgUjM2MIIBojANBgkqhkiG9w0B
++AQEFAAOCAY8AMIIBigKCAYEAljZf2HIz7+SPUPQCQObZYcrxLTHYdf1ZtMRe7Yeq
++RPSwygz16qJ9cAWtWNTcuICc++p8Dct7zNGxCpqmEtqifO7NvuB5dEVexXn9RFFH
++12Hm+NtPRQgXIFjx6MSJcNWuVO3XGE57L1mHlcQYj+g4hny90aFh2SCZCDEVkAja
++EMMfYPKuCjHuuF+bzHFb/9gV8P9+ekcHENF2nR1efGWSKwnfG5RawlkaQDpRtZTm
++M64TIsv/r7cyFO4nSjs1jLdXYdz5q3a4L0NoabZfbdxVb+CUEHfB0bpulZQtH1Rv
++38e/lIdP7OTTIlZh6OYL6NhxP8So0/sht/4J9mqIGxRFc0/pC8suja+wcIUna0HB
++pXKfXTKpzgis+zmXDL06ASJf5E4A2/m+Hp6b84sfPAwQ766rI65mh50S0Di9E3Pn
++2WcaJc+PILsBmYpgtmgWTR9eV9otfKRUBfzHUHcVgarub/XluEpRlTtZudU5xbFN
++xx/DgMrXLUAPaI60fZ6wA+PTAgMBAAGjggGBMIIBfTAfBgNVHSMEGDAWgBRWc1hk
++lfmSGrASKgRieaFAFYghSTAdBgNVHQ4EFgQUaMASFhgOr872h6YyV6NGUV3LBycw
++DgYDVR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0lBBYwFAYI
++KwYBBQUHAwEGCCsGAQUFBwMCMBsGA1UdIAQUMBIwBgYEVR0gADAIBgZngQwBAgEw
++VAYDVR0fBE0wSzBJoEegRYZDaHR0cDovL2NybC5zZWN0aWdvLmNvbS9TZWN0aWdv
++UHVibGljU2VydmVyQXV0aGVudGljYXRpb25Sb290UjQ2LmNybDCBhAYIKwYBBQUH
++AQEEeDB2ME8GCCsGAQUFBzAChkNodHRwOi8vY3J0LnNlY3RpZ28uY29tL1NlY3Rp
++Z29QdWJsaWNTZXJ2ZXJBdXRoZW50aWNhdGlvblJvb3RSNDYucDdjMCMGCCsGAQUF
++BzABhhdodHRwOi8vb2NzcC5zZWN0aWdvLmNvbTANBgkqhkiG9w0BAQwFAAOCAgEA
++YtOC9Fy+TqECFw40IospI92kLGgoSZGPOSQXMBqmsGWZUQ7rux7cj1du6d9rD6C8
++ze1B2eQjkrGkIL/OF1s7vSmgYVafsRoZd/IHUrkoQvX8FZwUsmPu7amgBfaY3g+d
++q1x0jNGKb6I6Bzdl6LgMD9qxp+3i7GQOnd9J8LFSietY6Z4jUBzVoOoz8iAU84OF
++h2HhAuiPw1ai0VnY38RTI+8kepGWVfGxfBWzwH9uIjeooIeaosVFvE8cmYUB4TSH
++5dUyD0jHct2+8ceKEtIoFU/FfHq/mDaVnvcDCZXtIgitdMFQdMZaVehmObyhRdDD
++4NQCs0gaI9AAgFj4L9QtkARzhQLNyRf87Kln+YU0lgCGr9HLg3rGO8q+Y4ppLsOd
++unQZ6ZxPNGIfOApbPVf5hCe58EZwiWdHIMn9lPP6+F404y8NNugbQixBber+x536
++WrZhFZLjEkhp7fFXf9r32rNPfb74X/U90Bdy4lzp3+X1ukh1BuMxA/EEhDoTOS3l
++7ABvc7BYSQubQ2490OcdkIzUh3ZwDrakMVrbaTxUM2p24N6dB+ns2zptWCva6jzW
++r8IWKIMxzxLPv5Kt3ePKcUdvkBU/smqujSczTzzSjIoR5QqQA6lN1ZRSnuHIWCvh
++JEltkYnTAH41QJ6SAWO66GrrUESwN/cgZzL4JLEqz1Y=
++-----END CERTIFICATE-----\n-----BEGIN CERTIFICATE-----
+ MIIGEzCCA/ugAwIBAgIQfVtRJrR2uhHbdBYLvFMNpzANBgkqhkiG9w0BAQwFADCB
+ iDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcTC0pl
+ cnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5ldHdvcmsxLjAsBgNV
+@@ -302,6 +337,8 @@
+             env["STEAM_COMPAT_CLIENT_INSTALL_PATH"] = "/tmp/wlib"
+         else:
+             env["WINEPREFIX"] = target["resolved_prefix"]
++            env.setdefault("WINE", "wine")
++            env.setdefault("WINE64", env.get("WINE") or "wine")
  
-             if needs_copy and os.path.isdir(bundled_ext_dir):
-                 if os.path.exists(persistent_ext_dir):
-+                    for _r, _ds, _fs in os.walk(persistent_ext_dir, topdown=False):
-+                        for _f in _fs:
-+                            try:
-+                                os.chmod(os.path.join(_r, _f), 0o644)
-+                            except OSError:
-+                                pass
-+                        for _d in _ds:
-+                            try:
-+                                os.chmod(os.path.join(_r, _d), 0o755)
-+                            except OSError:
-+                                pass
-+                    try:
-+                        os.chmod(persistent_ext_dir, 0o755)
-+                    except OSError:
-+                        pass
-                     shutil.rmtree(persistent_ext_dir)
-                 os.makedirs(persistent_ext_dir, exist_ok=True)
- 
-@@ -608,6 +623,11 @@
-                     chrome_dir,
-                     ignore=shutil.ignore_patterns("firefox"),
-                 )
-+                for _r, _ds, _fs in os.walk(chrome_dir):
-+                    for _d in _ds:
-+                        os.chmod(os.path.join(_r, _d), 0o755)
-+                    for _f in _fs:
-+                        os.chmod(os.path.join(_r, _f), 0o644)
- 
-                 chrome_manifest_path = os.path.join(chrome_dir, "manifest.json")
-                 import json
-@@ -630,6 +650,7 @@
-                 os.makedirs(firefox_dir, exist_ok=True)
-                 if os.path.isfile(bundled_firefox_xpi):
-                     _ = shutil.copy2(bundled_firefox_xpi, installed_firefox_xpi)
-+                    os.chmod(installed_firefox_xpi, 0o644)
-                 else:
-                     self._write_unsigned_firefox_xpi(
-                         bundled_ext_dir, installed_firefox_xpi
+         os.makedirs(env["WINEPREFIX"], exist_ok=True)
+         return env, target
