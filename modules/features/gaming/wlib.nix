@@ -48,7 +48,8 @@
         '';
 
         meta = {
-          description = "Modern Linux game manager for F95Zone";
+          # https://github.com/kirin-3/wLib
+          description = "wLib is a native Linux desktop application for managing, launching, and updating your F95Zone game library.";
           homepage = "https://github.com/kirin-3/wLib";
           license = lib.licenses.gpl3Plus;
           mainProgram = pname;
