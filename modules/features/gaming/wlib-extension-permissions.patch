@@ -53,6 +53,15 @@
          return env, target
 --- a/usr/bin/_internal/core/launcher.py	2026-09-02 20:55:46.699308773 +0700
 +++ b/usr/bin/_internal/core/launcher.py	2026-09-02 20:55:46.700520485 +0700
+@@ -96,7 +96,7 @@
+                 ("local-bin", "~/.local/bin/rpgmaker-linux"),
+                 (
+                     "default-install",
+-                    "~/desktopapps/nwjs/nwjs/packagefiles/nwjsstart-cicpoffs.sh",
++                    "~/desktopapps/nwjs/packagefiles/nwjsstart-cicpoffs.sh",
+                 ),
+             ]
+         )
 @@ -413,8 +413,7 @@
                      or "RPGMaker Linux runner is not available.",
                  }

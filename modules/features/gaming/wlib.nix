@@ -2,6 +2,7 @@
   den.aspects.gaming.wlib = {
     includes = [
       den.aspects.gaming.wine
+      den.aspects.gaming.rpgmakermlinux-cicpoffs
     ];
 
     nixos = {
