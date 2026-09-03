@@ -71,27 +71,66 @@
  
      def _format_rtp_download_error(self, url: str, error: BaseException) -> str:
          import urllib.parse
-@@ -2476,6 +2463,19 @@
-                         timeout=120,
-                         check=True,
-                     )
-+                except Exception as first_exc:
-+                    wine_bin = shutil.which("wine")
-+                    if wine_bin and runner_command != [wine_bin]:
+@@ -2466,16 +2453,49 @@
+ 
+                 print(f"Installing {rtp_name} RTP silently in prefix...")
+                 setup_exe_str = str(setup_exe)
+-                command = [*runner_command, setup_exe_str, "/S", "/v/qn"]
+                 try:
+-                    _ = subprocess.run(
+-                        command,
+-                        env=env,
+-                        stdout=subprocess.DEVNULL,
+-                        stderr=subprocess.DEVNULL,
+-                        timeout=120,
+-                        check=True,
+-                    )
++                    if rtp_name == "2003":
++                        ascii_dir = os.path.join(
++                            target["resolved_prefix"],
++                            "drive_c",
++                            "Program Files (x86)",
++                            "Common Files",
++                            "ASCII",
++                            "RPG2003",
++                        )
++                        os.makedirs(ascii_dir, exist_ok=True)
 +                        _ = subprocess.run(
-+                            [wine_bin, setup_exe_str, "/S", "/v/qn"],
-+                            env=env,
++                            ["7z", "x", "-y", f"-o{ascii_dir}", setup_exe_str],
 +                            stdout=subprocess.DEVNULL,
 +                            stderr=subprocess.DEVNULL,
-+                            timeout=120,
 +                            check=True,
 +                        )
 +                    else:
-+                        raise
++                        silent_flags = ["/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART"]
++                        command = [*runner_command, setup_exe_str, *silent_flags]
++                        try:
++                            _ = subprocess.run(
++                                command,
++                                env=env,
++                                stdout=subprocess.DEVNULL,
++                                stderr=subprocess.DEVNULL,
++                                timeout=120,
++                                check=True,
++                            )
++                        except Exception:
++                            wine_bin = shutil.which("wine")
++                            if wine_bin and runner_command != [wine_bin]:
++                                _ = subprocess.run(
++                                    [wine_bin, setup_exe_str, *silent_flags],
++                                    env=env,
++                                    stdout=subprocess.DEVNULL,
++                                    stderr=subprocess.DEVNULL,
++                                    timeout=120,
++                                    check=True,
++                                )
++                            else:
++                                raise
++
                      if not self._verify_rtp_packages(target["resolved_prefix"]).get(
                          rtp_name, False
                      ):
-@@ -2648,7 +2648,8 @@
+@@ -2648,7 +2668,8 @@
                  if not asset:
                      continue
                  asset_name = str(asset.get("name") or "")
