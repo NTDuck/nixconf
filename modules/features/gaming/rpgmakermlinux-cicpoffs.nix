@@ -28,9 +28,11 @@
             --replace-fail 'evbunpack "$gameexe"' '"$evbunpack" "$gameexe"' \
             --replace-fail 'if ! [ -d "$npath/$line-extracted" ]; then' 'if [ ! -d "$npath/$line-extracted" ] || [ -z "$(ls -A "$npath/$line-extracted" 2>/dev/null)" ]; then' \
             --replace-fail 'exenpath="$npath"' $'exenpath="$npath"\nbasegamef=$(basename "$npath")' \
+            --replace-fail $'npath="$npath"\nfi' $'npath="$npath"\nfi\nnpath=$(realpath "$npath")' \
             --replace-fail 'mountpath="$npath/www"' $'mountpath="$npath/www"\nnotfound=""' \
             --replace-fail 'if echo "$allstrings" | grep -m 1 -q "\.enigma"; then' $'if echo "$allstrings" | grep -m 1 -q "\\.enigma"; then\nif [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]; then ret=0; else' \
             --replace-fail 'if [[ $ret -eq 1 ]]; then' $'fi\nif [[ $ret -eq 1 ]]; then' \
+            --replace-fail 'checkandunmount() {' $'checkandunmount() {\n[ -L "$nwjstestpath/www" ] && rm -f "$nwjstestpath/www"' \
             --replace-fail 'if [ -n "$notfound" ]; then' 'if [ -n "$notfound" ] && [ "$found" != "true" ]; then' \
             --replace-fail 'startnw() {' $'startnw() {\nexport LD_LIBRARY_PATH="$nwjstestpath/lib:$nwjstestpath:$LD_LIBRARY_PATH"'
           cd ..
@@ -69,6 +71,7 @@
             gtk3
             libGL
             libdrm
+            libgbm
             libglvnd
             libnotify
             libx11
