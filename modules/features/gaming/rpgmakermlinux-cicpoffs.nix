@@ -20,8 +20,20 @@
         sourceRoot = ".";
 
         postPatch = ''
-          substituteInPlace rpgmakerlinux-x86_64-v${version}/nwjs/packagefiles/nwjsstart-cicpoffs.sh \
-            --replace-fail 'export nwjsfm="$mainfd/nwjs/nwjs"' 'export nwjsfm="$mainfd/nwjs"'
+          cd rpgmakerlinux-x86_64-v${version}
+          substituteInPlace nwjs/packagefiles/nwjsstart-cicpoffs.sh \
+            --replace-fail '$mainfd/nwjs/nwjs' '$mainfd/nwjs' \
+            --replace-fail 'if echo "$1" | grep ".exe"; then' 'if false; then' \
+            --replace-fail 'export nwjsfm="$mainfd/nwjs"' $'export nwjsfm="$mainfd/nwjs"\nexport PATH="$PATH:$nwjsfm/packagefiles"' \
+            --replace-fail 'evbunpack "$gameexe"' '"$evbunpack" "$gameexe"' \
+            --replace-fail 'if ! [ -d "$npath/$line-extracted" ]; then' 'if [ ! -d "$npath/$line-extracted" ] || [ -z "$(ls -A "$npath/$line-extracted" 2>/dev/null)" ]; then' \
+            --replace-fail 'exenpath="$npath"' $'exenpath="$npath"\nbasegamef=$(basename "$npath")' \
+            --replace-fail 'mountpath="$npath/www"' $'mountpath="$npath/www"\nnotfound=""' \
+            --replace-fail 'if echo "$allstrings" | grep -m 1 -q "\.enigma"; then' $'if echo "$allstrings" | grep -m 1 -q "\\.enigma"; then\nif [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]; then ret=0; else' \
+            --replace-fail 'if [[ $ret -eq 1 ]]; then' $'fi\nif [[ $ret -eq 1 ]]; then' \
+            --replace-fail 'if [ -n "$notfound" ]; then' 'if [ -n "$notfound" ] && [ "$found" != "true" ]; then' \
+            --replace-fail 'startnw() {' $'startnw() {\nexport LD_LIBRARY_PATH="$nwjstestpath/lib:$nwjstestpath:$LD_LIBRARY_PATH"'
+          cd ..
         '';
 
         installPhase = ''
@@ -100,8 +112,11 @@
           if [[ ! -d "$MAIN_DIR/nwjs" ]]; then
             mkdir -p "$MAIN_DIR"
             cp -r "$DATA_DIR/nwjs" "$MAIN_DIR/"
-            chmod -R u+w "$MAIN_DIR/nwjs"
+          else
+            cp -rf "$DATA_DIR/nwjs/packagefiles" "$MAIN_DIR/nwjs/"
+            cp -f "$DATA_DIR/nwjs/cicpoffs" "$DATA_DIR/nwjs/dwnwjs.sh" "$MAIN_DIR/nwjs/" 2>/dev/null || true
           fi
+          chmod -R u+w "$MAIN_DIR/nwjs"
 
           exec "$MAIN_DIR/nwjs/packagefiles/nwjsstart-cicpoffs.sh" "$@"
         '';

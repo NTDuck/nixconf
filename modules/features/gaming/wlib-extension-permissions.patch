@@ -51,3 +51,15 @@
  
          os.makedirs(env["WINEPREFIX"], exist_ok=True)
          return env, target
+--- a/usr/bin/_internal/core/launcher.py	2026-09-02 20:55:46.699308773 +0700
++++ b/usr/bin/_internal/core/launcher.py	2026-09-02 20:55:46.700520485 +0700
+@@ -413,8 +413,7 @@
+                     or "RPGMaker Linux runner is not available.",
+                 }
+ 
+-            runner_game_dir = os.path.dirname(os.path.abspath(exe_path))
+-            base_cmd = [runner_status["path"], "--gamepath", runner_game_dir]
++            base_cmd = [runner_status["path"], "--gamepath", os.path.abspath(exe_path)]
+ 
+             command = build_command(base_cmd, args)
+             print(f"Executing via RPGMaker Linux runner: {' '.join(command)}")
