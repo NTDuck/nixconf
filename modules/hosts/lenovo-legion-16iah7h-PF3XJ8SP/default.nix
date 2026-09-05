@@ -62,6 +62,7 @@
       den.aspects.services.gnome-keyring
       den.aspects.services.gvfs
       den.aspects.services.kanshi
+      den.aspects.services.keyd
       {
         internalOutput = "eDP-1";
 

@@ -30,10 +30,6 @@
             echo "$AALC_WINEPREFIX"
             return 0
           fi
-          if [ -n "''${WINEPREFIX:-}" ]; then
-            echo "$WINEPREFIX"
-            return 0
-          fi
 
           local default_paths=(
             "$HOME/.local/share/Steam/steamapps/compatdata/$APP_ID/pfx"
@@ -70,10 +66,14 @@
             fi
           done
 
+          if [ -n "''${WINEPREFIX:-}" ]; then
+            echo "$WINEPREFIX"
+            return 0
+          fi
+
           # Fallback to isolated prefix in local share
           echo "$HOME/.local/share/ahab-assistant/pfx"
         }
-
         PFX="$(find_proton_pfx)"
         export WINEPREFIX="$PFX"
 
@@ -94,8 +94,44 @@
         echo "==> Using WINEPREFIX: $WINEPREFIX"
         echo "==> Working Directory: $DATA_DIR"
 
-        # Run AALC through Wine
-        exec ${pkgs.unstable.wineWow64Packages.stableFull}/bin/wine "$DATA_DIR/AALC.exe" "$@"
+        COMPAT_DATA="$(dirname "$PFX")"
+        STEAM_PATH="''${PFX%%/steamapps/*}"
+        [ -d "$STEAM_PATH" ] || STEAM_PATH="$HOME/.local/share/Steam"
+
+        PROTON_DIR=""
+        if [ -f "$COMPAT_DATA/config_info" ]; then
+          lib_line="$(sed -n '3p' "$COMPAT_DATA/config_info" | tr -d '\r\n')"
+          if [ -n "$lib_line" ]; then
+            PROTON_DIR="$(dirname "$(dirname "$lib_line")")"
+          fi
+        fi
+
+        ENTRY_POINT=""
+        for ep in \
+          "$STEAM_PATH/steamapps/common/SteamLinuxRuntime_4/_v2-entry-point" \
+          "$HOME/.local/share/Steam/steamapps/common/SteamLinuxRuntime_4/_v2-entry-point" \
+          "$HOME/.steam/steam/steamapps/common/SteamLinuxRuntime_4/_v2-entry-point"; do
+          if [ -x "$ep" ]; then
+            ENTRY_POINT="$ep"
+            break
+          fi
+        done
+
+
+        # Run AALC inside the Steam Linux Runtime container with Proton
+        if [ -n "$PROTON_DIR" ] && [ -x "$PROTON_DIR/proton" ] && [ -n "$ENTRY_POINT" ]; then
+          echo "==> Running AALC inside Steam Linux Runtime with Proton: $PROTON_DIR"
+          exec ${pkgs.steam-run}/bin/steam-run env \
+            SteamAppId="$APP_ID" \
+            SteamGameId="$APP_ID" \
+            STEAM_COMPAT_DATA_PATH="$COMPAT_DATA" \
+            STEAM_COMPAT_CLIENT_INSTALL_PATH="$STEAM_PATH" \
+            "$ENTRY_POINT" --verb=waitforexitandrun -- \
+            "$PROTON_DIR/proton" run "$DATA_DIR/AALC.exe" "$@"
+        else
+          echo "==> Running AALC through system Wine"
+          exec ${pkgs.unstable.wineWow64Packages.stableFull}/bin/wine "$DATA_DIR/AALC.exe" "$@"
+        fi
       '';
 
       desktopItem = pkgs.makeDesktopItem {
