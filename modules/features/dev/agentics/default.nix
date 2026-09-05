@@ -8,6 +8,7 @@
       den.aspects.dev.agentics.heretic
       den.aspects.dev.agentics.huggingface
       den.aspects.dev.agentics.lmstudio
+      den.aspects.dev.agentics.sesori-bridge
       den.aspects.dev.agentics.spec-kit
     ];
   };

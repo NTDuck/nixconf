@@ -13,11 +13,18 @@
         hash = "sha256-2SagfgwPcL6+hnHnsKyVKpSeywIuZpkuLM1k03LsrxI=";
       };
 
+      mkxpzSrc = pkgs.fetchurl {
+        url = "https://github.com/bakustarver/rpgmakermlinux-cicpoffs/releases/download/libraries/mkxp-z.x86_64.zip";
+        hash = "sha256-F5G19gBqXfIIES5M7SH7Rzxcj9+Vxl/V2NOPyvvA+wQ=";
+      };
+
       rpgmaker-data = pkgs.stdenv.mkDerivation {
         pname = "${pname}-data";
         inherit version src;
 
         sourceRoot = ".";
+
+        nativeBuildInputs = [pkgs.unzip];
 
         postPatch = ''
           cd rpgmakerlinux-x86_64-v${version}
@@ -34,14 +41,16 @@
             --replace-fail 'if [[ $ret -eq 1 ]]; then' $'fi\nif [[ $ret -eq 1 ]]; then' \
             --replace-fail 'checkandunmount() {' $'checkandunmount() {\n[ -L "$nwjstestpath/www" ] && rm -f "$nwjstestpath/www"' \
             --replace-fail 'if [ -n "$notfound" ]; then' 'if [ -n "$notfound" ] && [ "$found" != "true" ]; then' \
-            --replace-fail 'startnw() {' $'startnw() {\nexport LD_LIBRARY_PATH="$nwjstestpath/lib:$nwjstestpath:$LD_LIBRARY_PATH"'
+            --replace-fail 'startnw() {' $'startnw() {\nexport LD_LIBRARY_PATH="$nwjstestpath/lib:$nwjstestpath:$LD_LIBRARY_PATH"' \
+            --replace-fail '"$mkxpzp/mkxp-z.$arch"' '(cd "$mkxpzp" && "$mkxpzp/mkxp-z.$arch")'
           cd ..
         '';
 
         installPhase = ''
           runHook preInstall
-          mkdir -p $out/share/rpgmaker-linux
+          mkdir -p $out/share/rpgmaker-linux/mkxp-z
           cp -r rpgmakerlinux-x86_64-v${version}/* $out/share/rpgmaker-linux/
+          unzip -q ${mkxpzSrc} -d $out/share/rpgmaker-linux/mkxp-z
           runHook postInstall
         '';
       };
@@ -65,18 +74,24 @@
             fuse3
             fuse
             gawk
+            gcc.cc.lib
             glib
             gnused
             gnutar
             gtk3
             libGL
+            libbsd
             libdrm
+            libffi
             libgbm
             libglvnd
             libnotify
+            libpulseaudio
+            libsndfile
             libx11
             libxcb
             libxcomposite
+            libxcrypt-legacy
             libxcursor
             libxdamage
             libxext
@@ -87,6 +102,7 @@
             libxrender
             libxscrnsaver
             libxtst
+            libyaml
             mesa
             nspr
             nss
@@ -94,6 +110,7 @@
             pango
             procps
             udev
+            unzip
             util-linux
             wget
             which
@@ -121,9 +138,16 @@
           fi
           chmod -R u+w "$MAIN_DIR/nwjs"
 
+          # Ensure mkxp-z directory and files exist in user directory
+          if [[ ! -f "$MAIN_DIR/mkxp-z/mkxp-z.x86_64" ]]; then
+            mkdir -p "$MAIN_DIR/mkxp-z"
+            cp -rf "$DATA_DIR/mkxp-z"/* "$MAIN_DIR/mkxp-z/"
+            chmod -R u+w "$MAIN_DIR/mkxp-z"
+            sed -e "s@\"RGSS@\"$MAIN_DIR/mkxp-z/RGSS@g" -e "s@\"Kawariki-patches@\"$MAIN_DIR/mkxp-z/Kawariki-patches@g" -i "$MAIN_DIR/mkxp-z/mkxp.json"
+          fi
+
           exec "$MAIN_DIR/nwjs/packagefiles/nwjsstart-cicpoffs.sh" "$@"
         '';
-
         extraInstallCommands = ''
           mkdir -p $out/share/applications $out/share/icons/hicolor/128x128/apps
           cp ${rpgmaker-data}/share/rpgmaker-linux/nwjs/packagefiles/nwjs128.png $out/share/icons/hicolor/128x128/apps/rpgmaker-linux.png
