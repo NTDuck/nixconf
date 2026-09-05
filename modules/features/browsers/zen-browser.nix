@@ -251,9 +251,9 @@
                       url = "https://chatgpt.com/";
                       position = 202;
                     };
-                    "Gemini" = {
+                    "Qwen" = {
                       id = "e10ba8f6-5473-4017-8dba-bb10b1172bdc";
-                      url = "https://gemini.google.com/app";
+                      url = "https://chat.qwen.ai/";
                       position = 203;
                     };
                     "Deepseek" = {
