@@ -34,15 +34,17 @@
         };
 
         extraFlags = [
+          # Device is picked via CUDA_VISIBLE_DEVICES (EnvironmentFile
+          # /run/egpu/llama-cpp.env): 3090 UUID when the dock is attached
+          # and CUDA-healthy, laptop 3060 otherwise. Pinning by UUID (never
+          # CUDA0) keeps the context stable across enumeration order
+          # changes — a live CUDA context on a TB-tunneled GPU is what
+          # hard-freezes the desktop on cable pull.
           # GPU-only: computation on CUDA, never CPU. --fit off so an
           # over-budget model fails loudly instead of silently falling
-          # back to CPU.
-          #
-          # Pinned by UUID via EnvironmentFile (below): 3090 when the
-          # eGPU dock is attached, laptop 3060 otherwise. Pinning by UUID
-          # (never CUDA0) keeps the context stable across enumeration
-          # order changes — a live CUDA context on a TB-tunneled GPU is
-          # what hard-freezes the desktop on cable pull.
+          # back to CPU or shrinking layers. (A CUDA-DEAD device would
+          # still silently run CPU — guarded upstream by egpu-adopt's
+          # CUDA probe, which only flips the env file for a healthy 3090.)
           "--device"
           "CUDA0"
           "-ngl"
@@ -70,23 +72,24 @@
       };
 
       # Device selection is dynamic: egpu-adopt.service rewrites
-      # /run/egpu/llama-cpp.env (3090 UUID when the dock is attached,
-      # 3060 UUID otherwise) and restarts this daemon. Pinning by UUID
-      # (never CUDA0) keeps the CUDA context stable across enumeration
-      # order changes.
-      # Seed the env file at boot; egpu-adopt / egpu-release rewrite it on
-      # dock transitions (systemd loads EnvironmentFile after preStart, so
-      # the preStart copy is in place before the daemon spawns).
+      # /run/egpu/llama-cpp.env (3090 UUID when the dock is attached AND
+      # CUDA-healthy, 3060 UUID otherwise) and restarts this daemon.
+      # Pinning by UUID (never CUDA0) keeps the context stable across
+      # enumeration order changes.
+      # Seed the env file at boot via tmpfiles: egpu-adopt only runs on a
+      # dock event, so a dock-less boot previously left /run/egpu/llama-cpp.env
+      # missing and the unit crash-looped with Result=resources
+      # ("Failed to load environment files", seen 2026-09-13). tmpfiles
+      # runs before services start, so the file exists before
+      # EnvironmentFile is read; egpu-adopt / egpu-release rewrite it on
+      # dock transitions.
       systemd.tmpfiles.rules = [
         "d /run/egpu 0755 root root -"
+        # 'f' not 'f+': create-if-missing only, so a pin egpu-adopt wrote
+        # mid-session (3090 UUID) survives a later nixos-rebuild switch.
+        "f /run/egpu/llama-cpp.env 0644 root root - CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529"
       ];
-      environment.etc."egpu-llama-default.env".text = "CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529\n";
       systemd.services.llama-cpp = {
-        # Copy the default (3060) in if the dock hasn't already claimed it.
-        preStart = ''
-          mkdir -p /run/egpu
-          [ -s /run/egpu/llama-cpp.env ] || cp /etc/egpu-llama-default.env /run/egpu/llama-cpp.env
-        '';
         serviceConfig.EnvironmentFile = "/run/egpu/llama-cpp.env";
       };
 

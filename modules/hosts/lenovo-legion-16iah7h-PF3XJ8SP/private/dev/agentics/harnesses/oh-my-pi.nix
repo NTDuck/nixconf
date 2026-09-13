@@ -8,8 +8,10 @@
       home.file.".omp/agent/models.yml".text = ''
         providers:
           # Local llama-cpp router (services.llama-cpp): MiniCPM resident
-          # on the laptop 3060; Qwen3.8-27B tiers to the 3090 eGPU when
-          # the UT3G dock is attached (3090 -> RAM -> NVMe mmap tiering).
+          # on the laptop 3060; Qwen3.8-27B tiers to the 3090 eGPU when the
+          # UT3G dock is attached AND CUDA-healthy (egpu-adopt gates the
+          # flip on llama-server --list-devices; a dead-NVRM-bind card
+          # stays on the 3060).
           llama-cpp:
             baseUrl: http://${osConfig.services.llama-cpp.host}:${builtins.toString osConfig.services.llama-cpp.port}/v1
             api: openai-completions

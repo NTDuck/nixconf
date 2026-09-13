@@ -7,14 +7,23 @@
       pkgs,
       ...
     }: let
-      # 1. The first NVRM bind after a USB4 link train can fail with
-      #    "objClInitPcieChipset: Unable to get PCI port handles". A
-      #    REBOOT rebinds cleanly; in-session PCI surgery is forbidden
-      #    (see the freeze note below).
-      # 2. nvidia-persistenced enumerated GPUs at its own startup and never
+      # 1. THE SLOW-TOK/S BUG (2026-09-12, boot -1): nvidia-smi -L listed
+      #    the 3090 (NVML adopts hotplugged GPUs fine) while its NVRM bind
+      #    had actually failed ("objClInitPcieChipset: Unable to get PCI
+      #    port handles"). NVML is not proof of compute health. egpu-adopt
+      #    then flipped llama-cpp to the dead 3090; CUDA init fails there
+      #    and ggml silently falls back to CPU: 0.2 tok/s, 0% GPU, 33 GB
+      #    streamed off NVMe for a 16.3 GB GGUF. Gate the tier flip on a
+      #    REAL CUDA probe (llama-server --list-devices, same stack as
+      #    inference): the card must appear AND report sane free VRAM.
+      # 2. First NVRM bind after a USB4 link train can fail with
+      #    "objClInitPcieChipset: Unable to get PCI port handles". In
+      #    that state the adopter stays on the laptop 3060; recovery is
+      #    a reboot (PCI surgery deadlocks nvidia_modeset, see below).
+      # 3. nvidia-persistenced enumerated GPUs at its own startup and never
       #    adopts hotplugged devices, so nvidia-smi/NVML hide the 3090 until
       #    the daemon restarts.
-      # 3. The original udev rules matched only ACTION=="add". With the dock
+      # 4. The original udev rules matched only ACTION=="add". With the dock
       #    attached at power-on, boltd re-authorizes ("changed", not "add")
       #    and the tunneled PCI device appears before this generation's rule
       #    is loaded — the uevent is never replayed, egpu-adopt never runs,
@@ -22,88 +31,93 @@
       #    3060 + llvmpipe (seen 2026-09-12 boot d2a56796). ACTION!=remove
       #    matches coldplug replay and every rebind; a multi-user.target
       #    boot trigger covers the pre-udevd window outright.
-      # DO NOT add PCI remove/rescan/unbind "recovery" here. Four hard
-      # desktop freezes on 2026-09-12 were all caused by tearing down a
-      # tunneled NVIDIA GPU while nvidia_modeset had it registered
-      # (nvEvoDisableVblankSemControl raw-spinlock deadlock inside the
-      # closed module; NVIDIA documents eGPU hot-unplug as unsupported).
-      # The adopter below only manages NVML adoption and llama tiering.
-      nvidiaSmi = "${config.hardware.nvidia.package.bin}/bin/nvidia-smi";
+      # CUDA compute probe. nvidia-smi -L is NOT sufficient: NVML lists a
+      # hotplugged GPU even when its NVRM bind failed (objClInitPcieChipset),
+      # which is exactly how llama-cpp got pinned to a dead 3090 and ran on
+      # CPU at 0.2 tok/s (2026-09-12 boot -1). llama-server --list-devices
+      # exercises the full CUDA stack — the same one inference uses — and
+      # prints one line per healthy device:
+      #   "  CUDA0: NVIDIA GeForce RTX 3090 (24576 MiB, 23000 MiB free)"
+      # A card whose bind failed appears as "(none)"; a card wedged by a
+      # stuck context reports 0 MiB free.
+      llamaServer = "${config.services.llama-cpp.package}/bin/llama-server";
+      cudaProbe = pkgs.writeShellScriptBin "egpu-cuda-probe" ''
+        set -eu
+        if out=$(${llamaServer} --list-devices 2>/dev/null); then
+          printf '%s\n' "$out" | grep -Eq 'RTX 3090 \([0-9]+ MiB, [1-9][0-9]{2,} MiB free\)'
+        else
+          exit 1
+        fi
+      '';
       egpu-adopt = pkgs.writeShellScriptBin "egpu-adopt" ''
         set -eu
-        gpu="0000:06:00.0"
         sysd=${config.systemd.package}/bin/systemctl
+        pin="CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"      # 3090 eGPU
+        fallback="CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529" # 3060 laptop
 
-        # llama-cpp tiering runs FIRST: healthy dock or not, the env file
-        # must reflect what nvidia-smi sees right now (3090 when present,
-        # 3060 fallback otherwise), and the daemon restarted on flip.
-        # (3090 -> weights mmap-tier RAM -> NVMe; --fit off forbids any
-        # CPU layer fallback.)
         mkdir -p /run/egpu
-        if ${nvidiaSmi} -L 2>/dev/null | grep -q 'RTX 3090'; then
-          echo "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c" > /run/egpu/llama-cpp.env
-        else
-          echo "CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529" > /run/egpu/llama-cpp.env
-        fi
-
-        # Healthy already: nothing else to do (udev fires this on every
-        # USB4 rebind, and the boot unit fires every boot).
-        if ${nvidiaSmi} -L 2>/dev/null | grep -q 'RTX 3090'; then
+        # Seed once; never clobber a pin a transition already wrote.
+        [ -s /run/egpu/llama-cpp.env ] || echo "$fallback" > /run/egpu/llama-cpp.env
+        current=$(cat /run/egpu/llama-cpp.env)
+        # Rewrite the pin and restart the daemon ONLY on an actual change:
+        # udev fires egpu-adopt on every USB4 rebind, and an unconditional
+        # restart would evict a resident 16 GB model for nothing.
+        tier() {
+          [ "$current" = "$1" ] && return 1
+          echo "$1" > /run/egpu/llama-cpp.env
           $sysd try-restart llama-cpp.service 2>/dev/null || true
-          exit 0
-        fi
-
-        # Wait for the tunneled GPU to appear behind the ASM2464 bridge
-        # (bolt authorizes -> tunnel -> 04:00.0 -> 05:00.0 -> 06:00.0).
-        # Late arrivals are covered by the udev rule; don't sit here long.
-        for _ in $(seq 1 5); do
-          [ -e "/sys/bus/pci/devices/$gpu" ] && break
-          sleep 1
-        done
-        [ -e "/sys/bus/pci/devices/$gpu" ] || {
-          echo "egpu-adopt: $gpu never appeared" >&2
-          exit 0
+          return 0
         }
 
-        # First-bind recovery, WITHOUT PCI surgery. Four hard freezes
-        # (2026-09-12) proved that remove/rescan/unbind of a tunneled
-        # NVIDIA GPU deadlocks nvidia_modeset in
-        # nvEvoDisableVblankSemControl — nvidia.ko probe attaches the GPU
-        # to nvkms, and tearing down a half-initialized tunneled Evo
-        # device spins forever on a raw spinlock (closed module, upstream
-        # documents hot-unplug as unsupported). Drain arming, client
-        # quiescing and ghost guards do NOT prevent it. The only safe
-        # recovery for a failed first bind is a reboot: the adopter never
-        # touches the PCI device.
-        #
-        # What remains fixable in userspace is NVML adoption: stop
-        # persistenced, wait for the tunneled GPU's NVRM probe to settle
-        # (nvidia.ko may still be initializing), restart persistenced so
-        # it enumerates BOTH GPUs. If NVRM never came up (objClInit
-        # failure), nvidia-smi stays 3090-less and the journal says so.
+        # Dock-less boot (no tunneled GPU): tmpfiles already seeded the
+        # fallback pin; nothing to adopt.
+        [ -e /sys/bus/pci/devices/0000:06:00.0 ] || exit 0
+
+        # Healthy dock: flip llama-cpp to the 3090. Gated on the CUDA probe,
+        # not nvidia-smi -L (see probe comment above).
+        if ${cudaProbe}/bin/egpu-cuda-probe; then
+          if tier "$pin"; then
+            echo "egpu-adopt: 3090 CUDA-healthy, llama-cpp tiered to eGPU" >&2
+          else
+            echo "egpu-adopt: 3090 CUDA-healthy, llama-cpp already tiered" >&2
+          fi
+          exit 0
+        fi
+
+        # NVML may not see the card yet (persistenced enumerates at startup).
+        # Restart it, then re-probe CUDA — still the only accepted proof.
         $sysd stop nvidia-persistenced.service 2>/dev/null || true
         for _ in $(seq 1 10); do
-          ${nvidiaSmi} -L 2>/dev/null | grep -q 'RTX 3090' && break
+          ${cudaProbe}/bin/egpu-cuda-probe && break
           sleep 2
         done
         $sysd start nvidia-persistenced.service 2>/dev/null || true
 
-        # Final health check; a failure here means the NVRM first bind
-        # failed (objClInitPcieChipset) — reboot to recover, surgery is
-        # proven to freeze the desktop.
-        if ${nvidiaSmi} -L 2>/dev/null | grep -q 'RTX 3090'; then
-          echo "egpu-adopt: 3090 alive" >&2
-        else
-          echo "egpu-adopt: 3090 NOT up (objClInitPcieChipset first-bind failure); reboot to recover" >&2
-          exit 1
+        if ${cudaProbe}/bin/egpu-cuda-probe; then
+          if tier "$pin"; then
+            echo "egpu-adopt: 3090 CUDA-healthy after persistenced restart, tiered" >&2
+          else
+            echo "egpu-adopt: 3090 CUDA-healthy after persistenced restart, already tiered" >&2
+          fi
+          exit 0
         fi
+
+        # Card present but CUDA-dead (objClInitPcieChipset first-bind
+        # failure). DO NOT touch the PCI device: remove/rescan/unbind of a
+        # tunneled NVIDIA GPU deadlocks nvidia_modeset in
+        # nvEvoDisableVblankSemControl (four hard freezes on 2026-09-12;
+        # closed module, hot-unplug unsupported upstream). Stay on the
+        # laptop 3060. If the daemon was running on the (now dead) 3090
+        # pin, tier() restarts it onto the 3060; boot-time runs are a no-op.
+        if tier "$fallback"; then
+          echo "egpu-adopt: 3090 present but CUDA-unhealthy (NVRM first-bind failure); llama-cpp reverted to 3060, reboot to recover" >&2
+        else
+          echo "egpu-adopt: 3090 present but CUDA-unhealthy (NVRM first-bind failure); already on 3060, reboot to recover" >&2
+        fi
+        exit 1
       '';
 
 
-      # Dock detach: the 3090's CUDA context must die BEFORE the tunnel
-      # does. Cable pull gives no warning, so this only helps for graceful
-      # teardown paths; the llama UUID pin (never CUDA0) is what makes an
-      # abrupt pull survivable for the desktop.
       egpu-release = pkgs.writeShellScriptBin "egpu-release" ''
         set -eu
         sysd=${config.systemd.package}/bin/systemctl
@@ -111,11 +125,15 @@
         mkdir -p /run/egpu
         echo "CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529" > /run/egpu/llama-cpp.env
         $sysd try-restart llama-cpp.service 2>/dev/null || true
-        $sysd stop nvidia-persistenced.service 2>/dev/null || true
+        # try-restart, not stop: stopping persistenced on detach left the
+        # 3060's BAR1/VA space corrupted on the next enumeration
+        # (dmaAllocMapping_GM107 failures, seen 2026-09-13 09:40+).
+        $sysd try-restart nvidia-persistenced.service 2>/dev/null || true
         echo "egpu-release: done" >&2
       '';
     in {
-      environment.systemPackages = [egpu-adopt egpu-release];
+      # egpu-cuda-probe exposed for manual health checks: `egpu-cuda-probe && echo 3090 healthy`
+      environment.systemPackages = [egpu-adopt egpu-release cudaProbe];
 
       # Fires when boltd authorizes a new Thunderbolt/USB4 device (the UT3G
       # router 0-1), then again on the tunneled PCI device appearance.
@@ -132,14 +150,17 @@
       '';
 
       systemd.services.egpu-adopt = {
-        description = "NixOS eGPU adopter: rescan tunneled 3090 and refresh NVML";
+        description = "NixOS eGPU adopter: CUDA-health gate and llama-cpp tier flip";
         after = ["bolt.service" "nvidia-persistenced.service"];
         wants = ["bolt.service"];
+        # Never let llama-cpp start against a missing env file: seed-before-
+        # daemon ordering, in both boot and dock-event paths.
+        before = ["llama-cpp.service"];
         # Boot trigger: covers the window where the tunneled GPU appears
         # before udev rules are loaded (no uevent is replayed into a rule
-        # that wasn't loaded yet). Dock-less boots skip via the condition.
+        # that wasn't loaded yet). Dock-less boots seed-and-exit in the
+        # script itself.
         wantedBy = ["multi-user.target"];
-        unitConfig.ConditionPathExists = "/sys/bus/pci/devices/0000:06:00.0";
         serviceConfig = {
           Type = "oneshot";
           ExecStart = "${egpu-adopt}/bin/egpu-adopt";
