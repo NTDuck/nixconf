@@ -5,7 +5,7 @@
         agent = {
           default_model = {
             provider = "openai";
-            model = "qwen3.8:27b-qwen3.8-27b-homelab";
+            model = "qwen3.8:27b-qwen3-8-27b-homelab";
             api_url = "http://127.0.0.1:11434/v1";
           };
           dock = "right";

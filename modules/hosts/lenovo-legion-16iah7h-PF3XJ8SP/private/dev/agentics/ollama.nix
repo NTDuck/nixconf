@@ -122,14 +122,14 @@
           # itself before the clone exists, so use a distinct tag. The tag
           # embeds the declared loadModels id "qwen3.8:27b" as a prefix so
           # syncModels' regex keeps it (tagless names get pruned).
-          create_clone "qwen3.8:27b-qwen3.8-27b-homelab" "qwen3.8:27b"
+          create_clone "qwen3.8:27b-qwen3-8-27b-homelab" "qwen3.8:27b"
           sleep 1
 
           # Same-shape clone off the uncensored blob: the tag is the
           # declared loadModels entry (regex-matched by syncModels), so
           # pruning keeps it.
           create_clone \
-            "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M-qwen3.8:27b-qwen3.8-27b-homelab" \
+            "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M-qwen3-8-27b-homelab" \
             "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M"
           sleep 1
 
