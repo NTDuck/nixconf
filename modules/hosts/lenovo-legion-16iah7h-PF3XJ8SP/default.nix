@@ -17,8 +17,8 @@
       den.aspects.dev
       den.aspects.editors.helix
       den.aspects.editors.zed-editor
-      den.aspects.file-managers.nemo
       den.aspects.file-managers.yazi
+      den.aspects.file-managers.nemo
       den.aspects.firmware.openrgb
       den.aspects.gaming.itch
       den.aspects.gaming.mangohud

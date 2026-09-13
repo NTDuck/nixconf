@@ -41,9 +41,15 @@
       # A card whose bind failed appears as "(none)"; a card wedged by a
       # stuck context reports 0 MiB free.
       llamaServer = "${config.services.llama-cpp.package}/bin/llama-server";
+      # Bounded: CUDA init can block for minutes while nvidia-persistenced
+      # brings a freshly-tunneled GPU up (2026-09-13 boot: the adopter's
+      # llama-server --list-devices hung 2min and its 120s TimeoutStartSec
+      # stalled multi-user.target → graphical at 2min; llama-cpp and the
+      # local omp provider only came up after it). Hard timeout keeps the
+      # probe from ever exceeding ~15s.
       cudaProbe = pkgs.writeShellScriptBin "egpu-cuda-probe" ''
         set -eu
-        if out=$(${llamaServer} --list-devices 2>/dev/null); then
+        if out=$(timeout 15 ${llamaServer} --list-devices 2>/dev/null); then
           printf '%s\n' "$out" | grep -Eq 'RTX 3090 \([0-9]+ MiB, [1-9][0-9]{2,} MiB free\)'
         else
           exit 1
@@ -83,15 +89,17 @@
           fi
           exit 0
         fi
-
         # NVML may not see the card yet (persistenced enumerates at startup).
-        # Restart it, then re-probe CUDA — still the only accepted proof.
+        # Restart it BEFORE probing, then retry with a bounded budget:
+        # 6 x (15s probe + 2s sleep) ~= 102s worst case, safely inside the
+        # unit's 120s TimeoutStartSec. (Previously 10 unbounded probes could
+        # hang for the full timeout and stall the boot transaction.)
         $sysd stop nvidia-persistenced.service 2>/dev/null || true
-        for _ in $(seq 1 10); do
+        $sysd start nvidia-persistenced.service 2>/dev/null || true
+        for _ in $(seq 1 6); do
           ${cudaProbe}/bin/egpu-cuda-probe && break
           sleep 2
         done
-        $sysd start nvidia-persistenced.service 2>/dev/null || true
 
         if ${cudaProbe}/bin/egpu-cuda-probe; then
           if tier "$pin"; then
@@ -149,26 +157,39 @@
         ACTION=="remove", SUBSYSTEM=="thunderbolt", ATTRS{device_name}=="UT4G", TAG+="systemd", ENV{SYSTEMD_WANTS}="egpu-release.service"
       '';
 
+      # Non-blocking boot: a oneshot WantedBy multi-user.target with
+      # Before=llama-cpp.service pulled the whole boot transaction for up to
+      # 2min (TimeoutStartSec) while the CUDA probe raced persistenced —
+      # llama-cpp, the local omp provider and graphical.target all waited
+      # behind it (2026-09-13 boot: graphical @2min2s). A timer unit is
+      # never part of a target transaction: the adopter runs 15s after
+      # boot in the background, udev rules still catch dock events, and
+      # llama-cpp starts against the tmpfiles-seeded 3060 pin either way
+      # (egpu-adopt flips it to the 3090 once the probe passes).
+      systemd.timers.egpu-adopt = {
+        wantedBy = ["timers.target"];
+        timerConfig = {
+          OnBootSec = "15";
+          Unit = "egpu-adopt.service";
+        };
+      };
+
       systemd.services.egpu-adopt = {
         description = "NixOS eGPU adopter: CUDA-health gate and llama-cpp tier flip";
         after = ["bolt.service" "nvidia-persistenced.service"];
         wants = ["bolt.service"];
-        # Never let llama-cpp start against a missing env file: seed-before-
-        # daemon ordering, in both boot and dock-event paths.
-        before = ["llama-cpp.service"];
         # Boot trigger: covers the window where the tunneled GPU appears
         # before udev rules are loaded (no uevent is replayed into a rule
         # that wasn't loaded yet). Dock-less boots seed-and-exit in the
         # script itself.
-        wantedBy = ["multi-user.target"];
         serviceConfig = {
           Type = "oneshot";
           ExecStart = "${egpu-adopt}/bin/egpu-adopt";
-          # Tunnel bring-up races bolt authorization; give it room.
+          # Tunnel bring-up races bolt authorization; bounded probes keep
+          # the run well inside this budget.
           TimeoutStartSec = "120";
         };
       };
-
       systemd.services.egpu-release = {
         description = "NixOS eGPU releaser: revert llama tiering on dock detach";
         serviceConfig = {

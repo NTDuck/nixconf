@@ -24,12 +24,15 @@
             load-on-startup = false;
           };
 
-          # eGPU (RTX 3090) class: 16.3 GB, does not fit the 6 GB 3060;
-          # declared ready, loads on demand when the eGPU is attached.
+          # eGPU (RTX 3090) class: 16.3 GB. NOT resident: services.ollama
+          # (reinstalled 2026-09-13) serves qwen3.8:27b from the same card,
+          # and both resident would spill ollama to 85% CPU. Spawns on
+          # demand here when the router's copy is requested and the 3090
+          # has headroom.
           "unsloth/Qwen3.8-27B-GGUF:UD-Q4_K_XL" = {
             hf-repo = "unsloth/Qwen3.8-27B-GGUF";
             hf-file = "Qwen3.8-27B-UD-Q4_K_XL.gguf";
-            load-on-startup = true;
+            load-on-startup = false;
           };
         };
 
