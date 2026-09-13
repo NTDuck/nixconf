@@ -1,6 +1,4 @@
-{
-  ...
-}: {
+{...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     nixos = {
       config,
@@ -11,7 +9,8 @@
       #    the 3090 (NVML adopts hotplugged GPUs fine) while its NVRM bind
       #    had actually failed ("objClInitPcieChipset: Unable to get PCI
       #    port handles"). NVML is not proof of compute health. egpu-adopt
-      #    then flipped llama-cpp to the dead 3090; CUDA init fails there
+      #    then flipped the inference daemon (now ollama, then llama-cpp) to
+      #    the dead 3090; CUDA init fails there
       #    and ggml silently falls back to CPU: 0.2 tok/s, 0% GPU, 33 GB
       #    streamed off NVMe for a 16.3 GB GGUF. Gate the tier flip on a
       #    REAL CUDA probe (llama-server --list-devices, same stack as
@@ -33,14 +32,17 @@
       #    boot trigger covers the pre-udevd window outright.
       # CUDA compute probe. nvidia-smi -L is NOT sufficient: NVML lists a
       # hotplugged GPU even when its NVRM bind failed (objClInitPcieChipset),
-      # which is exactly how llama-cpp got pinned to a dead 3090 and ran on
+      # which is exactly how the inference daemon (now ollama, then
+      # llama-cpp) got pinned to a dead 3090 and ran on
       # CPU at 0.2 tok/s (2026-09-12 boot -1). llama-server --list-devices
       # exercises the full CUDA stack — the same one inference uses — and
       # prints one line per healthy device:
       #   "  CUDA0: NVIDIA GeForce RTX 3090 (24576 MiB, 23000 MiB free)"
       # A card whose bind failed appears as "(none)"; a card wedged by a
       # stuck context reports 0 MiB free.
-      llamaServer = "${config.services.llama-cpp.package}/bin/llama-server";
+      # llama-cpp is now CLI-only; its llama-server binary is reused purely
+      # as a CUDA health probe (--list-devices); the serving daemon is ollama.
+      llamaServer = "${pkgs.unstable.llama-cpp.override {cudaSupport = true;}}/bin/llama-server";
       # Bounded: CUDA init can block for minutes while nvidia-persistenced
       # brings a freshly-tunneled GPU up (2026-09-13 boot: the adopter's
       # llama-server --list-devices hung 2min and its 120s TimeoutStartSec
@@ -63,15 +65,15 @@
 
         mkdir -p /run/egpu
         # Seed once; never clobber a pin a transition already wrote.
-        [ -s /run/egpu/llama-cpp.env ] || echo "$fallback" > /run/egpu/llama-cpp.env
-        current=$(cat /run/egpu/llama-cpp.env)
+        [ -s /run/egpu/ollama.env ] || echo "$fallback" > /run/egpu/ollama.env
+        current=$(cat /run/egpu/ollama.env)
         # Rewrite the pin and restart the daemon ONLY on an actual change:
         # udev fires egpu-adopt on every USB4 rebind, and an unconditional
         # restart would evict a resident 16 GB model for nothing.
         tier() {
           [ "$current" = "$1" ] && return 1
-          echo "$1" > /run/egpu/llama-cpp.env
-          $sysd try-restart llama-cpp.service 2>/dev/null || true
+          echo "$1" > /run/egpu/ollama.env
+          $sysd try-restart ollama.service 2>/dev/null || true
           return 0
         }
 
@@ -79,13 +81,13 @@
         # fallback pin; nothing to adopt.
         [ -e /sys/bus/pci/devices/0000:06:00.0 ] || exit 0
 
-        # Healthy dock: flip llama-cpp to the 3090. Gated on the CUDA probe,
+        # Healthy dock: flip ollama to the 3090. Gated on the CUDA probe,
         # not nvidia-smi -L (see probe comment above).
         if ${cudaProbe}/bin/egpu-cuda-probe; then
           if tier "$pin"; then
-            echo "egpu-adopt: 3090 CUDA-healthy, llama-cpp tiered to eGPU" >&2
+            echo "egpu-adopt: 3090 CUDA-healthy, ollama tiered to eGPU" >&2
           else
-            echo "egpu-adopt: 3090 CUDA-healthy, llama-cpp already tiered" >&2
+            echo "egpu-adopt: 3090 CUDA-healthy, ollama already tiered" >&2
           fi
           exit 0
         fi
@@ -118,21 +120,20 @@
         # laptop 3060. If the daemon was running on the (now dead) 3090
         # pin, tier() restarts it onto the 3060; boot-time runs are a no-op.
         if tier "$fallback"; then
-          echo "egpu-adopt: 3090 present but CUDA-unhealthy (NVRM first-bind failure); llama-cpp reverted to 3060, reboot to recover" >&2
+          echo "egpu-adopt: 3090 present but CUDA-unhealthy (NVRM first-bind failure); ollama reverted to 3060, reboot to recover" >&2
         else
           echo "egpu-adopt: 3090 present but CUDA-unhealthy (NVRM first-bind failure); already on 3060, reboot to recover" >&2
         fi
         exit 1
       '';
 
-
       egpu-release = pkgs.writeShellScriptBin "egpu-release" ''
         set -eu
         sysd=${config.systemd.package}/bin/systemctl
-        echo "egpu-release: reverting llama-cpp to laptop 3060" >&2
+        echo "egpu-release: reverting ollama to laptop 3060" >&2
         mkdir -p /run/egpu
-        echo "CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529" > /run/egpu/llama-cpp.env
-        $sysd try-restart llama-cpp.service 2>/dev/null || true
+        echo "CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529" > /run/egpu/ollama.env
+        $sysd try-restart ollama.service 2>/dev/null || true
         # try-restart, not stop: stopping persistenced on detach left the
         # 3060's BAR1/VA space corrupted on the next enumeration
         # (dmaAllocMapping_GM107 failures, seen 2026-09-13 09:40+).
@@ -158,13 +159,13 @@
       '';
 
       # Non-blocking boot: a oneshot WantedBy multi-user.target with
-      # Before=llama-cpp.service pulled the whole boot transaction for up to
+      # Before=ollama.service pulled the whole boot transaction for up to
       # 2min (TimeoutStartSec) while the CUDA probe raced persistenced —
-      # llama-cpp, the local omp provider and graphical.target all waited
+      # ollama, the local omp provider and graphical.target all waited
       # behind it (2026-09-13 boot: graphical @2min2s). A timer unit is
       # never part of a target transaction: the adopter runs 15s after
       # boot in the background, udev rules still catch dock events, and
-      # llama-cpp starts against the tmpfiles-seeded 3060 pin either way
+      # ollama starts against the tmpfiles-seeded 3060 pin either way
       # (egpu-adopt flips it to the 3090 once the probe passes).
       systemd.timers.egpu-adopt = {
         wantedBy = ["timers.target"];
@@ -175,7 +176,7 @@
       };
 
       systemd.services.egpu-adopt = {
-        description = "NixOS eGPU adopter: CUDA-health gate and llama-cpp tier flip";
+        description = "NixOS eGPU adopter: CUDA-health gate and ollama tier flip";
         after = ["bolt.service" "nvidia-persistenced.service"];
         wants = ["bolt.service"];
         # Boot trigger: covers the window where the tunneled GPU appears
@@ -191,7 +192,7 @@
         };
       };
       systemd.services.egpu-release = {
-        description = "NixOS eGPU releaser: revert llama tiering on dock detach";
+        description = "NixOS eGPU releaser: revert ollama tiering on dock detach";
         serviceConfig = {
           Type = "oneshot";
           ExecStart = "${egpu-release}/bin/egpu-release";
