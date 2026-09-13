@@ -77,7 +77,11 @@
           config.services.ollama.package
           pkgs.curl
           pkgs.jq
+          pkgs.gawk
+          pkgs.gnugrep
         ];
+
+        environment.HOME = config.services.ollama.home;
 
         serviceConfig = {
           Type = "oneshot";
