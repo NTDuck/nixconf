@@ -1,13 +1,12 @@
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-    homeManager = {osConfig, ...}: {
+    homeManager = {
       programs.zed-editor.userSettings = {
         agent = {
           default_model = {
             provider = "openai";
-            model = "openbmb/MiniCPM5-1B-GGUF:Q8_0";
-            api_url = "http://${osConfig.services.llama-cpp.host}:${builtins.toString osConfig.services.llama-cpp.port}/v1";
-            enable_thinking = true;
+            model = "qwen3.8-27b-homelab";
+            api_url = "http://127.0.0.1:11434/v1";
           };
           dock = "right";
           favourite_models = [];
