@@ -31,33 +31,14 @@
                 contextWindow: 32768
                 maxTokens: 32768
 
-          # services.ollama (127.0.0.1:11434): qwen3.8 27b on the 3090
-          # eGPU, qwen3 30b MoE thinking for reasoning, Qwen3-4B for coding.
+          # services.ollama (127.0.0.1:11434): models are auto-discovered
+          # from the daemon (qwen3.8:27b on the 3090 eGPU,
+          # qwen3:30b-a3b-thinking-2507 for reasoning, Qwen3-4B for coding);
+          # no explicit model registration needed here.
           ollama:
             baseUrl: http://127.0.0.1:11434/v1
             api: openai-completions
             apiKey: none
-            models:
-              - id: qwen3.8:27b
-                name: Qwen3.8 27B (ollama 3090)
-                reasoning: false
-                input: [text]
-                contextWindow: 32768
-                maxTokens: 32768
-
-              - id: qwen3:30b-a3b-thinking-2507-q4_K_M
-                name: Qwen3 30B Thinking (ollama)
-                reasoning: true
-                input: [text]
-                contextWindow: 32768
-                maxTokens: 32768
-
-              - id: hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL
-                name: Qwen3 4B Instruct (ollama)
-                reasoning: false
-                input: [text]
-                contextWindow: 32768
-                maxTokens: 32768
 
           # https://docs.orcarouter.ai/integrations/oh-my-pi
           orcarouter:
