@@ -7,13 +7,13 @@
     }: {
       home.file.".omp/agent/models.yml".text = ''
         providers:
-          # services.ollama (127.0.0.1:11434) — main inference engine; qwen3.8-27b-homelab is the RENDERER qwen3.5 clone (ollama #17778 fix), uncensored variant is the JonathanColetti Heretic finetune
+          # services.ollama (127.0.0.1:11434) — main inference engine; qwen3.8:27b-qwen3.8-27b-homelab is the RENDERER qwen3.5 clone (ollama #17778 fix), uncensored variant is the JonathanColetti Heretic finetune
           ollama:
             baseUrl: http://127.0.0.1:11434/v1
             api: openai-completions
             auth: none
             models:
-              - id: qwen3.8-27b-homelab        # renderer-clone of official qwen3.8:27b (ollama #17778 fix)
+              - id: qwen3.8:27b-qwen3.8-27b-homelab        # renderer-clone of official qwen3.8:27b (ollama #17778 fix)
                 name: Qwen3.8 27B Homelab
                 reasoning: true
                 input: [text]
@@ -24,7 +24,7 @@
                 compat:
                   thinkingFormat: qwen
                   qwenTemplateReasoningEffort: true
-              - id: hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M-qwen3.8-27b-homelab   # uncensored Heretic finetune (3090), qwen3.5 renderer clone
+              - id: hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M-qwen3.8:27b-qwen3.8-27b-homelab   # uncensored Heretic finetune (3090), qwen3.5 renderer clone
                 name: Qwen3.8 27B Uncensored
                 reasoning: true
                 input: [text]
@@ -119,10 +119,10 @@
       home.file.".omp/agent/config.yml".text = ''
         # homelab specialization: local qwen3.8 27b as default+smol (thinking, max effort)
         modelRoles:
-          default: ollama/qwen3.8-27b-homelab:max
-          smol: ollama/qwen3.8-27b-homelab:low
+          default: ollama/qwen3.8:27b-qwen3.8-27b-homelab:max
+          smol: ollama/qwen3.8:27b-qwen3.8-27b-homelab:low
           slow: ollama/qwen3:30b-a3b-thinking-2507-q4_K_M:high
-          plan: ollama/qwen3.8-27b-homelab:xhigh
+          plan: ollama/qwen3.8:27b-qwen3.8-27b-homelab:xhigh
           advisor: ollama/qwen3:30b-a3b-thinking-2507-q4_K_M:xhigh
         defaultThinkingLevel: max
         cycleOrder:

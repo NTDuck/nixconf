@@ -24,7 +24,7 @@
           "hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL"
           # uncensored Heretic finetune for the 3090 — chosen for ungated
           # pull + benchmark-preserved capabilities (mean delta -0.5pp).
-          # Its renderer clone below appends -qwen3.8-27b-homelab to this
+          # Its renderer clone below clone appends the homelab suffix to this
           # tag, so syncModels' regex match keeps both.
           "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M"
         ];
@@ -115,15 +115,17 @@
 
           # Official qwen3.8:27b renderer clone. 'FROM X' + 'model X'
           # (same-tag clone) is fragile: ollama resolves the tag against
-          # itself before the clone exists, so use a distinct tag.
-          create_clone "qwen3.8-27b-homelab" "qwen3.8:27b"
+          # itself before the clone exists, so use a distinct tag. The tag
+          # embeds the declared loadModels id "qwen3.8:27b" as a prefix so
+          # syncModels' regex keeps it (tagless names get pruned).
+          create_clone "qwen3.8:27b-qwen3.8-27b-homelab" "qwen3.8:27b"
           sleep 1
 
           # Same-shape clone off the uncensored blob: the tag is the
           # declared loadModels entry (regex-matched by syncModels), so
           # pruning keeps it.
           create_clone \
-            "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M-qwen3.8-27b-homelab" \
+            "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M-qwen3.8:27b-qwen3.8-27b-homelab" \
             "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M"
           sleep 1
 
