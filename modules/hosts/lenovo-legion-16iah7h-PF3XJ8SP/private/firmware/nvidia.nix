@@ -53,6 +53,9 @@
         pkgs.unstable.libva-vdpau-driver
         # eGPU verification: enumerate ICDs per-arch, render on the 3090.
         pkgs.vulkan-tools
+        # Interactive GPU/process monitor (NVML): watch the 3090 eGPU
+        # tiering and ollama VRAM residency live.
+        pkgs.nvitop
       ];
 
       # wine on the eGPU: DXVK/VKD3D pick the device by name; wine's WSI
