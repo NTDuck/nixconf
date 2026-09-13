@@ -92,7 +92,13 @@
           set -eu
 
           have() {
-            ollama list | awk '{print $1}' | grep -Fxq "$1"
+            local m="$1"
+            # `ollama list` normalizes a tagless name to name:latest.
+            case "$m" in
+              *:*) ;;
+              *) m="$m:latest" ;;
+            esac
+            ollama list | awk '{print $1}' | grep -Fxq "$m"
           }
 
           create_clone() {
