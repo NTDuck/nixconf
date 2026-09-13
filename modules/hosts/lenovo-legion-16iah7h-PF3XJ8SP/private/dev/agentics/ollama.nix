@@ -69,9 +69,13 @@
       systemd.services.ollama-renderer-clones = {
         description = "Create renderer-cloned ollama models (qwen3.5 renderer fix, ollama #17778)";
         wantedBy = ["multi-user.target"];
-        after = ["ollama.service" "network-online.target"];
+        after = [
+          "ollama.service"
+          "ollama-model-loader.service"
+          "network-online.target"
+        ];
         bindsTo = ["ollama.service"];
-        wants = ["network-online.target"];
+        wants = ["network-online.target" "ollama-model-loader.service"];
 
         path = [
           config.services.ollama.package
