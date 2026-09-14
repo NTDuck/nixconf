@@ -5,68 +5,68 @@
 
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     includes = [
-      den.aspects.battery.power-profiles-daemon
-      den.aspects.battery.upower
-      den.aspects.bluetooth
-      den.aspects.bootloaders.systemd
-      den.aspects.browsers.chromium
-      den.aspects.browsers.zen-browser
-      (den.aspects.compositors.mangowm {
+      den.aspects.system.power.power-profiles-daemon
+      den.aspects.system.power.upower
+      den.aspects.system.bluetooth
+      den.aspects.system.boot.systemd
+      den.aspects.apps.browsers.chromium
+      den.aspects.apps.browsers.zen-browser
+      (den.aspects.desktop.compositors.mangowm {
         terminal = pkgs: "${pkgs.unstable.ghostty}/bin/ghostty";
       })
       den.aspects.dev
-      den.aspects.editors.helix
-      den.aspects.editors.zed-editor
-      den.aspects.file-managers.yazi
-      den.aspects.file-managers.nemo
-      den.aspects.firmware.openrgb
-      den.aspects.gaming.itch
-      den.aspects.gaming.mangohud
-      den.aspects.gaming.lutris
-      den.aspects.gaming.steam
-      den.aspects.gaming.wine
-      den.aspects.gaming.wlib
-      den.aspects.gaming.rpgmakermlinux-cicpoffs
-      den.aspects.gaming.roleplaying.risuai
-      den.aspects.gaming.roleplaying.sillytavern
-      den.aspects.gaming.roleplaying.rp
-      (den.aspects.greeters.tuigreet {
+      den.aspects.apps.editors.helix
+      den.aspects.apps.editors.zed-editor
+      den.aspects.apps.file-managers.yazi
+      den.aspects.apps.file-managers.nemo
+      den.aspects.system.hardware.openrgb
+      den.aspects.apps.gaming.itch
+      den.aspects.apps.gaming.mangohud
+      den.aspects.apps.gaming.lutris
+      den.aspects.apps.gaming.steam
+      den.aspects.apps.gaming.wine
+      den.aspects.apps.gaming.wlib
+      den.aspects.apps.gaming.rpgmakermlinux-cicpoffs
+      den.aspects.apps.gaming.roleplaying.risuai
+      den.aspects.apps.gaming.roleplaying.sillytavern
+      den.aspects.apps.gaming.roleplaying.rp
+      (den.aspects.desktop.greeters.tuigreet {
         command = config: "${config.programs.mango.package}/bin/mango";
       })
-      den.aspects.kernels.cachyos-kernel
-      den.aspects.messenging.discord
-      den.aspects.messenging.lark-cli
-      den.aspects.messenging.telegram
-      den.aspects.multimedia.ffmpeg
-      den.aspects.multimedia.gallery-dl
-      den.aspects.multimedia.imv
-      den.aspects.multimedia.mpv
-      den.aspects.multimedia.obs-studio
-      den.aspects.multimedia.yt-dlp
-      den.aspects.music.youtube-music
-      den.aspects.nix
-      den.aspects.noctalia
-      den.aspects.lix
-      den.aspects.nh
-      den.aspects.nix-ld
-      den.aspects.nur
-      den.aspects.office.pandoc
-      den.aspects.office.libreoffice
-      den.aspects.office.texlive
-      den.aspects.office.zathura
-      den.aspects.productivity.mermaid
-      den.aspects.productivity.obsidian
-      den.aspects.productivity.taskwarrior
-      den.aspects.productivity.tomato
-      den.aspects.productivity.world-monitor
-      den.aspects.secrets.agenix
-      den.aspects.services.cliphist
-      den.aspects.services.cloudflare-warp
-      den.aspects.services.dconf
-      den.aspects.services.fcitx5
-      den.aspects.services.gnome-keyring
-      den.aspects.services.gvfs
-      den.aspects.services.kanshi
+      den.aspects.system.kernel.cachyos-kernel
+      den.aspects.apps.messenging.discord
+      den.aspects.apps.messenging.lark-cli
+      den.aspects.apps.messenging.telegram
+      den.aspects.apps.multimedia.ffmpeg
+      den.aspects.apps.multimedia.gallery-dl
+      den.aspects.apps.multimedia.imv
+      den.aspects.apps.multimedia.mpv
+      den.aspects.apps.multimedia.obs-studio
+      den.aspects.apps.multimedia.yt-dlp
+      den.aspects.apps.music.youtube-music
+      den.aspects.system.nix
+      den.aspects.desktop.panels.noctalia
+      den.aspects.system.nix.lix
+      den.aspects.system.nix.nh
+      den.aspects.system.nix.nix-ld
+      den.aspects.system.nix.nur
+      den.aspects.apps.office.pandoc
+      den.aspects.apps.office.libreoffice
+      den.aspects.apps.office.texlive
+      den.aspects.apps.office.zathura
+      den.aspects.apps.productivity.mermaid
+      den.aspects.apps.productivity.obsidian
+      den.aspects.apps.productivity.taskwarrior
+      den.aspects.apps.productivity.tomato
+      den.aspects.apps.productivity.world-monitor
+      den.aspects.system.secrets.agenix
+      den.aspects.desktop.clipboard.cliphist
+      den.aspects.system.network.cloudflare-warp
+      den.aspects.desktop.settings.dconf
+      den.aspects.desktop.input.fcitx5
+      den.aspects.desktop.auth.gnome-keyring
+      den.aspects.desktop.fs.gvfs
+      den.aspects.desktop.wayland.kanshi
       {
         internalOutput = "eDP-1";
 
@@ -77,35 +77,35 @@
           "HDMI-2"
         ];
       }
-      den.aspects.services.keyd
-      den.aspects.services.nftables
-      den.aspects.services.pipewire
-      den.aspects.services.polkit
-      den.aspects.services.resolved
-      den.aspects.services.ssh
-      den.aspects.services.udisks2
-      den.aspects.services.xdg
-      den.aspects.settings
-      den.aspects.shells.prompts.starship
-      den.aspects.shells.zsh
-      den.aspects.swap.zram
-      den.aspects.terminals.ghostty
-      den.aspects.utilities.screenshots.flameshot
-      den.aspects.utilities.screenshots.gpu-screen-recorder
-      den.aspects.utilities.torrents.rtorrent
-      den.aspects.utilities.torrents.torrent-tui
-      den.aspects.utilities.torrents.webtorrent
-      den.aspects.utilities.cava
-      den.aspects.utilities.fastfetch
-      den.aspects.utilities.p7zip
-      den.aspects.utilities.ripgrep
-      den.aspects.utilities.rufus
-      den.aspects.utilities.zoxide
-      den.aspects.virtualization.docker
-      den.aspects.virtualization.kubernetes
-      den.aspects.virtualization.qemu
-      den.aspects.virtualization.waydroid
-      den.aspects.stylix
+      den.aspects.desktop.input.keyd
+      den.aspects.system.network.nftables
+      den.aspects.desktop.audio.pipewire
+      den.aspects.desktop.auth.polkit
+      den.aspects.system.network.resolved
+      den.aspects.system.network.ssh
+      den.aspects.system.storage.udisks2
+      den.aspects.desktop.portals.xdg
+      den.aspects.system.settings
+      den.aspects.desktop.shells.prompts.starship
+      den.aspects.desktop.shells.zsh
+      den.aspects.system.swap.zram
+      den.aspects.apps.terminals.ghostty
+      den.aspects.desktop.screenshots.flameshot
+      den.aspects.desktop.screenshots.gpu-screen-recorder
+      den.aspects.apps.torrents.rtorrent
+      den.aspects.apps.torrents.torrent-tui
+      den.aspects.apps.torrents.webtorrent
+      den.aspects.desktop.audio.visualization.cava
+      den.aspects.apps.sysinfo.fastfetch
+      den.aspects.apps.cli.p7zip
+      den.aspects.apps.cli.ripgrep
+      den.aspects.apps.disk.rufus
+      den.aspects.apps.cli.zoxide
+      den.aspects.system.virtualization.docker
+      den.aspects.system.virtualization.kubernetes
+      den.aspects.system.virtualization.qemu
+      den.aspects.system.virtualization.waydroid
+      den.aspects.desktop.theming.stylix
     ];
   };
 }

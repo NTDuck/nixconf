@@ -1,0 +1,18 @@
+{den, ...}: {
+  den.aspects.apps.music.youtube-music = {
+    nixos = {pkgs, ...}: {
+      environment.systemPackages = [
+        pkgs.unstable.pear-desktop
+
+        (pkgs.makeDesktopItem {
+          name = "youtube-music";
+          exec = "${pkgs.unstable.pear-desktop}/bin/pear-desktop";
+          icon = "pear-desktop";
+          desktopName = "YouTube Music";
+          comment = "YouTube Music Desktop Client";
+          categories = ["AudioVideo" "Player" "Audio"];
+        })
+      ];
+    };
+  };
+}

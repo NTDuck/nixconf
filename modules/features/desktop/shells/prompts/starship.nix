@@ -1,0 +1,19 @@
+{den, ...}: {
+  den.aspects.desktop.shells.prompts.starship = {
+    homeManager = {
+      config,
+      lib,
+      pkgs,
+      ...
+    }: {
+      programs.starship = {
+        enable = true;
+        package = pkgs.unstable.starship;
+
+        enableBashIntegration = lib.mkIf config.programs.bash.enable true;
+        enableZshIntegration = lib.mkIf config.programs.zsh.enable true;
+        enableFishIntegration = lib.mkIf config.programs.fish.enable true;
+      };
+    };
+  };
+}
