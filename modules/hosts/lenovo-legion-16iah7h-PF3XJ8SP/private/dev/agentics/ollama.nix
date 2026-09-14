@@ -24,10 +24,13 @@
           "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M"
 
           # Wonderful SLMs
+          # Warning: [VRAM] 9GB at rest, ~41GB upon reaching 1M context window
+          # On 3090 recommended is 16/32K?
+          # https://www.mindstudio.ai/blog/spark-x25-4b-local-review
           "SparkLLM/Spark-X2.5-4B" # ^reasoning, coding
-          "openbmb/minicpm5-2b:2b" # reasoning, ^coding
-          "lfm2.5:8b" # hallucination-resistant, tool-calling
-          "granite4.1:3b" # hallucination-resistant, tool-calling
+          "openbmb/minicpm5-2b:f16" # reasoning, ^coding
+          "lfm2.5:8b-a1b-bf16" # hallucination-resistant, tool-calling
+          "granite4.1:3b-bf16" # hallucination-resistant, tool-calling
         ];
 
         syncModels = true;

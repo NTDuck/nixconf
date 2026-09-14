@@ -174,7 +174,7 @@
         colorBlindMode = false;
 
         statusLine = {
-          preset = "compact";
+          preset = "default";
           separator = "powerline-thin";
           contextLine = "embedded";
           sessionAccent = false;
