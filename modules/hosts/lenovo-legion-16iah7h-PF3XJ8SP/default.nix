@@ -22,6 +22,7 @@
       den.aspects.firmware.openrgb
       den.aspects.gaming.itch
       den.aspects.gaming.mangohud
+      den.aspects.gaming.lutris
       den.aspects.gaming.steam
       den.aspects.gaming.wine
       den.aspects.gaming.wlib
