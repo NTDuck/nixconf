@@ -116,7 +116,12 @@
                 maxTokens: 131072
       '';
 
-      home.file.".omp/agent/config.yml".text = ''
+      # NOT ".omp/agent/config.yml": omp treats that file as mutable state
+      # (writes setupVersion, /model picks, wizard results) and saving through
+      # an HM store symlink dies with EROFS, which re-triggers the setup wizard
+      # on every launch. This file is a read-only overlay merged OVER
+      # config.yml via PI_CONFIG_FILES (set in the omp alias below).
+      home.file.".omp/agent/homelab.yml".text = ''
         # homelab specialization: local qwen3.8 27b as default+smol (thinking, max effort)
         modelRoles:
           default: ollama/qwen3.8:27b-qwen3-8-27b-homelab:max
@@ -187,6 +192,7 @@
           TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path})" \
           REASONIX_SCAVENGE=1 \
           REASONIX_RESULT_CAP_TOKENS=3000 \
+          PI_CONFIG_FILES="$HOME/.omp/agent/homelab.yml" \
           ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp'';
       };
     };
