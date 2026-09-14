@@ -36,6 +36,7 @@
       den.aspects.kernels.cachyos-kernel
       den.aspects.messenging.discord
       den.aspects.messenging.lark-cli
+      den.aspects.messenging.telegram
       den.aspects.multimedia.ffmpeg
       den.aspects.multimedia.gallery-dl
       den.aspects.multimedia.imv
