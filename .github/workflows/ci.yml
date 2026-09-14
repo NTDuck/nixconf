@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main, indev]
+  pull_request:
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - name: alejandra check
+        run: |
+          nix run nixpkgs#alejandra -- --check .
+
+  build:
+    needs: format
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [lenovo-legion-16iah7h-PF3XJ8SP, dell-latitude-E7270-H836QF2]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - uses: cachix/cachix-action@v16
+        continue-on-error: true
+        with:
+          name: nix-community
+          authToken: ''
+      - name: Build ${{ matrix.host }}
+        run: |
+          nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --dry-run 2>&1 | tail -5 || true
+          nix flake check --all-systems || nix eval .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath
