@@ -25,6 +25,9 @@
       den.aspects.gaming.wine
       den.aspects.gaming.wlib
       den.aspects.gaming.rpgmakermlinux-cicpoffs
+      den.aspects.gaming.roleplaying.risuai
+      den.aspects.gaming.roleplaying.sillytavern
+      den.aspects.gaming.roleplaying.rp
       (den.aspects.greeters.tuigreet {
         command = config: "${config.programs.mango.package}/bin/mango";
       })
