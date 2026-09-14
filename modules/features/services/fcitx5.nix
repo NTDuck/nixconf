@@ -19,6 +19,11 @@
             };
             globalOptions = {
               "Hotkey/TriggerKeys"."0" = "Super+space";
+              # Default AltTriggerKeys is Shift_L: a lone Shift press toggles
+              # the input method. Clear it — only Super+space may switch IMs.
+              "Hotkey/AltTriggerKeys"."0" = "";
+              "Hotkey/EnumerateForwardKeys"."0" = "";
+              "Hotkey/EnumerateBackwardKeys"."0" = "";
 
               Behavior = {
                 ShowInputMethodInformation = false;
