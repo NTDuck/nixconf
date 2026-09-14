@@ -7,54 +7,6 @@
     }: {
       home.file.".omp/agent/models.yml".text = ''
         providers:
-          # services.ollama (127.0.0.1:11434) — main inference engine; qwen3.8:27b-qwen3-8-27b-homelab is the RENDERER qwen3.5 clone (ollama #17778 fix), uncensored variant is the JonathanColetti Heretic finetune
-          ollama:
-            baseUrl: http://127.0.0.1:11434/v1
-            api: openai-completions
-            auth: none
-            models:
-              - id: qwen3.8:27b-qwen3-8-27b-homelab        # renderer-clone of official qwen3.8:27b (ollama #17778 fix)
-                name: Qwen3.8 27B Homelab
-                reasoning: true
-                input: [text]
-                contextWindow: 65536
-                maxTokens: 65536
-                tokenizer: qwen3
-                supportsTools: true
-                compat:
-                  thinkingFormat: qwen
-                  qwenTemplateReasoningEffort: true
-              - id: hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M-qwen3-8-27b-homelab   # uncensored Heretic finetune (3090), qwen3.5 renderer clone
-                name: Qwen3.8 27B Uncensored
-                reasoning: true
-                input: [text]
-                contextWindow: 65536
-                maxTokens: 65536
-                tokenizer: qwen3
-                supportsTools: true
-                compat:
-                  thinkingFormat: qwen
-                  qwenTemplateReasoningEffort: true
-              - id: qwen3:30b-a3b-thinking-2507-q4_K_M   # MoE thinking (clone tag = official id)
-                name: Qwen3 30B A3B Thinking
-                reasoning: true
-                input: [text]
-                contextWindow: 32768
-                maxTokens: 32768
-                tokenizer: qwen3
-                supportsTools: true
-                compat:
-                  thinkingFormat: qwen
-                  qwenTemplateReasoningEffort: true
-              - id: hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL   # 3060-class coding model
-                name: Qwen3 4B Instruct (3060)
-                reasoning: false
-                input: [text]
-                contextWindow: 32768
-                maxTokens: 32768
-                tokenizer: qwen3
-                supportsTools: true
-
           # https://docs.orcarouter.ai/integrations/oh-my-pi
           orcarouter:
             baseUrl: https://api.orcarouter.ai/v1
