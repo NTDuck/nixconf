@@ -22,7 +22,11 @@
             # Vesktop 1.6.5 in the pinned unstable set validates against
             # Electron 40 at build time; keep this exception narrow.
             "electron"
-            "idea-oss"
+            # beekeeper-studio 6.0.5 ships Electron 39 (EOL 2026-03).
+            # 2026-09-14: allowInsecurePredicate shadows
+            # permittedInsecurePackages (pkgs/stdenv/generic/check-meta.nix),
+            # so per-module permit lists are dead — exceptions live here.
+            "beekeeper-studio"
           ];
       };
     in {
