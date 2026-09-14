@@ -28,7 +28,8 @@
           # On 3090 recommended is 16/32K?
           # https://www.mindstudio.ai/blog/spark-x25-4b-local-review
           "SparkLLM/Spark-X2.5-4B" # ^reasoning, coding
-          "openbmb/minicpm5-2b:f16" # reasoning, ^coding
+          "openbmb/minicpm5-2b:f16" # reasoning, ^coding'
+          "openbmb/minicpm5-2b:q8_0" # More comfortable fit for 3060
           "lfm2.5:8b-a1b-bf16" # hallucination-resistant, tool-calling
           "granite4.1:3b-bf16" # hallucination-resistant, tool-calling
         ];
