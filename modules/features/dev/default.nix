@@ -9,6 +9,7 @@
       den.aspects.dev.cloud.google-cloud-sdk
       den.aspects.dev.cloud.oracle-cloud-infrastructure
       den.aspects.dev.api.postman
+      den.aspects.dev.api.dbeaver
       den.aspects.dev.iac.terraform
     ];
   };
