@@ -1,6 +1,4 @@
-{
-  ...
-}: let
+{...}: let
   ccwVersion = "5.0.6";
 
   # https://github.com/miuuyy/codex-chatgpt-web — packaged desktop launcher (AppImage).
@@ -27,27 +25,27 @@
       dontBuild = true;
 
       installPhase = ''
-        runHook preInstall
-        mkdir -p $out/bin $out/share/applications
-        cp $src $out/${pname}-${version}.AppImage
-        chmod +x $out/${pname}-${version}.AppImage
+                runHook preInstall
+                mkdir -p $out/bin $out/share/applications
+                cp $src $out/${pname}-${version}.AppImage
+                chmod +x $out/${pname}-${version}.AppImage
 
-        makeWrapper ${pkgs.appimage-run}/bin/appimage-run $out/bin/codex-web-gpt \
-          --add-flags "$out/${pname}-${version}.AppImage"
+                makeWrapper ${pkgs.appimage-run}/bin/appimage-run $out/bin/codex-web-gpt \
+                  --add-flags "$out/${pname}-${version}.AppImage"
 
-        cat > $out/share/applications/codex-web-gpt.desktop <<EOF
-[Desktop Entry]
-Type=Application
-Version=1.0
-Name=Codex Web GPT
-Comment=ChatGPT Web models inside the native Codex harness
-Exec=$out/bin/codex-web-gpt
-Icon=codex-web-gpt
-Terminal=false
-Categories=Development;
-StartupWMClass=codex-web-gpt
-EOF
-        runHook postInstall
+                cat > $out/share/applications/codex-web-gpt.desktop <<EOF
+        [Desktop Entry]
+        Type=Application
+        Version=1.0
+        Name=Codex Web GPT
+        Comment=ChatGPT Web models inside the native Codex harness
+        Exec=$out/bin/codex-web-gpt
+        Icon=codex-web-gpt
+        Terminal=false
+        Categories=Development;
+        StartupWMClass=codex-web-gpt
+        EOF
+                runHook postInstall
       '';
 
       meta = {
