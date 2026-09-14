@@ -21,14 +21,30 @@
             # ovmf.enable = true;
             # ovmf.packages = [pkgs.unstable.OVMFFull.fd];
           };
-
-          # networks.default = {
-          #   enable = true;
-          #   autostart = true;
-          # };
         };
+
         # Enable SPICE USB redirection so guests can use attached peripherals.
         spiceUSBRedirection.enable = true;
+      };
+
+      # NAT network for guests (virbr0 DHCP/DNS). libvirt ships default.xml
+      # but NixOS 26.05's libvirtd module has no `networks` option to enable
+      # or autostart it, so net-start/autostart it after libvirtd-config
+      # copies the XML into /var/lib (idempotent; virsh talks to the daemon).
+      systemd.services.libvirtd-network-default = {
+        after = ["libvirtd-config.service" "libvirtd.service"];
+        wantedBy = ["multi-user.target"];
+        wants = ["libvirtd.service"];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          ExecStart = [
+            "${pkgs.libvirt}/bin/virsh --connect qemu:///system net-start default"
+            "${pkgs.libvirt}/bin/virsh --connect qemu:///system net-autostart default"
+          ];
+          # Network already active/autostarted → nonzero exit; harmless.
+          SuccessExitStatus = [1];
+        };
       };
 
       # libvirt's default NAT network serves DHCP/DNS from virbr0. The firewall
@@ -56,6 +72,12 @@
         pkgs.unstable.spice-vdagent # SPICE guest tools for Windows guests
         # qemu is included as a dependency
       ];
+
+      # virt-manager probes FHS paths (/usr/bin/qemu-system-*) to autodetect
+      # the default URI; on NixOS none exist, so it fails with "Could not
+      # detect a default hypervisor" even though libvirtd serves qemu:///system
+      # (virsh confirms). Pin the connection instead of relying on the probe.
+      environment.sessionVariables.LIBVIRT_DEFAULT_URI = "qemu:///system";
 
       # Allow dconf settings for virt-manager (optional)
       programs.dconf.enable = true;
