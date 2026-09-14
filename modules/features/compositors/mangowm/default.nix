@@ -75,7 +75,7 @@
           repeat_delay = 150;
           trackpad_natural_scrolling = 1;
           mouse_click_method = 2; # Clickfinger
-          disable_while_typing = 1;
+          trackpad_disable_while_typing = 1;
 
           xwayland_ignore_scale = 1; # DO_NOT_REMOVE otherwise XWayland apps suffer from low resolution
           # syncobj_enable = 1;
