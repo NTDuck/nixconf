@@ -12,6 +12,10 @@
       # the CachyOS kernel package set.
       environment.systemPackages = [
         pkgs.unstable.lenovo-legion
+        # qt6ct.conf sets style=kvantum; without the style plugin Qt falls
+        # back through proxy styles at startup and legion_gui segfaults
+        # (QProxyStyle::standardPalette recursion, Qt 6.11).
+        pkgs.qt6Packages.qtstyleplugin-kvantum
       ];
 
       boot.extraModulePackages = [config.boot.kernelPackages.lenovo-legion-module];
