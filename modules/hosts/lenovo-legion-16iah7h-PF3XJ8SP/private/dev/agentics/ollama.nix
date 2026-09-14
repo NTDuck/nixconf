@@ -15,18 +15,19 @@
         port = 11434;
 
         loadModels = [
-          # eGPU (RTX 3090): flagship local general model (official qwen3.8)
+          # Slayer of Opus 4.6!
           "qwen3.8:27b"
-
-          # reasoning: MoE thinking model
-          "qwen3:30b-a3b-thinking-2507-q4_K_M"
-          # coding: small instruct model, fits the laptop 3060
-          "hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL"
-          # uncensored Heretic finetune for the 3090 — chosen for ungated
+          # Uncensored Heretic finetune for the 3090 — chosen for ungated
           # pull + benchmark-preserved capabilities (mean delta -0.5pp).
           # Its renderer clone below clone appends the homelab suffix to this
           # tag, so syncModels' regex match keeps both.
           "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M"
+
+          # Wonderful SLMs
+          "SparkLLM/Spark-X2.5-4B" # ^reasoning, coding
+          "openbmb/minicpm5-2b:2b" # reasoning, ^coding
+          "lfm2.5:8b" # hallucination-resistant, tool-calling
+          "granite4.1:3b" # hallucination-resistant, tool-calling
         ];
 
         syncModels = true;
