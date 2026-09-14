@@ -10,7 +10,9 @@
       # (legion-laptop.ko, renamed from lenovo_legion.ko). Both at 0.0.22:
       # the app comes from unstable to match the module version packaged in
       # the CachyOS kernel package set.
-      environment.systemPackages = [pkgs.unstable.lenovo-legion];
+      environment.systemPackages = [
+        pkgs.unstable.lenovo-legion
+      ];
 
       boot.extraModulePackages = [config.boot.kernelPackages.lenovo-legion-module];
       boot.kernelModules = ["legion_laptop"];
