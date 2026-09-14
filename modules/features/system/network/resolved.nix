@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.services.resolved = {
+  den.aspects.system.network.resolved = {
     nixos = {
       services.resolved = {
         enable = true;

@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.virtualization.docker = {
+  den.aspects.system.virtualization.docker = {
     nixos = {pkgs, ...}: {
       virtualisation.docker.enable = true;
       environment.systemPackages = [

@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.dev.terraform = {
+  den.aspects.dev.iac.terraform = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.terraform

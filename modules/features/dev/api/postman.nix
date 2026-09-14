@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.dev.postman = {
+  den.aspects.dev.api.postman = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.postman

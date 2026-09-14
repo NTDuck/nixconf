@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.nix = {
+  den.aspects.system.nix = {
     nixos = {
       pkgs,
       lib,

@@ -1,7 +1,7 @@
 {den, ...}: {
-  den.aspects.virtualization.waydroid = {
+  den.aspects.system.virtualization.waydroid = {
     includes = [
-      den.aspects.services.nftables
+      den.aspects.system.network.nftables
     ];
 
     nixos = {pkgs, ...}: {

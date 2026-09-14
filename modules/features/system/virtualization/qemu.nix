@@ -1,6 +1,6 @@
 # TODO Slop, check this guy
 {den, ...}: {
-  den.aspects.virtualization.qemu = {
+  den.aspects.system.virtualization.qemu = {
     nixos = {
       config,
       pkgs,

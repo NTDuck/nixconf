@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.bootloaders.systemd = {
+  den.aspects.system.boot.systemd = {
     nixos = {
       boot.loader = {
         timeout = 4;

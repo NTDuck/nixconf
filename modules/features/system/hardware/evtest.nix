@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.utilities.evtest = {
+  den.aspects.system.hardware.evtest = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.evtest

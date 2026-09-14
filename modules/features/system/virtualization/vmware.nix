@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.virtualization.vmware = {
+  den.aspects.system.virtualization.vmware = {
     nixos = {pkgs, ...}: {
       virtualisation.vmware.host = {
         enable = true;

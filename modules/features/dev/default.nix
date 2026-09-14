@@ -6,10 +6,10 @@
       den.aspects.dev.gits
       den.aspects.dev.toolchains
 
-      den.aspects.dev.google-cloud-sdk
-      den.aspects.dev.oracle-cloud-infrastructure
-      den.aspects.dev.postman
-      den.aspects.dev.terraform
+      den.aspects.dev.cloud.google-cloud-sdk
+      den.aspects.dev.cloud.oracle-cloud-infrastructure
+      den.aspects.dev.api.postman
+      den.aspects.dev.iac.terraform
     ];
   };
 }

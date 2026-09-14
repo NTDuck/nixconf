@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.nh = {
+  den.aspects.system.nix.nh = {
     nixos = {pkgs, ...}: {
       programs.nh = {
         enable = true;

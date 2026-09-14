@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.battery.fstrim = {
+  den.aspects.system.storage.fstrim = {
     nixos = {
       services.fstrim = {
         enable = true;

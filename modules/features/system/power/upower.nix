@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.battery.upower = {
+  den.aspects.system.power.upower = {
     nixos = {pkgs, ...}: {
       services.upower = {
         enable = true;

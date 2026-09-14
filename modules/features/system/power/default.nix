@@ -1,11 +1,10 @@
 {den, ...}: {
-  den.aspects.battery.includes = [
-    den.aspects.battery.fstrim
-    den.aspects.battery.power-profiles-daemon
-    den.aspects.battery.powertop
-    den.aspects.battery.thermald
-    den.aspects.battery.throttled
-    # den.aspects.battery.tlp
-    den.aspects.battery.upower
+  den.aspects.system.power.includes = [
+    den.aspects.system.power.power-profiles-daemon
+    den.aspects.system.power.powertop
+    den.aspects.system.power.thermald
+    den.aspects.system.power.throttled
+    # den.aspects.system.power.tlp
+    den.aspects.system.power.upower
   ];
 }

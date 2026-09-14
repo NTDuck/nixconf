@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.lix = {
+  den.aspects.system.nix.lix = {
     nixos = {pkgs, ...}: {
       # https://lix.systems/add-to-config/
       nix.package = pkgs.lixPackageSets.stable.lix;

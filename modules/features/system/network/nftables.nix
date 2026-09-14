@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.services.nftables = {
+  den.aspects.system.network.nftables = {
     nixos = {
       networking.nftables.enable = true;
     };

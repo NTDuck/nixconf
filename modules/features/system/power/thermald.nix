@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.battery.thermald = {
+  den.aspects.system.power.thermald = {
     nixos = {pkgs, ...}: {
       services.thermald = {
         enable = true;

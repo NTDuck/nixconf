@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.battery.power-profiles-daemon = {
+  den.aspects.system.power.power-profiles-daemon = {
     nixos = {pkgs, ...}: {
       services.power-profiles-daemon = {
         enable = true;

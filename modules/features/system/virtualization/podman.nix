@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.virtualization.podman = {
+  den.aspects.system.virtualization.podman = {
     homeManager = {pkgs, ...}: {
       services.podman = {
         enable = true;

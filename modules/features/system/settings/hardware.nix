@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.settings.hardware = {
+  den.aspects.system.settings.hardware = {
     nixos = {pkgs, ...}: {
       hardware.firmware = [pkgs.linux-firmware];
 

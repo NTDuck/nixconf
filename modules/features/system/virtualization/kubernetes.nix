@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.virtualization.kubernetes = {
+  den.aspects.system.virtualization.kubernetes = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.minikube

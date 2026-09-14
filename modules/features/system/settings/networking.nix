@@ -1,7 +1,7 @@
 {den, ...}: {
-  den.aspects.settings.networking = {
+  den.aspects.system.settings.networking = {
     includes = [
-      den.aspects.services.resolved
+      den.aspects.system.network.resolved
     ];
 
     nixos = {

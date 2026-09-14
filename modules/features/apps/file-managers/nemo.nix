@@ -3,7 +3,7 @@
     includes = [
       den.aspects.desktop.settings.dconf
       den.aspects.desktop.fs.gvfs
-      den.aspects.services.udisks2
+      den.aspects.system.storage.udisks2
     ];
 
     nixos = {pkgs, ...}: {

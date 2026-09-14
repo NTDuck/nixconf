@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.battery.tlp = {
+  den.aspects.system.power.tlp = {
     nixos = {pkgs, ...}: {
       services.tlp = {
         enable = true;

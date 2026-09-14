@@ -1,10 +1,10 @@
 {den, ...}: {
-  den.aspects.settings = {
+  den.aspects.system.settings = {
     includes = [
-      den.aspects.settings.hardware
-      den.aspects.settings.i18n
-      den.aspects.settings.networking
-      den.aspects.settings.time
+      den.aspects.system.settings.hardware
+      den.aspects.system.settings.i18n
+      den.aspects.system.settings.networking
+      den.aspects.system.settings.time
     ];
 
     nixos = {

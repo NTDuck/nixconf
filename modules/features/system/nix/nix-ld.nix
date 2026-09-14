@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.nix-ld = {
+  den.aspects.system.nix.nix-ld = {
     nixos = {pkgs, ...}: {
       programs.nix-ld = {
         enable = true;

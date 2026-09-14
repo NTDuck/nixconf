@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.dev.oracle-cloud-infrastructure = {
+  den.aspects.dev.cloud.oracle-cloud-infrastructure = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.oci-cli

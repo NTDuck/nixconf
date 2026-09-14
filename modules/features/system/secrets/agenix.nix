@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  den.aspects.secrets.agenix = {
+  den.aspects.system.secrets.agenix = {
     nixos = {
       lib,
       pkgs,
