@@ -424,7 +424,10 @@
             niri_overview_type_to_launch_enabled = false;
             offline_mode = false;
             password_style = "default";
-            polkit_agent = false;
+            # pkexec (legion_gui's root-write path) needs a session auth agent;
+            # noctalia ships one — without it every GUI feature write fails
+            # with "No authentication agent found".
+            polkit_agent = true;
             popup_borders = true;
             popup_shadows = true;
             screen_time_enabled = false;

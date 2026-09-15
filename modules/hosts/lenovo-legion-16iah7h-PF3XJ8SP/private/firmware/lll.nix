@@ -21,12 +21,30 @@
         buildCommand = ''
           makeWrapper ${pkgs.unstable.lenovo-legion}/bin/.legion_gui-wrapped \
             $out/bin/legion_gui --unset QT_QPA_PLATFORMTHEME
-          # Share everything the app ships (applications/, pixmaps/,
-          # legion_linux/, polkit-1/) instead of guessing per-dir: the icon
-          # lives in share/pixmaps and there is NO share/icons upstream —
+          mkdir -p $out/bin $out/share
+          # Share everything the app ships as a real dir of symlinks (not one
+          # parent symlink) so the polkit actions below can be replaced: the
+          # icon lives in share/pixmaps and there is NO share/icons upstream —
           # a dangling share/icons symlink broke buildEnv (system-path
           # "not a directory", 2026-09-15).
-          ln -s ${pkgs.unstable.lenovo-legion}/share $out/share
+          # legion_cli goes next to legion_gui on the system-wide path.
+          ln -s ${pkgs.unstable.lenovo-legion}/bin/legion_cli $out/bin/legion_cli
+          for entry in ${pkgs.unstable.lenovo-legion}/share/*; do
+            ln -s "$entry" "$out/share/$(basename "$entry")"
+          done
+          # Upstream policies annotate FHS paths (/usr/local/bin,
+          # /usr/bin/<tool>) absent on NixOS, so pkexec can never match the
+          # actions — the GUI's every root write (powermode, touchpad,
+          # winkey, ...) died with "No authentication agent found" +
+          # path mismatch. polkit-1's symlink is dropped and a real
+          # actions dir holds patched copies (rm through a symlink-to-dir
+          # would follow INTO the store and fail with "Is a directory").
+          rm $out/share/polkit-1
+          mkdir -p $out/share/polkit-1/actions
+          for p in ${pkgs.unstable.lenovo-legion}/share/polkit-1/actions/*.policy; do
+            sed "s#/usr/local/bin/#/run/current-system/sw/bin/#g; s#/usr/bin/#/run/current-system/sw/bin/#g" \
+              "$p" > "$out/share/polkit-1/actions/$(basename "$p")"
+          done
         '';
       };
     in {
