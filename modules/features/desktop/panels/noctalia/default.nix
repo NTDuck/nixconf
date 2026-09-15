@@ -367,7 +367,10 @@
               caffeine = true;
               dnd = true;
               keyboard_backlight = true;
-              keyboard_layout = true;
+              # IM switches (fcitx5) pop this OSD via the tray Title change, not
+              # fcitx5's own overlay; see noctalia KeyboardLayoutOsd::onTrayChanged.
+              # No mango-side XKB layouts are in use, so this kind only noise.
+              keyboard_layout = false;
               lock_keys = true;
               media = true;
               nightlight = true;
