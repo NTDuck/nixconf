@@ -40,8 +40,7 @@
           # keep the 27B resident.
           OLLAMA_KEEP_ALIVE = "-1";
           # 64k for agentic tool loops.
-          # 262k for Qwen3.8 27b
-          OLLAMA_CONTEXT_LENGTH = "262144";
+          OLLAMA_CONTEXT_LENGTH = "128000";
           OLLAMA_NUM_PARALLEL = "1";
           OLLAMA_MAX_LOADED_MODELS = "2";
         };
