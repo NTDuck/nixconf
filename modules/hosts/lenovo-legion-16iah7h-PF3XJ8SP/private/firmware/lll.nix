@@ -4,17 +4,33 @@
       config,
       pkgs,
       ...
-    }: {
-      # https://github.com/johnfanv2/LenovoLegionLinux — nixpkgs packaging:
-      # `lenovo-legion` app (legion_gui, legion_cli) + `lenovo-legion-module`
-      # (legion-laptop.ko, renamed from lenovo_legion.ko). Both at 0.0.22:
-      # the app comes from unstable to match the module version packaged in
-      # the CachyOS kernel package set.
+    }: let
+      # legion_gui segfaults on Qt 6.11 when QT_QPA_PLATFORMTHEME=qt5ct is
+      # set (stylix HM qt target exports it via environment.d): the qt6ct
+      # platform theme wraps style creation in QProxyStyle and re-enters
+      # QStyleFactory forever with style=kvantum -> standardPalette
+      # recursion -> SIGSEGV (coredump 2026-09-15). Without the platform
+      # theme env, QStyleFactory loads the kvantum plugin directly and works
+      # (bisected with offscreen runs; QT_STYLE_OVERRIDE alone is safe).
+      # The kvantum plugin below is still required for that direct load.
+      legion = pkgs.stdenvNoCC.mkDerivation {
+        name = "lenovo-legion-wrapped";
+        nativeBuildInputs = [pkgs.makeBinaryWrapper];
+        # Desktop entry's Exec (`legion_gui --use_legion_cli_to_write`) keeps
+        # resolving; the wrapper only drops the env var that crashes Qt 6.11.
+        buildCommand = ''
+          mkdir -p $out/bin $out/share
+          makeWrapper ${pkgs.unstable.lenovo-legion}/bin/.legion_gui-wrapped \
+            $out/bin/legion_gui --unset QT_QPA_PLATFORMTHEME
+          ln -s ${pkgs.unstable.lenovo-legion}/share/applications $out/share/applications
+          ln -s ${pkgs.unstable.lenovo-legion}/share/icons $out/share/icons
+        '';
+      };
+    in {
       environment.systemPackages = [
-        pkgs.unstable.lenovo-legion
-        # qt6ct.conf sets style=kvantum; without the style plugin Qt falls
-        # back through proxy styles at startup and legion_gui segfaults
-        # (QProxyStyle::standardPalette recursion, Qt 6.11).
+        legion
+        # qt6ct.conf sets style=kvantum; without the style plugin Qt cannot
+        # load it directly and legion_gui segfaults (QProxyStyle recursion).
         pkgs.qt6Packages.qtstyleplugin-kvantum
       ];
 
