@@ -44,7 +44,8 @@
           # keep the 27B resident.
           OLLAMA_KEEP_ALIVE = "-1";
           # 64k for agentic tool loops.
-          OLLAMA_CONTEXT_LENGTH = "65536";
+          # 262k for Qwen3.8 27b
+          # OLLAMA_CONTEXT_LENGTH = "262144";
           OLLAMA_NUM_PARALLEL = "1";
           OLLAMA_MAX_LOADED_MODELS = "2";
         };
@@ -71,81 +72,81 @@
       # Clones are created once via the HTTP API; this oneshot is idempotent
       # (skips tags already present) so rebuilds are no-ops. Clone tags
       # match/superset the loadModels names so syncModels pruning keeps them.
-      systemd.services.ollama-renderer-clones = {
-        description = "Create renderer-cloned ollama models (qwen3.5 renderer fix, ollama #17778)";
-        wantedBy = ["multi-user.target"];
-        after = [
-          "ollama.service"
-          "ollama-model-loader.service"
-          "network-online.target"
-        ];
-        bindsTo = ["ollama.service"];
-        wants = ["network-online.target" "ollama-model-loader.service"];
+      # systemd.services.ollama-renderer-clones = {
+      #   description = "Create renderer-cloned ollama models (qwen3.5 renderer fix, ollama #17778)";
+      #   wantedBy = ["multi-user.target"];
+      #   after = [
+      #     "ollama.service"
+      #     "ollama-model-loader.service"
+      #     "network-online.target"
+      #   ];
+      #   bindsTo = ["ollama.service"];
+      #   wants = ["network-online.target" "ollama-model-loader.service"];
 
-        path = [
-          config.services.ollama.package
-          pkgs.curl
-          pkgs.jq
-          pkgs.gawk
-          pkgs.gnugrep
-        ];
+      #   path = [
+      #     config.services.ollama.package
+      #     pkgs.curl
+      #     pkgs.jq
+      #     pkgs.gawk
+      #     pkgs.gnugrep
+      #   ];
 
-        environment.HOME = config.services.ollama.home;
+      #   environment.HOME = config.services.ollama.home;
 
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-        };
+      #   serviceConfig = {
+      #     Type = "oneshot";
+      #     RemainAfterExit = true;
+      #   };
 
-        script = ''
-          set -eu
+      #   script = ''
+      #     set -eu
 
-          have() {
-            local m="$1"
-            # `ollama list` normalizes a tagless name to name:latest.
-            case "$m" in
-              *:*) ;;
-              *) m="$m:latest" ;;
-            esac
-            ollama list | awk '{print $1}' | grep -Fxq "$m"
-          }
+      #     have() {
+      #       local m="$1"
+      #       # `ollama list` normalizes a tagless name to name:latest.
+      #       case "$m" in
+      #         *:*) ;;
+      #         *) m="$m:latest" ;;
+      #       esac
+      #       ollama list | awk '{print $1}' | grep -Fxq "$m"
+      #     }
 
-          create_clone() {
-            local clone="$1" base="$2"
-            if have "$clone"; then
-              echo "clone $clone already present, skipping"
-            else
-              echo "creating clone $clone from $base"
-              curl -sS http://127.0.0.1:11434/api/create \
-                -d "$(printf '{"model":"%s","from":"%s","renderer":"qwen3.5"}' "$clone" "$base")"
-              have "$clone" || { echo "clone $clone failed to appear"; exit 1; }
-            fi
-          }
+      #     create_clone() {
+      #       local clone="$1" base="$2"
+      #       if have "$clone"; then
+      #         echo "clone $clone already present, skipping"
+      #       else
+      #         echo "creating clone $clone from $base"
+      #         curl -sS http://127.0.0.1:11434/api/create \
+      #           -d "$(printf '{"model":"%s","from":"%s","renderer":"qwen3.5"}' "$clone" "$base")"
+      #         have "$clone" || { echo "clone $clone failed to appear"; exit 1; }
+      #       fi
+      #     }
 
-          # Official qwen3.8:27b renderer clone. 'FROM X' + 'model X'
-          # (same-tag clone) is fragile: ollama resolves the tag against
-          # itself before the clone exists, so use a distinct tag. The tag
-          # embeds the declared loadModels id "qwen3.8:27b" as a prefix so
-          # syncModels' regex keeps it (tagless names get pruned).
-          create_clone "qwen3.8:27b-qwen3-8-27b-homelab" "qwen3.8:27b"
-          sleep 1
+      #     # Official qwen3.8:27b renderer clone. 'FROM X' + 'model X'
+      #     # (same-tag clone) is fragile: ollama resolves the tag against
+      #     # itself before the clone exists, so use a distinct tag. The tag
+      #     # embeds the declared loadModels id "qwen3.8:27b" as a prefix so
+      #     # syncModels' regex keeps it (tagless names get pruned).
+      #     create_clone "qwen3.8:27b-qwen3-8-27b-homelab" "qwen3.8:27b"
+      #     sleep 1
 
-          # Same-shape clone off the uncensored blob: the tag is the
-          # declared loadModels entry (regex-matched by syncModels), so
-          # pruning keeps it.
-          create_clone \
-            "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M-qwen3-8-27b-homelab" \
-            "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M"
-          sleep 1
+      #     # Same-shape clone off the uncensored blob: the tag is the
+      #     # declared loadModels entry (regex-matched by syncModels), so
+      #     # pruning keeps it.
+      #     create_clone \
+      #       "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M-qwen3-8-27b-homelab" \
+      #       "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M"
+      #     sleep 1
 
-          # Same-tag re-render: clone replaces the official 4B tag in place
-          # (FROM <itself> — ollama tolerates it on create); skipped by the
-          # have() guard on every later boot.
-          create_clone \
-            "hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL" \
-            "hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL"
-        '';
-      };
+      #     # Same-tag re-render: clone replaces the official 4B tag in place
+      #     # (FROM <itself> — ollama tolerates it on create); skipped by the
+      #     # have() guard on every later boot.
+      #     create_clone \
+      #       "hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL" \
+      #       "hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL"
+      #   '';
+      # };
     };
   };
 }

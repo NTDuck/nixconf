@@ -6,11 +6,11 @@
 # the app needs for login-token storage. checkReversePath "loose" keeps
 # WireGuard tunnel traffic alive under strict rp_filter (discourse.nixos.org
 # /t/how-to-configure-and-use-proton-vpn-on-nixos/65837).
-{
+{den, ...}: {
   den.aspects.system.network.protonvpn = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.protonvpn-gui
+        pkgs.proton-vpn
         pkgs.proton-vpn-cli
       ];
 
