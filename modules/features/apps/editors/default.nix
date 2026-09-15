@@ -1,0 +1,8 @@
+{den, ...}: {
+  den.aspects.apps.editors = {
+    includes = [
+      den.aspects.apps.editors.helix
+      den.aspects.apps.editors.zed-editor
+    ];
+  };
+}

@@ -4,6 +4,14 @@
   ...
 }: {
   den.aspects.system.nix = {
+    # nh/nix-ld/nur bundle with the core nixpkgs policy. lix deliberately NOT
+    # bundled: it swaps the nix implementation per host (dell keeps CppNix).
+    includes = [
+      den.aspects.system.nix.nh
+      den.aspects.system.nix.nix-ld
+      den.aspects.system.nix.nur
+    ];
+
     nixos = {
       pkgs,
       lib,
