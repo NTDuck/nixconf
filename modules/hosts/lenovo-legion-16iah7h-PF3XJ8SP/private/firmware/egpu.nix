@@ -40,8 +40,13 @@
       #   "  CUDA0: NVIDIA GeForce RTX 3090 (24576 MiB, 23000 MiB free)"
       # A card whose bind failed appears as "(none)"; a card wedged by a
       # stuck context reports 0 MiB free.
-      # llama-cpp is now CLI-only; its llama-server binary is reused purely
-      # as a CUDA health probe (--list-devices); the serving daemon is ollama.
+      # llama-cpp is CLI-only (llama-cpp.nix); its llama-server binary is reused
+      # purely as a CUDA health probe (--list-devices) — same CUDA build already
+      # in the closure, so no extra package cost. Ollama's bundled runner is NOT
+      # a substitute: it is a thin dispatcher that never initializes CUDA itself
+      # (its lib/ollama/llama-server --list-devices prints "(none)"; the CUDA
+      # backend lives in cuda_v12/ and is loaded only through ollama's own
+      # runner process, verified 2026-09-15).
       llamaServer = "${pkgs.unstable.llama-cpp.override {cudaSupport = true;}}/bin/llama-server";
       # Bounded: CUDA init can block for minutes while nvidia-persistenced
       # brings a freshly-tunneled GPU up (2026-09-13 boot: the adopter's
