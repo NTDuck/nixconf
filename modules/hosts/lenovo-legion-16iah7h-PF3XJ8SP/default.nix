@@ -44,11 +44,8 @@
       den.aspects.apps.multimedia.yt-dlp
       den.aspects.apps.music.youtube-music
       den.aspects.system.nix
-      den.aspects.desktop.panels.noctalia
       den.aspects.system.nix.lix
-      den.aspects.system.nix.nh
-      den.aspects.system.nix.nix-ld
-      den.aspects.system.nix.nur
+      den.aspects.desktop.panels.noctalia
       den.aspects.apps.office.pandoc
       den.aspects.apps.office.libreoffice
       den.aspects.apps.office.texlive
@@ -61,6 +58,7 @@
       den.aspects.system.secrets.agenix
       den.aspects.desktop.clipboard.cliphist
       den.aspects.system.network.cloudflare-warp
+      den.aspects.system.network.protonvpn
       den.aspects.desktop.settings.dconf
       den.aspects.desktop.input.fcitx5
       den.aspects.desktop.auth.gnome-keyring
