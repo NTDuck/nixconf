@@ -19,11 +19,14 @@
         # Desktop entry's Exec (`legion_gui --use_legion_cli_to_write`) keeps
         # resolving; the wrapper only drops the env var that crashes Qt 6.11.
         buildCommand = ''
-          mkdir -p $out/bin $out/share
           makeWrapper ${pkgs.unstable.lenovo-legion}/bin/.legion_gui-wrapped \
             $out/bin/legion_gui --unset QT_QPA_PLATFORMTHEME
-          ln -s ${pkgs.unstable.lenovo-legion}/share/applications $out/share/applications
-          ln -s ${pkgs.unstable.lenovo-legion}/share/icons $out/share/icons
+          # Share everything the app ships (applications/, pixmaps/,
+          # legion_linux/, polkit-1/) instead of guessing per-dir: the icon
+          # lives in share/pixmaps and there is NO share/icons upstream —
+          # a dangling share/icons symlink broke buildEnv (system-path
+          # "not a directory", 2026-09-15).
+          ln -s ${pkgs.unstable.lenovo-legion}/share $out/share
         '';
       };
     in {
