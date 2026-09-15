@@ -1,10 +1,6 @@
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-    nixos = {
-      config,
-      pkgs,
-      ...
-    }: {
+    nixos = {pkgs, ...}: {
       # ollama (127.0.0.1:11434) is the only local inference daemon;
       # llama-cpp stays installed CLI-only (see llama-cpp.nix).
       services.ollama = {
@@ -45,7 +41,7 @@
           OLLAMA_KEEP_ALIVE = "-1";
           # 64k for agentic tool loops.
           # 262k for Qwen3.8 27b
-          # OLLAMA_CONTEXT_LENGTH = "262144";
+          OLLAMA_CONTEXT_LENGTH = "262144";
           OLLAMA_NUM_PARALLEL = "1";
           OLLAMA_MAX_LOADED_MODELS = "2";
         };
