@@ -69,6 +69,28 @@
               }
             ];
           };
+          # Keyless local engine: explicit entry replaces implicit discovery
+          # but keeps ollama discovery. modelOverrides pins qwen3.8:27b to
+          # what the daemon actually serves (vram-based default 32768 on the
+          # 3090; see ollama.nix): omp's bundled ollama catalog claims
+          # contextWindow 262144 / maxTokens 32768, so omp keeps sending
+          # past the real window and ollama's trim drops the original user
+          # turn — every agentic tool-loop continuation then 500s with "no
+          # user query found in messages" (ollama #17778, reproduced
+          # 2026-09-15 via curl: tool-last + over-ctx = 500, under-ctx =
+          # 200) and the retry loop re-sends the identical payload forever.
+          # Pinning the window makes omp compact ~20K instead; maxTokens
+          # keeps the output cap sane inside the window.
+          ollama = {
+            baseUrl = "http://127.0.0.1:11434";
+            api = "openai-responses";
+            auth = "none";
+            discovery.type = "ollama";
+            modelOverrides."qwen3.8:27b" = {
+              contextWindow = 32768;
+              maxTokens = 16384;
+            };
+          };
 
           # https://netmind.viettel.vn/codev/vi/docs/hub/installation#install-sso
           codev = {
