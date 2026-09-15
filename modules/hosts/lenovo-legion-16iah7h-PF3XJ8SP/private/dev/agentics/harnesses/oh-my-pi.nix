@@ -97,10 +97,10 @@
       };
 
       defaultConfig = {
-        modelRoles = {
-          default = "codev/zai-org/GLM-5.3-Flash";
-          slow = "codev/MiniMax/MiniMax-M3:xhigh";
-        };
+        # modelRoles = {
+        # default = "codev/zai-org/GLM-5.3-Flash";
+        # slow = "codev/MiniMax/MiniMax-M3:xhigh";
+        # };
 
         symbolPreset = "nerd";
 
