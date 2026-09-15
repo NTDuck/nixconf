@@ -5,7 +5,14 @@
 
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     includes = [
-      den.aspects.system.power.power-profiles-daemon
+      # power-profiles-daemon deliberately EXCLUDED (2026-09-15): its
+      # profile set (low-power/balanced/performance) cannot represent
+      # legion's "custom" profile, and its reassertion overwrites a
+      # custom-mode write seconds later — legion_gui's custom mode
+      # "jumps back" to the previous mode with PPD running (proven:
+      # custom sticks indefinitely with PPD stopped, reverts ~2s with it
+      # active). legion_laptop drives platform_profile itself. upower
+      # stays for battery telemetry.
       den.aspects.system.power.upower
       den.aspects.system.bluetooth
       den.aspects.system.boot.systemd
