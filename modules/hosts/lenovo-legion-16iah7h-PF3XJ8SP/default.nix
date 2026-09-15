@@ -22,7 +22,6 @@
       den.aspects.system.hardware.openrgb
       den.aspects.apps.gaming.itch
       den.aspects.apps.gaming.mangohud
-      den.aspects.apps.gaming.lutris
       den.aspects.apps.gaming.steam
       den.aspects.apps.gaming.wine
       den.aspects.apps.gaming.wlib
