@@ -2,6 +2,8 @@
   den.aspects.apps.network = {
     includes = [
       den.aspects.apps.network.speedtest-cli
+      den.aspects.apps.network.sunshine
+      den.aspects.apps.network.moonlight
     ];
   };
 }

@@ -88,6 +88,7 @@
       den.aspects.desktop.auth.polkit
       den.aspects.system.network.resolved
       den.aspects.system.network.ssh
+      den.aspects.apps.network.sunshine
       den.aspects.system.storage.udisks2
       den.aspects.desktop.portals.xdg
       den.aspects.system.settings
