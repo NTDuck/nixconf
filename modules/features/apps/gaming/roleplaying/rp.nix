@@ -42,6 +42,9 @@
         '';
 
         script = ''
+          # Esoteric high port (user 2026-09-16): avoid common dev-port
+          # collisions (3000-3010). The server binds 3001 inside the
+          # container; only the host side is remapped.
           exec podman run \
             --name=rp \
             --log-driver=journald \
@@ -49,8 +52,7 @@
             --cgroups=enabled \
             --sdnotify=conmon \
             -d --replace \
-            --pull=never \
-            -p 127.0.0.1:3001:3001 \
+            -p 127.0.0.1:43110:3001 \
             -v /var/lib/rp:/app/data \
             -e TZ=UTC \
             rp-suite:local
@@ -72,6 +74,18 @@
           Restart = "on-failure";
         };
       };
+
+      # Launcher entry: the "app" is the web UI on the loopback port.
+      environment.systemPackages = [
+        (pkgs.makeDesktopItem {
+          name = "rp-suite";
+          exec = "xdg-open http://127.0.0.1:43110";
+          desktopName = "RP Suite";
+          comment = "RP Suite roleplay client (local web app)";
+          categories = ["Game" "RolePlaying"];
+          startupNotify = true;
+        })
+      ];
     };
   };
 }

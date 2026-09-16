@@ -4,12 +4,14 @@
   # Digest-pinned in the image ref: podman pulls exactly this index, immune to
   # upstream drift of the floating `latest` tag.
   den.aspects.apps.gaming.roleplaying.sillytavern = {
-    nixos = {
+    nixos = {pkgs, ...}: {
       virtualisation.oci-containers.containers.sillytavern = {
         image = "ghcr.io/sillytavern/sillytavern@sha256:5bb7ef334602ad72b29351acae4d9744ce16c99a1fab840acbd42a7d49d27d9b";
 
-        # Loopback-only: the API has no auth; expose deliberately if needed.
-        ports = ["127.0.0.1:8000:8000"];
+        # Esoteric high port (user 2026-09-16): avoid common dev-port
+        # collisions (8000 is a very common web/API dev port). The server
+        # binds 8000 inside the container; only the host side is remapped.
+        ports = ["127.0.0.1:43999:8000"];
 
         volumes = [
           # Mirrors the official compose mounts; config/ holds config.yaml,
@@ -33,6 +35,18 @@
           "--health-retries=3"
         ];
       };
+
+      # Launcher entry: the "app" is the web UI on the loopback port.
+      environment.systemPackages = [
+        (pkgs.makeDesktopItem {
+          name = "sillytavern";
+          exec = "xdg-open http://127.0.0.1:43999";
+          desktopName = "SillyTavern";
+          comment = "SillyTavern roleplay frontend (local web app)";
+          categories = ["Game" "RolePlaying"];
+          startupNotify = true;
+        })
+      ];
     };
   };
 }
