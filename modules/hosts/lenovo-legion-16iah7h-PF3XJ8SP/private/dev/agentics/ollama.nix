@@ -39,8 +39,8 @@
           OLLAMA_KV_CACHE_TYPE = "q8_0";
           # keep the 27B resident.
           OLLAMA_KEEP_ALIVE = "-1";
-          # 64k for agentic tool loops.
-          OLLAMA_CONTEXT_LENGTH = "128000";
+          # 64k recommended
+          OLLAMA_CONTEXT_LENGTH = "64000";
           OLLAMA_NUM_PARALLEL = "1";
           OLLAMA_MAX_LOADED_MODELS = "2";
         };
