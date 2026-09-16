@@ -33,12 +33,23 @@
         preStart = ''
           podman rm -f rp || true
           rm -f /run/podman-rp/ctr-id
-          podman build -t rp-suite:local ${src}
+          # Upstream declares VOLUME ["/app/data"] (Dockerfile line 36).
+          # On rootful podman, container-create then fixes up the declared
+          # volume path's ownership to the image's root — silently
+          # re-rooting the /var/lib/rp bind mount's files AFTER our chown
+          # (user-visible 2026-09-16: SQLITE_READONLY "attempt to write a
+          # readonly database" from the UID-1000 server). Strip the
+          # declaration pre-build; the run's -v bind mount is all the
+          # persistence this deployment needs.
+          # ${src} is read-only, so strip to a copy and build from it;
+          # RuntimeDirectory="podman-rp" guarantees /run/podman-rp exists.
+          sed '/^VOLUME/d' ${src}/Dockerfile > /run/podman-rp/Dockerfile
+          podman build -f /run/podman-rp/Dockerfile -t rp-suite:local ${src}
           # Container runs as UID 1000 (node), but StateDirectory="rp" gives
           # /var/lib/rp to root:root — the server's mkdir data/avatars then
           # dies with EACCES and the unit restart-loops, blocking
           # multi-user.target. chown the volume so the bind mount is writable.
-          chown -R 1000:1000 /var/lib/rp
+          /run/current-system/sw/bin/chown -R 1000:1000 /var/lib/rp
         '';
 
         script = ''
