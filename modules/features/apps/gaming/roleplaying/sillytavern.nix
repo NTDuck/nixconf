@@ -37,10 +37,21 @@
       };
 
       # Terminal invocation (user 2026-09-16): CLI command instead of a
-      # desktop entry; opens the web UI on the loopback port.
+      # desktop entry. Waits briefly for the loopback port (the unit may
+      # still be starting), then opens the web UI; warns instead of opening
+      # a dead page. xdg-open by absolute path: writeShellScriptBin scripts
+      # do not get xdg-utils on their PATH.
       environment.systemPackages = [
         (pkgs.writeShellScriptBin "sillytavern" ''
-          exec xdg-open http://127.0.0.1:43999
+          port=43999
+          for _ in $(seq 1 20); do
+            if (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null; then
+              exec ${pkgs.xdg-utils}/bin/xdg-open "http://127.0.0.1:$port"
+            fi
+            sleep 0.5
+          done
+          echo "sillytavern: http://127.0.0.1:$port not reachable after 10s — check: systemctl status podman-sillytavern" >&2
+          exit 1
         '')
       ];
     };
