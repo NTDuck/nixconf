@@ -75,16 +75,12 @@
         };
       };
 
-      # Launcher entry: the "app" is the web UI on the loopback port.
+      # Terminal invocation (user 2026-09-16): CLI command instead of a
+      # desktop entry; opens the web UI on the loopback port.
       environment.systemPackages = [
-        (pkgs.makeDesktopItem {
-          name = "rp-suite";
-          exec = "xdg-open http://127.0.0.1:43110";
-          desktopName = "RP Suite";
-          comment = "RP Suite roleplay client (local web app)";
-          categories = ["Game" "RolePlaying"];
-          startupNotify = true;
-        })
+        (pkgs.writeShellScriptBin "rp" ''
+          exec xdg-open http://127.0.0.1:43110
+        '')
       ];
     };
   };

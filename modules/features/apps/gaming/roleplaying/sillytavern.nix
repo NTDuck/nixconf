@@ -36,16 +36,12 @@
         ];
       };
 
-      # Launcher entry: the "app" is the web UI on the loopback port.
+      # Terminal invocation (user 2026-09-16): CLI command instead of a
+      # desktop entry; opens the web UI on the loopback port.
       environment.systemPackages = [
-        (pkgs.makeDesktopItem {
-          name = "sillytavern";
-          exec = "xdg-open http://127.0.0.1:43999";
-          desktopName = "SillyTavern";
-          comment = "SillyTavern roleplay frontend (local web app)";
-          categories = ["Game" "RolePlaying"];
-          startupNotify = true;
-        })
+        (pkgs.writeShellScriptBin "sillytavern" ''
+          exec xdg-open http://127.0.0.1:43999
+        '')
       ];
     };
   };
