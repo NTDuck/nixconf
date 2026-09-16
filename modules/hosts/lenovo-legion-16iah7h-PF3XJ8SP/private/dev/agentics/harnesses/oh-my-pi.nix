@@ -87,7 +87,7 @@
             auth = "none";
             discovery.type = "ollama";
             modelOverrides."qwen3.8:27b" = {
-              contextWindow = 32768;
+              contextWindow = 131072;
               maxTokens = 16384;
             };
           };

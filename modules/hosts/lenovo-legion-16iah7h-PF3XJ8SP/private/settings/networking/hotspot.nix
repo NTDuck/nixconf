@@ -43,7 +43,7 @@
             IEEE80211N = 1;
             IEEE80211AC = 0;
             IEEE80211AX = 0;
-            HT_CAPAB = "";
+            HT_CAPAB = "[HT20]";
             VHT_CAPAB = "";
 
             DRIVER = "nl80211";
