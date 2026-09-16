@@ -42,7 +42,10 @@
           rm $out/share/polkit-1
           mkdir -p $out/share/polkit-1/actions
           for p in ${pkgs.unstable.lenovo-legion}/share/polkit-1/actions/*.policy; do
-            sed "s#/usr/local/bin/#/run/current-system/sw/bin/#g; s#/usr/bin/#/run/current-system/sw/bin/#g" \
+            # Also force allow_active=yes: the defaults are auth_admin /
+            # auth_admin_keep, which prompt for an admin password even when
+            # the exec.path annotation matches (journal 2026-09-16).
+            sed "s#/usr/local/bin/#/run/current-system/sw/bin/#g; s#/usr/bin/#/run/current-system/sw/bin/#g; s#<allow_active>[a-z_]*</allow_active>#<allow_active>yes</allow_active>#g" \
               "$p" > "$out/share/polkit-1/actions/$(basename "$p")"
           done
         '';
@@ -54,6 +57,23 @@
         # load it directly and legion_gui segfaults (QProxyStyle recursion).
         pkgs.qt6Packages.qtstyleplugin-kvantum
       ];
+
+      # Passwordless elevation for the app's pkexec writes. The GUI shells
+      # out to `pkexec legion_cli` with a BARE name (legion.py
+      # write_file_with_legion_cli); pkexec's path lookup does not match
+      # the .policy exec.path annotation, so polkit falls back to the
+      # GENERIC org.freedesktop.policykit.exec action (auth_admin ->
+      # password prompt; journal 2026-09-16, "FAILED to authenticate").
+      # Grant YES to active local subjects when the action is one of the
+      # legion_* actions or the generic exec action for a legion path.
+      security.polkit.extraConfig = ''
+        polkit.addRule(function(action, subject) {
+          if (!(subject.local && subject.active)) return;
+          if (action.id.indexOf("legion") === 0) return polkit.Result.YES;
+          var p = action.lookup("org.freedesktop.policykit.exec.path");
+          if (p && p.indexOf("legion") !== -1) return polkit.Result.YES;
+        });
+      '';
 
       boot.extraModulePackages = [config.boot.kernelPackages.lenovo-legion-module];
       boot.kernelModules = ["legion_laptop"];

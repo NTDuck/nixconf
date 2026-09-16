@@ -7,10 +7,12 @@
   # /devices/platform/legion/platform-profile/platform-profile-0. That uevent
   # is a GENERIC hook — Fn+Q and power-profile writes fire it too — so the
   # handler reads the actual FnLock state and applies idempotently instead of
-  # toggling per event. FnLock state is ACPI HALS (bit 0x400); legion_laptop
-  # 0.0.22 hides fn_lock on J2CN (model_v0 has no FnLock ACPI path override),
-  # so the reader goes through acpi_call's /proc/acpi/call with the VPC0 FQN
-  # used by this EC family (\\_SB.PCI0.LPC0.EC0.VPC0.* per model_v0).
+ # toggling per event. FnLock state is ACPI HALS (bit 0x0400, set while
+ # HKDB==0, i.e. FnLock LED on); legion_laptop 0.0.22 hides fn_lock on
+ # J2CN (model_v0 has no FnLock ACPI path override), so the reader goes
+ # through acpi_call's /proc/acpi/call. FQN from this board's DSDT
+ # (2026-09-16): \_SB.PC00.LPCB.EC0.VPC0.HALS — the earlier PCI0/LPC0
+ # guess was AE_NOT_FOUND (journal 2026-09-16).
   # Trackpad state lives in mango: the script pokes every session's mango IPC
   # socket with `dispatch setoption,disable_trackpad,<0|1>` (absolute state —
   # repeat events no-op). No mango socket (other sessions) -> no-op.
@@ -25,11 +27,11 @@
       fnlock-touchpad = pkgs.writeShellScriptBin "fnlock-touchpad" ''
         set -u
         # FnLock state: 1 = LED on (touchpad enabled), 0 = off (disabled).
-        printf '%s' '\_SB.PCI0.LPC0.EC0.VPC0.HALS' > /proc/acpi/call || {
+        printf '%s' '\_SB.PC00.LPCB.EC0.VPC0.HALS' > /proc/acpi/call || {
           echo "fnlock-touchpad: acpi_call module not loaded" >&2
           exit 1
         }
-        val=$(cat /proc/acpi/call)
+        val=$(cat /proc/acpi/call | tr -d '\0')
         case "$val" in
           0x*) ;;
           *) echo "fnlock-touchpad: HALS eval failed: $val" >&2; exit 1 ;;
