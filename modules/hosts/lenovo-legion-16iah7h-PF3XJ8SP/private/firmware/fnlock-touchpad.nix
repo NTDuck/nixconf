@@ -1,7 +1,8 @@
 {...}: {
-  # FnLock (Fn+Esc indicator light) gates the touchpad:
-  #   FnLock LED on  -> touchpad enabled
-  #   FnLock LED off -> touchpad disabled (mango `disable_trackpad`)
+  # FnLock (Fn+Esc indicator light) gates the touchpad (INVERTED vs upstream
+  # convention, user request 2026-09-16):
+  #   FnLock LED on  -> touchpad disabled (mango `disable_trackpad`)
+  #   FnLock LED off -> touchpad enabled
   # FnLock presses emit a GameZone WMI event that legion_laptop forwards as a
   # `platform-profile change` uevent on
   # /devices/platform/legion/platform-profile/platform-profile-0. That uevent
@@ -26,7 +27,7 @@
     }: let
       fnlock-touchpad = pkgs.writeShellScriptBin "fnlock-touchpad" ''
         set -u
-        # FnLock state: 1 = LED on (touchpad enabled), 0 = off (disabled).
+        # FnLock state: 1 = LED on (touchpad DISABLED), 0 = off (enabled).
         printf '%s' '\_SB.PC00.LPCB.EC0.VPC0.HALS' > /proc/acpi/call || {
           echo "fnlock-touchpad: acpi_call module not loaded" >&2
           exit 1
@@ -41,7 +42,7 @@
         # Absolute state via setoption: burst/coalesced repeats are no-ops.
         for sock in /run/user/*/mango-*.sock; do
           [ -S "$sock" ] || continue
-          printf 'dispatch setoption,disable_trackpad,%s\n' "$((1 - state))" \
+          printf 'dispatch setoption,disable_trackpad,%s\n' "$state" \
             | ${pkgs.netcat-openbsd}/bin/nc -U -N -w 2 "$sock" >/dev/null 2>&1 \
             || echo "fnlock-touchpad: mango IPC failed ($sock)" >&2
         done
