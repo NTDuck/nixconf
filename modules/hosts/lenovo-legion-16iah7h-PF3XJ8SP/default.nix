@@ -26,6 +26,7 @@
       den.aspects.apps.editors.zed-editor
       den.aspects.apps.file-managers.yazi
       den.aspects.apps.file-managers.nemo
+      den.aspects.apps.file-managers.tfm
       den.aspects.system.hardware.openrgb
       den.aspects.apps.gaming.itch
       den.aspects.apps.gaming.mangohud
