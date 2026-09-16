@@ -38,15 +38,19 @@
 
       # Terminal invocation (user 2026-09-16): CLI command instead of a
       # desktop entry. Waits briefly for the loopback port (the unit may
-      # still be starting), then opens the web UI; warns instead of opening
-      # a dead page. xdg-open by absolute path: writeShellScriptBin scripts
-      # do not get xdg-utils on their PATH.
+      # still be starting), opens the web UI quietly (xdg-open prints
+      # portal noise on stdout), then streams the unit journal — Ctrl+C
+      # ends the stream, the browser stays open. Absolute paths for
+      # xdg-open/journalctl: writeShellScriptBin scripts get neither
+      # xdg-utils nor systemd on their PATH.
       environment.systemPackages = [
         (pkgs.writeShellScriptBin "sillytavern" ''
           port=43999
           for _ in $(seq 1 20); do
             if (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null; then
-              exec ${pkgs.xdg-utils}/bin/xdg-open "http://127.0.0.1:$port"
+              ${pkgs.xdg-utils}/bin/xdg-open "http://127.0.0.1:$port" >/dev/null
+              echo "sillytavern: streaming podman-sillytavern logs — Ctrl+C to stop (browser stays open)"
+              exec ${pkgs.systemd}/bin/journalctl --no-pager -n 5 -fu podman-sillytavern
             fi
             sleep 0.5
           done
