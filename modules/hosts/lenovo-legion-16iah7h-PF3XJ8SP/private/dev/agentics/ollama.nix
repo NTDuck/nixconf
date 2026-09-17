@@ -12,7 +12,7 @@
 
         loadModels = [
           # Slayer of Opus 4.6!
-          "qwen3.8:27b"
+          "qwen3.8:27b-mtp-q4_K_M"
           # Uncensored Heretic finetune for the 3090 — chosen for ungated
           # pull + benchmark-preserved capabilities (mean delta -0.5pp).
           # Its renderer clone below clone appends the homelab suffix to this
@@ -32,16 +32,35 @@
 
         syncModels = true;
 
+        # https://github.com/ollama/ollama/blob/main/envconfig/config.go
         environmentVariables = {
+          # https://markaicode.com/ollama-environment-variables-configuration-guide/#:~:text=Use%20OLLAMA%5FKEEP%5FALIVE%3D%2D1%20for%20a%20dedicated%20single%2Dmodel%20server%2E%20Use%200%20when%20memory%20is%20tight%20and%20requests%20are%20infrequent
+          OLLAMA_KEEP_ALIVE = "-1";
+          # OLLAMA_LOAD_TIMEOUT = "5m";
+
           OLLAMA_FLASH_ATTENTION = "1";
           # q8_0 KV over q4_0: the hybrid DeltaNet KV cache is tiny
           # (~2.1GB q8_0 at 64k), q4_0 saves ~0.5GB and costs quality.
           OLLAMA_KV_CACHE_TYPE = "q8_0";
+          # OLLAMA_NOHISTORY = 0;
+          # OLLAMA_NOPRUNE = 0;
           # keep the 27B resident.
-          OLLAMA_KEEP_ALIVE = "-1";
           OLLAMA_CONTEXT_LENGTH = "131072";
+          # OLLAMA_AUTH = 0;
+          # OLLAMA_IGPU_ENABLE = 0;
+          OLLAMA_NO_CLOUD = "1";
+          # OLLAMA_CREATE_REMOTE = 0;
+
           OLLAMA_NUM_PARALLEL = "1";
           OLLAMA_MAX_LOADED_MODELS = "1";
+
+          # What does this even do?
+          OLLAMA_NEW_ENGINE = "1";
+        };
+      };
+
+      specialisation.homelab.configuration = {
+        services.ollama.environmentVariables = {
         };
       };
 
