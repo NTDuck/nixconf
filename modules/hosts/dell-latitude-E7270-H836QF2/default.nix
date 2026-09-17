@@ -14,7 +14,8 @@
       den.aspects.apps.network.tailscale
       den.aspects.apps.sysinfo.fastfetch
       den.aspects.apps.terminals.foot
-      den.aspects.dev.gits
+      den.aspects.dev.gits.git
+      den.aspects.dev.gits.gh
       den.aspects.system.bluetooth
       den.aspects.system.boot.systemd
       den.aspects.system.network.cloudflare-warp
