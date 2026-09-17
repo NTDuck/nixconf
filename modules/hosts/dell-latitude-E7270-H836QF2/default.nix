@@ -35,12 +35,11 @@
       den.aspects.apps.file-managers.tfm
       den.aspects.desktop.theming.stylix
       den.aspects.dev.gits.git
-      (den.aspects.desktop.compositors.mangowm {
-        terminal = pkgs: "${pkgs.foot}/bin/footclient";
-      })
+      (den.aspects.desktop.compositors.dwl)
       (den.aspects.desktop.greeters.tuigreet {
-        command = config: "${config.programs.mango.package}/bin/mango";
+        command = config: "/etc/xdg/dwl-session";
       })
+      den.aspects.desktop.auth.gnome-keyring
     ];
   };
 }
