@@ -27,7 +27,7 @@
       den.aspects.system.nix.nur
       den.aspects.system.power.power-profiles-daemon
       den.aspects.system.power.upower
-      den.aspects.system.secrets.agenix
+      # den.aspects.system.secrets.agenix
       den.aspects.system.settings
       den.aspects.system.storage.udisks2
       den.aspects.system.swap.zram
