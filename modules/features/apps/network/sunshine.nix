@@ -25,7 +25,16 @@
 # Settings reference: https://docs.lizardbyte.dev/projects/sunshine/latest/md_docs_2configuration.html
 {den, ...}: {
   den.aspects.apps.network.sunshine = {
-    nixos = {pkgs, ...}: {
+    internalOutput,
+    externalOutput ? null,
+    externalMode ? null,
+  }: {
+    nixos = {
+      pkgs,
+      config,
+      lib,
+      ...
+    }: {
       services.sunshine = {
         enable = true;
         package = pkgs.unstable.sunshine;
@@ -40,7 +49,7 @@
           # below for UDP 48010 control traffic.
           port = 47989;
 
-          sunshine_name = "legion";
+          sunshine_name = config.networking.hostName;
 
           # Required for mDNS discovery by moonlight on mixed LANs; also lets
           # moonlight find the host over the tailscale mesh when avahi
@@ -52,9 +61,9 @@
           upnp = "disabled";
           min_log_level = 2;
 
-          # Display: legion streams eDP-1 (internal panel) by default; the
-          # external HDMI outputs are driven by mangowm/kanshi on the host.
-          output_name = "eDP-1";
+          # Display: the internal panel streams by default; external outputs
+          # are driven by the host's compositor/kanshi.
+          output_name = internalOutput;
 
           # Encoder preference: nvenc requires cap_sys_admin which we don't
           # grant (see above); let sunshine auto-probe and fall back.
@@ -66,60 +75,63 @@
             PATH = "$(PATH):$(HOME)/.local/bin";
           };
 
-          apps = [
-            # Plain desktop stream: no prep commands, sunshine captures the
-            # current session whatever it is.
-            {
-              name = "Desktop";
-              image-path = "desktop.png";
-            }
+          apps =
+            [
+              # Plain desktop stream: no prep commands, sunshine captures the
+              # current session whatever it is.
+              {
+                name = "Desktop";
+                image-path = "desktop.png";
+              }
+            ]
+            ++ (lib.optionals (externalOutput != null) [
+              # Low-res mode for weaker networks: switch the external output to
+              # the stream mode, restore native on detach. Uses wlr-randr
+              # (Wayland-native; the historical apps.json used xrandr, which
+              # requires an X server). Only declared when the host passes an
+              # external output; wlr-randr must run against the compositor's
+              # WAYLAND_DISPLAY, which sunshine's user unit imports.
+              {
+                name = "Low Res Desktop";
+                image-path = "desktop.png";
+                prep-cmd = [
+                  {
+                    do = "${pkgs.wlr-randr}/bin/wlr-randr --output ${externalOutput} --mode ${externalMode}";
+                    undo = "";
+                  }
+                ];
+                exclude-global-prep-cmd = "false";
+                auto-detach = "true";
+              }
+            ])
+            ++ [
+              # Steam Big Picture: detach sunshine's launcher and open BP in the
+              # user's existing steam (programs.steam is enabled on legion).
+              {
+                name = "Steam Big Picture";
+                detached = ["setsid steam steam://open/bigpicture"];
+                prep-cmd = [
+                  {
+                    do = "";
+                    undo = "setsid steam steam://close/bigpicture";
+                  }
+                ];
+                image-path = "steam.png";
+              }
 
-            # Low-res mode for weaker networks: switch the external output to
-            # 1080p for the stream, restore native on detach. Uses wlr-randr
-            # (Wayland-native; the historical apps.json used xrandr, which
-            # requires an X server that legion deliberately does not run).
-            # wlr-randr must run against the compositor's WAYLAND_DISPLAY;
-            # sunshine's user unit imports it via the session wrapper.
-            {
-              name = "Low Res Desktop";
-              image-path = "desktop.png";
-              prep-cmd = [
-                {
-                  do = "${pkgs.wlr-randr}/bin/wlr-randr --output HDMI-A-1 --mode 1920x1080";
-                  undo = "${pkgs.wlr-randr}/bin/wlr-randr --output HDMI-A-1 --mode 1920x1200";
-                }
-              ];
-              exclude-global-prep-cmd = "false";
-              auto-detach = "true";
-            }
-
-            # Steam Big Picture: detach sunshine's launcher and open BP in the
-            # user's existing steam (programs.steam is enabled on legion).
-            {
-              name = "Steam Big Picture";
-              detached = ["setsid steam steam://open/bigpicture"];
-              prep-cmd = [
-                {
-                  do = "";
-                  undo = "setsid steam steam://close/bigpicture";
-                }
-              ];
-              image-path = "steam.png";
-            }
-
-            # Moonlight on the DELL reaches this host; expose the DELL-facing
-            # terminal workload directly (foot client session) so a stream can
-            # drive a terminal without touching the desktop.
-            {
-              name = "Terminal (foot)";
-              prep-cmd = [
-                {
-                  do = "footclient";
-                  undo = "";
-                }
-              ];
-            }
-          ];
+              # Moonlight on the DELL reaches this host; expose the DELL-facing
+              # terminal workload directly (foot client session) so a stream can
+              # drive a terminal without touching the desktop.
+              {
+                name = "Terminal (foot)";
+                prep-cmd = [
+                  {
+                    do = "footclient";
+                    undo = "";
+                  }
+                ];
+              }
+            ];
         };
       };
 

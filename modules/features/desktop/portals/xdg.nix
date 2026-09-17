@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.desktop.portals.xdg = {
+  den.aspects.desktop.portals.xdg = {internalOutput ? "eDP-1"}: {
     nixos = {pkgs, ...}: let
       # Mango is a wlroots compositor, so screen capture goes through
       # xdg-desktop-portal-wlr while generic dialogs still fall back to GTK.
@@ -22,8 +22,9 @@
           enable = true;
           settings.screencast = {
             chooser_type = "none";
-            output_name = "eDP-1";
-            # output_name = "HDMI-A-1";
+            # Host-provided: the panel that screencast should capture when a
+            # chooser is suppressed.
+            output_name = internalOutput;
           };
         };
 
