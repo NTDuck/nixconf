@@ -139,8 +139,7 @@
             	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
             };
           '';
-        in
-          (pkgs.dwl.override {inherit configH;});
+        in (pkgs.dwl.override {inherit configH;});
 
         extraSessionCommands = ''
           # Mango exported these into the user session for portal/electron
