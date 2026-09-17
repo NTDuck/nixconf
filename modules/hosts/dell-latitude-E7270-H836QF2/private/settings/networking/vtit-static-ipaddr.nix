@@ -3,6 +3,9 @@
     nixos = {pkgs, ...}: let
       nic = "enp0s31f6";
     in {
+      # DELL→legion hotspot connect: nmcli device wifi connect 'Hotto Doggo'
+      #   password '20041889' (2.4GHz ch6 WPA2). DNS served by hotspot
+      #   gateway 192.168.12.1 after the 2026-09-17 fix.
       # Mirror of Legion's eth-vtit shell aliases with the DELL static IP .60 (Legion owns .59).
       # The declarative networking.networkmanager.ensureProfiles variant was abandoned upstream
       # (see the commented block in the Legion file); imperative nmcli aliases kept per that decision.

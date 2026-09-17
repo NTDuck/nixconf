@@ -5,7 +5,8 @@
       boot.blacklistedKernelModules = ["b43" "bcma" "brcmfmac"];
 
       boot.extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
-      nixpkgs.config.permittedInsecurePackages = [config.boot.kernelPackages.broadcom_sta.name];
+      # permittedInsecurePackages NOT set here: central allowInsecurePredicate
+      # in modules/features/system/nix/default.nix already covers broadcom-sta.
     };
   };
 }

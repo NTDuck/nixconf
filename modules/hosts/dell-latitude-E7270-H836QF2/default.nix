@@ -21,7 +21,6 @@
       den.aspects.system.settings
       den.aspects.system.storage.udisks2
       den.aspects.system.swap.zram
-      den.aspects.apps.terminals.ghostty
       den.aspects.apps.sysinfo.fastfetch
       den.aspects.apps.cli.p7zip
       den.aspects.apps.cli.ripgrep
@@ -30,6 +29,18 @@
       den.aspects.desktop.shells.prompts.powerlevel10k
       den.aspects.desktop.auth.polkit
       den.aspects.apps.network.moonlight
+      den.aspects.apps.network.tailscale
+      den.aspects.apps.terminals.foot
+      den.aspects.apps.browsers.firefox
+      den.aspects.apps.file-managers.tfm
+      den.aspects.desktop.theming.stylix
+      den.aspects.dev.gits.git
+      (den.aspects.desktop.compositors.mangowm {
+        terminal = pkgs: "${pkgs.foot}/bin/footclient";
+      })
+      (den.aspects.desktop.greeters.tuigreet {
+        command = config: "${config.programs.mango.package}/bin/mango";
+      })
     ];
   };
 }
