@@ -13,11 +13,13 @@
         loadModels = [
           # Slayer of Opus 4.6!
           "qwen3.8:27b-mtp-q4_K_M"
-          # Uncensored Heretic finetune for the 3090 — chosen for ungated
-          # pull + benchmark-preserved capabilities (mean delta -0.5pp).
-          # Its renderer clone below clone appends the homelab suffix to this
-          # tag, so syncModels' regex match keeps both.
-          "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M"
+          "jetelain/Qwen3.8-27B:latest" # Unsloth Dynamic V3.0 GGUFs, UD-Q4_K_XL, 128k
+          "mannix/omnimerge-v6:vision-Q4_K_M" # Weight tuned from qwen3.8:27b, vision
+          "orcarouter/Qwen3.8-27B-Uncensored:q4_K_M" # Abliterated
+          "smtek/Swift-Qwen3.8-27B:dflash2" # Block-diffusion draft model
+          "smtek/Swift-Qwen3.8-27B:map-k4v" # Engram
+
+          "Distendo/zen-pro" # Unknown pull
 
           # Wonderful SLMs
           # Warning: [VRAM] 9GB at rest, ~41GB upon reaching 1M context window
@@ -61,22 +63,24 @@
 
       specialisation.homelab.configuration = {
         services.ollama.environmentVariables = {
+          # TODO Fill with 3090
+          # CUDA_VISIBLE_DEVICES =
         };
       };
 
       # GPU pin: seeded by tmpfiles with the 3060 fallback, rewritten by
       # egpu-adopt/egpu-release on dock transitions (same pattern llama-cpp
       # used). ollama.service stays restartable via systemctl try-restart.
-      systemd.services.ollama = {
-        serviceConfig.EnvironmentFile = "/run/egpu/ollama.env";
-      };
+      # systemd.services.ollama = {
+      #   serviceConfig.EnvironmentFile = "/run/egpu/ollama.env";
+      # };
 
-      systemd.tmpfiles.rules = [
-        "d /run/egpu 0755 root root -"
-        # 3060 laptop fallback; 'f' (not 'f+') so a mid-session 3090 pin
-        # written by egpu-adopt survives a rebuild.
-        "f /run/egpu/ollama.env 0644 root root - CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529"
-      ];
+      # systemd.tmpfiles.rules = [
+      #   "d /run/egpu 0755 root root -"
+      #   # 3060 laptop fallback; 'f' (not 'f+') so a mid-session 3090 pin
+      #   # written by egpu-adopt survives a rebuild.
+      #   "f /run/egpu/ollama.env 0644 root root - CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529"
+      # ];
 
       # ollama #17778: the qwen3.8 renderer 500s with "no user query found
       # in messages" when context truncation drops the user turn or on
