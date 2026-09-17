@@ -9,6 +9,11 @@
       den.aspects.system.hardware.evtest
       den.aspects.desktop.screenshots.gpu-screen-recorder
 
+      # Mango config reads config.stylix.opacity (window opacity) and the
+      # Noctalia shell reads several stylix values; both aspects read the
+      # options directly (unguarded), so this aspect must force the theme in.
+      den.aspects.desktop.theming.stylix
+
       # Mango config and binds use Noctalia's IPC, and this session starts Noctalia
       # explicitly so its bars/lock shell exist in the compositor-only login.
       den.aspects.desktop.panels.noctalia

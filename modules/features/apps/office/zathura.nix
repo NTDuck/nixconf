@@ -1,5 +1,11 @@
-{
+{den, ...}: {
   den.aspects.apps.office.zathura = {
+    # Config reads config.stylix.fonts directly (unguarded); the theme
+    # aspect must be present wherever zathura is included.
+    includes = [
+      den.aspects.desktop.theming.stylix
+    ];
+
     homeManager = {
       config,
       pkgs,

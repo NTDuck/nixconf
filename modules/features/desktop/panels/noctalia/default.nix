@@ -10,6 +10,11 @@
       den.aspects.system.bluetooth
       den.aspects.system.power.power-profiles-daemon
       den.aspects.system.power.upower
+
+      # Noctalia's shell config reads config.stylix.opacity/image directly
+      # (bar, popups, wallpaper); the theme aspect must be present wherever
+      # noctalia is included.
+      den.aspects.desktop.theming.stylix
     ];
 
     nixos = {
@@ -288,6 +293,13 @@
             tint_intensity = 0.0;
             wallpaper = "${inputs.self}/assets/wallpapers/220826.png";
           };
+          # lockscreen_widgets: NOT parameterized — Noctalia keys each widget
+          # by "type@<output-name>", so the eDP-1 binding below is legion's
+          # internal panel. There is no clean host parameter without
+          # threading an internalOutput arg through the whole noctalia
+          # aspect (and mangowm would still have to forward it); the widget
+          # tree is disabled (enabled = false) anyway. If another host needs
+          # a lockscreen login box, it must declare its own widget block.
           lockscreen_widgets = {
             enabled = false;
             schema_version = 2;
@@ -298,6 +310,7 @@
               visible = true;
             };
             widget = {
+              # legion internal panel (eDP-1); see comment above.
               "lockscreen-login-box@eDP-1" = {
                 box_height = 196.0;
                 box_width = 810.0;
