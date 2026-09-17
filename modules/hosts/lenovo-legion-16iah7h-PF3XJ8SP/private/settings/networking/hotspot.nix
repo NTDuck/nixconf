@@ -47,13 +47,19 @@
             VHT_CAPAB = "";
 
             DRIVER = "nl80211";
-
-            # Hotspot addressing, DHCP, and DNS.
+            # 2026-09-17 DELL diagnosis: with NO_DNS=1 clients were handed the
+            # public resolvers (1.1.1.1/8.8.8.8) straight over DHCP, and the
+            # VTIT wired uplink drops client UDP/53 to public resolvers. The
+            # phone silently fell back to LTE; the DELL (no fallback) lost DNS
+            # entirely. Serve DNS from dnsmasq on the gateway instead: DHCP
+            # points clients at 192.168.12.1, dnsmasq forwards through the
+            # host resolver (corporate DNS), and create_ap redirects client
+            # :53 to its :5353 listener. DHCP_HOSTS dropped: unrecognized by
+            # create_ap 4.7.2 (WARN every boot, empty anyway).
             GATEWAY = "192.168.12.1";
-            DHCP_DNS = "1.1.1.1,8.8.8.8";
-            DHCP_HOSTS = "";
+            DHCP_DNS = "gateway";
             ETC_HOSTS = 0;
-            NO_DNS = 1;
+            NO_DNS = 0;
             NO_DNSMASQ = 0;
 
             # Share enp49s0 through NAT.
@@ -87,15 +93,19 @@
         # Loose reverse-path filtering to prevent dropped forwarded packets.
         networking.firewall.checkReversePath = "loose";
 
-        # dnsmasq serves DHCP and DNS on the hotspot interface.
+        # dnsmasq serves DHCP and DNS on the hotspot interface; create_ap
+        # listens on 5353 and redirects client :53 traffic to it, so both
+        # ports must pass the nftables input chain.
         networking.firewall.interfaces.${wifiInterface} = {
           allowedUDPPorts = [
             53 # DNS
             67 # DHCP server
+            5353 # create_ap dnsmasq DNS listener
           ];
 
           allowedTCPPorts = [
             53 # DNS
+            5353 # create_ap dnsmasq DNS listener
           ];
         };
 
