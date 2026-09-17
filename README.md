@@ -23,6 +23,12 @@ $ git clone https://github.com/NTDuck/nixconf && cd nixconf
 $ sudo nixos-rebuild switch --flake .#${HOSTNAME} --extra-experimental-features "nix-command flakes"
 ```
 
+Sometimes you have to do this instead:
+
+```bash
+$ sudo NIX_CONFIG="experimental-features = nix-command flakes" nixos-rebuild switch --flake ".#${HOSTNAME}"
+```
+
 Current supported hosts are `dell-latitude-E7270-H836QF2` and `lenovo-legion-16iah7h-PF3XJ8SP`.
 
 ### 2. Rebuild
