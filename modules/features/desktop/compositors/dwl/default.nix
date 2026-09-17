@@ -2,9 +2,10 @@
   # dwl: minimal wlroots compositor for the DELL streaming client. dwl ships
   # no runtime config UI — behavior is compiled into config.h, so we build it
   # with a custom configH (nixpkgs `dwl.override { configH = ...; }`).
-  # Stock dwl defaults put dwmenu on MODKEY+p; ours swaps in dmenu-wayland
-  # (dmenu-wl_run) and pins the keybindings below to mirror the mango setup
-  # the DELL previously used (2026-09-17).
+  # Core binds use plain Ctrl (no extra modifier): Ctrl+d launcher
+  # (dmenu-wl_run), Ctrl+Enter terminal (footclient), Ctrl+q kill window;
+  # the rest of the binds stay on MODKEY (Super) per the mango setup the
+  # DELL previously used (2026-09-17).
   den.aspects.desktop.compositors.dwl = {
     includes = [
       den.aspects.desktop.shells.zsh
@@ -13,6 +14,7 @@
     nixos = {
       pkgs,
       config,
+      lib,
       ...
     }: {
       # dmenu_wayland is built without an icon dependency and spawns via
@@ -20,6 +22,11 @@
       # overridden below (configH) and referenced by the session wrapper.
       programs.dwl = {
         enable = true;
+        # tuigreet runs `--cmd ${package}/bin/dwl` directly — the nixpkgs
+        # module's extraSessionCommands live only in /etc/xdg/dwl-session and
+        # the dwl.desktop entry, neither of which greetd consumes, so the
+        # session setup below must be compiled into the package itself
+        # (2026-09-17).
         package = let
           # Keys/binds mirror the previous mango config on this host:
           # foot terminal, dmenu launcher, vim-style focus/hjkl, 9 tags,
@@ -93,13 +100,15 @@
 
             #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
+            /* DELL uses Ctrl for the three core binds (2026-09-17):
+             * Ctrl+d launcher, Ctrl+Enter terminal, Ctrl+q kill window. */
             static const char *termcmd[]  = { "footclient", NULL };
             static const char *menucmd[]  = { "dmenu-wl_run", NULL };
 
             static const Key keys[] = {
-            	{ MODKEY,                    XKB_KEY_p,           spawn,            {.v = menucmd} },
-            	{ MODKEY,                    XKB_KEY_Return,      spawn,            {.v = termcmd} },
-            	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return,      spawn,            {.v = termcmd} },
+            	{ WLR_MODIFIER_CTRL,         XKB_KEY_d,           spawn,            {.v = menucmd} },
+            	{ WLR_MODIFIER_CTRL,         XKB_KEY_Return,      spawn,            {.v = termcmd} },
+            	{ WLR_MODIFIER_CTRL,         XKB_KEY_q,           killclient,       {0} },
             	{ MODKEY,                    XKB_KEY_j,           focusstack,       {.i = +1} },
             	{ MODKEY,                    XKB_KEY_k,           focusstack,       {.i = -1} },
             	{ MODKEY,                    XKB_KEY_i,           incnmaster,       {.i = +1} },
@@ -139,21 +148,29 @@
             	{ MODKEY, BTN_RIGHT,  moveresize,     {.ui = CurResize} },
             };
           '';
-        in (pkgs.dwl.override {inherit configH;});
-
-        extraSessionCommands = ''
-          # Mango exported these into the user session for portal/electron
-          # apps; dwl's wrapper only imports DISPLAY/WAYLAND_DISPLAY.
-          export XDG_CURRENT_DESKTOP=dwl
-          export XDG_SESSION_DESKTOP=dwl
-          export XDG_SESSION_TYPE=wayland
-          export ELECTRON_OZONE_PLATFORM_HINT=auto
-          export MOZ_ENABLE_WAYLAND=1
-          export NIXOS_OZONE_WL=1
-          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd \
-            WAYLAND_DISPLAY DISPLAY \
-            XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE
-        '';
+          inner = pkgs.dwl.override {inherit configH;};
+          wrapped = pkgs.writeShellScriptBin "dwl" ''
+            # dwl spawns termcmd/menucmd via execvp with the greetd session
+            # PATH (/run/current-system/sw/bin only); footclient and
+            # dmenu-wl_run live in the home-manager profile, so prepend it or
+            # the spawns silently fail and the screen stays blank.
+            export PATH="$HOME/.nix-profile/bin:$HOME/.local/state/nix/profiles/profile/bin:/run/current-system/sw/bin:$PATH"
+            # Mango exported these into the user session for portal/electron
+            # apps; greetd's bare --cmd exec only imports DISPLAY.
+            export XDG_CURRENT_DESKTOP=dwl
+            export XDG_SESSION_DESKTOP=dwl
+            export XDG_SESSION_TYPE=wayland
+            export ELECTRON_OZONE_PLATFORM_HINT=auto
+            export MOZ_ENABLE_WAYLAND=1
+            export NIXOS_OZONE_WL=1
+            ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd \
+              WAYLAND_DISPLAY DISPLAY \
+              XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE
+            # dwl has no autostart hook; notifications need this daemon.
+            ${pkgs.mako}/bin/mako &
+            exec ${lib.getExe inner} "$@"
+          '';
+        in wrapped;
       };
 
       # Session env vars for login shells/graphical apps started by dwl.
