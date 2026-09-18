@@ -79,6 +79,9 @@
           [ "$current" = "$1" ] && return 1
           echo "$1" > /run/egpu/ollama.env
           $sysd try-restart ollama.service 2>/dev/null || true
+          # bonsai2 (Bonsai 2 27B llama-server) shares the same pin file;
+          # without the restart it stays on the previous card's env.
+          $sysd try-restart bonsai2.service 2>/dev/null || true
           return 0
         }
 
@@ -134,11 +137,9 @@
 
       egpu-release = pkgs.writeShellScriptBin "egpu-release" ''
         set -eu
-        sysd=${config.systemd.package}/bin/systemctl
-        echo "egpu-release: reverting ollama to laptop 3060" >&2
-        mkdir -p /run/egpu
         echo "CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529" > /run/egpu/ollama.env
         $sysd try-restart ollama.service 2>/dev/null || true
+        $sysd try-restart bonsai2.service 2>/dev/null || true
         # try-restart, not stop: stopping persistenced on detach left the
         # 3060's BAR1/VA space corrupted on the next enumeration
         # (dmaAllocMapping_GM107 failures, seen 2026-09-13 09:40+).
