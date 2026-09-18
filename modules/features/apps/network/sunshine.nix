@@ -10,24 +10,30 @@
 # ~/.config/sunshine/sunshine_state.json, which the declarative config does
 # not touch.
 #
-# Capture: wayland (wlroots zwlr_screencopy) works under mango without
-# cap_sys_admin; the log showed portalgrab found 'eDP-1' directly. capSysAdmin
-# stays off so the wrapperless binary keeps working with the user systemd
-# unit. Encoder: nvenc fails in this unit ("Operation not permitted" /
-# CUDA load failure without cap_sys_admin), so sunshine falls back to
-# software x264 — matching the observed live behavior.
+# Capture (reversed 2026-09-18 with user approval): capSysAdmin is now ON so
+# sunshine can use DRM/KMS capture and probe NVENC on the 4060 — the previous
+# wrapperless posture forced wlr-screencopy + software x264, which cost CPU
+# and latency on every stream (log evidence: "Found H.264 encoder: libx264
+# [software]", vaapi probe failed for lack of intel-media-driver). The
+# capability is scoped to the sunshine security wrapper only.
 #
-# Applications: ports the entries from the pre-declaration apps.json.
-# The old "Low Res Desktop" prep-cmd used xrandr, which cannot work on
-# legion (services.xserver.enable = false); wlr-randr is the Wayland
-# equivalent and is what moonlight-only outputs need.
+# Applications (2026-09-18, exhaustive 3-app set): (1) "Desktop (Native)" —
+# plain capture of the running session, no prep; (2) "Desktop (dell-latitude-
+# E7270-H836QF2)" — drops eDP-1 to its 60Hz mode for the DELL client (matches
+# the client's 60Hz panel, halves compositor render load vs 165Hz; undo
+# restores 165Hz). Mango REJECTS wlr-randr --custom-mode (live-tested
+# 2026-09-18: "failed to apply configuration" for 1366x720 variants), so a
+# literal 720p mode is impossible; instead sunshine's encode pipeline scales
+# the capture to the client's requested resolution (1366x720) on its own.
+# The removed "Low Res Desktop" (external HDMI mode switch) is superseded by
+# entry (2) — it errored on open because the HDMI output is often absent/
+# kanshi-driven. (3) "Steam (Big Picture)" detaches steam BP from the stream
+# launch and closes it on detach.
 #
 # Settings reference: https://docs.lizardbyte.dev/projects/sunshine/latest/md_docs_2configuration.html
 {den, ...}: {
   den.aspects.apps.network.sunshine = {
     internalOutput,
-    externalOutput ? null,
-    externalMode ? null,
   }: {
     nixos = {
       pkgs,
@@ -39,6 +45,8 @@
         enable = true;
         package = pkgs.unstable.sunshine;
         openFirewall = true;
+        # Unlocks DRM/KMS capture + NVENC probing (see capture comment above).
+        capSysAdmin = true;
 
         # keys/values land verbatim in sunshine.conf (pkgs.formats.keyValue).
         # Only the port option is schema'd by the module; everything else is
@@ -80,35 +88,36 @@
               # Plain desktop stream: no prep commands, sunshine captures the
               # current session whatever it is.
               {
-                name = "Desktop";
+                name = "Desktop (Native)";
                 image-path = "desktop.png";
               }
             ]
-            ++ (lib.optionals (externalOutput != null) [
-              # Low-res mode for weaker networks: switch the external output to
-              # the stream mode, restore native on detach. Uses wlr-randr
-              # (Wayland-native; the historical apps.json used xrandr, which
-              # requires an X server). Only declared when the host passes an
-              # external output; wlr-randr must run against the compositor's
-              # WAYLAND_DISPLAY, which sunshine's user unit imports.
+            ++ [
+              # DELL-tuned stream: the internal panel is the only output that
+              # always exists, so park it at 60Hz (DELL's panel refresh) while
+              # streamed. Resolution stays 2560x1600 on the host; sunshine
+              # scales the encode to the client's requested 1366x720.
+              # wlr-randr needs the compositor's WAYLAND_DISPLAY, which the
+              # mango session imports into the systemd user environment that
+              # sunshine's unit runs in.
               {
-                name = "Low Res Desktop";
+                name = "Desktop (dell-latitude-E7270-H836QF2)";
                 image-path = "desktop.png";
                 prep-cmd = [
                   {
-                    do = "${pkgs.wlr-randr}/bin/wlr-randr --output ${externalOutput} --mode ${externalMode}";
-                    undo = "";
+                    do = "${pkgs.wlr-randr}/bin/wlr-randr --output ${internalOutput} --mode 2560x1600@60.007999Hz";
+                    undo = "${pkgs.wlr-randr}/bin/wlr-randr --output ${internalOutput} --mode 2560x1600@165.018997Hz";
                   }
                 ];
                 exclude-global-prep-cmd = "false";
                 auto-detach = "true";
               }
-            ])
+            ]
             ++ [
               # Steam Big Picture: detach sunshine's launcher and open BP in the
               # user's existing steam (programs.steam is enabled on legion).
               {
-                name = "Steam Big Picture";
+                name = "Steam (Big Picture)";
                 detached = ["setsid steam steam://open/bigpicture"];
                 prep-cmd = [
                   {
@@ -117,19 +126,6 @@
                   }
                 ];
                 image-path = "steam.png";
-              }
-
-              # Moonlight on the DELL reaches this host; expose the DELL-facing
-              # terminal workload directly (foot client session) so a stream can
-              # drive a terminal without touching the desktop.
-              {
-                name = "Terminal (foot)";
-                prep-cmd = [
-                  {
-                    do = "footclient";
-                    undo = "";
-                  }
-                ];
               }
             ];
         };

@@ -32,11 +32,7 @@
       den.aspects.apps.gaming.steam
       den.aspects.apps.gaming.wine
       den.aspects.apps.gaming.wlib
-      (den.aspects.apps.network.sunshine {
-        internalOutput = "eDP-1";
-        externalOutput = "HDMI-A-1";
-        externalMode = "1920x1200";
-      })
+      (den.aspects.apps.network.sunshine {internalOutput = "eDP-1";})
       den.aspects.apps.network.tailscale
       den.aspects.apps.messenging.discord
       den.aspects.apps.messenging.lark-cli
