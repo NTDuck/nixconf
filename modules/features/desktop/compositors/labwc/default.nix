@@ -1,7 +1,4 @@
-{
-  den,
-  ...
-}: {
+{den, ...}: {
   # labwc: stacking wlroots compositor for the DELL streaming client,
   # replacing dwl (2026-09-18). Keybinds mirror the legion mango setup as
   # closely as labwc 0.20.2 allows; the three impossible mappings are
@@ -20,7 +17,12 @@
       # history and Vietnamese input must live inside the compositor login.
       den.aspects.desktop.clipboard.cliphist
       den.aspects.desktop.input.fcitx5
-      den.aspects.desktop.portals.xdg {
+      # Bar + notifications now live in their own aspects; labwc only wires
+      # them into the session.
+      den.aspects.desktop.panels.waybar
+      den.aspects.desktop.notifications.mako
+      den.aspects.desktop.portals.xdg
+      {
         internalOutput = "eDP-1";
       }
     ];
@@ -60,7 +62,8 @@
                 makeWrapper $out/bin/labwc-raw $out/bin/labwc --run 'export PATH="$HOME/.nix-profile/bin:$HOME/.local/state/nix/profiles/profile/bin:/run/current-system/sw/bin:$PATH"' --set XDG_CURRENT_DESKTOP labwc --set XDG_SESSION_DESKTOP labwc --set XDG_SESSION_TYPE wayland --set ELECTRON_OZONE_PLATFORM_HINT auto --set MOZ_ENABLE_WAYLAND 1 --set NIXOS_OZONE_WL 1
               '';
           });
-        in wrapped;
+        in
+          wrapped;
       };
 
       # Session env vars for login shells/graphical apps started by labwc.
@@ -73,6 +76,7 @@
 
     homeManager = {
       pkgs,
+      osConfig,
       config,
       lib,
       ...
@@ -101,7 +105,7 @@
           };
           bemenu =
             [
-              "bemenu-run"
+              "${pkgs.unstable.bemenu}/bin/bemenu-run"
               "--fn '${config.stylix.fonts.monospace.name} 11'"
               "--prompt run"
             ]
@@ -128,7 +132,7 @@
                   "@key" = "W-Return";
                   action = {
                     "@name" = "Execute";
-                    "@command" = "footclient";
+                    "@command" = "${config.programs.foot.package}/bin/footclient";
                   };
                 }
                 {
@@ -264,14 +268,14 @@
                   "@key" = "W-C-l";
                   action = {
                     "@name" = "Execute";
-                    "@command" = "swaylock";
+                    "@command" = "${pkgs.unstable.swaylock}/bin/swaylock";
                   };
                 }
                 {
                   "@key" = "W-S-s";
                   action = {
                     "@name" = "Execute";
-                    "@command" = "grim";
+                    "@command" = "${pkgs.unstable.grim}/bin/grim";
                   };
                 }
                 # Media/brightness keys via pipewire + brightnessctl (mango
@@ -280,35 +284,35 @@
                   "@key" = "XF86MonBrightnessDown";
                   action = {
                     "@name" = "Execute";
-                    "@command" = "brightnessctl set 5%-";
+                    "@command" = "${pkgs.unstable.brightnessctl}/bin/brightnessctl set 5%-";
                   };
                 }
                 {
                   "@key" = "XF86MonBrightnessUp";
                   action = {
                     "@name" = "Execute";
-                    "@command" = "brightnessctl set +5%";
+                    "@command" = "${pkgs.unstable.brightnessctl}/bin/brightnessctl set +5%";
                   };
                 }
                 {
                   "@key" = "XF86AudioMute";
                   action = {
                     "@name" = "Execute";
-                    "@command" = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+                    "@command" = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
                   };
                 }
                 {
                   "@key" = "XF86AudioLowerVolume";
                   action = {
                     "@name" = "Execute";
-                    "@command" = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
+                    "@command" = "${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
                   };
                 }
                 {
                   "@key" = "XF86AudioRaiseVolume";
                   action = {
                     "@name" = "Execute";
-                    "@command" = "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+";
+                    "@command" = "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+";
                   };
                 }
               ]
@@ -339,17 +343,10 @@
               }) (map builtins.toString (lib.range 1 9)));
           };
         };
-
         autostart = [
-          # Notifications (mako), the bar, and the input method need explicit
-          # starts: labwc has no autostart XDG machinery of its own and DELL
-          # runs no Noctalia shell. The HM labwc module appends the
-          # dbus/systemd environment import + labwc-session.target start
-          # automatically (systemd.enable default), which pulls in the
-          # mako/waybar user units too — these lines are the belt-and-suspenders
-          # for direct spawns.
-          "waybar &"
-          "fcitx5 -d -r &"
+          # Only the input method needs an explicit start: mako and waybar
+          # start via their own systemd user units, and the HM labwc module
+          "${osConfig.i18n.inputMethod.package}/bin/fcitx5 -d -r &"
         ];
         # The labwc binary wrapper only sets env for the compositor process
         # itself; this import (appended to ~/.config/labwc/autostart by the HM
@@ -382,24 +379,22 @@
         menu.items.active.text.color: #${base00-hex}
       '';
 
-      # DELL session utilities (2026-09-18 user request): bar, notifications,
-      # launcher, screenshots, keys, clipboard, brightness/audio control.
-      programs.waybar = {
-        enable = true;
-        systemd.enable = true;
-      };
-      services.mako.enable = true;
-
-      home.packages = with pkgs; [
-        bemenu # W-d launcher (bemenu-run)
-        brightnessctl
-        grim # W-S-s screenshots
-        slurp # region selection helper for grim
-        libnotify # notify-send
-        swaylock # W-C-l lock (PAM service comes from programs.labwc)
-        wl-clipboard
-        wireplumber # wpctl volume control
-        wlr-randr # display mode control for moonlight-only outputs
+      # DELL session utilities (2026-09-18 user request): launcher,
+      # screenshots, keys, clipboard, brightness/audio control. All binaries
+      # referenced from rc keybinds and this list use explicit store-path refs
+      # so labwc keybinds cannot silently resolve to the wrong binary. Bar and
+      # notifications moved to their own aspects (panels.waybar,
+      # notifications.mako).
+      home.packages = [
+        pkgs.unstable.bemenu # W-d launcher (bemenu-run)
+        pkgs.unstable.brightnessctl
+        pkgs.unstable.grim # W-S-s screenshots
+        pkgs.unstable.slurp # region selection helper for grim
+        pkgs.unstable.libnotify # notify-send
+        pkgs.unstable.swaylock # W-C-l lock (PAM service comes from programs.labwc)
+        pkgs.unstable.wl-clipboard
+        pkgs.wireplumber # wpctl volume control (STABLE: ABI-coupled to system pipewire)
+        pkgs.unstable.wlr-randr # display mode control for moonlight-only outputs
       ];
     };
   };
