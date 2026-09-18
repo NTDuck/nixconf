@@ -92,6 +92,25 @@
             };
           };
 
+          # Bonsai 2 27B via the PrismML fork's llama-server (bonsai2.service,
+          # :8080; see bonsai2.nix for why ollama cannot run this model).
+          # openai-completions, NOT openai-responses: llama-server serves
+          # /v1/chat/completions only. contextWindow pins what the unit
+          # launches with (-c 32768); maxTokens 16384 keeps output inside it.
+          bonsai = {
+            baseUrl = "http://127.0.0.1:8080";
+            api = "openai-completions";
+            auth = "none";
+            models = [
+              {
+                id = "bonsai2";
+                name = "Ternary Bonsai 2 27B (local)";
+                contextWindow = 32768;
+                maxTokens = 16384;
+              }
+            ];
+          };
+
           # https://netmind.viettel.vn/codev/vi/docs/hub/installation#install-sso
           codev = {
             baseUrl = "https://netmind.viettel.vn/gateway/v1";
@@ -119,10 +138,16 @@
       };
 
       defaultConfig = {
-        # modelRoles = {
-        # default = "codev/zai-org/GLM-5.3-Flash";
-        # slow = "codev/MiniMax/MiniMax-M3:xhigh";
-        # };
+        # Daily driver switched to Bonsai 2 27B (bonsai2.service :8080,
+        # 2026-09-18). PI_CONFIG_FILES merges this OVER the mutable
+        # config.yml, so this beats whatever /model last picked. The
+        # ollama qwen3.8 models stay pulled and selectable via /model.
+        modelRoles = {
+          default = "bonsai/bonsai2:max";
+          smol = "bonsai/bonsai2:low";
+          plan = "bonsai/bonsai2:xhigh";
+        };
+
 
         symbolPreset = "nerd";
 
