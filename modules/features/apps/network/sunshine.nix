@@ -73,9 +73,12 @@
           # are driven by the host's compositor/kanshi.
           output_name = internalOutput;
 
-          # Encoder preference: nvenc requires cap_sys_admin which we don't
-          # grant (see above); let sunshine auto-probe and fall back.
-          # capture = "wlr";
+          # Encoder/capture: cap_sys_admin is granted (see above), so
+          # sunshine auto-probes NVENC on the 4060 and DRM/KMS capture; the
+          # latency-critical knobs (nvenc_preset=1, sw_tune=zerolatency) are
+          # already the sunshine defaults. Forcing capture = "wlr" would pin
+          # zwlr_screencopy under mango; auto order (nvfbc→wlr→kms) is
+          # preferred so KMS wins when the wrapper allows it (2026-09-18).
         };
 
         applications = {
