@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.apps.cli.ripgrep = {
+  den.aspects.apps.ripgrep = {
     homeManager = {pkgs, ...}: {
       programs.ripgrep = {
         enable = true;

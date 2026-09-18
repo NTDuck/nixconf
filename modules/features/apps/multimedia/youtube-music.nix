@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.apps.music.youtube-music = {
+  den.aspects.apps.multimedia.youtube-music = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.pear-desktop

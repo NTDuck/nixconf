@@ -1,8 +1,9 @@
 {den, ...}: {
-  den.aspects.dev.api.postman = {
+  den.aspects.dev.terraform = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.unstable.postman
+        pkgs.unstable.terraform
+        pkgs.unstable.tenv
       ];
     };
   };

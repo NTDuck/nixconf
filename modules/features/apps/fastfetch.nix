@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.apps.sysinfo.fastfetch = {
+  den.aspects.apps.fastfetch = {
     # TODO Better view
     homeManager = {
       config,

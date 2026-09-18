@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.dev.api.dbeaver = {
+  den.aspects.dev.toolchains.sql.dbeaver = {
     homeManager = {pkgs, ...}: {
       programs.dbeaver = {
         enable = true;

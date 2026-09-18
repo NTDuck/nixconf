@@ -6,13 +6,13 @@
   den.aspects.dell-latitude-E7270-H836QF2 = {
     includes = [
       den.aspects.apps.browsers.firefox
-      den.aspects.apps.cli.p7zip
-      den.aspects.apps.cli.ripgrep
-      den.aspects.apps.cli.zoxide
+      den.aspects.apps.p7zip
+      den.aspects.apps.ripgrep
+      den.aspects.apps.zoxide
       den.aspects.apps.file-managers.tfm
       den.aspects.apps.network.moonlight
-      den.aspects.apps.network.tailscale
-      den.aspects.apps.sysinfo.fastfetch
+      den.aspects.system.network.tailscale
+      den.aspects.apps.fastfetch
       den.aspects.apps.terminals.foot
       den.aspects.dev.gits.git
       den.aspects.dev.gits.gh

@@ -15,10 +15,10 @@
       # stays for battery telemetry.
       den.aspects.apps.browsers.chromium
       den.aspects.apps.browsers.zen-browser
-      den.aspects.apps.cli.p7zip
-      den.aspects.apps.cli.ripgrep
-      den.aspects.apps.cli.zoxide
-      den.aspects.apps.disk.rufus
+      den.aspects.apps.p7zip
+      den.aspects.apps.ripgrep
+      den.aspects.apps.zoxide
+      den.aspects.apps.rufus
       den.aspects.apps.editors.helix
       den.aspects.apps.editors.zed-editor
       den.aspects.apps.file-managers.nemo
@@ -33,27 +33,27 @@
       den.aspects.apps.gaming.wine
       den.aspects.apps.gaming.wlib
       (den.aspects.apps.network.sunshine {internalOutput = "eDP-1";})
-      den.aspects.apps.network.tailscale
-      den.aspects.apps.messenging.discord
-      den.aspects.apps.messenging.lark-cli
-      den.aspects.apps.messenging.telegram
+      den.aspects.system.network.tailscale
+      den.aspects.apps.messaging.discord
+      den.aspects.apps.messaging.lark-cli
+      den.aspects.apps.messaging.telegram
       den.aspects.apps.multimedia.ffmpeg
       den.aspects.apps.multimedia.gallery-dl
       den.aspects.apps.multimedia.imv
       den.aspects.apps.multimedia.mpv
       den.aspects.apps.multimedia.obs-studio
       den.aspects.apps.multimedia.yt-dlp
-      den.aspects.apps.music.youtube-music
+      den.aspects.apps.multimedia.youtube-music
       den.aspects.apps.office.libreoffice
       den.aspects.apps.office.pandoc
       den.aspects.apps.office.texlive
       den.aspects.apps.office.zathura
-      den.aspects.apps.productivity.mermaid
-      den.aspects.apps.productivity.obsidian
-      den.aspects.apps.productivity.taskwarrior
-      den.aspects.apps.productivity.tomato
-      den.aspects.apps.productivity.world-monitor
-      den.aspects.apps.sysinfo.fastfetch
+      den.aspects.apps.mermaid
+      den.aspects.apps.editors.obsidian
+      den.aspects.apps.taskwarrior
+      den.aspects.apps.tomato
+      den.aspects.apps.world-monitor
+      den.aspects.apps.fastfetch
       den.aspects.apps.terminals.ghostty
       den.aspects.apps.torrents.rtorrent
       den.aspects.apps.torrents.torrent-tui

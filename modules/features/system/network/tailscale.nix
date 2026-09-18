@@ -3,7 +3,7 @@
 # The user brings the node up interactively (`sudo tailscale up`) — no auth key
 # is provisioned in secrets.
 {den, ...}: {
-  den.aspects.apps.network.tailscale = {
+  den.aspects.system.network.tailscale = {
     nixos = {pkgs, ...}: {
       services.tailscale = {
         enable = true;

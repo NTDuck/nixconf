@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.apps.messenging.zalo = {
+  den.aspects.apps.messaging.zalo = {
     nixos = {
       pkgs,
       lib,

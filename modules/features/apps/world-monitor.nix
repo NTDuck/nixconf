@@ -1,6 +1,6 @@
 # TODO Slop, check this guy
 {den, ...}: {
-  den.aspects.apps.productivity.world-monitor = {
+  den.aspects.apps.world-monitor = {
     nixos = {
       pkgs,
       lib,

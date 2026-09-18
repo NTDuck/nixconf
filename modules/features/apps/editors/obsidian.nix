@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.apps.productivity.obsidian = {
+  den.aspects.apps.editors.obsidian = {
     homeManager = {pkgs, ...}: {
       programs.obsidian = {
         enable = true;

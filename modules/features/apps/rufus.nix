@@ -1,8 +1,8 @@
 {den, ...}: {
-  den.aspects.apps.network.speedtest-cli = {
+  den.aspects.apps.rufus = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.unstable.speedtest-cli
+        pkgs.unstable.impression
       ];
     };
   };

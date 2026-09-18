@@ -1,8 +1,8 @@
 {den, ...}: {
-  den.aspects.apps.cli.p7zip = {
+  den.aspects.apps.speedtest-cli = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.unstable.p7zip
+        pkgs.unstable.speedtest-cli
       ];
     };
   };

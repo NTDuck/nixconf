@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.apps.productivity.tomato = {
+  den.aspects.apps.tomato = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.tomato-c

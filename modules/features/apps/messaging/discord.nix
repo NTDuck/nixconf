@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.apps.messenging.discord = {
+  den.aspects.apps.messaging.discord = {
     homeManager = {pkgs, ...}: {
       # User's GUI choice (2026-09-15): discord:// links open Vesktop.
       xdg.mimeApps.defaultApplications."x-scheme-handler/discord" = ["vesktop.desktop"];

@@ -52,7 +52,7 @@ _: let
       };
     };
 in {
-  den.aspects.apps.messenging.lark-cli = {
+  den.aspects.apps.messaging.lark-cli = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         (lark-cli {

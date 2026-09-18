@@ -1,8 +1,8 @@
 {den, ...}: {
-  den.aspects.apps.disk.rufus = {
+  den.aspects.apps.p7zip = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.unstable.impression
+        pkgs.unstable.p7zip
       ];
     };
   };

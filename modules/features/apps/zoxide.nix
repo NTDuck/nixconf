@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.apps.cli.zoxide = {
+  den.aspects.apps.zoxide = {
     homeManager = {
       config,
       lib,

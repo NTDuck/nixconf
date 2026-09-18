@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.apps.messenging.telegram = {
+  den.aspects.apps.messaging.telegram = {
     nixos = {pkgs, ...}: {
       # # https://github.com/ndfined-crp/ayugram-desktop#--manual-binary-cache-setup
       # nix.settings = {

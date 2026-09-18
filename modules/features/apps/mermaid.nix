@@ -1,9 +1,8 @@
 {den, ...}: {
-  den.aspects.dev.iac.terraform = {
+  den.aspects.apps.mermaid = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.unstable.terraform
-        pkgs.unstable.tenv
+        pkgs.unstable.mermaid-cli
       ];
     };
   };

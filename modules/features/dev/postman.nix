@@ -1,8 +1,8 @@
 {den, ...}: {
-  den.aspects.dev.api.harlequin = {
+  den.aspects.dev.postman = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.unstable.harlequin
+        pkgs.unstable.postman
       ];
     };
   };

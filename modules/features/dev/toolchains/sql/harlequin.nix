@@ -1,8 +1,8 @@
 {den, ...}: {
-  den.aspects.apps.productivity.mermaid = {
+  den.aspects.dev.toolchains.sql.harlequin = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        pkgs.unstable.mermaid-cli
+        pkgs.unstable.harlequin
       ];
     };
   };
