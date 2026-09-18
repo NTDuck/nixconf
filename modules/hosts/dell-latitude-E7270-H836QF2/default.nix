@@ -10,7 +10,7 @@
       den.aspects.apps.ripgrep
       den.aspects.apps.zoxide
       den.aspects.apps.file-managers.tfm
-      den.aspects.apps.network.moonlight
+      den.aspects.remote-desktop.moonlight
       den.aspects.system.network.tailscale
       den.aspects.apps.fastfetch
       den.aspects.apps.terminals.foot

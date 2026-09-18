@@ -1,6 +1,6 @@
 # moonlight-qt client; pairs with the sunshine host on the Legion over LAN
 {...}: {
-  den.aspects.apps.network.moonlight = {
+  den.aspects.remote-desktop.moonlight = {
     homeManager = {pkgs, ...}: {
       home.packages = [
         # Wrapper forces --no-yuv444 (2026-09-18): with the "Enable YUV 4:4:4

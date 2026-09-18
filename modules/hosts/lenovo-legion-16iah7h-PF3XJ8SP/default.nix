@@ -32,7 +32,7 @@
       den.aspects.apps.gaming.steam
       den.aspects.apps.gaming.wine
       den.aspects.apps.gaming.wlib
-      (den.aspects.apps.network.sunshine {internalOutput = "eDP-1";})
+      den.aspects.remote-desktop.sunshine
       den.aspects.system.network.tailscale
       den.aspects.apps.messaging.discord
       den.aspects.apps.messaging.lark-cli

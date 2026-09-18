@@ -15,32 +15,48 @@
 # wrapperless posture forced wlr-screencopy + software x264, which cost CPU
 # and latency on every stream (log evidence: "Found H.264 encoder: libx264
 # [software]", vaapi probe failed for lack of intel-media-driver). The
-# capability is scoped to the sunshine security wrapper only.
+# capability is scoped to the sunshine security wrapper only. NOTE: the
+# wrapper only lands after an os switch — check
+# `ls /run/wrappers/bin/sunshine` and that the user unit's ExecStart points
+# at the wrapper (journal 2026-09-18 showed libx264 because the running
+# generation predated the capSysAdmin commit).
 #
-# Applications (2026-09-18, exhaustive 3-app set): (1) "Desktop (Native)" —
-# plain capture of the running session, no prep; (2) "Desktop (dell-latitude-
-# E7270-H836QF2)" — drops eDP-1 to its 60Hz mode for the DELL client (matches
-# the client's 60Hz panel, halves compositor render load vs 165Hz; undo
-# restores 165Hz). Mango REJECTS wlr-randr --custom-mode (live-tested
-# 2026-09-18: "failed to apply configuration" for 1366x720 variants), so a
-# literal 720p mode is impossible; instead sunshine's encode pipeline scales
-# the capture to the client's requested resolution (1366x720) on its own.
-# The removed "Low Res Desktop" (external HDMI mode switch) is superseded by
-# entry (2) — it errored on open because the HDMI output is often absent/
-# kanshi-driven. (3) "Steam (Big Picture)" detaches steam BP from the stream
+# Applications (2026-09-18, 3-app set): (1) "Desktop (Native)" — plain capture
+# of the running session, no prep; (2) "Desktop (dell-latitude-E7270-H836QF2)"
+# — creates a mango HEADLESS virtual output (mmsg dispatch
+# create_virtual_output,SUNHEAD) pinned to the DELL's native 1366x720@60 via
+# a monitorrule in the host's mango config, and points the stream at it.
+# Sunshine's Linux `output_name` is a GLOBAL setting (display_device is
+# Windows-only), but wlgrab matches captures by xdg_output name and falls
+# back to the first real output when the name is absent (wlgrab.cpp) — so
+# with output_name = "SUNHEAD": the DELL app creates the output and streams
+# it 1:1 (zero host-side scaling, native 720p60), while Native streams keep
+# capturing eDP-1. undo destroys all virtual outputs. wlr-randr is only a
+# safety re-assert: the monitorrule alone gives the headless output its
+# custom mode at creation (mango monitor.c applies custom modes to headless
+# outputs). (3) "Steam (Big Picture)" detaches steam BP from the stream
 # launch and closes it on detach.
 #
 # Settings reference: https://docs.lizardbyte.dev/projects/sunshine/latest/md_docs_2configuration.html
-{den, ...}: {
-  den.aspects.apps.network.sunshine = {
-    internalOutput,
-  }: {
+{...}: {
+  den.aspects.remote-desktop.sunshine = {
     nixos = {
       pkgs,
       config,
-      lib,
       ...
-    }: {
+    }: let
+      # Prep-cmds run through boost::process on the raw string (no shell):
+      # compound shell syntax is unsafe there, so the create+retry sequence
+      # lives in this script and the app's `do` stays one absolute path.
+      sunDellPrep = pkgs.writeShellScriptBin "sun-dell-prep" ''
+        ${config.programs.mango.package}/bin/mmsg dispatch create_virtual_output,SUNHEAD
+        # The virtual output appears asynchronously after the dispatch.
+        for i in 1 2 3 4 5; do
+          sleep 0.2
+          ${pkgs.wlr-randr}/bin/wlr-randr --output SUNHEAD --custom-mode 1366x720@60Hz && break
+        done
+      '';
+    in {
       services.sunshine = {
         enable = true;
         package = pkgs.unstable.sunshine;
@@ -69,16 +85,21 @@
           upnp = "disabled";
           min_log_level = 2;
 
-          # Display: the internal panel streams by default; external outputs
-          # are driven by the host's compositor/kanshi.
-          output_name = internalOutput;
+          # Global on Linux (no per-app override exists). "SUNHEAD" is the
+          # mango virtual output the DELL app creates in its prep-cmd; when
+          # it does not exist, wlgrab falls back to the first real output
+          # (eDP-1), which is exactly what "Desktop (Native)" wants.
+          output_name = "SUNHEAD";
 
           # Encoder/capture: cap_sys_admin is granted (see above), so
           # sunshine auto-probes NVENC on the 4060 and DRM/KMS capture; the
           # latency-critical knobs (nvenc_preset=1, sw_tune=zerolatency) are
-          # already the sunshine defaults. Forcing capture = "wlr" would pin
-          # zwlr_screencopy under mango; auto order (nvfbc→wlr→kms) is
-          # preferred so KMS wins when the wrapper allows it (2026-09-18).
+          # already the sunshine defaults. Capture stays on auto
+          # (nvfbc→wlr→kms): with cap_sys_admin KMS wins for real outputs,
+          # while the virtual output is only reachable via the wlr backend —
+          # probing happens per stream session, and a KMS lookup of the
+          # named display fails over correctly. Forcing "wlr" would pin
+          # every stream to zwlr_screencopy and lose KMS's zero-copy.
         };
 
         applications = {
@@ -89,27 +110,28 @@
           apps =
             [
               # Plain desktop stream: no prep commands, sunshine captures the
-              # current session whatever it is.
+              # current session whatever it is. output_name "SUNHEAD" does
+              # not exist here -> wlgrab falls back to eDP-1 (see above).
               {
                 name = "Desktop (Native)";
                 image-path = "desktop.png";
               }
             ]
             ++ [
-              # DELL-tuned stream: the internal panel is the only output that
-              # always exists, so park it at 60Hz (DELL's panel refresh) while
-              # streamed. Resolution stays 2560x1600 on the host; sunshine
-              # scales the encode to the client's requested 1366x720.
-              # wlr-randr needs the compositor's WAYLAND_DISPLAY, which the
-              # mango session imports into the systemd user environment that
-              # sunshine's unit runs in.
+              # DELL-tuned stream: create the named virtual output (mango
+              # IPC, mmsg ships in the mango package), let the host mango
+              # monitorrule pin it to 1366x720@60 (DELL's native mode), and
+              # give wlr-randr a safety re-assert with a short retry (the
+              # output appears asynchronously after the dispatch). undo
+              # destroys all virtual outputs; auto-detach mirrors the old
+              # 3-app set.
               {
                 name = "Desktop (dell-latitude-E7270-H836QF2)";
                 image-path = "desktop.png";
                 prep-cmd = [
                   {
-                    do = "${pkgs.wlr-randr}/bin/wlr-randr --output ${internalOutput} --mode 2560x1600@60.007999Hz";
-                    undo = "${pkgs.wlr-randr}/bin/wlr-randr --output ${internalOutput} --mode 2560x1600@165.018997Hz";
+                    do = "${sunDellPrep}/bin/sun-dell-prep";
+                    undo = "${config.programs.mango.package}/bin/mmsg dispatch destroy_all_virtual_output";
                   }
                 ];
                 exclude-global-prep-cmd = "false";
