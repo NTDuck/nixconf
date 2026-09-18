@@ -20,15 +20,14 @@
       zalo = pkgs.appimageTools.wrapType2 {
         inherit pname version src;
 
-        extraPkgs = pkgs:
-          with pkgs; [
-            libglvnd
-            libxkbcommon
-            openssl
-            sqlite
-            wayland
-            xz
-          ];
+        extraPkgs = pkgs: [
+          pkgs.libglvnd
+          pkgs.libxkbcommon
+          pkgs.openssl
+          pkgs.sqlite
+          pkgs.wayland
+          pkgs.xz
+        ];
 
         extraInstallCommands = ''
           install -Dm444 "${appimageContents}/zalo.desktop" "$out/share/applications/zalo.desktop"

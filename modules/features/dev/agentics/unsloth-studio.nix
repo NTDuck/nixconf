@@ -30,23 +30,22 @@
         # Tauri/WebKitGTK runtime libs the extracted AppImage expects on the
         # host (same set risuai uses; gstreamer libs back the app's audio/video
         # surfaces via its bundled apprun-hook paths).
-        extraPkgs = pkgs:
-          with pkgs; [
-            glib
-            gsettings-desktop-schemas
-            gtk3
-            webkitgtk_4_1
-            libsoup_3
-            cairo
-            pango
-            gdk-pixbuf
-            libepoxy
-            libsecret
-            # runtime deps the Tauri binary dlopens (missing-lib smoke test):
-            nghttp2
-            curl
-            openssl
-          ];
+        extraPkgs = pkgs: [
+          pkgs.glib
+          pkgs.gsettings-desktop-schemas
+          pkgs.gtk3
+          pkgs.webkitgtk_4_1
+          pkgs.libsoup_3
+          pkgs.cairo
+          pkgs.pango
+          pkgs.gdk-pixbuf
+          pkgs.libepoxy
+          pkgs.libsecret
+          # runtime deps the Tauri binary dlopens (missing-lib smoke test):
+          pkgs.nghttp2
+          pkgs.curl
+          pkgs.openssl
+        ];
 
         extraInstallCommands = ''
           install -Dm444 "${appimageContents}/usr/share/applications/Unsloth.desktop" \

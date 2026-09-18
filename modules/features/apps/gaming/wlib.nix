@@ -29,25 +29,24 @@
         inherit pname version;
         src = appimageContents;
 
-        extraPkgs = pkgs:
-          with pkgs; [
-            cabextract
-            gtk3
-            libglvnd
-            libxcb
-            libxcb-cursor
-            libxcb-image
-            libxcb-keysyms
-            libxcb-render-util
-            libxcb-wm
-            libxkbcommon
-            mesa-demos
-            p7zip
-            unzip
-            wayland
-            wineWow64Packages.stableFull
-            winetricks
-          ];
+        extraPkgs = pkgs: [
+          pkgs.cabextract
+          pkgs.gtk3
+          pkgs.libglvnd
+          pkgs.libxcb
+          pkgs.libxcb-cursor
+          pkgs.libxcb-image
+          pkgs.libxcb-keysyms
+          pkgs.libxcb-render-util
+          pkgs.libxcb-wm
+          pkgs.libxkbcommon
+          pkgs.mesa-demos
+          pkgs.p7zip
+          pkgs.unzip
+          pkgs.wayland
+          pkgs.wineWow64Packages.stableFull
+          pkgs.winetricks
+        ];
 
         extraInstallCommands = ''
           install -Dm444 "${appimageContents}/wlib.desktop" "$out/share/applications/wlib.desktop"

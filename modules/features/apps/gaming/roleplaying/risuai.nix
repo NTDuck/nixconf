@@ -27,19 +27,18 @@
         src = appimageContents;
 
         # Tauri/WebKitGTK runtime libs the extracted AppImage expects on the host.
-        extraPkgs = pkgs:
-          with pkgs; [
-            glib
-            gsettings-desktop-schemas
-            gtk3
-            webkitgtk_4_1
-            libsoup_3
-            cairo
-            pango
-            gdk-pixbuf
-            libepoxy
-            libsecret
-          ];
+        extraPkgs = pkgs: [
+          pkgs.glib
+          pkgs.gsettings-desktop-schemas
+          pkgs.gtk3
+          pkgs.webkitgtk_4_1
+          pkgs.libsoup_3
+          pkgs.cairo
+          pkgs.pango
+          pkgs.gdk-pixbuf
+          pkgs.libepoxy
+          pkgs.libsecret
+        ];
 
         extraInstallCommands = ''
           install -Dm444 "${appimageContents}/RisuAI.desktop" "$out/share/applications/risuai.desktop"
