@@ -35,28 +35,31 @@
         enable = true;
         # tuigreet runs `--cmd ${package}/bin/labwc` directly — the HM labwc
         # module's systemd/env machinery only fires from inside a session it
-        # manages, so the session setup is compiled into the package wrapper
-        # (same fix as the dwl aspect before it, 2026-09-18).
+        # manages, so the session setup is compiled into the binary wrapper
+        # (same fix as the dwl aspect before it, 2026-09-18). overrideAttrs
+        # (not a writeShellScriptBin) because nixpkgs programs.labwc feeds
+        # the package into services.displayManager.sessionPackages, which
+        # demands passthru.providedSessions — a bare script has none.
         package = let
           inner = pkgs.labwc;
-          wrapped = pkgs.writeShellScriptBin "labwc" ''
-            # labwc spawns autostart entries with the greetd session PATH
-            # (/run/current-system/sw/bin only); waybar/bemenu/fcitx5 live in
-            # the home-manager profile, so prepend it or they silently fail.
-            export PATH="$HOME/.nix-profile/bin:$HOME/.local/state/nix/profiles/profile/bin:/run/current-system/sw/bin:$PATH"
-            # Mango exported these into the user session for portal/electron
-            # apps; greetd's bare --cmd exec only imports DISPLAY.
-            export XDG_CURRENT_DESKTOP=labwc
-            export XDG_SESSION_DESKTOP=labwc
-            export XDG_SESSION_TYPE=wayland
-            export ELECTRON_OZONE_PLATFORM_HINT=auto
-            export MOZ_ENABLE_WAYLAND=1
-            export NIXOS_OZONE_WL=1
-            ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd \
-              WAYLAND_DISPLAY DISPLAY \
-              XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE
-            exec ${inner}/bin/labwc "$@"
-          '';
+          wrapped = inner.overrideAttrs (old: {
+            nativeBuildInputs =
+              (old.nativeBuildInputs or [])
+              ++ [pkgs.makeWrapper];
+
+            passthru = (old.passthru or {}) // {providedSessions = ["labwc"];};
+
+            postInstall =
+              (old.postInstall or "")
+              + ''
+                mv $out/bin/labwc $out/bin/labwc-raw
+                # PATH must expand $HOME at RUNTIME (the wrapper runs as the
+                # logged-in user), hence the --run export rather than
+                # --prefix, which bakes the build-time literal
+                # (/homeless-shelter).
+                makeWrapper $out/bin/labwc-raw $out/bin/labwc --run 'export PATH="$HOME/.nix-profile/bin:$HOME/.local/state/nix/profiles/profile/bin:/run/current-system/sw/bin:$PATH"' --set XDG_CURRENT_DESKTOP labwc --set XDG_SESSION_DESKTOP labwc --set XDG_SESSION_TYPE wayland --set ELECTRON_OZONE_PLATFORM_HINT auto --set MOZ_ENABLE_WAYLAND 1 --set NIXOS_OZONE_WL 1
+              '';
+          });
         in wrapped;
       };
 
@@ -347,6 +350,17 @@
           # for direct spawns.
           "waybar &"
           "fcitx5 -d -r &"
+        ];
+        # The labwc binary wrapper only sets env for the compositor process
+        # itself; this import (appended to ~/.config/labwc/autostart by the HM
+        # module) propagates the session vars into systemd/dbus so user
+        # services and portals see them. Superset of the module default.
+        systemd.variables = [
+          "DISPLAY"
+          "WAYLAND_DISPLAY"
+          "XDG_CURRENT_DESKTOP"
+          "XDG_SESSION_DESKTOP"
+          "XDG_SESSION_TYPE"
         ];
       };
 
