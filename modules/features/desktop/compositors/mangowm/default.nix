@@ -76,6 +76,7 @@
 
           ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
         in {
+          numlockon = 1; # numpad live from login; toggling stays manual (2026-09-19)
           repeat_rate = 50;
           repeat_delay = 150;
           trackpad_natural_scrolling = 1;
