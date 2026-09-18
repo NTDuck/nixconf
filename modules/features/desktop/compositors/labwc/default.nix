@@ -59,7 +59,12 @@
                 # logged-in user), hence the --run export rather than
                 # --prefix, which bakes the build-time literal
                 # (/homeless-shelter).
-                makeWrapper $out/bin/labwc-raw $out/bin/labwc --run 'export PATH="$HOME/.nix-profile/bin:$HOME/.local/state/nix/profiles/profile/bin:/run/current-system/sw/bin:$PATH"' --set XDG_CURRENT_DESKTOP labwc --set XDG_SESSION_DESKTOP labwc --set XDG_SESSION_TYPE wayland --set ELECTRON_OZONE_PLATFORM_HINT auto --set MOZ_ENABLE_WAYLAND 1 --set NIXOS_OZONE_WL 1
+                # /run/wrappers/bin MUST lead: system-path carries a plain
+                # non-setuid sudo (environment.systemPackages gets
+                # security.sudo.package), so without the wrappers dir first,
+                # `sudo` resolves to that copy and dies with "must be owned
+                # by uid 0 and have the setuid bit set" (DELL, 2026-09-19).
+                makeWrapper $out/bin/labwc-raw $out/bin/labwc --run 'export PATH="/run/wrappers/bin:$HOME/.nix-profile/bin:$HOME/.local/state/nix/profiles/profile/bin:/run/current-system/sw/bin:$PATH"' --set XDG_CURRENT_DESKTOP labwc --set XDG_SESSION_DESKTOP labwc --set XDG_SESSION_TYPE wayland --set ELECTRON_OZONE_PLATFORM_HINT auto --set MOZ_ENABLE_WAYLAND 1 --set NIXOS_OZONE_WL 1
               '';
           });
         in
