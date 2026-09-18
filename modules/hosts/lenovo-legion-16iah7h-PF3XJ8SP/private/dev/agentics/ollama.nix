@@ -1,11 +1,23 @@
-{den, ...}: {
-  den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-    nixos = {pkgs, ...}: {
-      # ollama (127.0.0.1:11434) is the only local inference daemon;
-      # llama-cpp stays installed CLI-only (see llama-cpp.nix).
-      services.ollama = {
-        enable = true;
-        package = pkgs.unstable.ollama-cuda;
+{
+  den,
+  ...
+}: {
+   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
+     nixos = {pkgs, ...}: let
+       # Upstream 0.33.3 silently drops model-authored speculative-decoding
+       # PARAMETERs at Options.FromMap ("invalid option provided"), so the ngram
+       # half of e.g. smtek/Swift-Qwen3.8-27B:map-k4v never reaches llama-server.
+       # Patch forwards draft_spec_type / draft_ngram_map_k4v_* verbatim; see
+       # patches/ollama-spec-params-passthrough.patch.
+       ollama-cuda = pkgs.unstable.ollama-cuda.overrideAttrs (old: {
+         patches = (old.patches or []) ++ [../../../../../../patches/ollama-spec-params-passthrough.patch];
+       });
+     in {
+       # ollama (127.0.0.1:11434) is the only local inference daemon;
+       # llama-cpp stays installed CLI-only (see llama-cpp.nix).
+       services.ollama = {
+         enable = true;
+        package = ollama-cuda;
 
         host = "127.0.0.1";
         port = 11434;

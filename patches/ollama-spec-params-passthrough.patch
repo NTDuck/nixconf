@@ -1,0 +1,63 @@
+--- a/api/types.go
++++ b/api/types.go
+@@ -594,6 +594,14 @@
+ 	UseMMap         *bool `json:"use_mmap,omitempty"`
+ 	NumThread       int   `json:"num_thread,omitempty"`
+ 	DraftNumPredict int   `json:"draft_num_predict,omitempty"`
++	// Speculative decoding overrides, forwarded verbatim to llama-server.
++	// Registry manifests (e.g. smtek/Swift-Qwen3.8-27B) author these as
++	// PARAMETERs; upstream 0.33.3 drops them at Options.FromMap with an
++	// "invalid option provided" warning.
++	DraftSpecType           string `json:"draft_spec_type,omitempty"`
++	DraftNgramMapK4vSizeN   int    `json:"draft_ngram_map_k4v_size_n,omitempty"`
++	DraftNgramMapK4vSizeM   int    `json:"draft_ngram_map_k4v_size_m,omitempty"`
++	DraftNgramMapK4vMinHits int    `json:"draft_ngram_map_k4v_min_hits,omitempty"`
+ }
+ 
+ // EmbedRequest is the request passed to [Client.Embed].
+--- a/llm/llama_server.go
++++ b/llm/llama_server.go
+@@ -805,21 +805,40 @@
+ )
+ 
+ func appendDraftArgs(params []string, draftType, draftModelPath string, opts api.Options) []string {
+-	if draftType == "" {
++	// opts.DraftSpecType, when authored by the model, wins over the derived
++	// single type; it may be a comma list (llama.cpp accepts multiple
++	// speculative implementations, e.g. "draft-dflash,ngram-map-k4v").
++	specType := opts.DraftSpecType
++	if specType == "" {
++		specType = draftType
++	}
++	if specType == "" {
+ 		return params
+ 	}
+ 	if opts.DraftNumPredict <= 0 {
+ 		return params
+ 	}
+ 
+-	params = append(params, "--spec-type", draftType)
++	params = append(params, "--spec-type", specType)
+ 	params = append(params, "--spec-draft-n-max", strconv.Itoa(opts.DraftNumPredict))
+-	if draftType == draftTypeMTP {
++	// backend sampling only makes sense for model-backed drafts; keep the
++	// upstream condition on the derived type so a model-authored list still
++	// gets it when MTP is part of the mix.
++	if draftType == draftTypeMTP || strings.Contains(specType, draftTypeMTP) {
+ 		params = append(params, "--spec-draft-backend-sampling")
+ 	}
+ 	if draftModelPath != "" {
+ 		params = append(params, "--spec-draft-model", draftModelPath)
+ 	}
++	if opts.DraftNgramMapK4vSizeN > 0 {
++		params = append(params, "--spec-ngram-map-k4v-size-n", strconv.Itoa(opts.DraftNgramMapK4vSizeN))
++	}
++	if opts.DraftNgramMapK4vSizeM > 0 {
++		params = append(params, "--spec-ngram-map-k4v-size-m", strconv.Itoa(opts.DraftNgramMapK4vSizeM))
++	}
++	if opts.DraftNgramMapK4vMinHits > 0 {
++		params = append(params, "--spec-ngram-map-k4v-min-hits", strconv.Itoa(opts.DraftNgramMapK4vMinHits))
++	}
+ 	return params
+ }
+ 
