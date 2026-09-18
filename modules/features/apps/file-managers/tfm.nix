@@ -66,7 +66,7 @@ in {
         pkgs.glib # gio — starred-file metadata, gvfs network locations
         pkgs.xdg-utils # xdg-open — required for "open in default app"
         pkgs.udisks # udisksctl — mount/eject removable drives
-        pkgs.wl-clipboard # wl-copy/wl-paste — clipboard with GUI apps
+        pkgs.unstable.wl-clipboard # wl-copy/wl-paste — one canonical copy with cliphist/labwc (stable copy collides on .wl-copy-wrapped, see cliphist.nix)
         pkgs.zip
         pkgs.unzip
         pkgs.p7zip
