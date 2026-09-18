@@ -32,14 +32,14 @@
       den.aspects.system.settings
       den.aspects.system.storage.udisks2
       den.aspects.system.swap.zram
-      (den.aspects.desktop.compositors.dwl)
+      (den.aspects.desktop.compositors.labwc)
       den.aspects.desktop.auth.gnome-keyring
       den.aspects.desktop.auth.polkit
       den.aspects.desktop.shells.prompts.powerlevel10k
       den.aspects.desktop.shells.zsh
       den.aspects.desktop.theming.stylix
       (den.aspects.desktop.greeters.tuigreet {
-        command = config: "${config.programs.dwl.package}/bin/dwl";
+        command = config: "${config.programs.labwc.package}/bin/labwc";
       })
     ];
   };
