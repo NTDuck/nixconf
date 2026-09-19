@@ -13,6 +13,12 @@
         # toggle cannot regress it. 4:2:0 High decodes fine on the fixed-
         # function block.
         (pkgs.writeShellScriptBin "moonlight-qt" ''
+          # Qt 6.11 + qt5ct QProxyStyle recursion SIGSEGVs Qt apps that
+          # inherit stylix's QT_QPA_PLATFORMTHEME=qt5ct (same class as the
+          # legion openrgb/legion_gui crashes, fixed 2026-09-19); shell-side
+          # unset — writeShellScriptBin in home.packages, no package slot to
+          # collide with.
+          unset QT_QPA_PLATFORMTHEME
           exec ${pkgs.moonlight-qt}/bin/moonlight-qt --no-yuv444 "$@"
         '')
       ];

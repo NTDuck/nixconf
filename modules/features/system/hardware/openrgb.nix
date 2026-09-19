@@ -13,6 +13,7 @@
       openrgb-wrapped = pkgs.stdenvNoCC.mkDerivation {
         name = "openrgb-wrapped";
         meta.mainProgram = "openrgb";
+        nativeBuildInputs = [pkgs.makeBinaryWrapper];
         buildCommand = ''
           # Wrap the nixpkgs shim (not the inner .openrgb-wrapped) so the
           # qtHook env (QT_PLUGIN_PATH, XDG_DATA_DIRS) still applies; the

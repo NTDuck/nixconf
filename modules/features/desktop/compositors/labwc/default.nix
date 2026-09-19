@@ -129,10 +129,15 @@
           # Nine workspaces named 1..9, matching the legion mango tags.
           desktops.names.name = map builtins.toString (lib.range 1 9);
 
+          # Key-input parity with the legion mango aspect (repeat_rate=50,
+          # repeat_delay=150, numlockon=1): labwc units match mango's
+          # (chars/s, ms; labwc 0.9.7 rc.xml reference, keyboard section).
           keyboard = {
+            repeatRate = 50;
+            repeatDelay = 150;
+            numlock = "on";
             default = true;
-            keybind =
-              [
+            keybind = [
                 {
                   "@key" = "W-Return";
                   action = {
