@@ -47,7 +47,13 @@
       # (its lib/ollama/llama-server --list-devices prints "(none)"; the CUDA
       # backend lives in cuda_v12/ and is loaded only through ollama's own
       # runner process, verified 2026-09-15).
-      llamaServer = "${pkgs.unstable.llama-cpp.override {cudaSupport = true;}}/bin/llama-server";
+      llamaServer = "${pkgs.unstable.llama-cpp.override {
+        cudaSupport = true;
+        # Same pin as llama-cpp.nix: unstable's nodejs_26 fails its sandbox
+        # test suite (predates nixpkgs#564449 skip); stable's identical 26.9.0
+        # is cached. Build-time-only dep, not embedded in the binary.
+        nodejs_latest = pkgs.nodejs_26;
+      }}/bin/llama-server";
       # Bounded: CUDA init can block for minutes while nvidia-persistenced
       # brings a freshly-tunneled GPU up (2026-09-13 boot: the adopter's
       # llama-server --list-devices hung 2min and its 120s TimeoutStartSec

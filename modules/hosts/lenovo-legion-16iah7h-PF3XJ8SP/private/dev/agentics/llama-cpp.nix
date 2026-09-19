@@ -7,6 +7,13 @@
       environment.systemPackages = [
         (pkgs.unstable.llama-cpp.override {
           cudaSupport = true;
+          # node is a build-time-only dep (webui `npm run build`, not
+          # embedded). Unstable's nodejs_26 (26.9.0) predates the
+          # test-fs-cp-async-file-modes sandbox skip (nixpkgs#564449) and
+          # fails its own test suite in the Nix sandbox, cascading into this
+          # CUDA build; the stable tree's identical 26.9.0 has the skip and
+          # is on cache.nixos.org. Keep args in sync with egpu.nix.
+          nodejs_latest = pkgs.nodejs_26;
         })
       ];
 
