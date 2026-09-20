@@ -7,6 +7,7 @@
       den.aspects.dev.toolchains
 
       den.aspects.dev.cloud.google-cloud-sdk
+      den.aspects.dev.cloud.oracle-cloud-infrastructure
       den.aspects.dev.postman
       den.aspects.dev.terraform
     ];

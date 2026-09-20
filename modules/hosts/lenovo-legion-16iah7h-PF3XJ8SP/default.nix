@@ -54,7 +54,12 @@
       den.aspects.apps.tomato
       den.aspects.apps.world-monitor
       den.aspects.apps.fastfetch
+      den.aspects.apps.speedtest-cli
+      den.aspects.apps.messaging.zalo
       den.aspects.apps.terminals.ghostty
+      # terminals: foot/kitty deliberately EXCLUDED — ghostty is the
+      # terminal (user rule of thumb: keep every feature except where a
+      # better alternative exists; ghostty > foot/kitty).
       den.aspects.apps.torrents.rtorrent
       den.aspects.apps.torrents.torrent-tui
       den.aspects.apps.torrents.webtorrent
@@ -73,11 +78,19 @@
       den.aspects.system.secrets.agenix
       den.aspects.system.settings
       den.aspects.system.storage.udisks2
+      den.aspects.system.storage.fstrim
       den.aspects.system.swap.zram
       den.aspects.system.virtualization.docker
       den.aspects.system.virtualization.kubernetes
       den.aspects.system.virtualization.qemu
       den.aspects.system.virtualization.waydroid
+      # power: power-profiles-daemon stays EXCLUDED (see header comment —
+      # it reverts legion_gui custom modes); thermald/throttled are Intel
+      # laptop guards that also fight custom platform_profile writes here,
+      # powertop auto-tune likewise (USB autosuspend breaks the eGPU link
+      # and input devices mid-session). tlp excluded with PPD for the same
+      # reason. upower arrives via noctalia's includes.
+      den.aspects.system.virtualization.podman
       (den.aspects.desktop.compositors.mangowm {
         terminal = pkgs: "${pkgs.unstable.ghostty}/bin/ghostty";
       })
@@ -102,7 +115,11 @@
           "HDMI-2"
         ];
       }
+      den.aspects.desktop.launchers.bemenu
       den.aspects.desktop.panels.noctalia
+      # panels: waybar/quickshell deliberately EXCLUDED on legion — noctalia
+      # is the shell here (its own notification daemon replaces mako too;
+      # enable_daemon = true). waybar/quickshell remain DELL/labwc aspects.
       (den.aspects.desktop.portals.xdg {internalOutput = "eDP-1";})
       den.aspects.desktop.screenshots.flameshot
       den.aspects.desktop.screenshots.gpu-screen-recorder
@@ -111,6 +128,9 @@
       den.aspects.desktop.shells.zsh
       den.aspects.desktop.theming.stylix
       den.aspects.desktop.wayland.kanshi
+      # Wayland extras: mango has native xwayland (xwayland_ignore_scale),
+      # so the standalone xwayland-satellite user service (HM) is redundant
+      # here; it stays for labwc hosts if needed.
     ];
   };
 }
