@@ -25,10 +25,15 @@
 # and hard-OOMs the 6 GB 3060 under load). Same flag set covers the 3060
 # laptop fallback and the 24 GB 3090 eGPU.
 #
-# -c 32768: full-precision KV here is 64 KiB/token -> 2 GiB KV at 32K. The
-# fit-params step also shrinks context to what VRAM allows (log: "failed
-# to fit params... n_gpu_layers already set" proves it engages on memory
-# pressure). Raise on the eGPU if longer context is needed.
+# -c 196608 (192K, 2026-09-20 user raise from 32K "context too low"):
+# measured KV cost on this model is 64 KiB/token (24 heads * 256-dim K+V *
+# 64 layers * 2 bytes, unified cache) -> ~11.25 GiB KV at 192K. Budget on
+# the 3090: PQ2_0 weights 6.71 GiB + KV 11.25 GiB + mmproj/CUDA ctx ~0.4 GiB
+# ~= 18.4 GiB of 24.5 — fits with ~6 GiB headroom; the model's native max
+# (262144) would NOT (24 GiB+). The fit-params step still shrinks context
+# to what VRAM allows when the 3060 (6 GB) fallback serves instead — log:
+# "failed to fit params... n_gpu_layers already set" proves it engages on
+# memory pressure.
 {
   den,
   ...
@@ -83,11 +88,13 @@
       '';
 
       # Weights, pinned via HF lfs.oid (== content sha256, cross-checked by
-      # downloading both and sha256sum). PTQ1_0 = 1.75 bpw max-quality band
-      # (AGENTS.md: "the highest-quality build"; PQ2_0 is the speed band).
+      # downloading both and sha256sum). PQ2_0 = 2.0-ish bpw speed band
+      # (2026-09-20 user switch from PTQ1_0, the 1.75 bpw max-quality band:
+      # AGENTS.md) — faster decode for the daily driver at slightly lower
+      # quality, and 0.59 GiB more weights for the 3090's KV budget.
       weights = pkgs.fetchurl {
-        url = "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/main/Ternary-Bonsai-2-27B-PTQ1_0.gguf";
-        sha256 = "sha256-UxB/UwqlLrAJEiY6se4pvRmSYch817StTKExjB/jPuM=";
+        url = "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/main/Ternary-Bonsai-2-27B-PQ2_0.gguf";
+        sha256 = "sha256-OQfcFlu3jbr4jUXNNUY4YtLTpWUWnln1jXHI5TlBPGw=";
       };
       mmproj = pkgs.fetchurl {
         url = "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/main/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf";
@@ -96,13 +103,15 @@
 
       bonsaiModels = pkgs.runCommand "bonsai2-27b-gguf" {} ''
         mkdir -p $out/share/bonsai2
-        cp ${weights} $out/share/bonsai2/Ternary-Bonsai-2-27B-PTQ1_0.gguf
+        cp ${weights} $out/share/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf
         cp ${mmproj} $out/share/bonsai2/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf
       '';
 
-      # GPU pin: same env-file contract as the (dormant) ollama pin in
-      # ollama.nix — egpu-adopt/egpu-release rewrite /run/egpu/ollama.env
-      # and try-restart this unit. '-' prefix: file may not exist yet.
+      # GPU pin: egpu-adopt/egpu-release rewrite /run/egpu/bonsai.env
+      # (renamed 2026-09-20 from ollama.env — ollama is now NixOS-pinned to
+      # the 3090 and no longer reads an env file; the two daemons must not
+      # be co-resident) and try-restart this unit. '-' prefix: file may not
+      # exist yet.
       #
       # PORT 8080, binds 127.0.0.1 only. Port 11434 is ollama; 8080 is the
       # Bonsai-demo default. NOTE: llama-server warns the default port
@@ -121,15 +130,15 @@
         wants = ["network-online.target"];
 
         serviceConfig = {
-          EnvironmentFile = "-/run/egpu/ollama.env";
+          EnvironmentFile = "-/run/egpu/bonsai.env";
           ExecStart = let
             flags = pkgs.lib.concatStringsSep " " [
-              "-m ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-PTQ1_0.gguf"
+              "-m ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf"
               "--mmproj ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf"
               "--host 127.0.0.1"
               "--port 8080"
               "-fa on"
-              "-c 32768"
+              "-c 196608"
               "--temp 1.0"
               "--top-p 0.95"
               "--top-k 20"

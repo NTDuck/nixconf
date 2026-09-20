@@ -74,19 +74,27 @@
         pin="CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"      # 3090 eGPU
         fallback="CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529" # 3060 laptop
 
+        # GPU pin file now owns BONSAI2 ONLY (renamed from ollama.env,
+        # 2026-09-20): ollama is statically pinned to the 3090 via
+        # services.ollama.environmentVariables.CUDA_VISIBLE_DEVICES =
+        # "GPU-a4e36250-873d-62c5-912e-fde18d238a6c" (the 3090)
+        # in dev/agentics/ollama.nix, and the two daemons must NOT be
+        # co-resident on the 3090 anyway (bonsai 192K ctx ~19 GiB + ollama
+        # 27B ~18 GiB > 24 GiB — the shared pin was what put them there and
+        # degraded ollama 27B loads to 34/66 layers @ 1.6 tok/s). Arbitrate
+        # with `model-swap` (dev/agentics/model-swap.nix).
         mkdir -p /run/egpu
         # Seed once; never clobber a pin a transition already wrote.
-        [ -s /run/egpu/ollama.env ] || echo "$fallback" > /run/egpu/ollama.env
-        current=$(cat /run/egpu/ollama.env)
+        [ -s /run/egpu/bonsai.env ] || echo "$fallback" > /run/egpu/bonsai.env
+        current=$(cat /run/egpu/bonsai.env)
         # Rewrite the pin and restart the daemon ONLY on an actual change:
         # udev fires egpu-adopt on every USB4 rebind, and an unconditional
-        # restart would evict a resident 16 GB model for nothing.
+        # restart would evict a resident model for nothing.
         tier() {
           [ "$current" = "$1" ] && return 1
-          echo "$1" > /run/egpu/ollama.env
-          $sysd try-restart ollama.service 2>/dev/null || true
-          # bonsai2 (Bonsai 2 27B llama-server) shares the same pin file;
-          # without the restart it stays on the previous card's env.
+          echo "$1" > /run/egpu/bonsai.env
+          # bonsai2 (Bonsai 2 27B llama-server) is the only consumer of
+          # this pin; ollama is pinned via NixOS config, not this file.
           $sysd try-restart bonsai2.service 2>/dev/null || true
           return 0
         }
@@ -95,13 +103,13 @@
         # fallback pin; nothing to adopt.
         [ -e /sys/bus/pci/devices/0000:06:00.0 ] || exit 0
 
-        # Healthy dock: flip ollama to the 3090. Gated on the CUDA probe,
+        # Healthy dock: flip bonsai2 to the 3090. Gated on the CUDA probe,
         # not nvidia-smi -L (see probe comment above).
         if ${cudaProbe}/bin/egpu-cuda-probe; then
           if tier "$pin"; then
-            echo "egpu-adopt: 3090 CUDA-healthy, ollama tiered to eGPU" >&2
+            echo "egpu-adopt: 3090 CUDA-healthy, bonsai tiered to eGPU" >&2
           else
-            echo "egpu-adopt: 3090 CUDA-healthy, ollama already tiered" >&2
+            echo "egpu-adopt: 3090 CUDA-healthy, bonsai already tiered" >&2
           fi
           exit 0
         fi
@@ -134,7 +142,7 @@
         # laptop 3060. If the daemon was running on the (now dead) 3090
         # pin, tier() restarts it onto the 3060; boot-time runs are a no-op.
         if tier "$fallback"; then
-          echo "egpu-adopt: 3090 present but CUDA-unhealthy (NVRM first-bind failure); ollama reverted to 3060, reboot to recover" >&2
+          echo "egpu-adopt: 3090 present but CUDA-unhealthy (NVRM first-bind failure); bonsai reverted to 3060, reboot to recover" >&2
         else
           echo "egpu-adopt: 3090 present but CUDA-unhealthy (NVRM first-bind failure); already on 3060, reboot to recover" >&2
         fi
@@ -143,8 +151,9 @@
 
       egpu-release = pkgs.writeShellScriptBin "egpu-release" ''
         set -eu
-        echo "CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529" > /run/egpu/ollama.env
-        $sysd try-restart ollama.service 2>/dev/null || true
+        echo "CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529" > /run/egpu/bonsai.env
+        # bonsai2 only (2026-09-20): ollama is NixOS-pinned to the 3090 and
+        # not touched by dock transitions.
         $sysd try-restart bonsai2.service 2>/dev/null || true
         # try-restart, not stop: stopping persistenced on detach left the
         # 3060's BAR1/VA space corrupted on the next enumeration
@@ -188,7 +197,7 @@
       };
 
       systemd.services.egpu-adopt = {
-        description = "NixOS eGPU adopter: CUDA-health gate and ollama tier flip";
+        description = "NixOS eGPU adopter: CUDA-health gate and bonsai tier flip";
         after = ["bolt.service" "nvidia-persistenced.service"];
         wants = ["bolt.service"];
         # Boot trigger: covers the window where the tunneled GPU appears
@@ -204,7 +213,7 @@
         };
       };
       systemd.services.egpu-release = {
-        description = "NixOS eGPU releaser: revert ollama tiering on dock detach";
+        description = "NixOS eGPU releaser: revert bonsai tiering on dock detach";
         serviceConfig = {
           Type = "oneshot";
           ExecStart = "${egpu-release}/bin/egpu-release";

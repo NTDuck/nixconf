@@ -86,7 +86,7 @@
             api = "openai-responses";
             auth = "none";
             discovery.type = "ollama";
-            modelOverrides."qwen3.8:27b" = {
+            modelOverrides."qwen3.8:27b-mtp-q4_K_M" = {
               contextWindow = 131072;
               maxTokens = 16384;
             };
@@ -96,7 +96,9 @@
           # :8080; see bonsai2.nix for why ollama cannot run this model).
           # openai-completions, NOT openai-responses: llama-server serves
           # /v1/chat/completions only. contextWindow pins what the unit
-          # launches with (-c 32768); maxTokens 16384 keeps output inside it.
+          # launches with (-c 196608, 2026-09-20 raise from 32768); maxTokens
+          # stays 16384 to keep peak VRAM inside the 3090's budget (see the
+          # models entry below).
           bonsai = {
             baseUrl = "http://127.0.0.1:8080";
             api = "openai-completions";
@@ -105,7 +107,12 @@
               {
                 id = "bonsai2";
                 name = "Ternary Bonsai 2 27B (local)";
-                contextWindow = 32768;
+                contextWindow = 196608;
+                # Deliberately 16384: peak decode KV = maxTokens * 64 KiB/token
+                # (see bonsai2.nix) = 1 GiB on top of the 11.25 GiB input KV +
+                # 6.71 GiB PQ2_0 weights — 192K/16K peaks ~19.4 GiB on the
+                # 24.5 GB 3090; a 64K output cap would push ~23.5 GiB with
+                # <1 GiB headroom.
                 maxTokens = 16384;
               }
             ];
@@ -142,12 +149,11 @@
         # 2026-09-18). PI_CONFIG_FILES merges this OVER the mutable
         # config.yml, so this beats whatever /model last picked. The
         # ollama qwen3.8 models stay pulled and selectable via /model.
-        modelRoles = {
-          default = "bonsai/bonsai2:max";
-          smol = "bonsai/bonsai2:low";
-          plan = "bonsai/bonsai2:xhigh";
-        };
-
+        # modelRoles = {
+        #   default = "bonsai/bonsai2:max";
+        #   smol = "bonsai/bonsai2:low";
+        #   plan = "bonsai/bonsai2:xhigh";
+        # };
 
         symbolPreset = "nerd";
 

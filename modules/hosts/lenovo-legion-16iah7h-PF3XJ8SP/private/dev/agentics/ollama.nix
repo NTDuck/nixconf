@@ -19,7 +19,14 @@
          enable = true;
         package = ollama-cuda;
 
-        host = "127.0.0.1";
+        # 0.0.0.0 + firewall scoped to tailscale0: DELL reaches ollama over
+        # the tailnet (moonlight-era plan: DELL consumes legion's ollama via
+        # tailscale, 2026-09-16). Binding the tailscale IP itself (100.x)
+        # races tailscaled at boot — systemd start order can't guarantee the
+        # address exists when ollama binds, and a bind failure loops the
+        # unit; wildcard bind + nftables interface scoping is the boring
+        # equivalent (verified: nftables aspect enabled on this host).
+        host = "0.0.0.0";
         port = 11434;
 
         loadModels = [
@@ -48,10 +55,29 @@
 
         # https://github.com/ollama/ollama/blob/main/envconfig/config.go
         environmentVariables = {
-          # https://markaicode.com/ollama-environment-variables-configuration-guide/#:~:text=Use%20OLLAMA%5FKEEP%5FALIVE%3D%2D1%20for%20a%20dedicated%20single%2Dmodel%20server%2E%20Use%200%20when%20memory%20is%20tight%20and%20requests%20are%20infrequent
+          # https://markaicode.com/ollama-environment-variables-configuration-guide/#:~:text=Use%20OLLAMA%5FKEEP%5FALIVE%3D-1%20for%20a%20dedicated%20single%2Dmodel%20server%2E%20Use%200%20when%20memory%20is%20tight%20and%20requests%20are%20infrequent
           OLLAMA_KEEP_ALIVE = "-1";
           # OLLAMA_LOAD_TIMEOUT = "5m";
 
+          # Pin to the 3090 ONLY (2026-09-20 fix for "27B models return
+          # 404"/no-output): without it ollama's fit-params sees BOTH GPUs,
+          # GPU1 (3060, 4 GiB free under bonsai2) drags the split down to
+          # 34/66 layers on the 3090 + 32 layers on CPU RAM — 1.6 tok/s
+          # decode (journal: "offloaded 34/66 layers to GPU",
+          # "cannot meet free memory targets on all devices, need to use
+          # 10238 MiB less"). Loads "succeed" but are so slow clients time
+          # out. With this env the full model offloads to the 3090
+          # (journal: 66/66) and the 3060 stays exclusive to bonsai2
+          # (whose pin lives in /run/egpu/bonsai.env).
+          #
+          # Explicit UUID, not index "0": CUDA enumerates the 3060 first
+          # (live check 2026-09-20: index 0 = 3060 a81782bc, index 1 = 3090
+          # a4e36250), so "0" would pin the 6 GB 3060 — 27B cannot fit.
+          # UUID is also enumerate-order-stable across reboots/dock states.
+          # DOCK-ONLY TRADE-OFF: undocked (no 3090) ollama.service fails to
+          # start on this pin; use `model-swap bonsai` for local inference
+          # then (bonsai2 falls back to the 3060 via bonsai.env).
+          CUDA_VISIBLE_DEVICES = "GPU-a4e36250-873d-62c5-912e-fde18d238a6c";
           OLLAMA_FLASH_ATTENTION = "1";
           # q8_0 KV over q4_0: the hybrid DeltaNet KV cache is tiny
           # (~2.1GB q8_0 at 64k), q4_0 saves ~0.5GB and costs quality.
@@ -73,16 +99,23 @@
         };
       };
 
-      specialisation.homelab.configuration = {
-        services.ollama.environmentVariables = {
-          # TODO Fill with 3090
-          # CUDA_VISIBLE_DEVICES =
-        };
-      };
+      # DELL consumes ollama over the tailnet (see host = "0.0.0.0" above):
+      # open 11434 ONLY on tailscale0, never the LAN. networking.firewall
+      # merges fine with the sunshine/ssh aspects' port lists.
+      networking.firewall.interfaces.tailscale0.allowedTCPPorts = [11434];
+
+      # REMOVED 2026-09-20 (homelab specialisation): it existed to swap the
+      # GPU pin per-boot, but the pin mechanism moved to
+      # /run/egpu/bonsai.env (bonsai2 only) + the static 3090 UUID pin for
+      # ollama above; the empty stub was dead config.
 
       # GPU pin: seeded by tmpfiles with the 3060 fallback, rewritten by
       # egpu-adopt/egpu-release on dock transitions (same pattern llama-cpp
       # used). ollama.service stays restartable via systemctl try-restart.
+      # OBSOLETE 2026-09-20: ollama is now pinned via
+      # services.ollama.environmentVariables.CUDA_VISIBLE_DEVICES (static
+      # 3090 UUID); the pin file /run/egpu/bonsai.env belongs to bonsai2
+      # only (see bonsai2.nix and firmware/egpu.nix).
       # systemd.services.ollama = {
       #   serviceConfig.EnvironmentFile = "/run/egpu/ollama.env";
       # };
