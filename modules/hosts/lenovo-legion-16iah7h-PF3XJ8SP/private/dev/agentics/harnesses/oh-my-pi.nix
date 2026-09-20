@@ -87,7 +87,9 @@
             auth = "none";
             discovery.type = "ollama";
             modelOverrides."qwen3.8:27b-mtp-q4_K_M" = {
-              contextWindow = 131072;
+              # 64K to match OLLAMA_CONTEXT_LENGTH (2026-09-20): the daemon
+              # can't serve more than it was launched with; see ollama.nix.
+              contextWindow = 65536;
               maxTokens = 16384;
             };
           };

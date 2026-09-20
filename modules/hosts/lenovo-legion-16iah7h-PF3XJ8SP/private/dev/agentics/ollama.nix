@@ -84,8 +84,15 @@
           OLLAMA_KV_CACHE_TYPE = "q8_0";
           # OLLAMA_NOHISTORY = 0;
           # OLLAMA_NOPRUNE = 0;
-          # keep the 27B resident.
-          OLLAMA_CONTEXT_LENGTH = "131072";
+          # 65536, not 131072 (2026-09-20 live test): at 131072 the 27B's
+          # KV + compute overshoot the 3090 once bonsai-style fixed
+          # allocations are counted — fit-params dropped to 63/66 layers
+          # (1.4 GiB still CPU-mapped, 19.4 GiB free→-1.68 GiB overflow at
+          # full fill) and the first load attempt logged 0/66 layers
+          # (common_params_fit_impl "cannot meet free memory targets").
+          # 64K keeps the model fully on the 3090 with headroom; raise
+          # OLLAMA_CONTEXT_LENGTH only when bonsai2 is swapped out.
+          OLLAMA_CONTEXT_LENGTH = "65536";
           # OLLAMA_AUTH = 0;
           # OLLAMA_IGPU_ENABLE = 0;
           OLLAMA_NO_CLOUD = "1";
