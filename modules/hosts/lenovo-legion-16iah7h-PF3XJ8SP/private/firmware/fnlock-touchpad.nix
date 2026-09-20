@@ -1,4 +1,4 @@
-{...}: {
+{den, ...}: {
   # FnLock (Fn+Esc indicator light) gates the touchpad (INVERTED vs upstream
   # convention, user request 2026-09-16):
   #   FnLock LED on  -> touchpad disabled (mango `disable_trackpad`)

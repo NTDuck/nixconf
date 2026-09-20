@@ -14,6 +14,11 @@
       den.aspects.system.network.tailscale
       den.aspects.apps.fastfetch
       den.aspects.apps.terminals.foot
+      den.aspects.apps.editors.obsidian
+      # JetBrains IDE (proprietary `idea`, not the dead idea-oss).
+      den.aspects.apps.editors.intellij
+      # omp + ollama-over-tailscale (models.yml points at legion).
+      den.aspects.dev.agentics.harnesses.oh-my-pi
       den.aspects.dev.gits.git
       den.aspects.dev.gits.gh
       den.aspects.system.bluetooth

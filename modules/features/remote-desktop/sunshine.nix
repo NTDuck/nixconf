@@ -38,7 +38,7 @@
 # launch and closes it on detach.
 #
 # Settings reference: https://docs.lizardbyte.dev/projects/sunshine/latest/md_docs_2configuration.html
-{...}: {
+{den, ...}: {
   den.aspects.remote-desktop.sunshine = {
     nixos = {
       pkgs,

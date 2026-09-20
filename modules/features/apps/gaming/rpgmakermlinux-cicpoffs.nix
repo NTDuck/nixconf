@@ -1,4 +1,4 @@
-{...}: {
+{den, ...}: {
   den.aspects.apps.gaming.rpgmakermlinux-cicpoffs = {
     nixos = {
       pkgs,

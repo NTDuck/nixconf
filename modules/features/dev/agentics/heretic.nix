@@ -1,4 +1,4 @@
-{...}: {
+{den, ...}: {
   den.aspects.dev.agentics.heretic = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [

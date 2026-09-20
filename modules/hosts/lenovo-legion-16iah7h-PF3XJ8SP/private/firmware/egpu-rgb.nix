@@ -7,7 +7,7 @@
 # after docking; the fix is a server restart, gated to only fire when the
 # 3090 is actually unenumerated (an unconditional restart on every USB4
 # rebind would tear down keyboard + laptop lighting for seconds each time).
-{...}: {
+{den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     nixos = {
       config,

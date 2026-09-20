@@ -1,4 +1,4 @@
-{...}: let
+{den, ...}: let
   sesori-bridge = {
     pkgs,
     lib,

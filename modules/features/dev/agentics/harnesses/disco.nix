@@ -1,4 +1,4 @@
-{...}: let
+{den, ...}: let
   discoVersion = "0.2.1";
 
   # https://github.com/VectorSpaceLab/AREX-Skill — DisCo CLI (@arex-skill/disco).

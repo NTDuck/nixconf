@@ -1,5 +1,5 @@
 # moonlight-qt client; pairs with the sunshine host on the Legion over LAN
-{...}: {
+{den, ...}: {
   den.aspects.remote-desktop.moonlight = {
     homeManager = {pkgs, ...}: {
       home.packages = [
