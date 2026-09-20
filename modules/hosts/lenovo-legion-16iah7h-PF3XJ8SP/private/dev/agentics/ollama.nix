@@ -75,7 +75,7 @@
           # a4e36250), so "0" would pin the 6 GB 3060 — 27B cannot fit.
           # UUID is also enumerate-order-stable across reboots/dock states.
           # DOCK-ONLY TRADE-OFF: undocked (no 3090) ollama.service fails to
-          # start on this pin; use `model-swap bonsai` for local inference
+          # start on this pin; use `llamacpp-prism-up` for local inference
           # then (bonsai2 falls back to the 3060 via bonsai.env).
           CUDA_VISIBLE_DEVICES = "GPU-a4e36250-873d-62c5-912e-fde18d238a6c";
           OLLAMA_FLASH_ATTENTION = "1";

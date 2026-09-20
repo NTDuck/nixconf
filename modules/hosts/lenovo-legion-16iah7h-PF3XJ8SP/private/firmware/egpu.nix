@@ -82,7 +82,7 @@
         # co-resident on the 3090 anyway (bonsai 192K ctx ~19 GiB + ollama
         # 27B ~18 GiB > 24 GiB — the shared pin was what put them there and
         # degraded ollama 27B loads to 34/66 layers @ 1.6 tok/s). Arbitrate
-        # with `model-swap` (dev/agentics/model-swap.nix).
+        # with `llamacpp-prism-up` (dev/agentics/llamacpp-prism.nix).
         mkdir -p /run/egpu
         # Seed once; never clobber a pin a transition already wrote.
         [ -s /run/egpu/bonsai.env ] || echo "$fallback" > /run/egpu/bonsai.env
