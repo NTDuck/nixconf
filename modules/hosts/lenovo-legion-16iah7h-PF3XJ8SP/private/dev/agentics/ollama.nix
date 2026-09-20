@@ -79,20 +79,22 @@
           # then (bonsai2 falls back to the 3060 via bonsai.env).
           CUDA_VISIBLE_DEVICES = "GPU-a4e36250-873d-62c5-912e-fde18d238a6c";
           OLLAMA_FLASH_ATTENTION = "1";
-          # q8_0 KV over q4_0: the hybrid DeltaNet KV cache is tiny
-          # (~2.1GB q8_0 at 64k), q4_0 saves ~0.5GB and costs quality.
-          OLLAMA_KV_CACHE_TYPE = "q8_0";
+          # q4_0 KV (revisit of the earlier q8_0 call, 2026-09-20 live fit):
+          # at 131072 ctx the hybrid DeltaNet KV is ~2.9 GiB q8_0 and the
+          # fit fell 707 MiB short of 66/66 layers (63/66, 1.4 GiB CPU
+          # tail). q4_0 halves the KV (~1.45 GiB) → 66/66 with margin.
+          # SSM-cache layers dominate anyway; per-layer full-attn KV is
+          # 1/4 of layers (full_attention_interval=4).
+          OLLAMA_KV_CACHE_TYPE = "q4_0";
           # OLLAMA_NOHISTORY = 0;
           # OLLAMA_NOPRUNE = 0;
-          # 65536, not 131072 (2026-09-20 live test): at 131072 the 27B's
-          # KV + compute overshoot the 3090 once bonsai-style fixed
-          # allocations are counted — fit-params dropped to 63/66 layers
-          # (1.4 GiB still CPU-mapped, 19.4 GiB free→-1.68 GiB overflow at
-          # full fill) and the first load attempt logged 0/66 layers
-          # (common_params_fit_impl "cannot meet free memory targets").
-          # 64K keeps the model fully on the 3090 with headroom; raise
-          # OLLAMA_CONTEXT_LENGTH only when bonsai2 is swapped out.
-          OLLAMA_CONTEXT_LENGTH = "65536";
+          # 131072 (2026-09-20, q4_0 KV): 128k is the floor per user. With
+          # q8_0 KV the fit fell 707 MiB short of 66/66 layers at 131072
+          # (63/66, 1.4 GiB CPU tail; earlier q8_0 + bonsai co-resident
+          # attempt logged 0/66). q4_0 KV closes the gap with ~700 MiB
+          # spare. Guard: full 66/66 offload needs an EMPTY 3090 — stop
+          # bonsai2 (llamacpp-prism-down) before heavy ollama loads.
+          OLLAMA_CONTEXT_LENGTH = "131072";
           # OLLAMA_AUTH = 0;
           # OLLAMA_IGPU_ENABLE = 0;
           OLLAMA_NO_CLOUD = "1";
