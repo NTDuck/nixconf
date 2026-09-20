@@ -8,6 +8,7 @@
       den.aspects.desktop.fs
       den.aspects.desktop.greeters
       den.aspects.desktop.input
+      den.aspects.desktop.launchers
       den.aspects.desktop.notifications
       den.aspects.desktop.panels
       den.aspects.desktop.portals

@@ -34,6 +34,10 @@
       den.aspects.system.swap.zram
       (den.aspects.desktop.compositors.labwc)
       den.aspects.desktop.auth.gnome-keyring
+      # Session lock (swaylock + PAM + idle chain). The labwc comment
+      # "PAM comes from programs.labwc" was wrong — without this aspect's
+      # security.pam.services.swaylock the W-C-l lock could not authenticate.
+      den.aspects.desktop.auth.lockscreen
       den.aspects.desktop.auth.polkit
       den.aspects.desktop.shells.prompts.powerlevel10k
       den.aspects.desktop.shells.zsh

@@ -19,6 +19,7 @@
       den.aspects.desktop.input.fcitx5
       # Bar + notifications now live in their own aspects; labwc only wires
       # them into the session.
+      den.aspects.desktop.launchers.bemenu
       den.aspects.desktop.panels.waybar
       den.aspects.desktop.notifications.mako
       den.aspects.desktop.portals.xdg
@@ -94,28 +95,7 @@
 
         # HM labwc renders `rc` through pkgs.formats.xml: attrs → elements,
         # "@key"-style entries → XML attributes, lists → repeated tags.
-        rc = let
-          # bemenu colors: fb/nb/tb/hb = backgrounds, ff/nf/tf/hf =
-          # foregrounds; resolved from the shared stylix palette so the
-          # launcher reads like the rest of the session.
-          bemenuColors = with config.lib.stylix.colors; {
-            fb = base00-hex;
-            ff = base05-hex;
-            nb = base00-hex;
-            nf = base05-hex;
-            tb = base0D-hex;
-            tf = base00-hex;
-            hb = base0D-hex;
-            hf = base00-hex;
-          };
-          bemenu =
-            [
-              "${pkgs.unstable.bemenu}/bin/bemenu-run"
-              "--fn '${config.stylix.fonts.monospace.name} 11'"
-              "--prompt run"
-            ]
-            ++ lib.mapAttrsToList (flag: hex: "--${flag} '#${hex}'") bemenuColors;
-        in {
+        rc = {
           theme = {
             # themerc-override (below) carries the stylix colors; rc-level
             # theme keeps only what themerc cannot express.
@@ -145,11 +125,18 @@
                     "@command" = "${config.programs.foot.package}/bin/footclient";
                   };
                 }
+                # W-d launcher (bemenu-run) — keybind lives HERE, not in
+                # desktop.launchers.bemenu: den's aspect-content merge is
+                # last-wins for function-valued class defs (two homeManager
+                # functions on one aspect do NOT list-concat; verified
+                # 2026-09-20, rc.keybind collapsed to the bemenu aspect's
+                # single bind). The launcher ASPECT owns the package; the
+                # compositor owns its keys.
                 {
                   "@key" = "W-d";
                   action = {
                     "@name" = "Execute";
-                    "@command" = lib.concatStringsSep " " bemenu;
+                    "@command" = "${pkgs.unstable.bemenu}/bin/bemenu-run --fn '${config.stylix.fonts.monospace.name} 11' --prefix '$' --prompt run --fb '#${config.lib.stylix.colors.base00-hex}' --ff '#${config.lib.stylix.colors.base05-hex}' --nb '#${config.lib.stylix.colors.base00-hex}' --nf '#${config.lib.stylix.colors.base05-hex}' --tb '#${config.lib.stylix.colors.base0D-hex}' --tf '#${config.lib.stylix.colors.base00-hex}' --hb '#${config.lib.stylix.colors.base0D-hex}' --hf '#${config.lib.stylix.colors.base00-hex}'";
                   };
                 }
                 # W-a: mango toggleoverview -> window list (no overview in labwc).
@@ -389,19 +376,18 @@
         menu.items.active.text.color: #${base00-hex}
       '';
 
-      # DELL session utilities (2026-09-18 user request): launcher,
-      # screenshots, keys, clipboard, brightness/audio control. All binaries
-      # referenced from rc keybinds and this list use explicit store-path refs
-      # so labwc keybinds cannot silently resolve to the wrong binary. Bar and
-      # notifications moved to their own aspects (panels.waybar,
-      # notifications.mako).
+      # DELL session utilities (2026-09-18 user request): screenshots, keys,
+      # clipboard, brightness/audio control. All binaries referenced from rc
+      # keybinds and this list use explicit store-path refs so labwc keybinds
+      # cannot silently resolve to the wrong binary. Bar, notifications and
+      # the launcher moved to their own aspects (panels.waybar,
+      # notifications.mako, launchers.bemenu).
       home.packages = [
-        pkgs.unstable.bemenu # W-d launcher (bemenu-run)
         pkgs.unstable.brightnessctl
         pkgs.unstable.grim # W-S-s screenshots
         pkgs.unstable.slurp # region selection helper for grim
         pkgs.unstable.libnotify # notify-send
-        pkgs.unstable.swaylock # W-C-l lock (PAM service comes from programs.labwc)
+        pkgs.unstable.swaylock # W-C-l lock (PAM provisioned by desktop.auth.lockscreen)
         pkgs.unstable.wl-clipboard
         pkgs.wireplumber # wpctl volume control (STABLE: ABI-coupled to system pipewire)
         pkgs.unstable.wlr-randr # display mode control for moonlight-only outputs

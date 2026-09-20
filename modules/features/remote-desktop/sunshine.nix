@@ -24,13 +24,13 @@
 # Applications (2026-09-18, 3-app set): (1) "Desktop (Native)" — plain capture
 # of the running session, no prep; (2) "Desktop (dell-latitude-E7270-H836QF2)"
 # — creates a mango HEADLESS virtual output (mmsg dispatch
-# create_virtual_output,SUNHEAD) pinned to the DELL's native 1366x720@60 via
+# create_virtual_output,SUNHEAD) pinned to the DELL's native 1366x768@60 via
 # a monitorrule in the host's mango config, and points the stream at it.
 # Sunshine's Linux `output_name` is a GLOBAL setting (display_device is
 # Windows-only), but wlgrab matches captures by xdg_output name and falls
 # back to the first real output when the name is absent (wlgrab.cpp) — so
 # with output_name = "SUNHEAD": the DELL app creates the output and streams
-# it 1:1 (zero host-side scaling, native 720p60), while Native streams keep
+# it 1:1 (zero host-side scaling, native 768p60), while Native streams keep
 # capturing eDP-1. undo destroys all virtual outputs. wlr-randr is only a
 # safety re-assert: the monitorrule alone gives the headless output its
 # custom mode at creation (mango monitor.c applies custom modes to headless
@@ -53,7 +53,7 @@
         # The virtual output appears asynchronously after the dispatch.
         for i in 1 2 3 4 5; do
           sleep 0.2
-          ${pkgs.wlr-randr}/bin/wlr-randr --output SUNHEAD --custom-mode 1366x720@60Hz && break
+          ${pkgs.wlr-randr}/bin/wlr-randr --output SUNHEAD --custom-mode 1366x768@60Hz && break
         done
       '';
     in {
@@ -120,7 +120,7 @@
             ++ [
               # DELL-tuned stream: create the named virtual output (mango
               # IPC, mmsg ships in the mango package), let the host mango
-              # monitorrule pin it to 1366x720@60 (DELL's native mode), and
+              # monitorrule pin it to 1366x768@60 (DELL's native mode), and
               # give wlr-randr a safety re-assert with a short retry (the
               # output appears asynchronously after the dispatch). undo
               # destroys all virtual outputs; auto-detach mirrors the old
