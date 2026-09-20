@@ -94,7 +94,7 @@
       # quality, and 0.59 GiB more weights for the 3090's KV budget.
       weights = pkgs.fetchurl {
         url = "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/main/Ternary-Bonsai-2-27B-PQ2_0.gguf";
-        sha256 = "sha256-OQfcFlu3jbr4jUXNNUY4YtLTpWUWnln1jXHI5TlBPGw=";
+        sha256 = "sha256-OQfcFljbH3ipgmv41by43GXbDUZjiJN69X8ilPrmLsE=";
       };
       mmproj = pkgs.fetchurl {
         url = "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/main/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf";
