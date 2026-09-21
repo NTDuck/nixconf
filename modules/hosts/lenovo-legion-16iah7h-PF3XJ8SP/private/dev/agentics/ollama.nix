@@ -124,7 +124,7 @@
       # OBSOLETE 2026-09-20: ollama is now pinned via
       # services.ollama.environmentVariables.CUDA_VISIBLE_DEVICES (static
       # 3090 UUID); the pin file /run/egpu/bonsai.env belongs to bonsai2
-      # only (see bonsai2.nix and firmware/egpu.nix).
+      # only (see bonsai2.nix and firmware/egpu/default.nix).
       # systemd.services.ollama = {
       #   serviceConfig.EnvironmentFile = "/run/egpu/ollama.env";
       # };

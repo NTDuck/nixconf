@@ -1,7 +1,7 @@
 # Toggle for the eGPU 3090's RGB (ASUS ROG STRIX ENE SMBus controller).
 #
 # The controller hangs off the tunneled card's i2c bus, so its availability
-# is coupled to the USB4 tunnel (same lifecycle as egpu.nix). The OpenRGB
+# is coupled to the USB4 tunnel (same lifecycle as egpu/default.nix). The OpenRGB
 # SDK server scans i2c adapters ONCE at startup — which races the tunnel
 # bring-up — so "card present but not enumerated" is the steady state right
 # after docking; the fix is a server restart, gated to only fire when the
@@ -157,7 +157,7 @@
 
       # Runtime dock events, same triggers as egpu-adopt's rules. '+=' is
       # load-bearing: a plain '=' in a later rule would REPLACE the
-      # SYSTEMD_WANTS value egpu.nix set on the same event and egpu-adopt
+      # SYSTEMD_WANTS value egpu/default.nix set on the same event and egpu-adopt
       # would silently stop firing.
       services.udev.extraRules = ''
         ACTION!="remove", SUBSYSTEM=="thunderbolt", ATTRS{device_name}=="UT4G", TAG+="systemd", ENV{SYSTEMD_WANTS}+="egpu-rgb-rescan.service"
@@ -180,7 +180,7 @@
       # so it cannot stall the boot; same rationale as egpu-adopt). Covers
       # dock-attached-at-power-on, where the tunneled PCI device appears
       # before this generation's udev rules are loaded and the uevent is
-      # never replayed (see egpu.nix).
+      # never replayed (see egpu/default.nix).
       systemd.timers.egpu-rgb-rescan = {
         wantedBy = ["timers.target"];
         timerConfig = {

@@ -22,7 +22,7 @@
         };
       };
 
-      # The eGPU adopter (firmware/egpu.nix) may rescan the tunneled GPU at
+      # The eGPU adopter (firmware/egpu/default.nix) may rescan the tunneled GPU at
       # boot; mango's EGL init must not race that rescan — a half-
       # initialized card0 made tuigreet fall back to llvmpipe ("Fail to
       # start EGL, render software", seen 2026-09-12).

@@ -2,7 +2,7 @@
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     nixos = {pkgs, ...}: {
       # llama-cpp is CLI-only now: llama-cli, llama-bench, and llama-server
-      # (the CUDA build's --list-devices powers the egpu.nix health probe).
+      # (the CUDA build's --list-devices powers the egpu/default.nix health probe).
       # All serving goes through services.ollama.
       environment.systemPackages = [
         (pkgs.unstable.llama-cpp.override {
@@ -12,7 +12,7 @@
           # test-fs-cp-async-file-modes sandbox skip (nixpkgs#564449) and
           # fails its own test suite in the Nix sandbox, cascading into this
           # CUDA build; the stable tree's identical 26.9.0 has the skip and
-          # is on cache.nixos.org. Keep args in sync with egpu.nix.
+          # is on cache.nixos.org. Keep args in sync with egpu/default.nix.
           nodejs_latest = pkgs.nodejs_26;
         })
       ];

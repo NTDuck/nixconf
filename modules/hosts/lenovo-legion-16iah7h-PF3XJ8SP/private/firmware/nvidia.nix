@@ -1,8 +1,4 @@
-{
-  den,
-  inputs,
-  ...
-}: {
+{den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     nixos = {pkgs, ...}: {
       # The nixos-hardware Legion profile (not included) ships the same
@@ -36,7 +32,7 @@
         # (rm external-client deadlock on unplug). REVERTED: mango/wlroots
         # then fails EGL at tuigreet and falls back to llvmpipe — the
         # compositor depends on the fbdev sideband. Freeze work continues
-        # in firmware/egpu.nix instead (nvkms ghost-detection on rescan).
+        # in firmware/egpu/default.nix instead (nvkms ghost-detection on rescan).
         # NMI watchdog: kernel hard-locks (driver spinlock deadlock)
         # self-reboot via the intel_oc_wdt hardware watchdog.
         "nmi_watchdog=1"
