@@ -1,22 +1,19 @@
-{
-  den,
-  ...
-}: {
-   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-     nixos = {pkgs, ...}: let
-       # Upstream 0.33.3 silently drops model-authored speculative-decoding
-       # PARAMETERs at Options.FromMap ("invalid option provided"), so the ngram
-       # half of e.g. smtek/Swift-Qwen3.8-27B:map-k4v never reaches llama-server.
-       # Patch forwards draft_spec_type / draft_ngram_map_k4v_* verbatim; see
-       # patches/ollama-spec-params-passthrough.patch.
-       ollama-cuda = pkgs.unstable.ollama-cuda.overrideAttrs (old: {
-         patches = (old.patches or []) ++ [../../../../../../patches/ollama-spec-params-passthrough.patch];
-       });
-     in {
-       # ollama (127.0.0.1:11434) is the only local inference daemon;
-       # llama-cpp stays installed CLI-only (see llama-cpp.nix).
-       services.ollama = {
-         enable = true;
+{den, ...}: {
+  den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
+    nixos = {pkgs, ...}: let
+      # Upstream 0.33.3 silently drops model-authored speculative-decoding
+      # PARAMETERs at Options.FromMap ("invalid option provided"), so the ngram
+      # half of e.g. smtek/Swift-Qwen3.8-27B:map-k4v never reaches llama-server.
+      # Patch forwards draft_spec_type / draft_ngram_map_k4v_* verbatim; see
+      # patches/ollama-spec-params-passthrough.patch.
+      ollama-cuda = pkgs.unstable.ollama-cuda.overrideAttrs (old: {
+        patches = (old.patches or []) ++ [../../../../../../patches/ollama-spec-params-passthrough.patch];
+      });
+    in {
+      # ollama (127.0.0.1:11434) is the only local inference daemon;
+      # llama-cpp stays installed CLI-only (see llama-cpp.nix).
+      services.ollama = {
+        enable = true;
         package = ollama-cuda;
 
         # 0.0.0.0 + firewall scoped to tailscale0: DELL reaches ollama over
@@ -37,6 +34,17 @@
           "orcarouter/Qwen3.8-27B-Uncensored:q4_K_M" # Abliterated
           "smtek/Swift-Qwen3.8-27B:dflash2" # Block-diffusion draft model
           "smtek/Swift-Qwen3.8-27B:map-k4v" # Engram
+          # Hemmingway-1 (2026-09-21): 27B Qwen3.8-27B finetune specialized
+          # for everyday human communication/writing (EQ-Bench 4 ~1330).
+          # Same qwen35 hybrid-SSM arch as the qwen3.8:27b entries (GGUF
+          # header: ssm.* + full_attention_interval), so the 128k/q4_0-KV
+          # budget math carries over: Q4_K_M weights 16.24 GiB + ~1.45 GiB
+          # KV ~= 18 GiB of the 3090's 24.5 -> full offload on an empty
+          # 3090 (stop bonsai2 first — see OLLAMA_CONTEXT_LENGTH guard).
+          # Catalog overclaims contextWindow 262144 like every qwen3.8
+          # quant; the omp override below pins the real daemon window
+          # (ollama #17778 500-loop hazard).
+          "hf.co/bartowski/Altworld_Hemmingway-1-GGUF:Q4_K_M"
 
           "Distendo/zen-pro" # Unknown pull
 

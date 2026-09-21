@@ -96,6 +96,15 @@
               contextWindow = 131072;
               maxTokens = 16384;
             };
+            # Hemmingway-1 Q4_K_M (added 2026-09-21): ollama's bundled
+            # catalog claims contextWindow 262144 for this qwen35-arch
+            # quant too — same overclaim -> trim -> "no user query found
+            # in messages" 500-loop as qwen3.8:27b (ollama #17778). Pin
+            # to the daemon's real window (OLLAMA_CONTEXT_LENGTH).
+            modelOverrides."hf.co/bartowski/Altworld_Hemmingway-1-GGUF:Q4_K_M" = {
+              contextWindow = 131072;
+              maxTokens = 16384;
+            };
           };
 
           # Bonsai 2 27B via the PrismML fork's llama-server (bonsai2.service,
