@@ -3,6 +3,7 @@
     nixos = {
       pkgs,
       config,
+      lib,
       ...
     }: {
       services.greetd = {
@@ -26,9 +27,15 @@
       # boot; mango's EGL init must not race that rescan — a half-
       # initialized card0 made tuigreet fall back to llvmpipe ("Fail to
       # start EGL, render software", seen 2026-09-12).
+      # CONDITIONAL (2026-09-21): the adopter now exists ONLY inside the
+      # legion homelab specialisation — a hard after/wants on the unit name
+      # would fail the default generation's boot transaction ("wants" is
+      # soft, but After= on a missing unit still records a failed
+      # dependency). Unit-existence check keeps the ordering where it
+      # exists and no-ops where it doesn't.
       systemd.services.greetd = {
-        after = ["egpu-adopt.service"];
-        wants = ["egpu-adopt.service"];
+        after = lib.optional (config.systemd.units ? "egpu-adopt.service") "egpu-adopt.service";
+        wants = lib.optional (config.systemd.units ? "egpu-adopt.service") "egpu-adopt.service";
       };
 
       services.xserver.enable = false;

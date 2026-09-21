@@ -7,6 +7,13 @@
 # (lenovo-legion-16iah7h-pf3xj8sp.taild3be63.ts.net, verified 2026-09-20),
 # but the bare name is enough and keeps working if the tailnet is renamed.
 #
+# REMOTE SPEC ONLY (2026-09-21 user request, hotspot.nix pattern): the
+# 3090-implied client rides the "remote" specialisation — booting DELL's
+# default generation drops the ollama entry (models.yml absent; omp falls
+# back to implicit catalog discovery). The daemon side is gated inside
+# legion's homelab specialisation; both specs must exist for the
+# tailscale workflow to work.
+#
 # Only the ollama provider: cloud providers (orcarouter/tabitoken/codev)
 # need API keys, and DELL has no agenix identity enrolled — keys are
 # legion-only. /model still lists the cloud providers' names via omp's
@@ -17,10 +24,17 @@
 {den, ...}: {
   den.aspects.dell-latitude-E7270-H836QF2 = {
     homeManager = {
+      osConfig,
       pkgs,
       ...
     }: let
       yaml = pkgs.formats.yaml {};
+
+      # 3090 gating: osConfig.isSpecialisation is mkOverride-0 true inside
+      # spec evals (nixos/modules/system/activation/no-clone.nix) and false
+      # in the default generation, so models.yml is written only when the
+      # remote spec boots.
+      onRemoteSpec = osConfig.isSpecialisation or false;
 
       models = {
         providers = {
@@ -42,8 +56,12 @@
         };
       };
     in {
-      home.file.".omp/agent/models.yml".source =
-        yaml.generate ".omp.agent.models.yml" models;
+      # `enable = false` drops the entry entirely; an empty attrset would
+      # fail ("source was accessed but has no value defined" at HM merge).
+      home.file.".omp/agent/models.yml" = {
+        enable = onRemoteSpec;
+        source = yaml.generate ".omp.agent.models.yml" models;
+      };
     };
   };
 }

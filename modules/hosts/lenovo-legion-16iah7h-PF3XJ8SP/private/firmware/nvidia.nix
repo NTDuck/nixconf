@@ -61,6 +61,10 @@
       environment.sessionVariables = {
         __GLX_VENDOR_LIBRARY_NAME = "nvidia";
         LIBVA_DRIVER_NAME = "nvidia";
+        # Dead variable (nothing in the tree reads it — wine's filters are
+        # set inside the wine3090 wrappers): kept because wine's WSI comment
+        # documents the eGPU story. Remove with the wine3090 wrappers if
+        # those ever move into the homelab spec.
         WINEGPU_FILTER = "NVIDIA GeForce RTX 3090";
       };
     };

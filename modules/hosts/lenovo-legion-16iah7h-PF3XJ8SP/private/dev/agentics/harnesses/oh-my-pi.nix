@@ -11,152 +11,173 @@
     }: let
       yaml = pkgs.formats.yaml {};
 
-      models = {
-        providers = {
-          # https://docs.orcarouter.ai/integrations/oh-my-pi
-          orcarouter = {
-            baseUrl = "https://api.orcarouter.ai/v1";
-            api = "openai-completions";
-            apiKey = "ORCAROUTER_API_KEY";
-            authHeader = true;
+      # 3090 gating (2026-09-21, hotspot.nix pattern): the local providers
+      # (ollama :11434, bonsai :8080) exist ONLY inside the homelab
+      # specialisation — the daemons they point at are gated there too
+      # (ollama.nix, bonsai2.nix). osConfig.isSpecialisation is mkOverride-0
+      # true inside spec evals (nixos/modules/system/activation/no-clone.nix)
+      # and false in the default generation, so the two models.yml variants
+      # diverge on this flag and there is no module collision (the spec HM
+      # eval replaces the default HM config wholesale).
+      onHomelabSpec = osConfig.isSpecialisation or false;
 
-            models = [
-              {
-                id = "orcarouter/auto";
-                name = "OrcaRouter";
-                reasoning = false;
-                input = ["text"];
-                contextWindow = 200000;
-                maxTokens = 8192;
+      cloudProviders = {
+        # https://docs.orcarouter.ai/integrations/oh-my-pi
+        orcarouter = {
+          baseUrl = "https://api.orcarouter.ai/v1";
+          api = "openai-completions";
+          apiKey = "ORCAROUTER_API_KEY";
+          authHeader = true;
 
-                compat = {
-                  supportsDeveloperRole = false;
-                  maxTokensField = "max_tokens";
-                };
-              }
-            ];
+          models = [
+            {
+              id = "orcarouter/auto";
+              name = "OrcaRouter";
+              reasoning = false;
+              input = ["text"];
+              contextWindow = 200000;
+              maxTokens = 8192;
+
+              compat = {
+                supportsDeveloperRole = false;
+                maxTokensField = "max_tokens";
+              };
+            }
+          ];
+        };
+
+        # https://tabitoken.com/pricing
+        tabitoken = {
+          baseUrl = "https://tabitoken.com/v1";
+          api = "openai-completions";
+          apiKey = "TABIAI_API_KEY";
+
+          models = [
+            {
+              id = "claude-opus-5";
+              name = "Claude Opus 5";
+              contextWindow = 200000;
+              maxTokens = 8192;
+            }
+
+            {
+              id = "claude-opus-5-thinking";
+              name = "Claude Opus 5 (Thinking)";
+              contextWindow = 200000;
+              maxTokens = 8192;
+            }
+
+            {
+              id = "claude-opus-4-8";
+              name = "Claude Opus 4.8";
+              contextWindow = 200000;
+              maxTokens = 8192;
+            }
+
+            {
+              id = "claude-opus-4-8-thinking";
+              name = "Claude Opus 4.8 (Thinking)";
+              contextWindow = 200000;
+              maxTokens = 8192;
+            }
+          ];
+        };
+        # https://netmind.viettel.vn/codev/vi/docs/hub/installation#install-sso
+        codev = {
+          baseUrl = "https://netmind.viettel.vn/gateway/v1";
+          api = "openai-completions";
+          apiKey = "CODEV_API_KEY";
+          authHeader = true;
+
+          models = [
+            {
+              id = "MiniMax/MiniMax-M3";
+              name = "MiniMax M3 (NetMind)";
+              contextWindow = 196608;
+              maxTokens = 65536;
+            }
+
+            {
+              id = "zai-org/GLM-5.3-Flash";
+              name = "GLM 5.3 Flash (NetMind)";
+              contextWindow = 1048576;
+              maxTokens = 131072;
+            }
+          ];
+        };
+      };
+
+      # 3090-coupled local providers — homelab spec only (see onHomelabSpec).
+      local = {
+        # Keyless local engine: explicit entry replaces implicit discovery
+        # but keeps ollama discovery. modelOverrides pins qwen3.8:27b to
+        # what the daemon actually serves (vram-based default 32768 on the
+        # 3090; see ollama.nix): omp's bundled ollama catalog claims
+        # contextWindow 262144 / maxTokens 32768, so omp keeps sending
+        # past the real window and ollama's trim drops the original user
+        # turn — every agentic tool-loop continuation then 500s with "no
+        # user query found in messages" (ollama #17778, reproduced
+        # 2026-09-15 via curl: tool-last + over-ctx = 500, under-ctx =
+        # 200) and the retry loop re-sends the identical payload forever.
+        # Pinning the window makes omp compact ~20K instead; maxTokens
+        # keeps the output cap sane inside the window.
+        ollama = {
+          baseUrl = "http://127.0.0.1:11434";
+          api = "openai-responses";
+          auth = "none";
+          discovery.type = "ollama";
+          modelOverrides."qwen3.8:27b-mtp-q4_K_M" = {
+            # 128k to match OLLAMA_CONTEXT_LENGTH (q4_0 KV makes 131072
+            # fit the 3090; see ollama.nix).
+            contextWindow = 131072;
+            maxTokens = 16384;
           };
-
-          # https://tabitoken.com/pricing
-          tabitoken = {
-            baseUrl = "https://tabitoken.com/v1";
-            api = "openai-completions";
-            apiKey = "TABIAI_API_KEY";
-
-            models = [
-              {
-                id = "claude-opus-5";
-                name = "Claude Opus 5";
-                contextWindow = 200000;
-                maxTokens = 8192;
-              }
-
-              {
-                id = "claude-opus-5-thinking";
-                name = "Claude Opus 5 (Thinking)";
-                contextWindow = 200000;
-                maxTokens = 8192;
-              }
-
-              {
-                id = "claude-opus-4-8";
-                name = "Claude Opus 4.8";
-                contextWindow = 200000;
-                maxTokens = 8192;
-              }
-
-              {
-                id = "claude-opus-4-8-thinking";
-                name = "Claude Opus 4.8 (Thinking)";
-                contextWindow = 200000;
-                maxTokens = 8192;
-              }
-            ];
-          };
-          # Keyless local engine: explicit entry replaces implicit discovery
-          # but keeps ollama discovery. modelOverrides pins qwen3.8:27b to
-          # what the daemon actually serves (vram-based default 32768 on the
-          # 3090; see ollama.nix): omp's bundled ollama catalog claims
-          # contextWindow 262144 / maxTokens 32768, so omp keeps sending
-          # past the real window and ollama's trim drops the original user
-          # turn — every agentic tool-loop continuation then 500s with "no
-          # user query found in messages" (ollama #17778, reproduced
-          # 2026-09-15 via curl: tool-last + over-ctx = 500, under-ctx =
-          # 200) and the retry loop re-sends the identical payload forever.
-          # Pinning the window makes omp compact ~20K instead; maxTokens
-          # keeps the output cap sane inside the window.
-          ollama = {
-            baseUrl = "http://127.0.0.1:11434";
-            api = "openai-responses";
-            auth = "none";
-            discovery.type = "ollama";
-            modelOverrides."qwen3.8:27b-mtp-q4_K_M" = {
-              # 128k to match OLLAMA_CONTEXT_LENGTH (q4_0 KV makes 131072
-              # fit the 3090; see ollama.nix).
-              contextWindow = 131072;
-              maxTokens = 16384;
-            };
-            # Hemmingway-1 Q4_K_M (added 2026-09-21): ollama's bundled
-            # catalog claims contextWindow 262144 for this qwen35-arch
-            # quant too — same overclaim -> trim -> "no user query found
-            # in messages" 500-loop as qwen3.8:27b (ollama #17778). Pin
-            # to the daemon's real window (OLLAMA_CONTEXT_LENGTH).
-            modelOverrides."hf.co/bartowski/Altworld_Hemmingway-1-GGUF:Q4_K_M" = {
-              contextWindow = 131072;
-              maxTokens = 16384;
-            };
-          };
-
-          # Bonsai 2 27B via the PrismML fork's llama-server (bonsai2.service,
-          # :8080; see bonsai2.nix for why ollama cannot run this model).
-          # openai-completions, NOT openai-responses: llama-server serves
-          # /v1/chat/completions only. contextWindow pins what the unit
-          # launches with (-c 196608, 2026-09-20 raise from 32768); maxTokens
-          # stays 16384 to keep peak VRAM inside the 3090's budget (see the
-          # models entry below).
-          bonsai = {
-            baseUrl = "http://127.0.0.1:8080";
-            api = "openai-completions";
-            auth = "none";
-            models = [
-              {
-                id = "bonsai2";
-                name = "Ternary Bonsai 2 27B (local)";
-                contextWindow = 196608;
-                # Deliberately 16384: peak decode KV = maxTokens * 64 KiB/token
-                # (see bonsai2.nix) = 1 GiB on top of the 11.25 GiB input KV +
-                # 6.71 GiB PQ2_0 weights — 192K/16K peaks ~19.4 GiB on the
-                # 24.5 GB 3090; a 64K output cap would push ~23.5 GiB with
-                # <1 GiB headroom.
-                maxTokens = 16384;
-              }
-            ];
-          };
-
-          # https://netmind.viettel.vn/codev/vi/docs/hub/installation#install-sso
-          codev = {
-            baseUrl = "https://netmind.viettel.vn/gateway/v1";
-            api = "openai-completions";
-            apiKey = "CODEV_API_KEY";
-            authHeader = true;
-
-            models = [
-              {
-                id = "MiniMax/MiniMax-M3";
-                name = "MiniMax M3 (NetMind)";
-                contextWindow = 196608;
-                maxTokens = 65536;
-              }
-
-              {
-                id = "zai-org/GLM-5.3-Flash";
-                name = "GLM 5.3 Flash (NetMind)";
-                contextWindow = 1048576;
-                maxTokens = 131072;
-              }
-            ];
+          # Hemmingway-1 Q4_K_M (added 2026-09-21): ollama's bundled
+          # catalog claims contextWindow 262144 for this qwen35-arch
+          # quant too — same overclaim -> trim -> "no user query found
+          # in messages" 500-loop as qwen3.8:27b (ollama #17778). Pin
+          # to the daemon's real window (OLLAMA_CONTEXT_LENGTH).
+          modelOverrides."hf.co/bartowski/Altworld_Hemmingway-1-GGUF:Q4_K_M" = {
+            contextWindow = 131072;
+            maxTokens = 16384;
           };
         };
+
+        # Bonsai 2 27B via the PrismML fork's llama-server (bonsai2.service,
+        # :8080; see bonsai2.nix for why ollama cannot run this model).
+        # openai-completions, NOT openai-responses: llama-server serves
+        # /v1/chat/completions only. contextWindow pins what the unit
+        # launches with (-c 196608, 2026-09-20 raise from 32768); maxTokens
+        # stays 16384 to keep peak VRAM inside the 3090's budget (see the
+        # models entry below).
+        bonsai = {
+          baseUrl = "http://127.0.0.1:8080";
+          api = "openai-completions";
+          auth = "none";
+          models = [
+            {
+              id = "bonsai2";
+              name = "Ternary Bonsai 2 27B (local)";
+              contextWindow = 196608;
+              # Deliberately 16384: peak decode KV = maxTokens * 64 KiB/token
+              # (see bonsai2.nix) = 1 GiB on top of the 11.25 GiB input KV +
+              # 6.71 GiB PQ2_0 weights — 192K/16K peaks ~19.4 GiB on the
+              # 24.5 GB 3090; a 64K output cap would push ~23.5 GiB with
+              # <1 GiB headroom.
+              maxTokens = 16384;
+            }
+          ];
+        };
+      };
+
+      models = {
+        providers =
+          cloudProviders
+          // (
+            if onHomelabSpec
+            then local
+            else {}
+          );
       };
 
       defaultConfig = {

@@ -139,55 +139,61 @@
         fi
       '';
     in {
-      environment.systemPackages = [egpu-rgb egpu-rgb-rescan];
+      specialisation.homelab.configuration = {
+        # HOMELAB-ONLY (2026-09-21 user request, hotspot.nix pattern): the
+        # 3090's i2c RGB controller hangs off the tunneled card — no tunnel,
+        # no controller. Lives inside specialisation.homelab with the rest of
+        # the eGPU machinery (see egpu/default.nix).
+        environment.systemPackages = [egpu-rgb egpu-rgb-rescan];
 
-      # Passwordless rescan for the user script's ensure() fallback: scoped
-      # to the single unit on the manage-units action (NOT pkexec's generic
-      # exec action — that matches on the binary path and would allow any
-      # `pkexec systemctl ...`).
-      security.polkit.extraConfig = ''
-        polkit.addRule(function(action, subject) {
-          if (action.id === "org.freedesktop.systemd1.manage-units" &&
-              action.lookup("unit") === "openrgb.service" &&
-              subject.local && subject.active) {
-            return polkit.Result.YES;
-          }
-        });
-      '';
+        # Passwordless rescan for the user script's ensure() fallback: scoped
+        # to the single unit on the manage-units action (NOT pkexec's generic
+        # exec action — that matches on the binary path and would allow any
+        # `pkexec systemctl ...`).
+        security.polkit.extraConfig = ''
+          polkit.addRule(function(action, subject) {
+            if (action.id === "org.freedesktop.systemd1.manage-units" &&
+                action.lookup("unit") === "openrgb.service" &&
+                subject.local && subject.active) {
+              return polkit.Result.YES;
+            }
+          });
+        '';
 
-      # Runtime dock events, same triggers as egpu-adopt's rules. '+=' is
-      # load-bearing: a plain '=' in a later rule would REPLACE the
-      # SYSTEMD_WANTS value egpu/default.nix set on the same event and egpu-adopt
-      # would silently stop firing.
-      services.udev.extraRules = ''
-        ACTION!="remove", SUBSYSTEM=="thunderbolt", ATTRS{device_name}=="UT4G", TAG+="systemd", ENV{SYSTEMD_WANTS}+="egpu-rgb-rescan.service"
-        ACTION!="remove", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", ENV{PCI_SLOT_NAME}=="0000:06:00.0", TAG+="systemd", ENV{SYSTEMD_WANTS}+="egpu-rgb-rescan.service"
-      '';
+        # Runtime dock events, same triggers as egpu-adopt's rules. '+=' is
+        # load-bearing: a plain '=' in a later rule would REPLACE the
+        # SYSTEMD_WANTS value egpu/default.nix set on the same event and egpu-adopt
+        # would silently stop firing.
+        services.udev.extraRules = ''
+          ACTION!="remove", SUBSYSTEM=="thunderbolt", ATTRS{device_name}=="UT4G", TAG+="systemd", ENV{SYSTEMD_WANTS}+="egpu-rgb-rescan.service"
+          ACTION!="remove", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", ENV{PCI_SLOT_NAME}=="0000:06:00.0", TAG+="systemd", ENV{SYSTEMD_WANTS}+="egpu-rgb-rescan.service"
+        '';
 
-      systemd.services.egpu-rgb-rescan = {
-        description = "Re-enumerate the eGPU 3090 in OpenRGB after USB4 tunnel bring-up";
-        after = ["openrgb.service"];
-        # udev-triggered units run outside normal target transactions.
-        unitConfig.DefaultDependencies = "no";
-        serviceConfig = {
-          Type = "oneshot";
-          ExecStart = "${egpu-rgb-rescan}/bin/egpu-rgb-rescan";
-          TimeoutStartSec = "60";
+        systemd.services.egpu-rgb-rescan = {
+          description = "Re-enumerate the eGPU 3090 in OpenRGB after USB4 tunnel bring-up";
+          after = ["openrgb.service"];
+          # udev-triggered units run outside normal target transactions.
+          unitConfig.DefaultDependencies = "no";
+          serviceConfig = {
+            Type = "oneshot";
+            ExecStart = "${egpu-rgb-rescan}/bin/egpu-rgb-rescan";
+            TimeoutStartSec = "60";
+          };
         };
-      };
 
-      # Boot-time trigger as a timer (never part of a target transaction,
-      # so it cannot stall the boot; same rationale as egpu-adopt). Covers
-      # dock-attached-at-power-on, where the tunneled PCI device appears
-      # before this generation's udev rules are loaded and the uevent is
-      # never replayed (see egpu/default.nix).
-      systemd.timers.egpu-rgb-rescan = {
-        wantedBy = ["timers.target"];
-        timerConfig = {
-          OnBootSec = "15";
-          Unit = "egpu-rgb-rescan.service";
+        # Boot-time trigger as a timer (never part of a target transaction,
+        # so it cannot stall the boot; same rationale as egpu-adopt). Covers
+        # dock-attached-at-power-on, where the tunneled PCI device appears
+        # before this generation's udev rules are loaded and the uevent is
+        # never replayed (see egpu/default.nix).
+        systemd.timers.egpu-rgb-rescan = {
+          wantedBy = ["timers.target"];
+          timerConfig = {
+            OnBootSec = "15";
+            Unit = "egpu-rgb-rescan.service";
+          };
         };
-      };
+      }; # specialisation.homelab.configuration
     };
   };
 }

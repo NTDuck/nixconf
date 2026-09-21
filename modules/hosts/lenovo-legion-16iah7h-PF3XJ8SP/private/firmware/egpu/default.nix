@@ -162,64 +162,72 @@
         echo "egpu-release: done" >&2
       '';
     in {
-      # egpu-cuda-probe exposed for manual health checks: `egpu-cuda-probe && echo 3090 healthy`
-      environment.systemPackages = [egpu-adopt egpu-release cudaProbe];
+      specialisation.homelab.configuration = {
+        # HOMELAB-ONLY (2026-09-21 user request, hotspot.nix pattern): the
+        # whole 3090 hot-plug machinery (CUDA-health adopter, releaser,
+        # udev rules, timer) lives inside specialisation.homelab. The
+        # default generation binds the tunneled card with the plain nvidia
+        # driver (3060 stack, firmware/nvidia.nix stays default) but never
+        # ADOPTS it for compute — no adopter, no tier flips, no CUDA probes.
+        # egpu-cuda-probe exposed for manual health checks: `egpu-cuda-probe && echo 3090 healthy`
+        environment.systemPackages = [egpu-adopt egpu-release cudaProbe];
 
-      # Fires when boltd authorizes a new Thunderbolt/USB4 device (the UT3G
-      # router 0-1), then again on the tunneled PCI device appearance.
-      # ACTION!=remove also matches coldplug replay and boltd's
-      # "authorized -> authorized" change events, which the old
-      # ACTION=="add" rules missed when the dock was attached at power-on.
-      services.udev.extraRules = ''
-        # Thunderbolt router (boltctl authorizes -> kernel creates the router)
-        ACTION!="remove", SUBSYSTEM=="thunderbolt", ATTRS{device_name}=="UT4G", TAG+="systemd", ENV{SYSTEMD_WANTS}="egpu-adopt.service"
-        # Tunneled NVIDIA GPU appearance (belt & braces if bolt already stored)
-        ACTION!="remove", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", ENV{PCI_SLOT_NAME}=="0000:06:00.0", TAG+="systemd", ENV{SYSTEMD_WANTS}="egpu-adopt.service"
-        # Dock detach: revert llama tiering before the tunnel is gone
-        ACTION=="remove", SUBSYSTEM=="thunderbolt", ATTRS{device_name}=="UT4G", TAG+="systemd", ENV{SYSTEMD_WANTS}="egpu-release.service"
-      '';
+        # Fires when boltd authorizes a new Thunderbolt/USB4 device (the UT3G
+        # router 0-1), then again on the tunneled PCI device appearance.
+        # ACTION!=remove also matches coldplug replay and boltd's
+        # "authorized -> authorized" change events, which the old
+        # ACTION=="add" rules missed when the dock was attached at power-on.
+        services.udev.extraRules = ''
+          # Thunderbolt router (boltctl authorizes -> kernel creates the router)
+          ACTION!="remove", SUBSYSTEM=="thunderbolt", ATTRS{device_name}=="UT4G", TAG+="systemd", ENV{SYSTEMD_WANTS}="egpu-adopt.service"
+          # Tunneled NVIDIA GPU appearance (belt & braces if bolt already stored)
+          ACTION!="remove", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", ENV{PCI_SLOT_NAME}=="0000:06:00.0", TAG+="systemd", ENV{SYSTEMD_WANTS}="egpu-adopt.service"
+          # Dock detach: revert llama tiering before the tunnel is gone
+          ACTION=="remove", SUBSYSTEM=="thunderbolt", ATTRS{device_name}=="UT4G", TAG+="systemd", ENV{SYSTEMD_WANTS}="egpu-release.service"
+        '';
 
-      # Non-blocking boot: a oneshot WantedBy multi-user.target with
-      # Before=ollama.service pulled the whole boot transaction for up to
-      # 2min (TimeoutStartSec) while the CUDA probe raced persistenced —
-      # ollama, the local omp provider and graphical.target all waited
-      # behind it (2026-09-13 boot: graphical @2min2s). A timer unit is
-      # never part of a target transaction: the adopter runs 15s after
-      # boot in the background, udev rules still catch dock events, and
-      # ollama starts against the tmpfiles-seeded 3060 pin either way
-      # (egpu-adopt flips it to the 3090 once the probe passes).
-      systemd.timers.egpu-adopt = {
-        wantedBy = ["timers.target"];
-        timerConfig = {
-          OnBootSec = "15";
-          Unit = "egpu-adopt.service";
+        # Non-blocking boot: a oneshot WantedBy multi-user.target with
+        # Before=ollama.service pulled the whole boot transaction for up to
+        # 2min (TimeoutStartSec) while the CUDA probe raced persistenced —
+        # ollama, the local omp provider and graphical.target all waited
+        # behind it (2026-09-13 boot: graphical @2min2s). A timer unit is
+        # never part of a target transaction: the adopter runs 15s after
+        # boot in the background, udev rules still catch dock events, and
+        # ollama starts against the tmpfiles-seeded 3060 pin either way
+        # (egpu-adopt flips it to the 3090 once the probe passes).
+        systemd.timers.egpu-adopt = {
+          wantedBy = ["timers.target"];
+          timerConfig = {
+            OnBootSec = "15";
+            Unit = "egpu-adopt.service";
+          };
         };
-      };
 
-      systemd.services.egpu-adopt = {
-        description = "NixOS eGPU adopter: CUDA-health gate and bonsai tier flip";
-        after = ["bolt.service" "nvidia-persistenced.service"];
-        wants = ["bolt.service"];
-        # Boot trigger: covers the window where the tunneled GPU appears
-        # before udev rules are loaded (no uevent is replayed into a rule
-        # that wasn't loaded yet). Dock-less boots seed-and-exit in the
-        # script itself.
-        serviceConfig = {
-          Type = "oneshot";
-          ExecStart = "${egpu-adopt}/bin/egpu-adopt";
-          # Tunnel bring-up races bolt authorization; bounded probes keep
-          # the run well inside this budget.
-          TimeoutStartSec = "120";
+        systemd.services.egpu-adopt = {
+          description = "NixOS eGPU adopter: CUDA-health gate and bonsai tier flip";
+          after = ["bolt.service" "nvidia-persistenced.service"];
+          wants = ["bolt.service"];
+          # Boot trigger: covers the window where the tunneled GPU appears
+          # before udev rules are loaded (no uevent is replayed into a rule
+          # that wasn't loaded yet). Dock-less boots seed-and-exit in the
+          # script itself.
+          serviceConfig = {
+            Type = "oneshot";
+            ExecStart = "${egpu-adopt}/bin/egpu-adopt";
+            # Tunnel bring-up races bolt authorization; bounded probes keep
+            # the run well inside this budget.
+            TimeoutStartSec = "120";
+          };
         };
-      };
-      systemd.services.egpu-release = {
-        description = "NixOS eGPU releaser: revert bonsai tiering on dock detach";
-        serviceConfig = {
-          Type = "oneshot";
-          ExecStart = "${egpu-release}/bin/egpu-release";
-          TimeoutStartSec = "60";
+        systemd.services.egpu-release = {
+          description = "NixOS eGPU releaser: revert bonsai tiering on dock detach";
+          serviceConfig = {
+            Type = "oneshot";
+            ExecStart = "${egpu-release}/bin/egpu-release";
+            TimeoutStartSec = "60";
+          };
         };
-      };
+      }; # specialisation.homelab.configuration
     };
   };
 }

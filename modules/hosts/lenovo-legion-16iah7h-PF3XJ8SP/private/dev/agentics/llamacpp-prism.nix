@@ -19,12 +19,15 @@
 # stops/starts units; it does not touch pins.
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
+    # HOMELAB-ONLY (2026-09-21 user request, hotspot.nix pattern): the swap
+    # helpers stop/start ollama + bonsai2 — both live only inside
+    # specialisation.homelab now.
     nixos = {
       pkgs,
       config,
       ...
     }: {
-      environment.systemPackages = let
+      specialisation.homelab.configuration.environment.systemPackages = let
         llamacpp-prism-up = pkgs.writeShellScriptBin "llamacpp-prism-up" ''
           set -eu
           sysd=${config.systemd.package}/bin/systemctl

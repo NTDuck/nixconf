@@ -34,15 +34,12 @@
 # to what VRAM allows when the 3060 (6 GB) fallback serves instead — log:
 # "failed to fit params... n_gpu_layers already set" proves it engages on
 # memory pressure.
-{
-  den,
-  ...
-}: {
+{den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-    nixos = {
-      pkgs,
-      ...
-    }: let
+    # HOMELAB-ONLY (2026-09-21 user request, hotspot.nix pattern): the whole
+    # Bonsai 2 stack (prism llama-server, weights, service) lives inside
+    # specialisation.homelab — absent from the default generation.
+    nixos = {pkgs, ...}: let
       # llama-server + libs from the PrismML fork (prebuilt, CUDA 12.8).
       # 167 MB tarball, sha256 computed locally (GitHub publishes none).
       # The binaries link against system glibc but need these runtimes on
@@ -106,7 +103,6 @@
         cp ${weights} $out/share/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf
         cp ${mmproj} $out/share/bonsai2/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf
       '';
-
       # GPU pin: egpu-adopt/egpu-release rewrite /run/egpu/bonsai.env
       # (renamed 2026-09-20 from ollama.env — ollama is now NixOS-pinned to
       # the 3090 and no longer reads an env file; the two daemons must not
@@ -118,48 +114,50 @@
       # moves to 9931 upstream; we pin 8080 explicitly so that drift is
       # invisible here.
     in {
-      environment.systemPackages = [
-        bonsaiLlamaServer
-        bonsaiModels
-      ];
+      specialisation.homelab.configuration = {
+        environment.systemPackages = [
+          bonsaiLlamaServer
+          bonsaiModels
+        ];
 
-      systemd.services.bonsai2 = {
-        description = "Bonsai 2 27B llama-server (PrismML fork)";
-        wantedBy = ["multi-user.target"];
-        after = ["network-online.target"];
-        wants = ["network-online.target"];
+        systemd.services.bonsai2 = {
+          description = "Bonsai 2 27B llama-server (PrismML fork)";
+          wantedBy = ["multi-user.target"];
+          after = ["network-online.target"];
+          wants = ["network-online.target"];
 
-        serviceConfig = {
-          EnvironmentFile = "-/run/egpu/bonsai.env";
-          ExecStart = let
-            flags = pkgs.lib.concatStringsSep " " [
-              "-m ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf"
-              "--mmproj ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf"
-              "--host 127.0.0.1"
-              "--port 8080"
-              "-fa on"
-              "-c 196608"
-              "--temp 1.0"
-              "--top-p 0.95"
-              "--top-k 20"
-              "--jinja"
-              "-np 1"
-            ];
-          in "+${bonsaiLlamaServer}/bin/bonsai-llama-server ${flags}";
-          Restart = "on-failure";
-          RestartSec = "5";
-          # Model + KV live in VRAM/host RAM; nothing to persist. DynamicUser
-          # + ProtectSystem keep the prebuilt-binary daemon sandboxed.
-          DynamicUser = true;
-          NoNewPrivileges = true;
-          ProtectHome = true;
-          PrivateTmp = true;
-          ProtectSystem = "strict";
-          ProtectKernelTunables = true;
-          ProtectControlGroups = true;
-          RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX"];
+          serviceConfig = {
+            EnvironmentFile = "-/run/egpu/bonsai.env";
+            ExecStart = let
+              flags = pkgs.lib.concatStringsSep " " [
+                "-m ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf"
+                "--mmproj ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf"
+                "--host 127.0.0.1"
+                "--port 8080"
+                "-fa on"
+                "-c 196608"
+                "--temp 1.0"
+                "--top-p 0.95"
+                "--top-k 20"
+                "--jinja"
+                "-np 1"
+              ];
+            in "+${bonsaiLlamaServer}/bin/bonsai-llama-server ${flags}";
+            Restart = "on-failure";
+            RestartSec = "5";
+            # Model + KV live in VRAM/host RAM; nothing to persist. DynamicUser
+            # + ProtectSystem keep the prebuilt-binary daemon sandboxed.
+            DynamicUser = true;
+            NoNewPrivileges = true;
+            ProtectHome = true;
+            PrivateTmp = true;
+            ProtectSystem = "strict";
+            ProtectKernelTunables = true;
+            ProtectControlGroups = true;
+            RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX"];
+          };
         };
-      };
+      }; # specialisation.homelab.configuration
     };
   };
 }
