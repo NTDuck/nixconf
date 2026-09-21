@@ -19,6 +19,8 @@
       den.aspects.apps.editors.intellij
       # omp + ollama-over-tailscale (models.yml points at legion).
       den.aspects.dev.agentics.harnesses.oh-my-pi
+      den.aspects.dev.toolchains.sql.tabularis
+      den.aspects.dev.postman
       den.aspects.dev.gits.git
       den.aspects.dev.gits.gh
       den.aspects.system.bluetooth
