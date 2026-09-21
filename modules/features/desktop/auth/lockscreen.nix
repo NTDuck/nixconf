@@ -18,7 +18,7 @@
 #   10 min   screen off (wlopm)     — resume re-powers outputs
 #   20 min   lock, then suspend at 30 min via a second timeout
 # Suspend resume hooks not needed: suspend only happens after lock.
-{
+{den, ...}: {
   den.aspects.desktop.auth.lockscreen = {
     nixos = {
       # swaylock authenticates through its own PAM stack; without this the

@@ -17,7 +17,7 @@
 # bonsai2 → /run/egpu/bonsai.env, rewritten by egpu-adopt/egpu-release on
 # dock transitions (3090 docked, 3060 fallback undocked). The swap only
 # stops/starts units; it does not touch pins.
-{
+{den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     nixos = {
       pkgs,

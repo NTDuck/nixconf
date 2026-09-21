@@ -1,4 +1,4 @@
-_: let
+{den, ...}: let
   # 2026-09-14: lark-cli is not in nixpkgs. The official npm package
   # (@larksuite/cli) is only a Node launcher whose postinstall curls a
   # prebuilt Go binary from GitHub releases — undeclarative. Package the
