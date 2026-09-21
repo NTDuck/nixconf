@@ -26,10 +26,20 @@
       };
     };
 
-    homeManager = {config, ...}: {
+    homeManager = {
+      config,
+      pkgs,
+      ...
+    }: {
       imports = [
         inputs.noctalia.homeModules.default
       ];
+
+      # shell.font_family below names "Maple Mono Light" — a family only the
+      # plain truetype build registers (NF-CN registers "Maple Mono NF CN
+      # Light" instead; fc-scan verified 2026-09-21). The repo-wide stylix
+      # monospace pin flipped to NF-CN, so install the TTF here explicitly.
+      home.packages = [pkgs.unstable.maple-mono.truetype];
 
       programs.noctalia = {
         enable = true;

@@ -20,7 +20,7 @@
       # Bar + notifications now live in their own aspects; labwc only wires
       # them into the session.
       den.aspects.desktop.launchers.bemenu
-      den.aspects.desktop.panels.waybar
+      den.aspects.desktop.panels.yambar
       den.aspects.desktop.notifications.mako
       den.aspects.desktop.portals.xdg
       {
@@ -376,14 +376,14 @@
       # clipboard, brightness/audio control. All binaries referenced from rc
       # keybinds and this list use explicit store-path refs so labwc keybinds
       # cannot silently resolve to the wrong binary. Bar, notifications and
-      # the launcher moved to their own aspects (panels.waybar,
+      # the launcher moved to their own aspects (panels.yambar,
       # notifications.mako, launchers.bemenu).
       home.packages = [
         pkgs.unstable.brightnessctl
         pkgs.unstable.grim # W-S-s screenshots
         pkgs.unstable.slurp # region selection helper for grim
         pkgs.unstable.libnotify # notify-send
-        pkgs.unstable.swaylock # W-C-l lock (PAM provisioned by desktop.auth.lockscreen)
+        pkgs.unstable.swaylock # W-C-l manual lock (PAM now provisioned by HM's security.pam; see auth/always-on.nix for why the idle chain is gone)
         pkgs.unstable.wl-clipboard
         pkgs.wireplumber # wpctl volume control (STABLE: ABI-coupled to system pipewire)
         pkgs.unstable.wlr-randr # display mode control for moonlight-only outputs

@@ -32,9 +32,14 @@
             package = pkgs.unstable.lora;
             name = "Lora";
           };
+          # NF-CN variant (2026-09-21): the plain truetype build carries NO
+          # Nerd-Font glyphs, so any NF glyph (waybar/yambar modules, shell
+          # prompts) rendered as tofu when this family was resolved. Commit
+          # 3123d86 claimed a stylix font pin for the waybar fix but only the
+          # comment landed — this block is the actual fix.
           monospace = {
-            package = pkgs.unstable.maple-mono.truetype;
-            name = "Maple Mono";
+            package = pkgs.unstable.maple-mono.NF-CN;
+            name = "Maple Mono NF CN";
           };
           emoji = {
             package = pkgs.unstable.noto-fonts-color-emoji;

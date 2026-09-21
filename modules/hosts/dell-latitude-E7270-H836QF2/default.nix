@@ -39,10 +39,14 @@
       den.aspects.system.swap.zram
       (den.aspects.desktop.compositors.labwc)
       den.aspects.desktop.auth.gnome-keyring
-      # Session lock (swaylock + PAM + idle chain). The labwc comment
-      # "PAM comes from programs.labwc" was wrong — without this aspect's
-      # security.pam.services.swaylock the W-C-l lock could not authenticate.
-      den.aspects.desktop.auth.lockscreen
+      # Always-on session (swayidle alive but zero timeouts; logind lid/
+      # suspend keys ignored; sleep targets force-disabled). Replaces
+      # desktop.auth.lockscreen (swaylock + PAM + idle chain) per the
+      # 2026-09-21 "never dim/sleep when idle" request — the two aspects
+      # both write services.swayidle and would collide; list options
+      # concatenate across aspects, so include order alone cannot disable
+      # the lockscreen chain.
+      den.aspects.desktop.auth.always-on
       den.aspects.desktop.auth.polkit
       den.aspects.desktop.shells.prompts.powerlevel10k
       den.aspects.desktop.shells.zsh
