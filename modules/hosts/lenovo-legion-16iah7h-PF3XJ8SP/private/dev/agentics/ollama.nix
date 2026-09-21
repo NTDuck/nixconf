@@ -88,7 +88,7 @@
             # UUID is also enumerate-order-stable across reboots/dock states.
             # DOCK-ONLY TRADE-OFF: undocked (no 3090) ollama.service fails to
             # start on this pin.
-            CUDA_VISIBLE_DEVICES = "GPU-a4e36250-873d-62c5-912e-fde18d238a6c";
+            # CUDA_VISIBLE_DEVICES = "GPU-a4e36250-873d-62c5-912e-fde18d238a6c";
             OLLAMA_FLASH_ATTENTION = "1";
             # q4_0 KV (revisit of the earlier q8_0 call, 2026-09-20 live fit):
             # at 131072 ctx the hybrid DeltaNet KV is ~2.9 GiB q8_0 and the
