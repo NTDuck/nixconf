@@ -146,10 +146,17 @@
         # Bonsai 2 27B via the PrismML fork's llama-server (bonsai2.service,
         # :8080; see bonsai2.nix for why ollama cannot run this model).
         # openai-completions, NOT openai-responses: llama-server serves
-        # /v1/chat/completions only. contextWindow pins what the unit
-        # launches with (-c 196608, 2026-09-20 raise from 32768); maxTokens
-        # stays 16384 to keep peak VRAM inside the 3090's budget (see the
-        # models entry below).
+        # /v1/chat/completions only.
+        #
+        # contextWindow 65536 (2026-09-21, was 196608): the daemon's window
+        # now TIERS WITH THE GPU PIN (/run/egpu/bonsai.env writes
+        # LLAMA_ARG_CTX_SIZE — 64K on the 3060 laptop, 192K only when the
+        # 3090 is docked; see firmware/egpu/default.nix). omp's config is
+        # static and cannot see the dock, so it must pin the FLOOR: if it
+        # believed 192K while the daemon serves 64K, requests past 64K
+        # return llama-server's "prompt token ... exceeds the available
+        # context size" 400 and the session wedges. The reverse (belief
+        # under the daemon) is merely conservative. maxTokens 16384 unchanged.
         bonsai = {
           baseUrl = "http://127.0.0.1:8080";
           api = "openai-completions";
@@ -158,7 +165,7 @@
             {
               id = "bonsai2";
               name = "Ternary Bonsai 2 27B (local)";
-              contextWindow = 196608;
+              contextWindow = 65536;
               # Deliberately 16384: peak decode KV = maxTokens * 64 KiB/token
               # (see bonsai2.nix) = 1 GiB on top of the 11.25 GiB input KV +
               # 6.71 GiB PQ2_0 weights — 192K/16K peaks ~19.4 GiB on the

@@ -71,8 +71,19 @@
       egpu-adopt = pkgs.writeShellScriptBin "egpu-adopt" ''
         set -eu
         sysd=${config.systemd.package}/bin/systemctl
-        pin="CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"      # 3090 eGPU
-        fallback="CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529" # 3060 laptop
+        # Context rides the SAME env file as the GPU pin (LLAMA_ARG_CTX_SIZE,
+        # verified mapped from --ctx-size in the pinned llama-server --help):
+        # Bonsai-2 KV costs 64 KiB/token, so the window MUST match the tiered
+        # card — 192K ≈ 11.25 GiB KV fits only the 3090; the 6 GiB 3060 gets
+        # 64K (user decision 2026-09-21: 4 GiB KV spills to host RAM natively
+        # — llama.cpp has no KV spillover flag, CPU layers ARE the fallback —
+        # vs the 192K static flag that swap-thrashed 15G RAM at 0.61 t/s for
+        # days, journal 2026-09-19..21). egpu-release must stay byte-identical
+        # to $fallback.
+        pin="CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c
+LLAMA_ARG_CTX_SIZE=196608"      # 3090 eGPU + 192K ctx (user raise 2026-09-20)
+        fallback="CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529
+LLAMA_ARG_CTX_SIZE=65536"       # 3060 laptop + 64K ctx (user decision 2026-09-21)
 
         # GPU pin file now owns BONSAI2 ONLY (renamed from ollama.env,
         # 2026-09-20): ollama is statically pinned to the 3090 via
@@ -151,7 +162,8 @@
 
       egpu-release = pkgs.writeShellScriptBin "egpu-release" ''
         set -eu
-        echo "CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529" > /run/egpu/bonsai.env
+        # Byte-identical to egpu-adopt's $fallback: GPU pin + matched ctx.
+        printf 'CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529\nLLAMA_ARG_CTX_SIZE=65536\n' > /run/egpu/bonsai.env
         # bonsai2 only (2026-09-20): ollama is NixOS-pinned to the 3090 and
         # not touched by dock transitions.
         $sysd try-restart bonsai2.service 2>/dev/null || true

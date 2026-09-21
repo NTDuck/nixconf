@@ -103,16 +103,6 @@
         cp ${weights} $out/share/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf
         cp ${mmproj} $out/share/bonsai2/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf
       '';
-      # GPU pin: egpu-adopt/egpu-release rewrite /run/egpu/bonsai.env
-      # (renamed 2026-09-20 from ollama.env — ollama is now NixOS-pinned to
-      # the 3090 and no longer reads an env file; the two daemons must not
-      # be co-resident) and try-restart this unit. '-' prefix: file may not
-      # exist yet.
-      #
-      # PORT 8080, binds 127.0.0.1 only. Port 11434 is ollama; 8080 is the
-      # Bonsai-demo default. NOTE: llama-server warns the default port
-      # moves to 9931 upstream; we pin 8080 explicitly so that drift is
-      # invisible here.
     in {
       specialisation.homelab.configuration = {
         environment.systemPackages = [
@@ -122,20 +112,38 @@
 
         systemd.services.bonsai2 = {
           description = "Bonsai 2 27B llama-server (PrismML fork)";
-          wantedBy = ["multi-user.target"];
+          # NO AUTOSTART (2026-09-21 user request): the 27B daemon is a
+          # scarce-resource unit — it contends with ollama for the 3090 and
+          # its KV reservation thrashes host swap when launched before
+          # egpu-adopt has tiered the pin. Started on demand via
+          # `llamacpp-prism-up` (which first stops ollama).
+          wantedBy = [];
           after = ["network-online.target"];
           wants = ["network-online.target"];
 
           serviceConfig = {
             EnvironmentFile = "-/run/egpu/bonsai.env";
             ExecStart = let
+              # -c is NOT in the flags: the context rides /run/egpu/bonsai.env
+              # as LLAMA_ARG_CTX_SIZE (verified: this llama-server's --help
+              # maps --ctx-size to that env var), so it always matches the
+              # GPU the pin selects. History (2026-09-21 fix): a static
+              # -c 196608 ran the 192K KV (64 KiB/token × 192K ≈ 11.25 GiB)
+              # into host RAM on 3060-fallback boots — 6.6G RSS + 11.8G swap
+              # on a 15G machine, swap-thrash decode at 0.61 t/s for days
+              # (journal 2026-09-19..21). 32768 was the proven-healthy era
+              # (54-63 t/s). egpu-adopt/egpu-release tier the var with the
+              # GPU pin (see firmware/egpu/default.nix).
               flags = pkgs.lib.concatStringsSep " " [
                 "-m ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf"
                 "--mmproj ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf"
                 "--host 127.0.0.1"
+                # PORT 8080, binds 127.0.0.1 only. Port 11434 is ollama; 8080
+                # is the Bonsai-demo default. NOTE: llama-server warns the
+                # default port moves to 9931 upstream; we pin 8080 explicitly
+                # so that drift is invisible here.
                 "--port 8080"
                 "-fa on"
-                "-c 196608"
                 "--temp 1.0"
                 "--top-p 0.95"
                 "--top-k 20"

@@ -109,11 +109,32 @@
           ];
         };
 
-        # Avoid starting create_ap before NetworkManager has initialized the
-        # physical devices. create_ap will mark the AP interface unmanaged.
+        # AUTOSTART, HOMELAB SPEC ONLY (2026-09-21 user decision): the module
+        # default (wantedBy multi-user.target) stands INSIDE the specialisation;
+        # the default generation never defines create_ap so it never starts
+        # there. That fixes the autostart scoping but NOT the wifi-kill: the
+        # hotspot and the client uplink share the only wifi radio (wlp0s20f3),
+        # and an undocked boot has the station on VTIT_Guest — create_ap then
+        # sets the interface unmanaged and deauths the client link
+        # (DEAUTH_LEAVING, journal 2026-09-21 15:30:59; five live activations,
+        # five dead uplinks, five forced reboots). The dock gate below refuses
+        # to start unless the ethernet uplink (enp49s0, dock-only) has a
+        # cable+carrier, so undocked boots/activations stay on station wifi and
+        # docked boots bring the hotspot up automatically.
         systemd.services.create_ap = {
           wants = ["NetworkManager.service"];
           after = ["NetworkManager.service"];
+          # Bounded pre-start gate: docked = enp49s0 carrier up. When undocked,
+          # fail fast and STAY failed (Restart "on-failure" + this gate would
+          # regrab the radio every 5s otherwise; failure = wifi preserved).
+          preStart = ''
+            if ! cat /sys/class/net/enp49s0/carrier 2>/dev/null | grep -q 1; then
+              echo "create_ap: undocked (enp49s0 no carrier) — refusing to grab wlp0s20f3; client wifi stays up"
+              exit 1
+            fi
+          '';
+          # Manual restart is the recovery path once actually docked.
+          restartIfChanged = false;
         };
       };
     };
