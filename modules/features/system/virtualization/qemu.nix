@@ -1,11 +1,7 @@
 # TODO Slop, check this guy
 {den, ...}: {
   den.aspects.system.virtualization.qemu = {
-    nixos = {
-      config,
-      pkgs,
-      ...
-    }: {
+    nixos = {pkgs, ...}: {
       # KVM kernel modules are often auto-detected, but you can ensure they are loaded
       boot.kernelModules = ["kvm-amd" "kvm-intel"];
 

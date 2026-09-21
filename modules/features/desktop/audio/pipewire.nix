@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.desktop.audio.pipewire = {
-    nixos = {pkgs, ...}: {
+    nixos = {...}: {
       services.pipewire = {
         enable = true;
         alsa = {

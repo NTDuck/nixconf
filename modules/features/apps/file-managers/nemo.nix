@@ -14,11 +14,7 @@
       ];
     };
 
-    homeManager = {
-      lib,
-      pkgs,
-      ...
-    }: {
+    homeManager = {...}: {
       # gio/xdg-mime rewrite this file in place on GUI default-app changes,
       # leaving a regular file that collides with the next activation's
       # backup under backupFileExtension (linkGeneration mv overwrites the

@@ -1,4 +1,8 @@
-{inputs, ...}: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     homeManager = {
       osConfig,
@@ -280,24 +284,8 @@
           enabled = false;
         };
       };
-
-      homelabConfig = {
-        modelRoles = {
-          default = "ollama/qwen3.8:27b-qwen3-8-27b-homelab:max";
-          smol = "ollama/qwen3.8:27b-qwen3-8-27b-homelab:low";
-          slow = "ollama/qwen3:30b-a3b-thinking-2507-q4_K_M:high";
-          plan = "ollama/qwen3.8:27b-qwen3-8-27b-homelab:xhigh";
-          advisor = "ollama/qwen3:30b-a3b-thinking-2507-q4_K_M:xhigh";
-        };
-
-        defaultThinkingLevel = "max";
-
-        cycleOrder = [
-          "smol"
-          "default"
-          "slow"
-        ];
-      };
+      # TODO "homelab" specialization: homelabConfig was deleted unused
+      # (2026-09-21); re-add it together with its consumer when needed.
     in {
       home.file.".omp/agent/models.yml".source =
         yaml.generate ".omp.agent.models.yml" models;

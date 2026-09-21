@@ -28,12 +28,7 @@
       }
     ];
 
-    nixos = {
-      pkgs,
-      config,
-      lib,
-      ...
-    }: {
+    nixos = {pkgs, ...}: {
       programs.labwc = {
         enable = true;
         # tuigreet runs `--cmd ${package}/bin/labwc` directly — the HM labwc
@@ -117,7 +112,8 @@
             repeatDelay = 150;
             numlock = "on";
             default = true;
-            keybind = [
+            keybind =
+              [
                 {
                   "@key" = "W-Return";
                   action = {

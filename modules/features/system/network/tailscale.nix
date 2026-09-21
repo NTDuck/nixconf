@@ -4,7 +4,7 @@
 # is provisioned in secrets.
 {den, ...}: {
   den.aspects.system.network.tailscale = {
-    nixos = {pkgs, ...}: {
+    nixos = {...}: {
       services.tailscale = {
         enable = true;
         openFirewall = true;
