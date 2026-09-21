@@ -31,8 +31,9 @@
         # Attempt 2026-09-12: nvidia_drm.fbdev=0 to keep fbcon off the eGPU
         # (rm external-client deadlock on unplug). REVERTED: mango/wlroots
         # then fails EGL at tuigreet and falls back to llvmpipe — the
-        # compositor depends on the fbdev sideband. Freeze work continues
-        # in firmware/egpu/default.nix instead (nvkms ghost-detection on rescan).
+        # compositor depends on the fbdev sideband. (The eGPU adopter that
+        # continued freeze work here was removed 2026-09-21 with the Bonsai
+        # stack.)
         # NMI watchdog: kernel hard-locks (driver spinlock deadlock)
         # self-reboot via the intel_oc_wdt hardware watchdog.
         "nmi_watchdog=1"

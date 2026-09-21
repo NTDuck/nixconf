@@ -44,7 +44,10 @@
           # would ride past the real window into ollama's trim, dropping
           # the original user turn (ollama #17778 retry loop).
           ollama = {
-            baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:11434";
+            # /v1 REQUIRED (2026-09-21): omp's openai-responses adapter posts
+            # <baseUrl>/responses verbatim (no /v1 of its own); ollama serves
+            # OpenAI-compat under /v1. Mirrors legion's oh-my-pi.nix fix.
+            baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:11434/v1";
             api = "openai-responses";
             auth = "none";
             discovery.type = "ollama";

@@ -11,10 +11,9 @@
     }: let
       yaml = pkgs.formats.yaml {};
 
-      # 3090 gating (2026-09-21, hotspot.nix pattern): the local providers
-      # (ollama :11434, bonsai :8080) exist ONLY inside the homelab
-      # specialisation — the daemons they point at are gated there too
-      # (ollama.nix, bonsai2.nix). osConfig.isSpecialisation is mkOverride-0
+      # 3090 gating (2026-09-21, hotspot.nix pattern): the local ollama
+      # provider (:11434) exists ONLY inside the homelab specialisation —
+      # the daemon it points at is gated there too (ollama.nix). osConfig.isSpecialisation is mkOverride-0
       # true inside spec evals (nixos/modules/system/activation/no-clone.nix)
       # and false in the default generation, so the two models.yml variants
       # diverge on this flag and there is no module collision (the spec HM
@@ -109,20 +108,12 @@
 
       # 3090-coupled local providers — homelab spec only (see onHomelabSpec).
       local = {
-        # Keyless local engine: explicit entry replaces implicit discovery
-        # but keeps ollama discovery. modelOverrides pins qwen3.8:27b to
-        # what the daemon actually serves (vram-based default 32768 on the
-        # 3090; see ollama.nix): omp's bundled ollama catalog claims
-        # contextWindow 262144 / maxTokens 32768, so omp keeps sending
-        # past the real window and ollama's trim drops the original user
-        # turn — every agentic tool-loop continuation then 500s with "no
-        # user query found in messages" (ollama #17778, reproduced
-        # 2026-09-15 via curl: tool-last + over-ctx = 500, under-ctx =
-        # 200) and the retry loop re-sends the identical payload forever.
-        # Pinning the window makes omp compact ~20K instead; maxTokens
-        # keeps the output cap sane inside the window.
         ollama = {
-          baseUrl = "http://127.0.0.1:11434";
+          # /v1 REQUIRED (2026-09-21): omp's openai-responses adapter posts
+          # <baseUrl>/responses verbatim — no /v1 of its own (journal showed
+          # 404 POST "/responses"; ollama serves OpenAI-compat under /v1).
+          # Same convention as the codev cloud provider above.
+          baseUrl = "http://127.0.0.1:11434/v1";
           api = "openai-responses";
           auth = "none";
           discovery.type = "ollama";
@@ -142,39 +133,6 @@
             maxTokens = 16384;
           };
         };
-
-        # Bonsai 2 27B via the PrismML fork's llama-server (bonsai2.service,
-        # :8080; see bonsai2.nix for why ollama cannot run this model).
-        # openai-completions, NOT openai-responses: llama-server serves
-        # /v1/chat/completions only.
-        #
-        # contextWindow 65536 (2026-09-21, was 196608): the daemon's window
-        # now TIERS WITH THE GPU PIN (/run/egpu/bonsai.env writes
-        # LLAMA_ARG_CTX_SIZE — 64K on the 3060 laptop, 192K only when the
-        # 3090 is docked; see firmware/egpu/default.nix). omp's config is
-        # static and cannot see the dock, so it must pin the FLOOR: if it
-        # believed 192K while the daemon serves 64K, requests past 64K
-        # return llama-server's "prompt token ... exceeds the available
-        # context size" 400 and the session wedges. The reverse (belief
-        # under the daemon) is merely conservative. maxTokens 16384 unchanged.
-        bonsai = {
-          baseUrl = "http://127.0.0.1:8080";
-          api = "openai-completions";
-          auth = "none";
-          models = [
-            {
-              id = "bonsai2";
-              name = "Ternary Bonsai 2 27B (local)";
-              contextWindow = 65536;
-              # Deliberately 16384: peak decode KV = maxTokens * 64 KiB/token
-              # (see bonsai2.nix) = 1 GiB on top of the 11.25 GiB input KV +
-              # 6.71 GiB PQ2_0 weights — 192K/16K peaks ~19.4 GiB on the
-              # 24.5 GB 3090; a 64K output cap would push ~23.5 GiB with
-              # <1 GiB headroom.
-              maxTokens = 16384;
-            }
-          ];
-        };
       };
 
       models = {
@@ -188,14 +146,10 @@
       };
 
       defaultConfig = {
-        # Daily driver switched to Bonsai 2 27B (bonsai2.service :8080,
-        # 2026-09-18). PI_CONFIG_FILES merges this OVER the mutable
-        # config.yml, so this beats whatever /model last picked. The
-        # ollama qwen3.8 models stay pulled and selectable via /model.
+        # The ollama qwen3.8 models are selectable via /model; roles stay in
+        # the mutable config.yml (PI_CONFIG_FILES merges this OVER it).
         # modelRoles = {
-        #   default = "bonsai/bonsai2:max";
-        #   smol = "bonsai/bonsai2:low";
-        #   plan = "bonsai/bonsai2:xhigh";
+        #   default = "ollama/qwen3.8:27b-mtp-q4_K_M:max";
         # };
 
         symbolPreset = "nerd";

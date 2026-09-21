@@ -4,8 +4,8 @@
     # every service/package here lives inside specialisation.homelab
     # (hotspot.nix pattern — specialisation.X.configuration merges over the
     # inherited parent config, and options NOT set in the default generation
-    # don't exist there). Boot the default spec and ollama/bonsai2/the CUDA
-    # builds are absent; pick "homelab" in the bootloader menu for inference.
+    # don't exist there). Boot the default spec and ollama/the CUDA builds
+    # are absent; pick "homelab" in the bootloader menu for inference.
     nixos = {pkgs, ...}: let
       # Upstream 0.33.3 silently drops model-authored speculative-decoding
       # PARAMETERs at Options.FromMap ("invalid option provided"), so the ngram
@@ -47,10 +47,9 @@
             # header: ssm.* + full_attention_interval), so the 128k/q4_0-KV
             # budget math carries over: Q4_K_M weights 16.24 GiB + ~1.45 GiB
             # KV ~= 18 GiB of the 3090's 24.5 -> full offload on an empty
-            # 3090 (stop bonsai2 first — see OLLAMA_CONTEXT_LENGTH guard).
-            # Catalog overclaims contextWindow 262144 like every qwen3.8
-            # quant; the omp override below pins the real daemon window
-            # (ollama #17778 500-loop hazard).
+            # 3090. Catalog overclaims contextWindow 262144 like every
+            # qwen3.8 quant; the omp override below pins the real daemon
+            # window (ollama #17778 500-loop hazard).
             "hf.co/bartowski/Altworld_Hemmingway-1-GGUF:Q4_K_M"
 
             "Distendo/zen-pro" # Unknown pull
@@ -75,23 +74,20 @@
             # OLLAMA_LOAD_TIMEOUT = "5m";
 
             # Pin to the 3090 ONLY (2026-09-20 fix for "27B models return
-            # 404"/no-output): without it ollama's fit-params sees BOTH GPUs,
-            # GPU1 (3060, 4 GiB free under bonsai2) drags the split down to
-            # 34/66 layers on the 3090 + 32 layers on CPU RAM — 1.6 tok/s
-            # decode (journal: "offloaded 34/66 layers to GPU",
-            # "cannot meet free memory targets on all devices, need to use
-            # 10238 MiB less"). Loads "succeed" but are so slow clients time
-            # out. With this env the full model offloads to the 3090
-            # (journal: 66/66) and the 3060 stays exclusive to bonsai2
-            # (whose pin lives in /run/egpu/bonsai.env).
+            # 404"/no-output): without it ollama's fit-params sees BOTH GPUs
+            # (3060 + 3090) and drags the split down to 34/66 layers on the
+            # 3090 + 32 layers on CPU RAM — 1.6 tok/s decode (journal:
+            # "offloaded 34/66 layers to GPU", "cannot meet free memory
+            # targets on all devices, need to use 10238 MiB less"). Loads
+            # "succeed" but are so slow clients time out. With this env the
+            # full model offloads to the 3090 (journal: 66/66).
             #
             # Explicit UUID, not index "0": CUDA enumerates the 3060 first
             # (live check 2026-09-20: index 0 = 3060 a81782bc, index 1 = 3090
             # a4e36250), so "0" would pin the 6 GB 3060 — 27B cannot fit.
             # UUID is also enumerate-order-stable across reboots/dock states.
             # DOCK-ONLY TRADE-OFF: undocked (no 3090) ollama.service fails to
-            # start on this pin; use `llamacpp-prism-up` for local inference
-            # then (bonsai2 falls back to the 3060 via bonsai.env).
+            # start on this pin.
             CUDA_VISIBLE_DEVICES = "GPU-a4e36250-873d-62c5-912e-fde18d238a6c";
             OLLAMA_FLASH_ATTENTION = "1";
             # q4_0 KV (revisit of the earlier q8_0 call, 2026-09-20 live fit):
@@ -105,10 +101,8 @@
             # OLLAMA_NOPRUNE = 0;
             # 131072 (2026-09-20, q4_0 KV): 128k is the floor per user. With
             # q8_0 KV the fit fell 707 MiB short of 66/66 layers at 131072
-            # (63/66, 1.4 GiB CPU tail; earlier q8_0 + bonsai co-resident
-            # attempt logged 0/66). q4_0 KV closes the gap with ~700 MiB
-            # spare. Guard: full 66/66 offload needs an EMPTY 3090 — stop
-            # bonsai2 (llamacpp-prism-down) before heavy ollama loads.
+            # (63/66, 1.4 GiB CPU tail). q4_0 KV closes the gap with ~700
+            # MiB spare; full 66/66 offload needs an EMPTY 3090.
             OLLAMA_CONTEXT_LENGTH = "131072";
             # OLLAMA_AUTH = 0;
             # OLLAMA_IGPU_ENABLE = 0;
@@ -127,112 +121,6 @@
         # open 11434 ONLY on tailscale0, never the LAN. networking.firewall
         # merges fine with the sunshine/ssh aspects' port lists.
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [11434];
-
-        # REMOVED 2026-09-20 (homelab specialisation): it existed to swap the
-        # GPU pin per-boot, but the pin mechanism moved to
-        # /run/egpu/bonsai.env (bonsai2 only) + the static 3090 UUID pin for
-        # ollama above; the empty stub was dead config.
-
-        # GPU pin: seeded by tmpfiles with the 3060 fallback, rewritten by
-        # egpu-adopt/egpu-release on dock transitions (same pattern llama-cpp
-        # used). ollama.service stays restartable via systemctl try-restart.
-        # OBSOLETE 2026-09-20: ollama is now pinned via
-        # services.ollama.environmentVariables.CUDA_VISIBLE_DEVICES (static
-        # 3090 UUID); the pin file /run/egpu/bonsai.env belongs to bonsai2
-        # only (see bonsai2.nix and firmware/egpu/default.nix).
-        # systemd.services.ollama = {
-        #   serviceConfig.EnvironmentFile = "/run/egpu/ollama.env";
-        # };
-
-        # systemd.tmpfiles.rules = [
-        #   "d /run/egpu 0755 root root -"
-        #   # 3060 laptop fallback; 'f' (not 'f+') so a mid-session 3090 pin
-        #   # written by egpu-adopt survives a rebuild.
-        #   "f /run/egpu/ollama.env 0644 root root - CUDA_VISIBLE_DEVICES=GPU-a81782bc-e6d4-e015-445a-d413a0e94529"
-        # ];
-
-        # ollama #17778: the qwen3.8 renderer 500s with "no user query found
-        # in messages" when context truncation drops the user turn or on
-        # tool-only turns. Cloning with renderer=qwen3.5 overrides only the
-        # renderer — same weights, tolerant renderer, thinking+tools intact.
-        # Clones are created once via the HTTP API; this oneshot is idempotent
-        # (skips tags already present) so rebuilds are no-ops. Clone tags
-        # match/superset the loadModels names so syncModels pruning keeps them.
-        # systemd.services.ollama-renderer-clones = {
-        #   description = "Create renderer-cloned ollama models (qwen3.5 renderer fix, ollama #17778)";
-        #   wantedBy = ["multi-user.target"];
-        #   after = [
-        #     "ollama.service"
-        #     "ollama-model-loader.service"
-        #     "network-online.target"
-        #   ];
-        #   bindsTo = ["ollama.service"];
-        #   wants = ["network-online.target" "ollama-model-loader.service"];
-
-        #   path = [
-        #     config.services.ollama.package
-        #     pkgs.curl
-        #     pkgs.jq
-        #     pkgs.gawk
-        #     pkgs.gnugrep
-        #   ];
-
-        #   environment.HOME = config.services.ollama.home;
-
-        #   serviceConfig = {
-        #     Type = "oneshot";
-        #     RemainAfterExit = true;
-        #   };
-
-        #   script = ''
-        #     set -eu
-
-        #     have() {
-        #       local m="$1"
-        #       # `ollama list` normalizes a tagless name to name:latest.
-        #       case "$m" in
-        #         *:*) ;;
-        #         *) m="$m:latest" ;;
-        #       esac
-        #       ollama list | awk '{print $1}' | grep -Fxq "$m"
-        #     }
-
-        #     create_clone() {
-        #       local clone="$1" base="$2"
-        #       if have "$clone"; then
-        #         echo "clone $clone already present, skipping"
-        #       else
-        #         echo "creating clone $clone from $base"
-        #         curl -sS http://127.0.0.1:11434/api/create \
-        #           -d "$(printf '{"model":"%s","from":"%s","renderer":"qwen3.5"}' "$clone" "$base")"
-        #         have "$clone" || { echo "clone $clone failed to appear"; exit 1; }
-        #       fi
-        #     }
-
-        #     # Official qwen3.8:27b renderer clone. 'FROM X' + 'model X'
-        #     # (same-tag clone) is fragile: ollama resolves the tag against
-        #     # itself before the clone exists, so use a distinct tag. The tag
-        #     # embeds the declared loadModels id "qwen3.8:27b" as a prefix so
-        #     # syncModels' regex keeps it (tagless names get pruned).
-        #     create_clone "qwen3.8:27b-qwen3-8-27b-homelab" "qwen3.8:27b"
-        #     sleep 1
-
-        #     # Same-shape clone off the uncensored blob: the tag is the
-        #     # declared loadModels entry (regex-matched by syncModels), so
-        #     # pruning keeps it.
-        #     create_clone \
-        #       "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M-qwen3-8-27b-homelab" \
-        #       "hf.co/JonathanColetti/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M"
-        #     sleep 1
-
-        #     # Same-tag re-render: clone replaces the official 4B tag in place
-        #     # (FROM <itself> — ollama tolerates it on create); skipped by the
-        #     # have() guard on every later boot.
-        #     create_clone \
-        #       "hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL" \
-        #       "hf.co/unsloth/Qwen3-4B-Instruct-2507-GGUF:UD-Q4_K_XL"
-        #   '';
-        # };
       }; # specialisation.homelab.configuration
     };
   };

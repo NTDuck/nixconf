@@ -1,7 +1,8 @@
 # Toggle for the eGPU 3090's RGB (ASUS ROG STRIX ENE SMBus controller).
 #
 # The controller hangs off the tunneled card's i2c bus, so its availability
-# is coupled to the USB4 tunnel (same lifecycle as egpu/default.nix). The OpenRGB
+# is coupled to the USB4 tunnel (lives in the homelab specialisation with the
+# rest of the eGPU stack). The OpenRGB
 # SDK server scans i2c adapters ONCE at startup — which races the tunnel
 # bring-up — so "card present but not enumerated" is the steady state right
 # after docking; the fix is a server restart, gated to only fire when the
@@ -143,7 +144,7 @@
         # HOMELAB-ONLY (2026-09-21 user request, hotspot.nix pattern): the
         # 3090's i2c RGB controller hangs off the tunneled card — no tunnel,
         # no controller. Lives inside specialisation.homelab with the rest of
-        # the eGPU machinery (see egpu/default.nix).
+        # the eGPU stack.
         environment.systemPackages = [egpu-rgb egpu-rgb-rescan];
 
         # Passwordless rescan for the user script's ensure() fallback: scoped
@@ -160,10 +161,11 @@
           });
         '';
 
-        # Runtime dock events, same triggers as egpu-adopt's rules. '+=' is
-        # load-bearing: a plain '=' in a later rule would REPLACE the
-        # SYSTEMD_WANTS value egpu/default.nix set on the same event and egpu-adopt
-        # would silently stop firing.
+        # Runtime dock events (the adopt/release machinery these rules
+        # originally accompanied was removed 2026-09-21 with the Bonsai
+        # stack; the rescan rules stay). '+=' is load-bearing: a plain '='
+        # here would REPLACE any SYSTEMD_WANTS set by a later rule on the
+        # same event.
         services.udev.extraRules = ''
           ACTION!="remove", SUBSYSTEM=="thunderbolt", ATTRS{device_name}=="UT4G", TAG+="systemd", ENV{SYSTEMD_WANTS}+="egpu-rgb-rescan.service"
           ACTION!="remove", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", ENV{PCI_SLOT_NAME}=="0000:06:00.0", TAG+="systemd", ENV{SYSTEMD_WANTS}+="egpu-rgb-rescan.service"
@@ -182,10 +184,9 @@
         };
 
         # Boot-time trigger as a timer (never part of a target transaction,
-        # so it cannot stall the boot; same rationale as egpu-adopt). Covers
-        # dock-attached-at-power-on, where the tunneled PCI device appears
-        # before this generation's udev rules are loaded and the uevent is
-        # never replayed (see egpu/default.nix).
+        # so it cannot stall the boot). Covers dock-attached-at-power-on,
+        # where the tunneled PCI device appears before this generation's
+        # udev rules are loaded and the uevent is never replayed.
         systemd.timers.egpu-rgb-rescan = {
           wantedBy = ["timers.target"];
           timerConfig = {

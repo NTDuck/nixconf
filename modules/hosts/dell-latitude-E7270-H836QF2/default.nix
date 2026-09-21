@@ -17,7 +17,9 @@
       den.aspects.apps.editors.obsidian
       # JetBrains IDE (proprietary `idea`, not the dead idea-oss).
       den.aspects.apps.editors.intellij
+      den.aspects.apps.editors.zed-editor
       # omp + ollama-over-tailscale (models.yml points at legion).
+      den.aspects.dev.agentics.harnesses.codev
       den.aspects.dev.agentics.harnesses.oh-my-pi
       den.aspects.dev.toolchains.sql.tabularis
       den.aspects.dev.postman
