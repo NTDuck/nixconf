@@ -347,6 +347,16 @@
           # Only the input method needs an explicit start: mako and waybar
           # start via their own systemd user units, and the HM labwc module
           "${osConfig.i18n.inputMethod.package}/bin/fcitx5 -d -r &"
+          # Desktop background (2026-09-21 "wallpaper not showing" fix):
+          # labwc has no built-in wallpaper and stylix has no labwc target
+          # (see the themerc-override comment), and neither the `wallpaper`
+          # package nor a `services.wallpaper` NixOS module exists in
+          # nixos-26.05 (verified against the locked rev 2026-09-21) — so
+          # the shared stylix image is painted with swaybg, a plain
+          # layer-shell client (no wlroots linkage; works on labwc).
+          # `fill` = cover-crop: 16:10 source on the 16:9 panel; omitting
+          # -m falls back to stretch (distortion). Output defaults to "*".
+          "${pkgs.swaybg}/bin/swaybg -i ${config.stylix.image} -m fill"
         ];
         # The labwc binary wrapper only sets env for the compositor process
         # itself; this import (appended to ~/.config/labwc/autostart by the HM
