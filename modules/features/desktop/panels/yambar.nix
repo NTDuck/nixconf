@@ -29,8 +29,8 @@
     }: let
       # yambar colors are RRGGBBAA hexstrings (no '#'); opacity.desktop is
       # 0..1 — convert to the two-hex alpha suffix the bar background wants.
-      alphaHex = op: lib.fixedWidthString 2 "0" (lib.toHexString (builtins.floor (op * 255)));
-      colors = config.lib.stylix.colors;
+      # alphaHex = op: lib.fixedWidthString 2 "0" (lib.toHexString (builtins.floor (op * 255)));
+      # colors = config.lib.stylix.colors;
     in {
       programs.yambar = {
         enable = true;
@@ -41,112 +41,113 @@
         # labwc-session.target and links it to graphical-session.target.
         systemd.target = "labwc-session.target";
 
-        settings.bar = {
-          # 30px ≈ the waybar height this replaces; one Maple Mono line
-          # plus padding.
-          height = 30;
-          location = "top";
-          layer = "top";
-          background = "${colors.base00-hex}${alphaHex config.stylix.opacity.desktop}";
-          # Bar-level font is inherited by every particle (man
-          # yambar-particles(5)); NF CN covers the glyphs used below.
-          font = "Maple Mono NF CN:pixelsize=12";
+        #   settings.bar = {
+        #     # 30px ≈ the waybar height this replaces; one Maple Mono line
+        #     # plus padding.
+        #     height = 30;
+        #     location = "top";
+        #     layer = "top";
+        #     background = "${colors.base00-hex}${alphaHex config.stylix.opacity.desktop}";
+        #     # Bar-level font is inherited by every particle (man
+        #     # yambar-particles(5)); NF CN covers the glyphs used below.
+        #     font = "Maple Mono NF CN:pixelsize=12";
 
-          left = [
-            {
-              foreign-toplevel.content.map = {
-                conditions = {
-                  # Only the focused window renders; everything else empty.
-                  "~activated" = {empty = {};};
-                  activated = [
-                    {
-                      string = {
-                        text = "{app-id}: {title}";
-                        max = 60;
-                      };
-                    }
-                  ];
-                };
-              };
-            }
-          ];
+        #     left = [
+        #       {
+        #         foreign-toplevel.content.map = {
+        #           conditions = {
+        #             # Only the focused window renders; everything else empty.
+        #             "~activated" = {empty = {};};
+        #             activated = [
+        #               {
+        #                 string = {
+        #                   text = "{app-id}: {title}";
+        #                   max = 60;
+        #                 };
+        #               }
+        #             ];
+        #           };
+        #         };
+        #       }
+        #     ];
 
-          right = [
-            {
-              # Module instantiates content per interface; hide lo and
-              # non-carrier links (module has no interface filter option).
-              network.content.map = {
-                conditions = {
-                  "name == \"lo\"" = {empty = {};};
-                  "~carrier" = [{string = {text = "󰤭";};}];
-                  "carrier && ipv4 != \"\"" = [{string = {text = "󰈀 {name} {ipv4}";};}];
-                  carrier = [{string = {text = "󰈀 {name} (no IP)";};}];
-                };
-              };
-            }
-            {
-              pulse.content.map = {
-                conditions = {
-                  # No default sink right now (e.g. HDMI-only moments).
-                  "~sink_online" = {empty = {};};
-                  sink_muted = [{string = {text = "󰖁 {sink_percent}%";};}];
-                  "~sink_muted" = [{string = {text = "󰕾 {sink_percent}%";};}];
-                };
-              };
-            }
-            {
-              # Template runs per core (id >= 0) and once for the total
-              # (id == -1); render only the total.
-              cpu.content.map = {
-                conditions = {
-                  "id < 0" = [{string = {text = "󰻠 {cpu}%";};}];
-                };
-                default = {empty = {};};
-              };
-            }
-            {
-              mem.content.string.text = "󰍛 {percent_used}%";
-            }
-            {
-              # E7270 panel backlight — the standard i915 device name.
-              backlight = {
-                name = "intel_backlight";
-                content.string.text = "󰃟 {percent}%";
-              };
-            }
-            {
-              battery = {
-                name = "BAT0";
-                poll-interval = 30000;
-                content.map = {
-                  conditions = {
-                    "state == \"charging\"" = [{string = {text = "󰂄 {capacity}%";};}];
-                    "state == \"full\"" = [{string = {text = "󰚥 {capacity}%";};}];
-                    "state == \"discharging\" && capacity < 15" = [
-                      {
-                        string = {
-                          text = "󰁺 {capacity}%";
-                          foreground = "${colors.base08-hex}ff";
-                        };
-                      }
-                    ];
-                    "state == \"discharging\"" = [{string = {text = "󰁹 {capacity}% {estimate}";};}];
-                  };
-                  # The module docs warn some batteries sit in "unknown"
-                  # around ~90% while charging — fall through to the plain
-                  # reading instead of hiding the module.
-                  default = [{string = {text = "󰁹 {capacity}%";};}];
-                };
-              };
-            }
-            {
-              clock = {
-                time-format = "%H:%M";
-                content.string.text = "󰅐 {date} {time}";
-              };
-            }
-          ];
-        };
+        #     right = [
+        #       {
+        #         # Module instantiates content per interface; hide lo and
+        #         # non-carrier links (module has no interface filter option).
+        #         network.content.map = {
+        #           conditions = {
+        #             "name == \"lo\"" = {empty = {};};
+        #             "~carrier" = [{string = {text = "󰤭";};}];
+        #             "carrier && ipv4 != \"\"" = [{string = {text = "󰈀 {name} {ipv4}";};}];
+        #             carrier = [{string = {text = "󰈀 {name} (no IP)";};}];
+        #           };
+        #         };
+        #       }
+        #       {
+        #         pulse.content.map = {
+        #           conditions = {
+        #             # No default sink right now (e.g. HDMI-only moments).
+        #             "~sink_online" = {empty = {};};
+        #             sink_muted = [{string = {text = "󰖁 {sink_percent}%";};}];
+        #             "~sink_muted" = [{string = {text = "󰕾 {sink_percent}%";};}];
+        #           };
+        #         };
+        #       }
+        #       {
+        #         # Template runs per core (id >= 0) and once for the total
+        #         # (id == -1); render only the total.
+        #         cpu.content.map = {
+        #           conditions = {
+        #             "id < 0" = [{string = {text = "󰻠 {cpu}%";};}];
+        #           };
+        #           default = {empty = {};};
+        #         };
+        #       }
+        #       {
+        #         mem.content.string.text = "󰍛 {percent_used}%";
+        #       }
+        #       {
+        #         # E7270 panel backlight — the standard i915 device name.
+        #         backlight = {
+        #           name = "intel_backlight";
+        #           content.string.text = "󰃟 {percent}%";
+        #         };
+        #       }
+        #       {
+        #         battery = {
+        #           name = "BAT0";
+        #           poll-interval = 30000;
+        #           content.map = {
+        #             conditions = {
+        #               "state == \"charging\"" = [{string = {text = "󰂄 {capacity}%";};}];
+        #               "state == \"full\"" = [{string = {text = "󰚥 {capacity}%";};}];
+        #               "state == \"discharging\" && capacity < 15" = [
+        #                 {
+        #                   string = {
+        #                     text = "󰁺 {capacity}%";
+        #                     foreground = "${colors.base08-hex}ff";
+        #                   };
+        #                 }
+        #               ];
+        #               "state == \"discharging\"" = [{string = {text = "󰁹 {capacity}% {estimate}";};}];
+        #             };
+        #             # The module docs warn some batteries sit in "unknown"
+        #             # around ~90% while charging — fall through to the plain
+        #             # reading instead of hiding the module.
+        #             default = [{string = {text = "󰁹 {capacity}%";};}];
+        #           };
+        #         };
+        #       }
+        #       {
+        #         clock = {
+        #           time-format = "%H:%M";
+        #           content.string.text = "󰅐 {date} {time}";
+        #         };
+        #       }
+        #     ];
+        #   };
+        # };
       };
     };
   };
