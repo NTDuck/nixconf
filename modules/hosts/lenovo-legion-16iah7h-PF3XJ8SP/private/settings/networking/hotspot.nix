@@ -43,23 +43,17 @@
             IEEE80211N = 1;
             IEEE80211AC = 0;
             IEEE80211AX = 0;
-            HT_CAPAB = "[HT20]";
+            HT_CAPAB = "";
             VHT_CAPAB = "";
 
             DRIVER = "nl80211";
-            # 2026-09-17 DELL diagnosis: with NO_DNS=1 clients were handed the
-            # public resolvers (1.1.1.1/8.8.8.8) straight over DHCP, and the
-            # VTIT wired uplink drops client UDP/53 to public resolvers. The
-            # phone silently fell back to LTE; the DELL (no fallback) lost DNS
-            # entirely. Serve DNS from dnsmasq on the gateway instead: DHCP
-            # points clients at 192.168.12.1, dnsmasq forwards through the
-            # host resolver (corporate DNS), and create_ap redirects client
-            # :53 to its :5353 listener. DHCP_HOSTS dropped: unrecognized by
-            # create_ap 4.7.2 (WARN every boot, empty anyway).
+
+            # Hotspot addressing, DHCP, and DNS.
             GATEWAY = "192.168.12.1";
-            DHCP_DNS = "gateway";
+            DHCP_DNS = "1.1.1.1,8.8.8.8";
+            DHCP_HOSTS = "";
             ETC_HOSTS = 0;
-            NO_DNS = 0;
+            NO_DNS = 1;
             NO_DNSMASQ = 0;
 
             # Share enp49s0 through NAT.
@@ -93,48 +87,23 @@
         # Loose reverse-path filtering to prevent dropped forwarded packets.
         networking.firewall.checkReversePath = "loose";
 
-        # dnsmasq serves DHCP and DNS on the hotspot interface; create_ap
-        # listens on 5353 and redirects client :53 traffic to it, so both
-        # ports must pass the nftables input chain.
+        # dnsmasq serves DHCP and DNS on the hotspot interface.
         networking.firewall.interfaces.${wifiInterface} = {
           allowedUDPPorts = [
             53 # DNS
             67 # DHCP server
-            5353 # create_ap dnsmasq DNS listener
           ];
 
           allowedTCPPorts = [
             53 # DNS
-            5353 # create_ap dnsmasq DNS listener
           ];
         };
 
-        # AUTOSTART, HOMELAB SPEC ONLY (2026-09-21 user decision): the module
-        # default (wantedBy multi-user.target) stands INSIDE the specialisation;
-        # the default generation never defines create_ap so it never starts
-        # there. That fixes the autostart scoping but NOT the wifi-kill: the
-        # hotspot and the client uplink share the only wifi radio (wlp0s20f3),
-        # and an undocked boot has the station on VTIT_Guest — create_ap then
-        # sets the interface unmanaged and deauths the client link
-        # (DEAUTH_LEAVING, journal 2026-09-21 15:30:59; five live activations,
-        # five dead uplinks, five forced reboots). The dock gate below refuses
-        # to start unless the ethernet uplink (enp49s0, dock-only) has a
-        # cable+carrier, so undocked boots/activations stay on station wifi and
-        # docked boots bring the hotspot up automatically.
+        # Avoid starting create_ap before NetworkManager has initialized the
+        # physical devices. create_ap will mark the AP interface unmanaged.
         systemd.services.create_ap = {
           wants = ["NetworkManager.service"];
           after = ["NetworkManager.service"];
-          # Bounded pre-start gate: docked = enp49s0 carrier up. When undocked,
-          # fail fast and STAY failed (Restart "on-failure" + this gate would
-          # regrab the radio every 5s otherwise; failure = wifi preserved).
-          preStart = ''
-            if ! cat /sys/class/net/enp49s0/carrier 2>/dev/null | grep -q 1; then
-              echo "create_ap: undocked (enp49s0 no carrier) — refusing to grab wlp0s20f3; client wifi stays up"
-              exit 1
-            fi
-          '';
-          # Manual restart is the recovery path once actually docked.
-          restartIfChanged = false;
         };
       };
     };
