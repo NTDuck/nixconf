@@ -104,6 +104,16 @@
           # Nine workspaces named 1..9, matching the legion mango tags.
           desktops.names.name = map builtins.toString (lib.range 1 9);
 
+          # Touchpad smooth scrolling (2026-09-22 DELL user request).
+          # labwc's compiled default for touchpad scroll_method is already
+          # `twofinger` (smooth), but the rc.xml had no <touchpad> block
+          # at all — making it explicit guards against future labwc
+          # default flips. scroll_method "twofinger" = continuous
+          # (smooth); "clickfinger"/"onbutton" = discrete (not smooth).
+          touchpad = {
+            scroll_method = "twofinger";
+          };
+
           # Key-input parity with the legion mango aspect (repeat_rate=50,
           # repeat_delay=150, numlockon=1): labwc units match mango's
           # (chars/s, ms; labwc 0.9.7 rc.xml reference, keyboard section).
