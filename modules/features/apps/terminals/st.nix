@@ -48,8 +48,14 @@
             # pattern mismatch (upstream changed the default font)
             # doesn't fail the build.
             sed -i 's|static char \*font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";|static char *font = "Maple Mono NF CN:pixelsize=11:antialias=true:autohint=true";|' config.def.h || true
-            # Border width: line 9.
-            sed -i 's|static int borderpx = 2;|static int borderpx = 2;|' config.def.h || true
+            # Border width: line 9. 14 mirrors ghostty's window-padding-x
+            # (the padding IS the border in st since there's no gap).
+            # NOTE: width 14 with border_width=0 in spectrwm is
+            # intentional — spectrwm draws no decoration; st provides
+            # its own visual frame. Border COLOR is st's default (the
+            # defaultfg palette slot, already stylix-patched below);
+            # upstream st has no separate bordercolor knob.
+            sed -i 's|static int borderpx = 2;|static int borderpx = 14;|' config.def.h || true
             # TERM value: line 77.
             sed -i 's|char \*termname = "st-256color";|char *termname = "st-256color";|' config.def.h || true
             # Cursor shape: line 144. 2=Block, 4=Underline, 6=Bar.

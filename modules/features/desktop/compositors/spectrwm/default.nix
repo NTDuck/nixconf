@@ -25,6 +25,15 @@
 # built-ins first, then `program[name]` — so `term`/`launcher`/`locker`/
 # `screenshot` are wired via `programs` and the binds reference them by
 # name. spectrwm's `MOD` literal in binds is substituted from `modkey`.
+#
+# Session startup (2026-09-22): tuigreet launches the wrapped spectrwm
+# binary, not HM's xsession script (xsession.enable stays false — the
+# session lives under greetd, and HM's xsession module asserts its own
+# script only fires when IT manages the session). Without activation,
+# graphical-session.target stays down and user services bound to it
+# (xss-lock, dunst, clipmenu) never start. The wrapper mirrors the old
+# labwc aspect: export session env vars, start the HM graphical target,
+# then exec spectrwm.
 {den, ...}: {
   den.aspects.desktop.compositors.spectrwm = {
     includes = [
@@ -68,6 +77,11 @@
     }: let
       tags = map builtins.toString (lib.range 1 9);
     in {
+      # HM's xsession module owns the session lifecycle: ~/.xsession
+      # starts hm-graphical-session.target BEFORE the WM runs and stops
+      # it after. tuigreet invokes ~/.xsession (see dell host greeter).
+      xsession.enable = true;
+
       xsession.windowManager.spectrwm = {
         enable = true;
         package = pkgs.spectrwm;
@@ -89,6 +103,11 @@
           # spectrwm's `include` keyword takes a path string; the HM
           # settings type accepts strings, so this works.
           include = "${config.home.homeDirectory}/.config/spectrwm/bar.conf";
+          # Session bootstrap (2026-09-22): spawn the autostart script
+          # on the first workspace at WM start. The HM xsession script
+          # has already activated graphical-session.target by the time
+          # this runs, so xss-lock/dunst/clipmenu daemons are up.
+          autorun = "ws[1]:${config.home.homeDirectory}/.config/spectrwm/autostart.sh";
         };
 
         # Programs referenced by binds below. spectrwm resolves
@@ -208,12 +227,31 @@
         ];
       };
 
+      # Session bootstrap spawned by spectrwm's `autorun` setting (see
+      # above). Background everything: spectrwm spawns autorun entries
+      # sequentially and would block startup otherwise. The idle.sh
+      # trigger lives in auth/slock (X screensaver -> xss-lock chain);
+      # the wallpaper is the stylix image — X11 has no compositor
+      # wallpaper, so feh paints the root window.
+      xdg.configFile."spectrwm/autostart.sh" = {
+        executable = true;
+        text = ''
+          #!/bin/sh
+          # DELL spectrwm session bootstrap; spawned via spectrwm.conf
+          # `autorun`. Everything backgrounds — spectrwm waits on each
+          # autorun entry otherwise.
+          ${config.home.homeDirectory}/.config/spectrwm/idle.sh &
+          ${pkgs.feh}/bin/feh --bg-fill ${config.stylix.image} &
+        '';
+      };
+
       # DELL session utilities (2026-09-22): screenshots, keys, clipboard,
       # brightness/audio control. All binaries referenced from spectrwm
       # binds and this list use explicit store-path refs so binds cannot
       # silently resolve to the wrong binary.
       home.packages = [
         pkgs.unstable.brightnessctl
+        pkgs.feh # X11 root-window wallpaper (stylix image)
         pkgs.scrot # W-Shift-s screenshots
         pkgs.slurp # region selection helper (paired with scrot -s)
         pkgs.libnotify # notify-send

@@ -65,11 +65,12 @@
       den.aspects.desktop.shells.zsh
       den.aspects.desktop.theming.stylix
       (den.aspects.desktop.greeters.tuigreet {
-        # HM's xsession.windowManager.spectrwm adds spectrwm to
-        # home.packages, so the binary is in the user's PATH after
-        # activation. tuigreet runs the command as the logged-in user,
-        # so PATH resolution works.
-        command = _config: "spectrwm";
+        # Launch HM's xsession script, not the raw spectrwm binary: the
+        # script activates hm-graphical-session.target (xss-lock, dunst,
+        # clipmenu) before exec'ing spectrwm and tears it down on exit.
+        # ~/.xsession resolves via the user's home, so PATH is not a
+        # factor; tuigreet runs it as the logged-in user.
+        command = config: "${config.home-manager.users.ayin.home.homeDirectory}/.xsession";
       })
     ];
   };
