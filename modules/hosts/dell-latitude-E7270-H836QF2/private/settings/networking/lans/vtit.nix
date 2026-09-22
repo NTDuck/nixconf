@@ -15,11 +15,11 @@
 
           ${pkgs.networkmanager}/bin/nmcli connection add \
             type ethernet \
-            con-name "ETH_VTIT_10.224.220.60" \
+            con-name "ETH_VTIT_10.224.220.59" \
             ifname "${nic}" \
             autoconnect yes \
             connection.autoconnect-priority 100 \
-            ip4 10.224.220.60/24 \
+            ip4 10.224.220.59/24 \
             gw4 10.224.220.1 \
             ipv4.dns "10.10.101.212 10.10.101.211" \
             ipv4.method manual \
@@ -28,14 +28,14 @@
             proxy.pac-url "http://10.10.101.208/proxy.pac"
 
             ${pkgs.networkmanager}/bin/nmcli connection up \
-              "ETH_VTIT_10.224.220.60" \
+              "ETH_VTIT_10.224.220.59" \
               ifname "${nic}"
         '';
 
         eth-vtit-down = ''
           ip link show "${nic}" >/dev/null 2>&1 || { echo "eth-vtit: ${nic} missing" >&2; return 1; }
 
-          ${pkgs.networkmanager}/bin/nmcli connection delete ETH_VTIT_10.224.220.60
+          ${pkgs.networkmanager}/bin/nmcli connection delete ETH_VTIT_10.224.220.59
         '';
       };
     };
