@@ -66,7 +66,7 @@
             [Desktop Entry]
             Name=Moonlight (legion stream)
             Comment=Remote desktop client to legion (cage kiosk)
-            Exec=${pkgs.cage}/bin/cage -s -- ${pkgs.moonlight-qt}/bin/moonlight --no-yuv444
+            Exec=${pkgs.cage}/bin/cage -s -- ${pkgs.moonlight-qt}/bin/moonlight --no-h265 --no-av1 --no-yuv444
             Type=Application
             DesktopNames=cage;moonlight
             EOF
