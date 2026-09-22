@@ -64,13 +64,35 @@
       den.aspects.desktop.shells.prompts.powerlevel10k
       den.aspects.desktop.shells.zsh
       den.aspects.desktop.theming.stylix
+      # X11 session start (2026-09-22): greetd+tuigreet does NOT start an
+      # X server — verified against tuigreet 0.11.1 source (ipc.rs
+      # wrap_session_command: the `--cmd` path runs the command directly;
+      # xsession_wrapper only applies to registered xsessions entries).
+      # greetd's StartSession execs cmd[0] as a SINGLE argv path, so the
+      # command must be one binary. This wrapper (started as the
+      # logged-in user on tty1) runs startx, which:
+      #   - starts Xorg on the session's VT (vt1, non-root via logind),
+      #   - writes serverauth to ~/.serverauth.$$ and adds the cookie to
+      #     ~/.Xauthority (xrandr/udev mirror script read it from there),
+      #   - execs HM's ~/.xsession as the X client — which activates
+      #     hm-graphical-session.target (xss-lock, dunst, clipmenu) and
+      #     execs spectrwm.
+      ({
+        nixos = {pkgs, ...}: {
+          environment.systemPackages = let
+            x11Session = pkgs.writeShellScriptBin "dell-x11-session" ''
+              # startx's server args: after `--` the first token is the
+              # SERVER COMMAND, so `-- vt1` would exec a binary named
+              # "vt1". No server args — startx uses its baked Xorg path
+              # and auto-detects the current VT (the greetd session's
+              # tty1), adding `vt1 -keeptty` itself.
+              exec ${pkgs.xorg.xinit}/bin/startx "$HOME"/.xsession
+            '';
+          in [x11Session];
+        };
+      })
       (den.aspects.desktop.greeters.tuigreet {
-        # Launch HM's xsession script, not the raw spectrwm binary: the
-        # script activates hm-graphical-session.target (xss-lock, dunst,
-        # clipmenu) before exec'ing spectrwm and tears it down on exit.
-        # ~/.xsession resolves via the user's home, so PATH is not a
-        # factor; tuigreet runs it as the logged-in user.
-        command = config: "${config.home-manager.users.ayin.home.homeDirectory}/.xsession";
+        command = _config: "dell-x11-session";
       })
     ];
   };
