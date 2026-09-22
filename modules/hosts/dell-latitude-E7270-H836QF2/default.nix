@@ -86,6 +86,14 @@
               # "vt1". No server args — startx uses its baked Xorg path
               # and auto-detects the current VT (the greetd session's
               # tty1), adding `vt1 -keeptty` itself.
+              #
+              # PATH: greetd hands the session a minimal environment, but
+              # startx invokes `xinit` and `xauth` BY NAME. Prepend the
+              # xinit package bin (carries both) so the wrapper never
+              # depends on the session's PATH — 2026-09-22 "xinit not
+              # present" failure from exactly this.
+              PATH="${pkgs.xorg.xinit}/bin:${pkgs.xorg.xauth}/bin:$PATH"
+              export PATH
               exec ${pkgs.xorg.xinit}/bin/startx "$HOME"/.xsession
             '';
           in [x11Session];
