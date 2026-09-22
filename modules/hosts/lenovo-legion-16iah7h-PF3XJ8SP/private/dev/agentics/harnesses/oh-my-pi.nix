@@ -1,6 +1,5 @@
 {
   den,
-  inputs,
   ...
 }: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
@@ -145,167 +144,17 @@
           );
       };
 
-      defaultConfig = {
-        # The ollama qwen3.8 models are selectable via /model; roles stay in
-        # the mutable config.yml (PI_CONFIG_FILES merges this OVER it).
-        # modelRoles = {
-        #   default = "ollama/qwen3.8:27b-mtp-q4_K_M:max";
-        # };
-
-        symbolPreset = "nerd";
-
-        composer = {
-          shape = "box";
-        };
-
-        theme = {
-          dark = "dark-rainforest";
-          light = "light-forest";
-        };
-
-        setupVersion = 2;
-
-        astGrep = {
-          enabled = true;
-        };
-
-        github = {
-          enabled = true;
-        };
-
-        edit = {
-          mode = "hashline";
-        };
-
-        memory = {
-          backend = "mnemopi";
-        };
-
-        defaultThinkingLevel = "max";
-
-        retry = {
-          usageAwareFallback = false;
-          fallbackRevertPolicy = "cooldown-expiry";
-        };
-
-        advisor = {
-          enabled = true;
-          syncBacklog = "off";
-        };
-
-        autolearn = {
-          enabled = true;
-          autoContinue = true;
-        };
-
-        followUpMode = "one-at-a-time";
-        interruptMode = "immediate";
-
-        tools = {
-          approvalMode = "yolo";
-        };
-
-        error = {
-          notify = "on";
-        };
-
-        update = {
-          channel = "stable";
-        };
-
-        power = {
-          sleepPrevention = "idle";
-        };
-
-        features = {
-          unexpectedStopDetection = "smart";
-        };
-
-        colorBlindMode = false;
-
-        statusLine = {
-          preset = "default";
-          separator = "powerline-thin";
-          contextLine = "embedded";
-          sessionAccent = false;
-          transparent = false;
-          compactThinkingLevel = true;
-          showHookStatus = true;
-        };
-
-        terminal = {
-          showProgress = true;
-        };
-
-        tui = {
-          textSizing = true;
-          codexResetFireworks = true;
-          tight = false;
-          hyperlinks = "always";
-        };
-
-        display = {
-          shimmer = "classic";
-          smoothStreaming = true;
-          showTokenUsage = true;
-          showTurnTime = true;
-          cacheMissMarker = true;
-        };
-
-        task = {
-          showResolvedModelBadge = true;
-        };
-
-        images = {
-          blockImages = false;
-        };
-
-        modelRoleStorage = "global";
-        personality = "default";
-
-        prewalk = {
-          enabled = false;
-        };
-
-        loop = {
-          mode = "compact";
-        };
-
-        contextPromotion = {
-          enabled = false;
-        };
-      };
-      # TODO "homelab" specialization: homelabConfig was deleted unused
-      # (2026-09-21); re-add it together with its consumer when needed.
+      # config.default.yml (shared omp TUI defaults) and the `omp` alias
+      # (secret exports + PI_CONFIG_FILES wrapper) moved to the COMMON
+      # aspect modules/features/dev/agentics/harnesses/oh-my-pi.nix
+      # (2026-09-22): dell gets the same defaults/alias, and a second
+      # bare `omp =` definition here would collide with the common one
+      # at eval (attrset leaf values need a single definition). The
+      # commented modelRoles block went with it — roles belong in the
+      # mutable config.yml, and the comment lives on in the common file.
     in {
       home.file.".omp/agent/models.yml".source =
         yaml.generate ".omp.agent.models.yml" models;
-
-      # NOT ".omp/agent/config.yml": omp treats that file as mutable state
-      # (writes setupVersion, /model picks, wizard results) and saving through
-      # an HM store symlink dies with EROFS, which re-triggers the setup wizard
-      # on every launch. This file is a read-only overlay merged OVER
-      # config.yml via PI_CONFIG_FILES (set in the omp alias below).
-      home.file.".omp/agent/config.default.yml".source =
-        yaml.generate ".omp.agent.config.default.yml" defaultConfig;
-
-      # TODO "homelab" specialization
-      # home.file.".omp/agent/config.homelab.yml".source =
-      #   yaml.generate ".omp.agent.config.homelab.yml" homelabConfig;
-
-      home.shellAliases = {
-        omp = ''
-          CODEV_API_KEY="$(cat ${osConfig.age.secrets."codev-api-key".path})" \
-          ORCAROUTER_API_KEY="$(cat ${osConfig.age.secrets."orcarouter-api-key".path})" \
-          OPENCODE_API_KEY="$(cat ${osConfig.age.secrets."opencode-api-key".path})" \
-          OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."openrouter-api-key".path})" \
-          TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path})" \
-          REASONIX_SCAVENGE=1 \
-          REASONIX_RESULT_CAP_TOKENS=3000 \
-          PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml" \
-          ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp
-        '';
-      };
     };
   };
 }
