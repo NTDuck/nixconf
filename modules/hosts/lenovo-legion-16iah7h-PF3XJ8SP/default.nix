@@ -15,6 +15,7 @@
       # stays for battery telemetry.
       den.aspects.apps.browsers.chromium
       den.aspects.apps.browsers.zen-browser
+      den.aspects.apps.btop
       den.aspects.apps.p7zip
       den.aspects.apps.ripgrep
       den.aspects.apps.zoxide
@@ -115,7 +116,7 @@
           "HDMI-2"
         ];
       }
-      den.aspects.desktop.launchers.bemenu
+      den.aspects.desktop.launchers.dmenu
       den.aspects.desktop.panels.noctalia
       # panels: waybar/quickshell deliberately EXCLUDED on legion — noctalia
       # is the shell here (its own notification daemon replaces mako too;

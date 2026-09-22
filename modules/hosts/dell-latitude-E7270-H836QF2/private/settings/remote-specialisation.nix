@@ -7,7 +7,7 @@
 #
 # Select with: sudo /run/current-system/bin/switch-to-configuration boot
 #   + reboot → pick "remote" in the bootloader specialisation menu.
-# The default (no specialisation) remains the full labwc desktop.
+# The default (no specialisation) remains the full spectrwm desktop.
 {den, ...}: {
   den.aspects.dell-latitude-E7270-H836QF2 = {
     nixos = {

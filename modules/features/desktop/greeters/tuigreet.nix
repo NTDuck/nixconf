@@ -11,7 +11,7 @@
           default_session = {
             command = ''
               ${pkgs.tuigreet}/bin/tuigreet \
-              --cmd ${command config} --no-xsession-wrapper \
+              --cmd ${command config} \
               --asterisks --asterisks-char '*' \
               --time --time-format '%Y-%m-%d %H:%M:%S' \
               --remember \
@@ -22,7 +22,11 @@
         };
       };
 
-      services.xserver.enable = false;
+      # X11 is required for the spectrwm session (legion's mango session
+      # also works with xserver.enable = true — greetd starts the X
+      # server, mango runs as a Wayland client via WLR_NO_HARDWARE=1 in
+      # its autostart).
+      services.xserver.enable = true;
       console.earlySetup = true;
     };
   };

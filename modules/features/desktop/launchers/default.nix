@@ -1,7 +1,7 @@
 {den, ...}: {
   den.aspects.desktop.launchers = {
     includes = [
-      den.aspects.desktop.launchers.bemenu
+      den.aspects.desktop.launchers.dmenu
     ];
   };
 }

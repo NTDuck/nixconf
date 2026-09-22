@@ -2,6 +2,7 @@
   den.aspects.apps = {
     includes = [
       den.aspects.apps.browsers
+      den.aspects.apps.btop
       den.aspects.apps.editors
       den.aspects.apps.file-managers
       den.aspects.apps.gaming
