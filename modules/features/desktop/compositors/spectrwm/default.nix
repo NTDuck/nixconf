@@ -22,7 +22,7 @@
 #
 # Keybinds mirror the legion mango aspect as closely as spectrwm's action
 # set allows. spectrwm's `bind[KEY] = action` resolves `action` against
-# built-ins first, then `program[name]` — so `term`/`launcher`/`locker`/
+# built-ins first, then `program[name]` — so `term`/`launcher`/`lock`/
 # `screenshot` are wired via `programs` and the binds reference them by
 # name. spectrwm's `MOD` literal in binds is substituted from `modkey`.
 #
@@ -122,7 +122,10 @@
           # lock chain is handled by the xss-lock systemd service in
           # desktop.auth.slock — spawning a second xss-lock here would
           # race with the daemon over the X screensaver.
-          locker = "${pkgs.slock}/bin/slock";
+          # bind[lock] (built-in) spawns program[lock] — the key must be
+          # `lock`, not `locker` (spectrwm 3.7 has no program[locker]
+          # lookup; the default xlock would run instead).
+          lock = "${pkgs.slock}/bin/slock";
           screenshot = "${pkgs.scrot}/bin/scrot";
           # Volume/brightness: spectrwm binds accept arbitrary program
           # names, so XF86 keys spawn wpctl/brightnessctl directly.
@@ -149,6 +152,8 @@
 
         bindings = {
           # --- terminal / launcher / lock / screenshot ---
+          # bind[lock] is a BUILT-IN action that spawns program[lock];
+          # the program key below is `lock` for exactly that reason.
           term = "MOD+Return";
           launcher = "MOD+d";
           lock = "MOD+Control+l";
@@ -161,21 +166,22 @@
           quit = "MOD+Shift+e";
           restart = "MOD+Shift+r";
 
-          # --- directional focus (mango focusdir h/j/k/l) ---
-          focus_left = "MOD+h";
-          focus_down = "MOD+j";
-          focus_up = "MOD+k";
-          focus_right = "MOD+l";
+          # --- focus (spectrwm has NO directional focus — only cycling
+          # focus_next/focus_prev, which the binary + man page confirm) ---
+          # mango focusdir h/j/k/l → cycle h=prev?? No: mango maps h/j/k/l
+          # directionally. spectrwm's only focus motion: focus_next (M-j
+          # default), focus_prev (M-k default). Keep mango's keys cycling:
+          focus_next = "MOD+l";
+          focus_prev = "MOD+k";
 
-          # --- directional swap (mango exchange_client W-S-h/j/k/l) ---
-          swap_left = "MOD+Shift+h";
-          swap_down = "MOD+Shift+j";
-          swap_up = "MOD+Shift+k";
-          swap_right = "MOD+Shift+l";
+          # --- swap (spectrwm has NO directional swap; cycle instead) ---
+          swap_prev = "MOD+Shift+h";
+          swap_next = "MOD+Shift+l";
 
           # --- workspace navigation (mango viewtoright/left) ---
-          ws_left = "MOD+F12";
-          ws_right = "MOD+F11";
+          # ws_left/ws_right don't exist; ws_prev/ws_next do.
+          ws_prev = "MOD+F12";
+          ws_next = "MOD+F11";
 
           # --- per-tag focus (mango SUPER,N,view,N) ---
           ws_1 = "MOD+1";
@@ -188,27 +194,19 @@
           ws_8 = "MOD+8";
           ws_9 = "MOD+9";
 
-          # --- per-tag send-without-follow (mango SUPER+SHIFT,N,tagsilent) ---
-          sendtos_ws_1 = "MOD+Shift+1";
-          sendtos_ws_2 = "MOD+Shift+2";
-          sendtos_ws_3 = "MOD+Shift+3";
-          sendtos_ws_4 = "MOD+Shift+4";
-          sendtos_ws_5 = "MOD+Shift+5";
-          sendtos_ws_6 = "MOD+Shift+6";
-          sendtos_ws_7 = "MOD+Shift+7";
-          sendtos_ws_8 = "MOD+Shift+8";
-          sendtos_ws_9 = "MOD+Shift+9";
-
-          # --- per-tag send-and-follow (mango SUPER+ALT,N,tag) ---
-          sendto_ws_1 = "MOD+Mod1+1";
-          sendto_ws_2 = "MOD+Mod1+2";
-          sendto_ws_3 = "MOD+Mod1+3";
-          sendto_ws_4 = "MOD+Mod1+4";
-          sendto_ws_5 = "MOD+Mod1+5";
-          sendto_ws_6 = "MOD+Mod1+6";
-          sendto_ws_7 = "MOD+Mod1+7";
-          sendto_ws_8 = "MOD+Mod1+8";
-          sendto_ws_9 = "MOD+Mod1+9";
+          # --- per-tag send (mango SUPER+SHIFT,N,tagsilent) ---
+          # spectrwm's send action is mvws_<N> (move window, no follow).
+          # There is NO send-and-follow for absolute tags (ws_next_move is
+          # relative-only), so mango's SUPER+ALT,N,tag mapping is dropped.
+          mvws_1 = "MOD+Shift+1";
+          mvws_2 = "MOD+Shift+2";
+          mvws_3 = "MOD+Shift+3";
+          mvws_4 = "MOD+Shift+4";
+          mvws_5 = "MOD+Shift+5";
+          mvws_6 = "MOD+Shift+6";
+          mvws_7 = "MOD+Shift+7";
+          mvws_8 = "MOD+Shift+8";
+          mvws_9 = "MOD+Shift+9";
 
           # --- media keys (mango bindl XF86*) ---
           vol_up = "XF86AudioRaiseVolume";
@@ -218,12 +216,13 @@
           bright_down = "XF86MonBrightnessDown";
         };
 
-        # Disable defaults that conflict with our binds (MOD+q is close,
-        # MOD+f is maximize_toggle — spectrwm's defaults already use
-        # these, but listing them documents intent and survives upstream
-        # default flips).
+        # Disable defaults that conflict with our binds. MOD+Shift+q is
+        # the default quit — ours is MOD+Shift+e; the default bind would
+        # shadow nothing (different key), but spectrwm validates binds
+        # against ITS default table: unbind first so a stray MOD+Shift+q
+        # can never quit the session.
         unbindings = [
-          "MOD+Shift+q" # default quit; we use MOD+Shift+e
+          "MOD+Shift+q"
         ];
       };
 
