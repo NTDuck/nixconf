@@ -8,10 +8,16 @@
       wayland.windowManager.mango.settings = {
         monitorrule = lib.mkForce [
           "name:^eDP-1$,width:2560,height:1600,refresh:165.019,x:0,y:0,scale:1.5,vrr:1"
-          "name:^HDMI-A-1$,x:1707,y:0,scale:1,vrr:0"
-          "name:^HDMI-A-2$,x:1707,y:0,scale:1,vrr:0"
-          "name:^HDMI-1$,x:1707,y:0,scale:1,vrr:0"
-          "name:^HDMI-2$,x:1707,y:0,scale:1,vrr:0"
+          # HDMI externals: x:0,y:0 = SAME position as eDP-1 — mango's
+          # output-layout overlap renders the mirrored clone (2026-09-23;
+          # kanshi's mirror profiles apply the same position via
+          # wlr-output-management, and the monitorrule must agree or
+          # mango re-parks the output at creation). Previously x:1707
+          # (extended desktop) which fought the kanshi mirror profiles.
+          "name:^HDMI-A-1$,x:0,y:0,scale:1,vrr:0"
+          "name:^HDMI-A-2$,x:0,y:0,scale:1,vrr:0"
+          "name:^HDMI-1$,x:0,y:0,scale:1,vrr:0"
+          "name:^HDMI-2$,x:0,y:0,scale:1,vrr:0"
           # Sunshine "Desktop (dell-latitude-E7270-H836QF2)" app: the DELL
           # client's native panel is 1366x768@60. Mango applies CUSTOM modes
           # to headless outputs (monitor.c: rule->custom ||
