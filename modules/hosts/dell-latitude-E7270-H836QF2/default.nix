@@ -13,7 +13,7 @@
       # Dell-specific wallpaper (2026-09-22): the shared stylix aspect
       # defaults to 230826-2.png, which noctalia (legion) consumes as its
       # fallback too — override here instead of flipping the shared pin.
-      # The spectrwm aspect's feh autostart reads config.stylix.image.
+      # The dwm session wrapper's feh paints config.stylix.image.
       # mkForce: the shared stylix aspect also defines image (mkDefault);
       # two plain definitions conflict at eval.
       ({
@@ -62,17 +62,20 @@
       den.aspects.system.settings
       den.aspects.system.storage.udisks2
       den.aspects.system.swap.zram
-      # spectrwm (X11) — 2026-09-23 stack: spectrwm + native bar, feh,
-      # dmenu, dunst, st, pcmanfm, i3lock+xss-lock. The spectrwm aspect
-      # pulls in its own session furniture (clipmenu, fcitx5, dmenu,
-      # dunst, i3lock/xss-lock, portals.xdg) so the host doesn't list
-      # them individually.
-      (den.aspects.desktop.compositors.spectrwm)
+      # dwm (X11) — 2026-09-23 cutover after spectrwm froze the whole
+      # screen on two independent boots (gen 19 parser-verified, gen 22
+      # zero-exception conf that survived the same binds under Xvfb).
+      # Same stack around it: native bar (dwm's), feh, dmenu, dunst,
+      # st, pcmanfm, i3lock+xss-lock. The dwm aspect pulls in its own
+      # session furniture (clipmenu, fcitx5, dmenu, dunst,
+      # i3lock/xss-lock, portals.xdg) so the host doesn't list them
+      # individually.
+      (den.aspects.desktop.compositors.dwm)
       den.aspects.desktop.auth.gnome-keyring
       # Always-on session (logind lid/suspend keys ignored; sleep
       # targets force-disabled). The idle/lock chain is handled by the
       # i3lock aspect (manual W-Ctrl-l + suspend lock; the X screensaver
-      # timer and DPMS are disabled in the spectrwm autostart per the
+      # timer and DPMS are disabled in the dwm session wrapper per the
       # 2026-09-21 "never dim/sleep when idle" request).
       den.aspects.desktop.auth.always-on
       den.aspects.desktop.auth.polkit

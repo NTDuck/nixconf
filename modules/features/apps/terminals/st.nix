@@ -76,14 +76,14 @@
                 with open('config.def.h', 'r') as f:
                     src = f.read()
                 palette = [
-                    "${bg}", "${colors.base08-hex}", "${colors.base0B-hex}",
-                    "${colors.base0A-hex}", "${colors.base0D-hex}",
-                    "${colors.base0E-hex}", "${colors.base0C-hex}",
-                    "${colors.base05-hex}",
-                    "${colors.base03-hex}", "${colors.base08-hex}",
-                    "${colors.base0B-hex}", "${colors.base0A-hex}",
-                    "${colors.base0D-hex}", "${colors.base0E-hex}",
-                    "${colors.base0C-hex}", "${colors.base07-hex}",
+                    "${bg}", "#${colors.base08-hex}", "#${colors.base0B-hex}",
+                    "#${colors.base0A-hex}", "#${colors.base0D-hex}",
+                    "#${colors.base0E-hex}", "#${colors.base0C-hex}",
+                    "#${colors.base05-hex}",
+                    "#${colors.base03-hex}", "#${colors.base08-hex}",
+                    "#${colors.base0B-hex}", "#${colors.base0A-hex}",
+                    "#${colors.base0D-hex}", "#${colors.base0E-hex}",
+                    "#${colors.base0C-hex}", "#${colors.base07-hex}",
                 ]
                 arr_lines = ["static const char *colorname[] = {"]
                 arr_lines.append("\t/* 8 normal colors */")
