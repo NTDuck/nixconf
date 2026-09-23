@@ -34,9 +34,13 @@
     }: {
       services.screen-locker = {
         enable = true;
-        # 10-minute idle timeout (matches the retired slock setup's
-        # `xset s 600`); cycle 600s per screensaver spec.
-        inactiveInterval = 10;
+        # VESTIGIAL (2026-09-23): with xautolock.enable=false this only
+        # feeds the unit's ExecStartPre `xset s <interval*60> 0`, which
+        # the spectrwm autostart's `xset s off -dpms` overrides — the
+        # X screensaver timer ends OFF, so nothing auto-locks on idle.
+        # 60 = the module's documented maximum; the value has no
+        # behavioral effect on this host.
+        inactiveInterval = 60;
         # -n (--nofork): xss-lock waits for the locker process to exit
         # before resuming its event loop; plain i3lock forks a child and
         # exits the parent, which breaks the chain.
