@@ -47,6 +47,9 @@
       den.aspects.desktop.input.fcitx5
       den.aspects.desktop.launchers.dmenu
       den.aspects.desktop.notifications.dunst
+      # i3lock + xss-lock (X11 idle chain; PAM + xss-lock service live
+      # in the i3lock aspect).
+      den.aspects.desktop.auth.i3lock
       (den.aspects.desktop.portals.xdg {internalOutput = "eDP-1";})
     ];
 
@@ -132,15 +135,22 @@
         programs = {
           term = config.home.sessionVariables.TERMINAL or "${pkgs.st}/bin/st";
           launcher = "${pkgs.dmenu}/bin/dmenu_run";
-          # Manual lock (W-Ctrl-l) = direct slock. The idle/suspend
+          # Manual lock (W-Ctrl-l) = direct i3lock. The idle/suspend
           # lock chain is handled by the xss-lock systemd service in
-          # desktop.auth.slock — spawning a second xss-lock here would
+          # desktop.auth.i3lock — spawning a second xss-lock here would
           # race with the daemon over the X screensaver.
+          # -n (--nofork): xss-lock waits for the locker process to
+          # exit before resuming its event loop; plain i3lock forks a
+          # child and exits the parent, which breaks the chain.
+          # -c: fill color, hex WITHOUT '#' prefix (i3lock's -c format
+          # matches stylix's base00-hex output directly).
           # bind[lock] (built-in) spawns program[lock] — the key must be
           # `lock`, not `locker` (spectrwm 3.7 has no program[locker]
           # lookup; the default xlock would run instead).
-          lock = "${pkgs.slock}/bin/slock";
+          lock = "${pkgs.i3lock}/bin/i3lock -n -c ${config.lib.stylix.colors.base00-hex}";
           screenshot = "${pkgs.scrot}/bin/scrot";
+          # W-b: falkon browser (DELL stack, 2026-09-23).
+          browser = "${pkgs.kdePackages.falkon}/bin/falkon";
           # Volume/brightness: spectrwm binds accept arbitrary program
           # names, so XF86 keys spawn wpctl/brightnessctl directly.
           vol_up = "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+";
@@ -172,6 +182,7 @@
           # the program key below is `lock` for exactly that reason.
           term = "MOD+Return";
           launcher = "MOD+d";
+          browser = "MOD+b";
           lock = "MOD+Control+l";
           screenshot = "MOD+Shift+s";
 
@@ -248,10 +259,9 @@
 
       # Session bootstrap spawned by spectrwm's `autorun` setting (see
       # above). Background everything: spectrwm spawns autorun entries
-      # sequentially and would block startup otherwise. The idle.sh
-      # trigger lives in auth/slock (X screensaver -> xss-lock chain);
-      # the wallpaper is the stylix image — X11 has no compositor
-      # wallpaper, so feh paints the root window.
+      # sequentially and would block startup otherwise. The wallpaper
+      # is the stylix image — X11 has no compositor wallpaper, so feh
+      # paints the root window.
       xdg.configFile."spectrwm/autostart.sh" = {
         executable = true;
         text = ''
@@ -259,23 +269,29 @@
           # DELL spectrwm session bootstrap; spawned via spectrwm.conf
           # `autorun`. Everything backgrounds — spectrwm waits on each
           # autorun entry otherwise.
-          ${config.home.homeDirectory}/.config/spectrwm/idle.sh &
+          # "Never dim/sleep when idle" (2026-09-21): kill the X
+          # screensaver timer (which screen-locker's ExecStartPre set to
+          # 600s for auto-lock) and DPMS blanking. The autostart runs
+          # AFTER the xss-lock unit's ExecStartPre, so this wins. Locking
+          # stays MANUAL (W-Ctrl-l) plus the suspend path (--transfer-
+          # sleep-lock); nothing auto-locks or blanks on idle.
+          ${pkgs.xorg.xset}/bin/xset s off -dpms &
           ${pkgs.feh}/bin/feh --bg-fill ${config.stylix.image} &
         '';
       };
 
-      # DELL session utilities (2026-09-22): screenshots, keys, clipboard,
+      # DELL session utilities (2026-09-23): screenshots, keys, clipboard,
       # brightness/audio control. All binaries referenced from spectrwm
       # binds and this list use explicit store-path refs so binds cannot
-      # silently resolve to the wrong binary.
+      # silently resolve to the wrong binary. Lock packages live in
+      # desktop.auth.i3lock (i3lock via programs.i3lock, xss-lock via
+      # services.screen-locker).
       home.packages = [
         pkgs.unstable.brightnessctl
         pkgs.feh # X11 root-window wallpaper (stylix image)
         pkgs.scrot # W-Shift-s screenshots
         pkgs.slurp # region selection helper (paired with scrot -s)
         pkgs.libnotify # notify-send
-        pkgs.slock # W-Ctrl-l manual lock (PAM provisioned by HM's security.pam; see auth/slock.nix)
-        pkgs.xss-lock # idle/suspend -> slock
         pkgs.wireplumber # wpctl volume control (STABLE: ABI-coupled to system pipewire)
         pkgs.xrandr # display mode control for moonlight-only outputs
       ];

@@ -5,8 +5,8 @@
 #
 # Updated 2026-09-22 for the X11 cut: swayidle is Wayland-only (requires
 # ext_idle_notify_v1). xss-lock (the X11 equivalent) lives in
-# desktop.auth.slock; this aspect only handles the logind-side belt-and-
-# suspenders. The desktop.auth.slock include handles the PAM service
+# desktop.auth.i3lock; this aspect only handles the logind-side belt-and-
+# suspenders. The desktop.auth.i3lock include handles the PAM service
 # and the xss-lock daemon; xss-lock respects logind's IdleAction=ignore
 # and HandleLidSwitch=ignore via D-Bus, so no idle timeouts fire while
 # these settings are in effect.
@@ -17,7 +17,7 @@
 {den, ...}: {
   den.aspects.desktop.auth.always-on = {
     homeManager = {pkgs, ...}: {
-      # xss-lock is enabled by desktop.auth.slock; nothing to add here.
+      # xss-lock is enabled by desktop.auth.i3lock; nothing to add here.
     };
 
     nixos = {lib, ...}: {
