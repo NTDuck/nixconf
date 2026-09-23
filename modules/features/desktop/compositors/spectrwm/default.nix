@@ -12,7 +12,9 @@
 #   - focus_mode = manual — mango's focus_on_activate = 0.
 #   - focus_close = next — closest mango analog (default is "prev").
 #   - border_width = 0 — mango's borderpx = 0.
-#   - bar_enabled = 0 — lemonbar (panels.lemonbar) owns the bar slot.
+#   - bar_enabled = 1 — spectrwm's NATIVE bar (bar.sh/lemonbar pipe
+#     model was fictional: bar_action stdout is the bar, stdin is
+#     /dev/null — no wsx events; deleted 2026-09-23).
 #   - verbose_layout = 0 — quiet status.
 #
 # Mango settings with NO spectrwm equivalent (dropped, not faked):
@@ -38,13 +40,12 @@
   den.aspects.desktop.compositors.spectrwm = {
     includes = [
       den.aspects.desktop.shells.zsh
-      # Session furniture: clipboard history (X11), Vietnamese input, bar,
+      # Session furniture: clipboard history (X11), Vietnamese input,
       # notifications, launcher, portals. Same shape as the labwc aspect
       # before it; only the WM-specific bits differ.
       den.aspects.desktop.clipboard.clipmenu
       den.aspects.desktop.input.fcitx5
       den.aspects.desktop.launchers.dmenu
-      den.aspects.desktop.panels.lemonbar
       den.aspects.desktop.notifications.dunst
       (den.aspects.desktop.portals.xdg {internalOutput = "eDP-1";})
     ];
@@ -76,6 +77,8 @@
       ...
     }: let
       tags = map builtins.toString (lib.range 1 9);
+      # "181616" → "18/16/16" (spectrwm's core-protocol color form).
+      hexToRgb = h: "${builtins.substring 0 2 h}/${builtins.substring 2 2 h}/${builtins.substring 4 2 h}";
     in {
       # HM's xsession module owns the session lifecycle: ~/.xsession
       # starts hm-graphical-session.target BEFORE the WM runs and stops
@@ -92,17 +95,28 @@
           focus_mode = "manual";
           focus_close = "next";
           border_width = 0;
-          # bar_enabled is set to 1 by the lemonbar include (bar.conf)
-          # — spectrwm requires bar_enabled = 1 to invoke bar_action.
-          # The lemonbar aspect writes bar.conf which sets bar_enabled
-          # = 1 and bar_action = ~/.config/spectrwm/bar.sh.
           verbose_layout = 0;
           # Tile layout is the default; spectrwm has no scroller/dwindle
           # split — leave the default (tile).
-          # Source the lemonbar config written by panels.lemonbar.
-          # spectrwm's `include` keyword takes a path string; the HM
-          # settings type accepts strings, so this works.
-          include = "${config.home.homeDirectory}/.config/spectrwm/bar.conf";
+          #
+          # CONFIG-ERROR ROOT CAUSE (2026-09-23): spectrwm 3.7 has NO
+          # `include` directive (verified against the 3.7 source's
+          # configopt table) — the previous `include = …/bar.conf` line
+          # raised "unknown option: include", which spectrwm surfaces in
+          # its bar as a startup exception (the on-screen "config
+          # error"). bar.conf is gone; the bar is spectrwm's NATIVE bar:
+          # bar_action's stdout is the bar and its stdin is /dev/null,
+          # so the lemonbar/wsx-pipe model never existed — dropped.
+          bar_enabled = 1;
+          bar_font = "Maple Mono NF CN:size=10";
+          # COLOR SYNTAX (verified under Xvfb against spectrwm 3.7):
+          # hex `#RRGGBB` is REJECTED by xcb_lookup_color on this
+          # server ("color '#181616' not found"), and an unescaped `#`
+          # starts a comment anyway (fparseln FPARSELN_UNESCCOMM —
+          # `bar_color = #181616` became "must supply value"). The
+          # core-protocol form works everywhere:
+          #   bar_color = rgb:RR/GG/BB
+          bar_color = "rgb:${hexToRgb config.lib.stylix.colors.base00-hex}";
           # Session bootstrap (2026-09-22): spawn the autostart script
           # on the first workspace at WM start. The HM xsession script
           # has already activated graphical-session.target by the time
@@ -136,11 +150,13 @@
           bright_down = "${pkgs.unstable.brightnessctl}/bin/brightnessctl set 5%-";
         };
 
-        # Quirks: float dialogs/popups that should not tile. spectrwm
-        # matches by WM_CLASS (substring) and applies the rule.
+        # Quirks: float dialogs/popups that should not tile. Selector is
+        # an ERE matched against WM_CLASS; flags are space-separated.
         quirks = {
-          # Float any tool that asks for transient behavior.
-          "*" = "TRANSSIENT";
+          # Selector is a REGEX (upstream format class[:instance]:
+          # [role]:[type]); bare "*" is a dangling-quantifier regex and
+          # raises "invalid regex for class field" — use ".*".
+          ".*" = "TRANSSZ";
           # Common dialogs.
           Pavucontrol = "FLOAT";
           Arandr = "FLOAT";
@@ -160,7 +176,11 @@
           screenshot = "MOD+Shift+s";
 
           # --- window management ---
-          close = "MOD+q";
+          # spectrwm's kill-window action is wind_del — `close` is not
+          # in the 3.7 actions table ("invalid action: close" on the
+          # 2026-09-23 config-error bar; verified against the source's
+          # actions[] table).
+          wind_del = "MOD+q";
           maximize_toggle = "MOD+f";
           fullscreen_toggle = "MOD+Shift+f";
           quit = "MOD+Shift+e";

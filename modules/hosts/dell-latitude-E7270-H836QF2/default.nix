@@ -39,6 +39,7 @@
       den.aspects.dev.agentics.harnesses.oh-my-pi
       den.aspects.dev.toolchains.sql.tabularis
       den.aspects.dev.toolchains.java-kotlin
+      den.aspects.dev.toolchains.javascript-typescript
       den.aspects.dev.postman
       den.aspects.dev.gits.git
       den.aspects.dev.gits.gh
