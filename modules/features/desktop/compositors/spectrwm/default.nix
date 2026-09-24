@@ -11,10 +11,10 @@
 #   - workspace_limit = 9 — mango uses 9 tags.
 #   - focus_mode = manual — mango's focus_on_activate = 0.
 #   - focus_close = next — closest mango analog (default is "prev").
-#   - border_width = 0 — mango's borderpx = 0. (2026-09-24 brief 2px-
-#     border trial reverted same-day: user asked for NO window border
-#     and consistent bar/window margins — zero outer margin anywhere,
-#     2px tile_gap between windows only. See margins note below.)
+#   - border_width = 0, tile_gap = 6, region_padding = 6 — mango's
+#     borderpx = 0 with 6px inner/outer gaps (gappi*/gappo* = 6;
+#     2026-09-24 evening: user restored outer margins, reverting the
+#     same-day zero-outer-margin trial. See margins note below.)
 #   - bar_enabled = 1 — spectrwm's NATIVE bar (bar.sh/lemonbar pipe
 #     model was fictional: bar_action stdout is the bar, stdin is
 #     /dev/null — no wsx events; deleted 2026-09-23). From 2026-09-24
@@ -31,8 +31,9 @@
 #   - blur, animations, opacity curves, scroller layouts, gapp*, drag_* —
 #     spectrwm is a minimal dwm-style tiler; no such knobs.
 #
-# Keybinds (2026-09-24, user request): i3's default keymap mapped onto
-# spectrwm's closest actions (see the KEYMAP PARITY note in bindings).
+# Keybinds (2026-09-24 evening, user request): mango's keymap mapped
+# onto spectrwm's closest actions (wind_del M-q, cycle_layout M-s,
+# maximize/fullscreen M-f/M-S-f, reload M-S-r; see bindings).
 # spectrwm's `bind[KEY] = action` resolves `action` against
 # built-ins first, then `program[name]` — so `term`/`launcher`/`lock`/
 # `screenshot` are wired via `programs` and the binds reference them by
@@ -100,12 +101,22 @@
       # "181616" → "18/16/16" (spectrwm's core-protocol color form).
       hexToRgb = h: "${builtins.substring 0 2 h}/${builtins.substring 2 2 h}/${builtins.substring 4 2 h}";
 
-      # Bar status script (2026-09-24): ONE line — light, volume,
-      # battery — feeding bar_format's +A section. spectrwm re-runs
-      # bar_action itself, so NO loop/sleep here (that would wedge the
-      # bar refresh). Binaries are explicit store paths so the bar can
-      # never resolve a wrong binary. writeShellScript runs this under
-      # bash with set -euo pipefail, hence the || true guards.
+      # Bar status script (2026-09-24 evening): light, volume, battery
+      # feeding bar_format's +A section. PERSISTENT loop, not one-shot:
+      # spectrwm reads bar_action output from ITS OWN STDIN
+      # (bar_extra_update() in spectrwm.c) and treats pipe EOF as
+      # "bar_action failed" — a one-shot script is dead after its
+      # first line, and the dell booted into exactly that wedge (right
+      # section empty from the 22:07 boot until a USR1 reload; the
+      # same conf rendered fully under Xvfb, so this was a boot race
+      # on the EOF, not a config bug). Upstream's own baraction.sh is
+      # a while-loop for the same reason: keep the pipe open. The loop
+      # re-echoes the line every 5s (brightness/volume/battery drift
+      # slowly; the %H:%M clock in bar_format is rendered by spectrwm
+      # itself and stays 1s-fresh). Binaries are explicit store paths
+      # so the bar can never resolve a wrong binary. writeShellScript
+      # runs this under bash with set -euo pipefail, hence the || true
+      # guards.
       swm-status = pkgs.writeShellScript "swm-status" ''
         # Nerd Font glyphs as $'…' escapes (raw UTF-8 got mangled in the
         # nix file round-trip). NOTE: $'…' only expands OUTSIDE double
@@ -119,57 +130,69 @@
         g_bat_low=$'\uf243'
         g_bat_empty=$'\uf244'
 
-        light=""
-        pct=$(${pkgs.unstable.brightnessctl}/bin/brightnessctl get 2>/dev/null || true)
-        max=$(${pkgs.unstable.brightnessctl}/bin/brightnessctl max 2>/dev/null || true)
-        # max-zero guard: divide-by-zero would abort the whole line.
-        if [ -n "$pct" ] && [ -n "$max" ] && [ "$max" -gt 0 ]; then
-          light="$g_bolt $((pct * 100 / max))%"
-        fi
-
-        vol=""
-        vol_out=$(${pkgs.wireplumber}/bin/wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null || true)
-        case "$vol_out" in
-          *Volume:*)
-            raw=''${vol_out#*Volume: }
-            case "$raw" in
-              # wpctl appends " [MUTED]" to the same Volume line.
-              *MUTED*) vol="$g_mute muted" ;;
-              *)
-                case "$raw" in
-                  0.*) raw=''${raw#0.} ;; # 0.45 → 45 (10#05 → 5 too)
-                  *) raw=''${raw//./} ;; # 1.00 → 100 (wpctl caps at 1.00)
-                esac
-                [ -n "$raw" ] || raw=0
-                vol="$g_vol $((10#$raw))%"
-                ;;
-            esac
-            ;;
-        esac
-
-        bat=""
-        for bat_dir in /sys/class/power_supply/BAT*; do
-          # Glob stays literal when no battery exists; -r fails and we
-          # skip, leaving the battery segment out entirely (AC-only
-          # desktops must not show a dead cell).
-          [ -r "$bat_dir/capacity" ] || continue
-          cap=$(${pkgs.coreutils}/bin/cat "$bat_dir/capacity")
-          [ -n "$cap" ] || continue
-          if [ "$cap" -ge 90 ]; then icon=$g_bat_full
-          elif [ "$cap" -ge 70 ]; then icon=$g_bat_34
-          elif [ "$cap" -ge 50 ]; then icon=$g_bat_12
-          elif [ "$cap" -ge 30 ]; then icon=$g_bat_low
-          else icon=$g_bat_empty
+        status() {
+          light=""
+          pct=$(${pkgs.unstable.brightnessctl}/bin/brightnessctl get 2>/dev/null || true)
+          max=$(${pkgs.unstable.brightnessctl}/bin/brightnessctl max 2>/dev/null || true)
+          # max-zero guard: divide-by-zero would abort the whole line.
+          if [ -n "$pct" ] && [ -n "$max" ] && [ "$max" -gt 0 ]; then
+            light="$g_bolt $((pct * 100 / max))%"
           fi
-          suffix=""
-          if [ "$(${pkgs.coreutils}/bin/cat "$bat_dir/status")" = "Charging" ]; then
-            suffix=" $g_bolt"
-          fi
-          bat=" $icon $cap%$suffix"
-          break
+
+          vol=""
+          vol_out=$(${pkgs.wireplumber}/bin/wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null || true)
+          case "$vol_out" in
+            *Volume:*)
+              raw=''${vol_out#*Volume: }
+              case "$raw" in
+                # wpctl appends " [MUTED]" to the same Volume line.
+                *MUTED*) vol="$g_mute muted" ;;
+                *)
+                  case "$raw" in
+                    0.*) raw=''${raw#0.} ;; # 0.45 → 45 (10#05 → 5 too)
+                    *) raw=''${raw//./} ;; # 1.00 → 100 (wpctl caps at 1.00)
+                  esac
+                  [ -n "$raw" ] || raw=0
+                  vol="$g_vol $((10#$raw))%"
+                  ;;
+              esac
+              ;;
+          esac
+
+          bat=""
+          for bat_dir in /sys/class/power_supply/BAT*; do
+            # Glob stays literal when no battery exists; -r fails and we
+            # skip, leaving the battery segment out entirely (AC-only
+            # desktops must not show a dead cell).
+            [ -r "$bat_dir/capacity" ] || continue
+            cap=$(${pkgs.coreutils}/bin/cat "$bat_dir/capacity")
+            [ -n "$cap" ] || continue
+            if [ "$cap" -ge 90 ]; then icon=$g_bat_full
+            elif [ "$cap" -ge 70 ]; then icon=$g_bat_34
+            elif [ "$cap" -ge 50 ]; then icon=$g_bat_12
+            elif [ "$cap" -ge 30 ]; then icon=$g_bat_low
+            else icon=$g_bat_empty
+            fi
+            suffix=""
+            if [ "$(${pkgs.coreutils}/bin/cat "$bat_dir/status")" = "Charging" ]; then
+              suffix=" $g_bolt"
+            fi
+            bat=" $icon $cap%$suffix"
+            break
+          done
+
+          echo "$light   $vol   $bat"
+        }
+        # Emit immediately (bar paints its right section on the first
+        # line), then refresh every 5s. NEVER exits while spectrwm is
+        # alive: the pipe carries the status, and EOF on it is exactly
+        # what empties the bar's right section. spectrwm SIGTERMs this
+        # child on quit/reload (kill_bar_extra_atexit / bar_extra_stop),
+        # so there is no orphan.
+        while :; do
+          status
+          ${pkgs.coreutils}/bin/sleep 5
         done
-
-        echo "$light   $vol   $bat"
       '';
     in {
       # HM's xsession module owns the session lifecycle: ~/.xsession
@@ -186,18 +209,20 @@
           workspace_limit = 9;
           focus_mode = "manual";
           focus_close = "next";
-          # Margins (2026-09-24, revised after 2px-border trial): user
-          # request "remove window border; bar margin == window margin".
-          # spectrwm's bar window always spans the full region width
-          # (no bar-inset knob exists; region_padding does not move it —
-          # measured live: bar 1366x26 at +0+0 with region_padding=2),
-          # so equal margins are achieved the other way: NO outer
-          # margin anywhere — windows flush to region edges (region_
-          # padding=0, border_width=0), 2px gap only BETWEEN tiles, and
-          # the bar keeps its own 2px frame as its visual edge.
+          # Margins (2026-09-24 evening, mango parity): mango runs
+          # borderpx=0 with 6px inner and outer gaps (gappih/gappiv/
+          # gappoh/gappov=6). spectrwm mapping: border_width=0,
+          # tile_gap=6 (inner gap between tiles; replaces the 2px
+          # trial), region_padding=6 (outer margin — user restored
+          # outer margins, reverting the earlier zero-outer-margin
+          # decision). spectrwm's bar window still spans the full
+          # region width (no bar-inset knob exists; region_padding
+          # does not move it — measured live: bar 1366x26 at +0+0 with
+          # region_padding=2), so the bar keeps its own 2px frame as
+          # its visual edge.
           border_width = 0;
-          tile_gap = 2;
-          region_padding = 0;
+          tile_gap = 6;
+          region_padding = 6;
           verbose_layout = 0;
           # Tile layout is the default; spectrwm has no scroller/dwindle
           # split — leave the default (tile).
@@ -335,21 +360,23 @@
           lock = "MOD+Control+l";
           screenshot = "MOD+Shift+s";
 
-          # --- window management (i3) ---
-          # i3 Mod+Shift+q close; Mod+f fullscreen; Mod+Shift+c reload;
-          # Mod+Shift+e exit; Mod+Shift+r restart; Mod+Shift+space
-          # toggle floating. maximize_toggle (M-S-f) replaces i3's
-          # absent "maximize" — nearest analogue. spectrwm's kill action
-          # is wind_del — `close` is not in the 3.7 actions table
+          # --- window management (mango parity, 2026-09-24 evening) ---
+          # Mango: SUPER,q killclient; SUPER,f togglemaximizescreen;
+          # SUPER+SHIFT,f togglefullscreen; SUPER+SHIFT,e quit;
+          # SUPER+SHIFT,r reload_config. spectrwm's kill action is
+          # wind_del — `close` is not in the 3.7 actions table
           # ("invalid action: close" on the 2026-09-23 config-error bar;
-          # verified against the source's actions[] table).
-          wind_del = "MOD+Shift+q";
-          fullscreen_toggle = "MOD+f";
-          maximize_toggle = "MOD+Shift+f";
+          # verified against the source's actions[] table). Mango has
+          # no restart bind, so spectrwm's restart stays unbound
+          # (SIGHUP and quit paths remain). float_toggle keeps
+          # M-S-space: mango binds no SUPER+SHIFT,space, and fcitx5
+          # owns plain M-space.
+          wind_del = "MOD+q";
+          maximize_toggle = "MOD+f";
+          fullscreen_toggle = "MOD+Shift+f";
           float_toggle = "MOD+Shift+space";
-          reload = "MOD+Shift+c";
+          reload = "MOD+Shift+r";
           quit = "MOD+Shift+e";
-          restart = "MOD+Shift+r";
 
           # --- focus (spectrwm has NO directional focus — only cycling
           # focus_next/focus_prev, which the binary + man page confirm;
@@ -362,14 +389,12 @@
           focus_next = "MOD+j";
           focus_prev = "MOD+k";
 
-          # --- layout cycling (i3 Mod+e "toggle default layout";
-          # Mod+s stacking ≈ spectrwm's max layout) ---
-          # Overrides spectrwm defaults M-e (maximize_toggle, moved to
-          # M-S-f above) and M-s (screenshot_all, freed + unbound
-          # below) INTENTIONALLY — layout switching is higher-value
-          # than the all-screenshots hotkey on this box.
-          cycle_layout = "MOD+e";
-          layout_max = "MOD+s";
+          # --- layout cycling (mango parity, 2026-09-24 evening) ---
+          # Mango: SUPER,s switch_layout → cycle_layout on M-s
+          # (overrides the default screenshot_all there). M-e is freed
+          # entirely: mango binds no SUPER,e and the default
+          # maximize_toggle moved to M-f — unbound below.
+          cycle_layout = "MOD+s";
 
           # --- swap (spectrwm has NO directional swap; cycle instead) ---
           swap_prev = "MOD+Shift+h";
@@ -414,25 +439,26 @@
           bright_down = "XF86MonBrightnessDown";
         };
 
-        # Disable defaults that collide with our binds or free keys i3
-        # leaves empty (default table verified in the 3.7 man page).
-        # MOD+Shift+q is the default quit — ours is wind_del there;
-        # spectrwm validates binds against ITS default table: unbind
-        # first so a stray MOD+Shift+q can never quit the session.
-        # MOD+q default restart / MOD+s default screenshot_all /
-        # MOD+w default iconify: keys our i3 map freed (i3 has no
-        # restart key, M-w is tabbed — absent here, M-s is stacking).
-        # Unbound so no stock action fires on muscle memory.
-        # MOD+Space (default cycle_layout, spectrwm 3.7 man line ~1508):
-        # freed for fcitx5's input-method trigger (Super+space,
-        # i18n.inputMethod config) — 2026-09-24, keypress never reached
-        # fcitx5 while spectrwm held the grab. NOTE: keysym must be
-        # lowercase `space` — `bind[]: invalid key: Space` kills the
-        # whole bar render (Xvfb-reproduced 2026-09-24).
+        # Disable defaults for keys our map leaves empty (default
+        # table verified in the 3.7 man page). MOD+Shift+q is the
+        # default quit — wind_del moved to M-q (mango parity), so free
+        # M-S-q so a stray press can never quit the session. MOD+e
+        # default maximize_toggle moved to M-f; MOD+w default iconify
+        # freed (mango has no SUPER,w). MOD+Space (default
+        # cycle_layout, spectrwm 3.7 man line ~1508) is freed for
+        # fcitx5's input-method trigger (Super+space, i18n.inputMethod
+        # config) — keypress never reached fcitx5 while spectrwm held
+        # the grab. NOTE: keysym must be lowercase `space` —
+        # `bind[]: invalid key: Space` kills the whole bar render
+        # (Xvfb-reproduced 2026-09-24).
+        # CAUTION (2026-09-24, the original W+q killer): HM emits
+        # unbindings AFTER binds in the generated conf, and an unbind
+        # for a key a bind[] above uses silently disables that bind —
+        # wind_del=M-S-q was dead on arrival exactly this way. Never
+        # list a key a bind above consumes.
         unbindings = [
           "MOD+Shift+q"
-          "MOD+q"
-          "MOD+s"
+          "MOD+e"
           "MOD+w"
           "MOD+space"
         ];
