@@ -47,9 +47,6 @@
           }) {
             # https://github.com/EdgeTypE/better-deepseek
             "betterdeepseek@goygoyengine.com" = "better-deepseek";
-
-            # https://github.com/saeedezzati/superpower-chatgpt
-            "cjiggdeafkdppmdmlcdpfigbalcgbkpg@fancydino.com" = "superpower-chatgpt";
           };
       };
 
