@@ -30,12 +30,33 @@
       programs.urxvt = {
         enable = true;
         package = pkgs.rxvt-unicode;
-        # Font spec MUST equal spectrwm's bar_font (Maple Mono NF CN:size=10,
-        # 2026-09-24 user request "terminal font must match bar"). The old
-        # pixelsize=11 rendered ~11px while the bar's Xft size=10 renders
-        # ~13.3px at the server's 96dpi — the terminal text was visibly
-        # smaller. Identical Xft spec + same server DPI = identical size.
-        fonts = ["xft:Maple Mono NF CN:size=10"];
+        # Font spec: primary Maple Mono NF CN:size=10 (2026-09-24 user
+        # request "terminal font must match bar", bar_font = Maple Mono
+        # NF CN:size=10), DejaVu Sans Mono as the NF-GLYPH fallback.
+        #
+        # The fallback exists because urxvt 9.31's Xft layer draws
+        # .notdef (hollow box) for Nerd-Font PUA glyphs the primary
+        # font's cmap PROVABLY contains (U+E7C0/U+E7C9/U+F359: rendered
+        # fine by FreeType/ImageMagick and by ghostty from the same TTF
+        # on this machine, but tofu in urxvt with Maple primary;
+        # Xvfb-reproduced 2026-09-24). urxvt's own fontset fallback
+        # short-circuits on the primary font's cmap, so the ONLY working
+        # layout is a non-NF primary + NF font as secondary — then the
+        # NF codepoints resolve through the secondary. DejaVu was chosen
+        # as the primary because it shares Maple's metrics closely and
+        # has no PUA coverage of its own (fc-list charset verified), so
+        # every NF codepoint defers to the fallback instead of shading.
+        # KNOWN LIMITATION (user-accepted 2026-09-24): glyphs in the
+        # gaps of Nerd Font v3 coverage (e.g. U+E91A, U+E480, U+EC8D,
+        # U+EE81 — verified against official Symbols Nerd Font 3.4.0,
+        # same ranges) still render as boxes, and supplementary-plane
+        # codepoints beyond f1af0 have no urxvt rendering path at all.
+        # Full omp icon rendering requires a terminal whose harfbuzz
+        # fallback chain works (ghostty verified complete on dell).
+        fonts = [
+          "xft:DejaVu Sans Mono:size=10"
+          "xft:Maple Mono NF CN"
+        ];
         # st has no scrollbar; urxvt's default plain bar is off to match.
         scroll.bar.enable = false;
         # X clipboard integration (urxvt manages PRIMARY only by default).
