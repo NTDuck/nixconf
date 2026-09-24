@@ -385,8 +385,15 @@
         # shadow nothing (different key), but spectrwm validates binds
         # against ITS default table: unbind first so a stray MOD+Shift+q
         # can never quit the session.
+        # MOD+Space (default cycle_layout, spectrwm 3.7 man line ~1508):
+        # freed for fcitx5's input-method trigger (Super+space,
+        # i18n.inputMethod config) — 2026-09-24, keypress never reached
+        # fcitx5 while spectrwm held the grab. NOTE: keysym must be
+        # lowercase `space` — `bind[]: invalid key: Space` kills the
+        # whole bar render (Xvfb-reproduced 2026-09-24).
         unbindings = [
           "MOD+Shift+q"
+          "MOD+space"
         ];
       };
 
