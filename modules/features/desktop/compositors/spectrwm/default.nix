@@ -11,9 +11,10 @@
 #   - workspace_limit = 9 — mango uses 9 tags.
 #   - focus_mode = manual — mango's focus_on_activate = 0.
 #   - focus_close = next — closest mango analog (default is "prev").
-#   - border_width = 0 — mango's borderpx = 0. SUPERSEDED 2026-09-24:
-#     user request moved dell to 2px borders + 2px margins with stylix
-#     colors (border_width/tile_gap/region_padding/color_* below).
+#   - border_width = 0 — mango's borderpx = 0. (2026-09-24 brief 2px-
+#     border trial reverted same-day: user asked for NO window border
+#     and consistent bar/window margins — zero outer margin anywhere,
+#     2px tile_gap between windows only. See margins note below.)
 #   - bar_enabled = 1 — spectrwm's NATIVE bar (bar.sh/lemonbar pipe
 #     model was fictional: bar_action stdout is the bar, stdin is
 #     /dev/null — no wsx events; deleted 2026-09-23). From 2026-09-24
@@ -30,8 +31,9 @@
 #   - blur, animations, opacity curves, scroller layouts, gapp*, drag_* —
 #     spectrwm is a minimal dwm-style tiler; no such knobs.
 #
-# Keybinds mirror the legion mango aspect as closely as spectrwm's action
-# set allows. spectrwm's `bind[KEY] = action` resolves `action` against
+# Keybinds (2026-09-24, user request): i3's default keymap mapped onto
+# spectrwm's closest actions (see the KEYMAP PARITY note in bindings).
+# spectrwm's `bind[KEY] = action` resolves `action` against
 # built-ins first, then `program[name]` — so `term`/`launcher`/`lock`/
 # `screenshot` are wired via `programs` and the binds reference them by
 # name. spectrwm's `MOD` literal in binds is substituted from `modkey`.
@@ -317,6 +319,13 @@
         };
 
         bindings = {
+          # KEYMAP PARITY (2026-09-24): i3's defaults, mapped onto
+          # spectrwm's closest actions (user request "make controls like
+          # i3"). Divergences are forced by spectrwm's action table and
+          # noted inline. Verified default-table conflicts per key
+          # against the 3.7 man page (lines 1498-1643); freed keys are
+          # unbound below so no stock action resurfaces.
+
           # --- terminal / launcher / lock / screenshot ---
           # bind[lock] is a BUILT-IN action that spawns program[lock];
           # the program key below is `lock` for exactly that reason.
@@ -326,43 +335,52 @@
           lock = "MOD+Control+l";
           screenshot = "MOD+Shift+s";
 
-          # --- window management ---
-          # spectrwm's kill-window action is wind_del — `close` is not
-          # in the 3.7 actions table ("invalid action: close" on the
-          # 2026-09-23 config-error bar; verified against the source's
-          # actions[] table).
-          wind_del = "MOD+q";
-          maximize_toggle = "MOD+f";
-          fullscreen_toggle = "MOD+Shift+f";
+          # --- window management (i3) ---
+          # i3 Mod+Shift+q close; Mod+f fullscreen; Mod+Shift+c reload;
+          # Mod+Shift+e exit; Mod+Shift+r restart; Mod+Shift+space
+          # toggle floating. maximize_toggle (M-S-f) replaces i3's
+          # absent "maximize" — nearest analogue. spectrwm's kill action
+          # is wind_del — `close` is not in the 3.7 actions table
+          # ("invalid action: close" on the 2026-09-23 config-error bar;
+          # verified against the source's actions[] table).
+          wind_del = "MOD+Shift+q";
+          fullscreen_toggle = "MOD+f";
+          maximize_toggle = "MOD+Shift+f";
+          float_toggle = "MOD+Shift+space";
+          reload = "MOD+Shift+c";
           quit = "MOD+Shift+e";
           restart = "MOD+Shift+r";
 
           # --- focus (spectrwm has NO directional focus — only cycling
-          # focus_next/focus_prev, which the binary + man page confirm) ---
-          # mango-parity cycle keys (2026-09-24): M-j/M-k are spectrwm's
-          # NATIVE cycle keys, so focus_next moves off the default M-l —
-          # that bind clobbered the built-in master_grow. No h/l binds:
-          # h/l keep their master_shrink/master_grow defaults
-          # (spectrwm 3.7 has no directional focus to map them to).
+          # focus_next/focus_prev, which the binary + man page confirm;
+          # i3's M-j/M-k directional keys map onto the cycle) ---
+          # M-j/M-k are spectrwm's NATIVE cycle keys, so focus_next
+          # moves off the default M-l — that bind clobbered the built-in
+          # master_grow. No h/l binds: h/l keep their
+          # master_shrink/master_grow defaults (spectrwm 3.7 has no
+          # directional focus to map them to).
           focus_next = "MOD+j";
           focus_prev = "MOD+k";
 
-          # --- layout cycling (mango SUPER,s,switch_layout) ---
-          # (2026-09-24) Overrides spectrwm's default M+s
-          # screenshot_all binding INTENTIONALLY — layout switching is
-          # higher-value than the all-screenshots hotkey on this box.
-          cycle_layout = "MOD+s";
+          # --- layout cycling (i3 Mod+e "toggle default layout";
+          # Mod+s stacking ≈ spectrwm's max layout) ---
+          # Overrides spectrwm defaults M-e (maximize_toggle, moved to
+          # M-S-f above) and M-s (screenshot_all, freed + unbound
+          # below) INTENTIONALLY — layout switching is higher-value
+          # than the all-screenshots hotkey on this box.
+          cycle_layout = "MOD+e";
+          layout_max = "MOD+s";
 
           # --- swap (spectrwm has NO directional swap; cycle instead) ---
           swap_prev = "MOD+Shift+h";
           swap_next = "MOD+Shift+l";
 
-          # --- workspace navigation (mango viewtoright/left) ---
-          # ws_left/ws_right don't exist; ws_prev/ws_next do.
+          # --- workspace navigation (i3 has no default prev/next) ---
+          # ws_left/ws_right don't exist; ws_prev/ws_next do (F11/F12).
           ws_prev = "MOD+F12";
           ws_next = "MOD+F11";
 
-          # --- per-tag focus (mango SUPER,N,view,N) ---
+          # --- per-tag focus (i3 Mod+N workspace N) ---
           ws_1 = "MOD+1";
           ws_2 = "MOD+2";
           ws_3 = "MOD+3";
@@ -373,10 +391,11 @@
           ws_8 = "MOD+8";
           ws_9 = "MOD+9";
 
-          # --- per-tag send (mango SUPER+SHIFT,N,tagsilent) ---
+          # --- per-tag send (i3 Mod+Shift+N move container to N) ---
           # spectrwm's send action is mvws_<N> (move window, no follow).
           # There is NO send-and-follow for absolute tags (ws_next_move is
-          # relative-only), so mango's SUPER+ALT,N,tag mapping is dropped.
+          # relative-only); mvws moves without following — accepted
+          # divergence from i3's move+follow.
           mvws_1 = "MOD+Shift+1";
           mvws_2 = "MOD+Shift+2";
           mvws_3 = "MOD+Shift+3";
@@ -387,7 +406,7 @@
           mvws_8 = "MOD+Shift+8";
           mvws_9 = "MOD+Shift+9";
 
-          # --- media keys (mango bindl XF86*) ---
+          # --- media keys (i3 bindl XF86* equivalents) ---
           vol_up = "XF86AudioRaiseVolume";
           vol_down = "XF86AudioLowerVolume";
           vol_mute = "XF86AudioMute";
@@ -395,11 +414,15 @@
           bright_down = "XF86MonBrightnessDown";
         };
 
-        # Disable defaults that conflict with our binds. MOD+Shift+q is
-        # the default quit — ours is MOD+Shift+e; the default bind would
-        # shadow nothing (different key), but spectrwm validates binds
-        # against ITS default table: unbind first so a stray MOD+Shift+q
-        # can never quit the session.
+        # Disable defaults that collide with our binds or free keys i3
+        # leaves empty (default table verified in the 3.7 man page).
+        # MOD+Shift+q is the default quit — ours is wind_del there;
+        # spectrwm validates binds against ITS default table: unbind
+        # first so a stray MOD+Shift+q can never quit the session.
+        # MOD+q default restart / MOD+s default screenshot_all /
+        # MOD+w default iconify: keys our i3 map freed (i3 has no
+        # restart key, M-w is tabbed — absent here, M-s is stacking).
+        # Unbound so no stock action fires on muscle memory.
         # MOD+Space (default cycle_layout, spectrwm 3.7 man line ~1508):
         # freed for fcitx5's input-method trigger (Super+space,
         # i18n.inputMethod config) — 2026-09-24, keypress never reached
@@ -408,6 +431,9 @@
         # whole bar render (Xvfb-reproduced 2026-09-24).
         unbindings = [
           "MOD+Shift+q"
+          "MOD+q"
+          "MOD+s"
+          "MOD+w"
           "MOD+space"
         ];
       };
