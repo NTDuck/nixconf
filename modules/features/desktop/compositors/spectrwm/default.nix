@@ -255,8 +255,16 @@
           # lookup; the default xlock would run instead).
           lock = "${pkgs.i3lock}/bin/i3lock -n -c ${config.lib.stylix.colors.base00-hex}";
           screenshot = "${pkgs.scrot}/bin/scrot";
-          # W-b: firefox browser (falkon removed 2026-09-24).
-          browser = "${pkgs.firefox}/bin/firefox";
+          # W-b: firefox browser (falkon removed 2026-09-24). Must be
+          # finalPackage: HM bakes programs.firefox.policies into the
+          # finalPackage's distribution/policies.json (force-installs
+          # betterdeepseek); the bare pkgs.firefox store path carries
+          # no policies. Guarded because the spectrwm aspect is
+          # firefox-independent in principle.
+          browser =
+            if config.programs.firefox.enable or false
+            then "${config.programs.firefox.finalPackage}/bin/firefox"
+            else "${pkgs.unstable.firefox}/bin/firefox";
           # Volume/brightness: spectrwm binds accept arbitrary program
           # names, so XF86 keys spawn wpctl/brightnessctl directly.
           vol_up = "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+";
