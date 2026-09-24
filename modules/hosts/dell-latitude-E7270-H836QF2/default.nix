@@ -62,15 +62,14 @@
       den.aspects.system.settings
       den.aspects.system.storage.udisks2
       den.aspects.system.swap.zram
-      # dwm (X11) — 2026-09-23 cutover after spectrwm froze the whole
-      # screen on two independent boots (gen 19 parser-verified, gen 22
-      # zero-exception conf that survived the same binds under Xvfb).
-      # Same stack around it: native bar (dwm's), feh, dmenu, dunst,
-      # st, pcmanfm, i3lock+xss-lock. The dwm aspect pulls in its own
-      # session furniture (clipmenu, fcitx5, dmenu, dunst,
-      # i3lock/xss-lock, portals.xdg) so the host doesn't list them
-      # individually.
-      (den.aspects.desktop.compositors.dwm)
+      # spectrwm (X11) — reinstated 2026-09-24 after one day on dwm.
+      # The two freeze boots are diagnosed as spectrwm's libswmhack
+      # spawn path (LD_PRELOAD injection into every program[] child),
+      # fixed with spawn_flags = "nospawnws" in the spectrwm aspect.
+      # The spectrwm aspect pulls in its own session furniture
+      # (clipmenu, fcitx5, dmenu, dunst, i3lock/xss-lock, portals.xdg)
+      # so the host doesn't list them individually.
+      den.aspects.desktop.compositors.spectrwm
       den.aspects.desktop.auth.gnome-keyring
       # Always-on session (logind lid/suspend keys ignored; sleep
       # targets force-disabled). The idle/lock chain is handled by the
