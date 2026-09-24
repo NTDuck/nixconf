@@ -120,24 +120,17 @@
           # core-protocol form works everywhere:
           #   bar_color = rgb:RR/GG/BB
           bar_color = "rgb:${hexToRgb config.lib.stylix.colors.base00-hex}";
-          # SPAWN DEADLOCK FIX (2026-09-24): both real-hardware freeze
-          # boots (gen 19, gen 22 — parser/exception clean confs that
-          # survived the same binds under Xvfb) died on the first
-          # program[] spawn (W-Return/W-d). spectrwm's default spawn
-          # path injects LD_PRELOAD=libswmhack.so + _SWM_WS into every
-          # program[] child (spectrwm.c:6628 gates that env block on
-          # SWM_SPAWN_WS|PID|XTERM_FONTADJ), and libswmhack has a
-          # long-standing deadlock history (fixed upstream in 3.2.0,
-          # 3.7.0 still in nixpkgs). spawn_flags = "nospawnws" (valid
-          # 3.7 flag, spectrwm.c:12139) is captured into each
-          # program[] at conf-parse time (setconfspawn,
-          # spectrwm.c:12294), making spawn_custom skip SWM_SPAWN_WS
-          # (spectrwm.c:11828-11829) — so no libswmhack injection.
-          # Cost: spawned windows land on the FOCUSED workspace instead
-          # of the spawning one; irrelevant with manual focus_mode.
-          # HM renders settings before programs (spectrwm.nix
-          # concatStringsSep order), so this line precedes program[].
-          spawn_flags = "nospawnws";
+          # (2026-09-24) The `spawn_flags = "nospawnws"` line that stood
+          # here is REVERTED: the libswmhack spawn-deadlock theory was
+          # falsified — gen 24 had nospawnws and still froze identically,
+          # and the dwm era (no libswmhack at all) froze identically too.
+          # The real cause was Xorg starting with ZERO input drivers
+          # (xinit's startx bakes the raw xorgserver as its default
+          # server, whose ModulePath lacks libinput/evdev) — fixed in the
+          # dell host via /etc/X11/xorg.conf.d/00-modulepath.conf. Xvfb
+          # A/B tests passed because XTEST key injection bypasses input
+          # drivers entirely. Default spawn behavior (workspace-targeted
+          # spawn via libswmhack) is restored.
           # Session bootstrap (2026-09-22): spawn the autostart script
           # on the first workspace at WM start. The HM xsession script
           # has already activated graphical-session.target by the time
