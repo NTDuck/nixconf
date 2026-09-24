@@ -30,9 +30,9 @@
       den.aspects.remote-desktop.moonlight
       den.aspects.system.network.tailscale
       den.aspects.apps.fastfetch
-      # DELL terminal stack (2026-09-23): st (suckless, X11 — patched
-      # with the kanagawa-dragon palette in the st aspect).
-      den.aspects.apps.terminals.st
+      # DELL terminal stack (2026-09-24): urxvt (rxvt-unicode, stylix
+      # palette via xresources — replaced the patched st).
+      den.aspects.apps.terminals.urxvt
       den.aspects.apps.editors.obsidian
       # JetBrains IDE (proprietary `idea`, not the dead idea-oss).
       den.aspects.apps.editors.intellij

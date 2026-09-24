@@ -140,11 +140,13 @@
 
         # Programs referenced by binds below. spectrwm resolves
         # `bind[KEY] = name` against `program[name]` first, so the binds
-        # stay readable. The st binary is the patched one from
-        # desktop.apps.terminals.st (kanagawa-dragon palette + Maple
-        # Mono NF CN font), NOT the upstream default.
+        # stay readable. The terminal is urxvt (apps.terminals.urxvt,
+        # stylix palette via xresources); the fallback pins the same
+        # binary in case TERMINAL is unset.
         programs = {
-          term = config.home.sessionVariables.TERMINAL or "${pkgs.st}/bin/st";
+          term =
+            config.home.sessionVariables.TERMINAL
+            or "${pkgs.rxvt-unicode}/bin/urxvt";
           launcher = "${pkgs.dmenu}/bin/dmenu_run";
           # Manual lock (W-Ctrl-l) = direct i3lock. The idle/suspend
           # lock chain is handled by the xss-lock systemd service in
