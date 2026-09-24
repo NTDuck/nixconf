@@ -19,8 +19,8 @@
       ({
         nixos.stylix.image = lib.mkForce "${inputs.self}/assets/wallpapers/isle-of-the-dead.jpg";
       })
-      # DELL browser stack (2026-09-23): falkon (KDE QtWebEngine).
-      den.aspects.apps.browsers.falkon
+      # DELL browser (2026-09-24): firefox replaces falkon (parity with legion).
+      den.aspects.apps.browsers.firefox
       den.aspects.apps.btop
       den.aspects.apps.p7zip
       den.aspects.apps.ripgrep

@@ -67,6 +67,13 @@
           color13 = "#${c.base0E-hex}";
           color14 = "#${c.base0C-hex}";
           color15 = "#${c.base07-hex}";
+          # mirrors legion ghostty look (cursor-style-blink=false,
+          # mouse-hide-while-typing, roomy scrollback) 2026-09-24
+          cursorBlink = "false";
+          cursorUnderline = "false";
+          pointerBlank = "true";
+          pointerBlankDelay = "0.3";
+          saveLines = "10000";
         };
       };
 

@@ -14,7 +14,9 @@
 #   - border_width = 0 — mango's borderpx = 0.
 #   - bar_enabled = 1 — spectrwm's NATIVE bar (bar.sh/lemonbar pipe
 #     model was fictional: bar_action stdout is the bar, stdin is
-#     /dev/null — no wsx events; deleted 2026-09-23).
+#     /dev/null — no wsx events; deleted 2026-09-23). From 2026-09-24
+#     the bar is laid out via bar_format sections: workspaces left,
+#     clock middle, light/audio/battery right (swm-status script).
 #   - verbose_layout = 0 — quiet status.
 #
 # Mango settings with NO spectrwm equivalent (dropped, not faked):
@@ -82,6 +84,78 @@
       tags = map builtins.toString (lib.range 1 9);
       # "181616" → "18/16/16" (spectrwm's core-protocol color form).
       hexToRgb = h: "${builtins.substring 0 2 h}/${builtins.substring 2 2 h}/${builtins.substring 4 2 h}";
+
+      # Bar status script (2026-09-24): ONE line — light, volume,
+      # battery — feeding bar_format's +A section. spectrwm re-runs
+      # bar_action itself, so NO loop/sleep here (that would wedge the
+      # bar refresh). Binaries are explicit store paths so the bar can
+      # never resolve a wrong binary. writeShellScript runs this under
+      # bash with set -euo pipefail, hence the || true guards.
+      swm-status = pkgs.writeShellScript "swm-status" ''
+        # Nerd Font glyphs as $'…' escapes (raw UTF-8 got mangled in the
+        # nix file round-trip). NOTE: $'…' only expands OUTSIDE double
+        # quotes, so each glyph is assigned first, then interpolated.
+        g_bolt=$'\uf0e7' # brightness / charging
+        g_vol=$'\uf028' # nf-fa-volume_up
+        g_mute=$'\uf026' # nf-fa-volume_off
+        g_bat_full=$'\uf240'
+        g_bat_34=$'\uf241'
+        g_bat_12=$'\uf242'
+        g_bat_low=$'\uf243'
+        g_bat_empty=$'\uf244'
+
+        light=""
+        pct=$(${pkgs.unstable.brightnessctl}/bin/brightnessctl get 2>/dev/null || true)
+        max=$(${pkgs.unstable.brightnessctl}/bin/brightnessctl max 2>/dev/null || true)
+        # max-zero guard: divide-by-zero would abort the whole line.
+        if [ -n "$pct" ] && [ -n "$max" ] && [ "$max" -gt 0 ]; then
+          light="$g_bolt $((pct * 100 / max))%"
+        fi
+
+        vol=""
+        vol_out=$(${pkgs.wireplumber}/bin/wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null || true)
+        case "$vol_out" in
+          *Volume:*)
+            raw=''${vol_out#*Volume: }
+            case "$raw" in
+              # wpctl appends " [MUTED]" to the same Volume line.
+              *MUTED*) vol="$g_mute muted" ;;
+              *)
+                case "$raw" in
+                  0.*) raw=''${raw#0.} ;; # 0.45 → 45 (10#05 → 5 too)
+                  *) raw=''${raw//./} ;; # 1.00 → 100 (wpctl caps at 1.00)
+                esac
+                [ -n "$raw" ] || raw=0
+                vol="$g_vol $((10#$raw))%"
+                ;;
+            esac
+            ;;
+        esac
+
+        bat=""
+        for bat_dir in /sys/class/power_supply/BAT*; do
+          # Glob stays literal when no battery exists; -r fails and we
+          # skip, leaving the battery segment out entirely (AC-only
+          # desktops must not show a dead cell).
+          [ -r "$bat_dir/capacity" ] || continue
+          cap=$(${pkgs.coreutils}/bin/cat "$bat_dir/capacity")
+          [ -n "$cap" ] || continue
+          if [ "$cap" -ge 90 ]; then icon=$g_bat_full
+          elif [ "$cap" -ge 70 ]; then icon=$g_bat_34
+          elif [ "$cap" -ge 50 ]; then icon=$g_bat_12
+          elif [ "$cap" -ge 30 ]; then icon=$g_bat_low
+          else icon=$g_bat_empty
+          fi
+          suffix=""
+          if [ "$(${pkgs.coreutils}/bin/cat "$bat_dir/status")" = "Charging" ]; then
+            suffix=" $g_bolt"
+          fi
+          bat=" $icon $cap%$suffix"
+          break
+        done
+
+        echo "$light   $vol   $bat"
+      '';
     in {
       # HM's xsession module owns the session lifecycle: ~/.xsession
       # starts hm-graphical-session.target BEFORE the WM runs and stops
@@ -112,6 +186,25 @@
           # so the lemonbar/wsx-pipe model never existed — dropped.
           bar_enabled = 1;
           bar_font = "Maple Mono NF CN:size=10";
+          # Bar layout (2026-09-24 request): workspaces left, clock
+          # middle, light/audio/battery right. +|L/C/R pin the sections;
+          # +L renders the workspace list, %H:%M the clock, +A the
+          # bar_action script's stdout (single line, see swm-status).
+          bar_format = "+|L+L+|C%H:%M+|R+A";
+          # bar_action writes plain text — expand=1 lets spectrwm feed
+          # it through bar_format escape processing each refresh.
+          bar_action = "${swm-status}";
+          bar_action_expand = 1;
+          # Workspace list capped at 9 (mango-parity tag count).
+          bar_workspace_limit = 9;
+          bar_border_width = 0;
+          bar_padding_horizontal = 6;
+          bar_padding_vertical = 2;
+          # Readable fg on the base00 bar; accent (base0B) for the
+          # selected workspace marker. Same rgb:RR/GG/BB form as
+          # bar_color above (hex `#` is rejected/comment-start).
+          bar_font_color = "rgb:${hexToRgb config.lib.stylix.colors.base04-hex}";
+          bar_font_color_selected = "rgb:${hexToRgb config.lib.stylix.colors.base0B-hex}";
           # COLOR SYNTAX (verified under Xvfb against spectrwm 3.7):
           # hex `#RRGGBB` is REJECTED by xcb_lookup_color on this
           # server ("color '#181616' not found"), and an unescaped `#`
@@ -162,8 +255,8 @@
           # lookup; the default xlock would run instead).
           lock = "${pkgs.i3lock}/bin/i3lock -n -c ${config.lib.stylix.colors.base00-hex}";
           screenshot = "${pkgs.scrot}/bin/scrot";
-          # W-b: falkon browser (DELL stack, 2026-09-23).
-          browser = "${pkgs.kdePackages.falkon}/bin/falkon";
+          # W-b: firefox browser (falkon removed 2026-09-24).
+          browser = "${pkgs.firefox}/bin/firefox";
           # Volume/brightness: spectrwm binds accept arbitrary program
           # names, so XF86 keys spawn wpctl/brightnessctl directly.
           vol_up = "${pkgs.wireplumber}/bin/wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+";
@@ -212,11 +305,19 @@
 
           # --- focus (spectrwm has NO directional focus — only cycling
           # focus_next/focus_prev, which the binary + man page confirm) ---
-          # mango focusdir h/j/k/l → cycle h=prev?? No: mango maps h/j/k/l
-          # directionally. spectrwm's only focus motion: focus_next (M-j
-          # default), focus_prev (M-k default). Keep mango's keys cycling:
-          focus_next = "MOD+l";
+          # mango-parity cycle keys (2026-09-24): M-j/M-k are spectrwm's
+          # NATIVE cycle keys, so focus_next moves off the default M-l —
+          # that bind clobbered the built-in master_grow. No h/l binds:
+          # h/l keep their master_shrink/master_grow defaults
+          # (spectrwm 3.7 has no directional focus to map them to).
+          focus_next = "MOD+j";
           focus_prev = "MOD+k";
+
+          # --- layout cycling (mango SUPER,s,switch_layout) ---
+          # (2026-09-24) Overrides spectrwm's default M+s
+          # screenshot_all binding INTENTIONALLY — layout switching is
+          # higher-value than the all-screenshots hotkey on this box.
+          cycle_layout = "MOD+s";
 
           # --- swap (spectrwm has NO directional swap; cycle instead) ---
           swap_prev = "MOD+Shift+h";
