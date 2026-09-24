@@ -73,10 +73,8 @@
       # (clipmenu, fcitx5, dmenu, dunst, i3lock/xss-lock, portals.xdg)
       # so the host doesn't list them individually.
       den.aspects.desktop.compositors.spectrwm
-      # keyd (2026-09-24): legion-parity input remap (rightalt nav layer,
-      # numlock LED sync timer). The spectrwm aspect relies on keyd-level
-      # XKB handling for repeat rate/delay instead of WM settings.
-      den.aspects.desktop.input.keyd
+      # keyd removed (2026-09-24): the X11/spectrwm session needs no
+      # key-level remap; repeat rate/delay fall back to X server defaults.
       den.aspects.desktop.auth.gnome-keyring
       # Always-on session (logind lid/suspend keys ignored; sleep
       # targets force-disabled). The idle/lock chain is handled by the

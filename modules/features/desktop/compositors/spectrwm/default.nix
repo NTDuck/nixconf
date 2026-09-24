@@ -20,7 +20,8 @@
 #   - verbose_layout = 0 — quiet status.
 #
 # Mango settings with NO spectrwm equivalent (dropped, not faked):
-#   - numlockon, repeat_rate, repeat_delay — XKB-level, handled by keyd.
+#   - numlockon, repeat_rate, repeat_delay — XKB-level; keyd was removed
+#     from DELL (2026-09-24), so these sit at X server defaults.
 #   - blur, animations, opacity curves, scroller layouts, gapp*, drag_* —
 #     spectrwm is a minimal dwm-style tiler; no such knobs.
 #
@@ -52,7 +53,14 @@
       # i3lock + xss-lock (X11 idle chain; PAM + xss-lock service live
       # in the i3lock aspect).
       den.aspects.desktop.auth.i3lock
-      (den.aspects.desktop.portals.xdg {internalOutput = "eDP-1";})
+      # Portals (2026-09-24): X11 session — the wlr ScreenCast/Screenshot
+      # backend (xdg-desktop-portal-wlr) is wlroots/Wayland-only and was
+      # a labwc-era leftover; passing wlr = false drops it from the
+      # closure (the GTK portal covers Screenshot on X11).
+      (den.aspects.desktop.portals.xdg {
+        internalOutput = "eDP-1";
+        wlr = false;
+      })
     ];
 
     nixos = {pkgs, ...}: {
@@ -411,8 +419,9 @@
       home.packages = [
         pkgs.unstable.brightnessctl
         pkgs.feh # X11 root-window wallpaper (stylix image)
-        pkgs.scrot # W-Shift-s screenshots
-        pkgs.slurp # region selection helper (paired with scrot -s)
+        pkgs.scrot # W-Shift-s screenshots; also does its own X11 region select
+        # slurp removed (2026-09-24): wlroots/Wayland-only selector, labwc-era
+        # leftover; scrot -s covers region selection on X11.
         pkgs.libnotify # notify-send
         pkgs.wireplumber # wpctl volume control (STABLE: ABI-coupled to system pipewire)
         pkgs.xrandr # display mode control for moonlight-only outputs
