@@ -30,8 +30,12 @@
       programs.urxvt = {
         enable = true;
         package = pkgs.rxvt-unicode;
-        # st used "Maple Mono NF CN:pixelsize=11"; keep the same metric.
-        fonts = ["xft:Maple Mono NF CN:pixelsize=11"];
+        # Font spec MUST equal spectrwm's bar_font (Maple Mono NF CN:size=10,
+        # 2026-09-24 user request "terminal font must match bar"). The old
+        # pixelsize=11 rendered ~11px while the bar's Xft size=10 renders
+        # ~13.3px at the server's 96dpi — the terminal text was visibly
+        # smaller. Identical Xft spec + same server DPI = identical size.
+        fonts = ["xft:Maple Mono NF CN:size=10"];
         # st has no scrollbar; urxvt's default plain bar is off to match.
         scroll.bar.enable = false;
         # X clipboard integration (urxvt manages PRIMARY only by default).

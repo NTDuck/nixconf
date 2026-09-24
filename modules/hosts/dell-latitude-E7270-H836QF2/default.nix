@@ -74,7 +74,9 @@
       # so the host doesn't list them individually.
       den.aspects.desktop.compositors.spectrwm
       # keyd removed (2026-09-24): the X11/spectrwm session needs no
-      # key-level remap; repeat rate/delay fall back to X server defaults.
+      # key-level remap; repeat rate/delay are set at the X server level
+      # (-ardelay/-arinterval in the session wrapper below) to match
+      # legion's mango settings (150 ms / 50 cps).
       den.aspects.desktop.auth.gnome-keyring
       # Always-on session (logind lid/suspend keys ignored; sleep
       # targets force-disabled). The idle/lock chain is handled by the
@@ -119,9 +121,11 @@
       # NixOS-merged module tree (which HAS libinput+evdev) into the
       # config search path the raw server already reads — Xorg.0.log's
       # "Using config directory: /etc/X11/xorg.conf.d" proves that path
-      # is consulted. Keep the default server (no explicit server arg):
-      # startx's auto `vt1 -keeptty` and logind session activation both
-      # depend on that code path.
+      # is consulted. The default server is kept (the baked raw
+      # Xorg path); autorepeat flags are appended as server ARGS
+      # (not a different server binary), and startx still auto-adds
+      # `vt1 -keeptty` when serverargs lack a vt token — see the
+      # wrapper below.
       ({
         nixos = {pkgs, ...}: {
           environment.etc."X11/xorg.conf.d/00-modulepath.conf".text = ''
@@ -129,13 +133,42 @@
               ModulePath "/run/current-system/sw/lib/xorg/modules"
             EndSection
           '';
+          # Touchpad defaults (2026-09-24, "sane defaults & like legion"):
+          # tap-to-click + natural scrolling + disable-while-typing, ported
+          # from the legion mango settings (trackpad_natural_scrolling=1,
+          # trackpad_disable_while_typing=1). mango mouse_click_method=2
+          # (clickfinger) has NO equivalent here: the E7270 GlidePoint has
+          # real physical buttons, so libinput exposes exactly one click
+          # method — verified live 2026-09-24 (no "Click Method" xinput
+          # property at all); a ClickMethod option would be silently inert.
+          #
+          # WHY a hand-written InputClass instead of services.libinput.*:
+          # this session starts the RAW xorgserver via startx (see
+          # 00-modulepath.conf above), which reads ONLY /etc/X11/xorg.conf.d
+          # snippets — services.libinput emits its option sections into the
+          # main xserver.conf (inputClassSections → xserver.nix
+          # configFile), which only a display-manager-launched server with
+          # `-config` reads. Filename sorts AFTER 10-evdev.conf and
+          # 40-libinput.conf so this section wins (InputClass sections are
+          # last-match-wins per option).
+          environment.etc."X11/xorg.conf.d/50-libinput-touchpad.conf".text = ''
+            Section "InputClass"
+              Identifier "Dell libinput touchpad defaults"
+              MatchIsTouchpad "on"
+              MatchDriver "libinput"
+              Option "Tapping" "on"
+              Option "NaturalScrolling" "on"
+              Option "DisableWhileTyping" "on"
+            EndSection
+          '';
           environment.systemPackages = let
             x11Session = pkgs.writeShellScriptBin "dell-x11-session" ''
               # startx's server args: after `--` the first token is the
               # SERVER COMMAND, so `-- vt1` would exec a binary named
-              # "vt1". No server args — startx uses its baked Xorg path
-              # and auto-detects the current VT (the greetd session's
-              # tty1), adding `vt1 -keeptty` itself.
+              # "vt1". Only FLAGS go after `--` (autorepeat below); the
+              # server command stays startx's baked raw Xorg, and startx
+              # auto-appends the current `vt<N> -keeptty` when serverargs
+              # lack a vt token (logind session activation depends on it).
               #
               # PATH: greetd hands the session a minimal environment, but
               # startx invokes `xinit` and `xauth` BY NAME. Prepend the
@@ -144,7 +177,14 @@
               # present" failure from exactly this.
               PATH="${pkgs.xorg.xinit}/bin:${pkgs.xorg.xauth}/bin:$PATH"
               export PATH
-              exec ${pkgs.xorg.xinit}/bin/startx "$HOME"/.xsession
+              # Key repeat (2026-09-24): legion mango parity
+              # (repeat_delay=150 ms, repeat_rate=50 cps ⇒ 20 ms interval).
+              # Server-level flags beat a session-side `xset r rate` (no
+              # autostart race; applies before any client connects).
+              # startx auto-appends `vt<N> -keeptty` when serverargs lack a
+              # vt token (startx lines ~242-251), so logind/VT semantics
+              # from the no-server-args path are preserved.
+              exec ${pkgs.xorg.xinit}/bin/startx "$HOME"/.xsession -- -ardelay 150 -arinterval 20
             '';
           in [x11Session];
         };
