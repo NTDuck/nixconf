@@ -184,25 +184,21 @@
           workspace_limit = 9;
           focus_mode = "manual";
           focus_close = "next";
-          # Thin borders + 2px margins, stylix colors (2026-09-24 user
-          # request, replacing the mango-parity borderless look):
-          #   border_width/tile_gap/region_padding — 2px frame around
-          #     every window, 2px between tiles and region edges.
-          #     Man page: set tile_gap to the OPPOSITE of border_width
-          #     to collapse the border between tiles — NOT wanted here;
-          #     a positive gap keeps visible spacing.
-          #   color_focus = base0B (kanagawa accent, matches the bar's
-          #     selected-workspace color); color_unfocus = base01 so
-          #     unfocused windows keep a faint frame.
-          border_width = 2;
+          # Margins (2026-09-24, revised after 2px-border trial): user
+          # request "remove window border; bar margin == window margin".
+          # spectrwm's bar window always spans the full region width
+          # (no bar-inset knob exists; region_padding does not move it —
+          # measured live: bar 1366x26 at +0+0 with region_padding=2),
+          # so equal margins are achieved the other way: NO outer
+          # margin anywhere — windows flush to region edges (region_
+          # padding=0, border_width=0), 2px gap only BETWEEN tiles, and
+          # the bar keeps its own 2px frame as its visual edge.
+          border_width = 0;
           tile_gap = 2;
-          region_padding = 2;
-          color_focus = "rgb:${hexToRgb config.lib.stylix.colors.base0B-hex}";
-          color_unfocus = "rgb:${hexToRgb config.lib.stylix.colors.base01-hex}";
+          region_padding = 0;
           verbose_layout = 0;
           # Tile layout is the default; spectrwm has no scroller/dwindle
           # split — leave the default (tile).
-          #
           # CONFIG-ERROR ROOT CAUSE (2026-09-23): spectrwm 3.7 has NO
           # `include` directive (verified against the 3.7 source's
           # configopt table) — the previous `include = …/bar.conf` line
@@ -225,7 +221,8 @@
           # Workspace list capped at 9 (mango-parity tag count).
           bar_workspace_limit = 9;
           bar_border_width = 2;
-          # Bar frame in the same accent as the focused-window border.
+          # Bar frame in the base0B accent (stylix), matching the
+          # selected-workspace marker.
           bar_border = "rgb:${hexToRgb config.lib.stylix.colors.base0B-hex}";
           bar_padding_horizontal = 6;
           bar_padding_vertical = 2;

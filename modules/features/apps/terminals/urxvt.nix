@@ -77,6 +77,14 @@
           # mid-window, no prompt drawn — reproduced 2026-09-24; -pt Root
           # live-tested: cursor at row 0, prompt renders immediately).
           preeditType = "Root";
+          # geometry 52x43 (resource URxvt.geometry): default 80x24 +
+          # spectrwm's post-map tile resize left the FIRST paint anchored
+          # mid-window (output drawn on the 24-row grid, cursor at its
+          # middle; Ctrl+L repaint fixed it). Verified by A/B: spawning
+          # at the final tiled size (~52x43 cells) puts the cursor at
+          # row 0. Larger/smaller final sizes reflow from a sane top-
+          # anchored state.
+          geometry = "52x43";
           # mirrors legion ghostty look (cursor-style-blink=false,
           # mouse-hide-while-typing, roomy scrollback) 2026-09-24
           # pointerBlank dropped 2026-09-24: unlike ghostty's
