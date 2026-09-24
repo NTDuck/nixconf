@@ -71,12 +71,20 @@
           color13 = "#${c.base0E-hex}";
           color14 = "#${c.base0C-hex}";
           color15 = "#${c.base07-hex}";
+          # XIM preedit as Root (resource form of -pt Root): urxvt's
+          # default xim-onthespot draws the IM preedit on the terminal
+          # grid and misplaces the CURSOR on fresh windows (vertically
+          # mid-window, no prompt drawn — reproduced 2026-09-24; -pt Root
+          # live-tested: cursor at row 0, prompt renders immediately).
+          preeditType = "Root";
           # mirrors legion ghostty look (cursor-style-blink=false,
           # mouse-hide-while-typing, roomy scrollback) 2026-09-24
+          # pointerBlank dropped 2026-09-24: unlike ghostty's
+          # mouse-hide-while-typing, urxvt blanks the pointer after 0.3 s
+          # of ANY inactivity — reads as "cursor not rendering" (user
+          # report). Mouse pointer stays visible now.
           cursorBlink = "false";
           cursorUnderline = "false";
-          pointerBlank = "true";
-          pointerBlankDelay = "0.3";
           saveLines = "10000";
         };
       };

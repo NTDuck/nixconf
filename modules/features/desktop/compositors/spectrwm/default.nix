@@ -11,7 +11,9 @@
 #   - workspace_limit = 9 — mango uses 9 tags.
 #   - focus_mode = manual — mango's focus_on_activate = 0.
 #   - focus_close = next — closest mango analog (default is "prev").
-#   - border_width = 0 — mango's borderpx = 0.
+#   - border_width = 0 — mango's borderpx = 0. SUPERSEDED 2026-09-24:
+#     user request moved dell to 2px borders + 2px margins with stylix
+#     colors (border_width/tile_gap/region_padding/color_* below).
 #   - bar_enabled = 1 — spectrwm's NATIVE bar (bar.sh/lemonbar pipe
 #     model was fictional: bar_action stdout is the bar, stdin is
 #     /dev/null — no wsx events; deleted 2026-09-23). From 2026-09-24
@@ -182,7 +184,21 @@
           workspace_limit = 9;
           focus_mode = "manual";
           focus_close = "next";
-          border_width = 0;
+          # Thin borders + 2px margins, stylix colors (2026-09-24 user
+          # request, replacing the mango-parity borderless look):
+          #   border_width/tile_gap/region_padding — 2px frame around
+          #     every window, 2px between tiles and region edges.
+          #     Man page: set tile_gap to the OPPOSITE of border_width
+          #     to collapse the border between tiles — NOT wanted here;
+          #     a positive gap keeps visible spacing.
+          #   color_focus = base0B (kanagawa accent, matches the bar's
+          #     selected-workspace color); color_unfocus = base01 so
+          #     unfocused windows keep a faint frame.
+          border_width = 2;
+          tile_gap = 2;
+          region_padding = 2;
+          color_focus = "rgb:${hexToRgb config.lib.stylix.colors.base0B-hex}";
+          color_unfocus = "rgb:${hexToRgb config.lib.stylix.colors.base01-hex}";
           verbose_layout = 0;
           # Tile layout is the default; spectrwm has no scroller/dwindle
           # split — leave the default (tile).
@@ -208,7 +224,9 @@
           bar_action_expand = 1;
           # Workspace list capped at 9 (mango-parity tag count).
           bar_workspace_limit = 9;
-          bar_border_width = 0;
+          bar_border_width = 2;
+          # Bar frame in the same accent as the focused-window border.
+          bar_border = "rgb:${hexToRgb config.lib.stylix.colors.base0B-hex}";
           bar_padding_horizontal = 6;
           bar_padding_vertical = 2;
           # Readable fg on the base00 bar; accent (base0B) for the
