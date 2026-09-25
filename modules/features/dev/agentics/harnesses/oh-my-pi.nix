@@ -54,11 +54,10 @@
 
   # Shared omp TUI defaults (moved from legion's private aspect
   # 2026-09-22): pure UI/behavior preferences with no host coupling, so
-  # both hosts get the same baseline. Lives in ./omp-default-config.nix
-  # (2026-09-25): dell's host-private aspect imports the SAME file to
-  # regenerate config.default.yml minus `symbolPreset` (legion keeps
-  # "nerd"). modelRoles stay out — /model picks belong in the mutable
-  # config.yml (PI_CONFIG_FILES merges this file OVER it).
+  # both hosts get the same baseline (dell's ascii override reverted to
+  # the shared "nerd" 2026-09-25). modelRoles stay out — /model picks
+  # belong in the mutable config.yml (PI_CONFIG_FILES merges this file
+  # OVER it).
   defaultConfig = import ./_omp-default-config.nix;
 
   # API keys live in agenix on legion; dell has no agenix identity
@@ -69,13 +68,31 @@
   # SCREAMING — hence the pair list.
   secretExports = lib: osConfig:
     lib.concatStringsSep " \\\n" (map
-      ({env, secret}: ''${env}="$(cat ${osConfig.age.secrets.${secret}.path})"'')
+      ({
+        env,
+        secret,
+      }: ''${env}="$(cat ${osConfig.age.secrets.${secret}.path})"'')
       [
-        {env = "CODEV_API_KEY"; secret = "codev-api-key";}
-        {env = "ORCAROUTER_API_KEY"; secret = "orcarouter-api-key";}
-        {env = "OPENCODE_API_KEY"; secret = "opencode-api-key";}
-        {env = "OPENROUTER_API_KEY"; secret = "openrouter-api-key";}
-        {env = "TABIAI_API_KEY"; secret = "tabiai-api-key";}
+        {
+          env = "CODEV_API_KEY";
+          secret = "codev-api-key";
+        }
+        {
+          env = "ORCAROUTER_API_KEY";
+          secret = "orcarouter-api-key";
+        }
+        {
+          env = "OPENCODE_API_KEY";
+          secret = "opencode-api-key";
+        }
+        {
+          env = "OPENROUTER_API_KEY";
+          secret = "openrouter-api-key";
+        }
+        {
+          env = "TABIAI_API_KEY";
+          secret = "tabiai-api-key";
+        }
       ]);
 in {
   den.aspects.dev.agentics.harnesses.oh-my-pi = {

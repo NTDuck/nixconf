@@ -1,11 +1,7 @@
 # Shared omp TUI defaults for config.default.yml — SINGLE SOURCE OF
-# TRUTH imported by both consumers:
-#   - modules/features/dev/agentics/harnesses/oh-my-pi.nix (all hosts;
-#     generated with symbolPreset = "nerd")
-#   - modules/hosts/dell-latitude-E7270-H836QF2/private/dev/agentics/
-#     harnesses/oh-my-pi.nix (dell regenerates the file with
-#     removeAttrs … ["symbolPreset"] — user request 2026-09-25, legion
-#     KEEPS "nerd")
+# TRUTH imported by the shared aspect (modules/features/dev/agentics/
+# harnesses/oh-my-pi.nix) and generated for ALL hosts, dell included
+# (2026-09-25 user request: dell back to symbolPreset = "nerd").
 # modelRoles stay out — /model picks belong in the mutable config.yml
 # (PI_CONFIG_FILES merges config.default.yml OVER it).
 {

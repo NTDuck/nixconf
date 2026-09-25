@@ -21,7 +21,7 @@
 # get exactly ollama. sessionVariables/pi-reasonix extension come from the
 # shared dev.agentics.harnesses.oh-my-pi aspect; this file only pins hosts
 # and windows.
-{lib, ...}: {
+{
   den.aspects.dell-latitude-E7270-H836QF2 = {
     homeManager = {
       osConfig,
@@ -58,17 +58,11 @@
           };
         };
       };
-
-      # SYMBOL PRESET = ASCII (2026-09-25 user request, amended from
-      # "omit the key"): dell's config.default.yml regenerates from the
-      # SHARED attrset (./_omp-default-config.nix, imported by the
-      # shared aspect too) with symbolPreset overridden to "ascii" —
-      # legion keeps "nerd". mkForce wins the leaf collision with the
-      # shared aspect's home.file definition (same path, different
-      # content).
-      ompDefaultConfig = (import ../../../../../../features/dev/agentics/harnesses/_omp-default-config.nix) // {
-        symbolPreset = "ascii";
-      };
+      # config.default.yml comes from the SHARED aspect unchanged
+      # (symbolPreset = "nerd", 2026-09-25 user request "revert back to
+      # use symbolPreset = nerd"): no host-private override of
+      # .omp/agent/config.default.yml — the shared aspect's
+      # home.file definition is the only one, so no mkForce needed.
     in {
       # `enable = false` drops the entry entirely; an empty attrset would
       # fail ("source was accessed but has no value defined" at HM merge).
@@ -76,9 +70,6 @@
         enable = onRemoteSpec;
         source = yaml.generate ".omp.agent.models.yml" models;
       };
-
-      home.file.".omp/agent/config.default.yml".source =
-        lib.mkForce (yaml.generate ".omp.agent.config.default.yml" ompDefaultConfig);
     };
   };
 }
