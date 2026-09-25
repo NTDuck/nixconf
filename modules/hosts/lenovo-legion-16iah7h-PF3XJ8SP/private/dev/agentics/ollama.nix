@@ -69,8 +69,13 @@
 
           # https://github.com/ollama/ollama/blob/main/envconfig/config.go
           environmentVariables = {
-            # https://markaicode.com/ollama-environment-variables-configuration-guide/#:~:text=Use%20OLLAMA%5FKEEP%5FALIVE%3D-1%20for%20a%20dedicated%20single%2Dmodel%20server%2E%20Use%200%20when%20memory%20is%20tight%20and%20requests%20are%20infrequent
-            OLLAMA_KEEP_ALIVE = "-1";
+            # Auto-unload after 5 idle minutes (2026-09-25 user request):
+            # models release the 3090 when nobody talks to the daemon, and
+            # the next request pays a cold load. "-1" (pin forever) was the
+            # swap-era setting when bonsai2 arbitration needed a resident
+            # winner; with the 3090 now shared again (prism stack is back)
+            # an evergreen resident just starves the other daemon.
+            OLLAMA_KEEP_ALIVE = "5m";
             # OLLAMA_LOAD_TIMEOUT = "5m";
 
             # Pin to the 3090 ONLY (2026-09-20 fix for "27B models return
@@ -88,7 +93,10 @@
             # UUID is also enumerate-order-stable across reboots/dock states.
             # DOCK-ONLY TRADE-OFF: undocked (no 3090) ollama.service fails to
             # start on this pin.
-            # CUDA_VISIBLE_DEVICES = "GPU-a4e36250-873d-62c5-912e-fde18d238a6c";
+            # Re-enabled 2026-09-25 (user request: homelab spec shows the
+            # 3090 only); the 34/66 hazard is real and CUDA_VISIBLE_DEVICES
+            # on the unit is the proven guard.
+            CUDA_VISIBLE_DEVICES = "GPU-a4e36250-873d-62c5-912e-fde18d238a6c";
             OLLAMA_FLASH_ATTENTION = "1";
             # q4_0 KV (revisit of the earlier q8_0 call, 2026-09-20 live fit):
             # at 131072 ctx the hybrid DeltaNet KV is ~2.9 GiB q8_0 and the
