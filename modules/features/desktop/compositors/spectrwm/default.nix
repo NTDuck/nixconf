@@ -72,6 +72,35 @@
     ];
 
     nixos = {pkgs, ...}: {
+      # PATCHED spectrwm (2026-09-25): update_floater()'s MAXIMIZED
+      # branch used rf->g_usable raw, so a maximized window sat flush
+      # against the screen edges while tiled windows kept the
+      # region_padding margin (user: "when window is maximized, it
+      # still have margin to the screen borders"). The patch mirrors
+      # stack()'s inset. Overlay, not a systemPackages-local override:
+      # the HM xsession module launches `package = pkgs.spectrwm`
+      # separately — only an overlay patches both consumers. No config
+      # knob exists for this (source-verified against 3.7.0); upstream
+      # material if it survives.
+      nixpkgs.overlays = [
+        (final: prev: {
+          spectrwm = prev.spectrwm.overrideAttrs (old: {
+            # patchPhase runs with cwd = sourceRoot = source/linux, but
+            # spectrwm.c sits at source/ — one level up — and GNU patch
+            # refuses `..` in -p1 filenames. Apply with `-d .. -p0`
+            # instead (header paths are `spectrwm.c`).
+            prePatch = ''
+              # patch needs write on the FILE (store sources are
+              # read-only) AND on the DIRECTORY for its temp files.
+              chmod u+w .. ../spectrwm.c
+              patch -d .. -p0 < ${
+                ./maximize-region-padding.patch
+              }
+            '';
+          });
+        })
+      ];
+
       # spectrwm ships no NixOS module (verified against nixpkgs
       # release-26.05 nixos/modules/programs/x11/ — no spectrwm.nix), so
       # the package is exposed via environment.systemPackages and the
@@ -183,15 +212,51 @@
 
           echo "$light   $vol   $bat"
         }
-        # Emit immediately (bar paints its right section on the first
-        # line), then refresh every 5s. NEVER exits while spectrwm is
-        # alive: the pipe carries the status, and EOF on it is exactly
-        # what empties the bar's right section. spectrwm SIGTERMs this
-        # child on quit/reload (kill_bar_extra_atexit / bar_extra_stop),
-        # so there is no orphan.
+        # EVENT-DRIVEN (2026-09-25): the original while/sleep-5 poll
+        # made every status change wait up to 5s to hit the bar (user:
+        # "bar is supposed to be event based … brightness takes a few
+        # seconds"). Now: a monitor process inotify-watches the
+        # backlight + battery sysfs files and pings a FIFO on every
+        # change; the emitter prints instantly on each ping, or wakes
+        # at most 2s for volume (no file surface — wpctl has no
+        # watchable node). Same EOF contract as before: the pipe to
+        # spectrwm's stdin must NEVER close while spectrwm lives.
+        fifo=$(${pkgs.coreutils}/bin/mktemp -u)
+        ${pkgs.coreutils}/bin/mkfifo "$fifo"
+        # Reload/quit respawns this script; without the trap each cycle
+        # would leak one FIFO node in /tmp. HUP/TERM needed: bash skips
+        # the EXIT trap when killed by an unhandled signal, and
+        # spectrwm stops bar_action with SIGTERM (kill_bar_extra).
+        trap '${pkgs.coreutils}/bin/rm -f "$fifo"' EXIT INT TERM HUP
+
+        # One emitter only: spawn a replacement monitor if it dies.
+        monitor() {
+          while :; do
+            ${pkgs.inotify-tools}/bin/inotifywait -q -e modify \
+              /sys/class/backlight/intel_backlight/brightness \
+              /sys/class/backlight/intel_backlight/max_brightness \
+              /sys/class/power_supply/BAT*/capacity \
+              /sys/class/power_supply/BAT*/status 2>/dev/null \
+              | while read -r _; do
+                  ${pkgs.coreutils}/bin/echo 1 > "$fifo"
+                done
+            ${pkgs.coreutils}/bin/sleep 1 # inotify watch died; retry
+          done
+        }
+        monitor &
+        mon_pid=$!
+
+        last=""
         while :; do
-          status
-          ${pkgs.coreutils}/bin/sleep 5
+          line="$(status)"
+          # Dedup: only print when the rendered line actually changed.
+          if [ "$line" != "$last" ]; then
+            echo "$line"
+            last="$line"
+          fi
+          # 2s watchdog: volume drift (no file event), missed pings.
+          ${pkgs.coreutils}/bin/timeout 2 \
+            ${pkgs.coreutils}/bin/cat "$fifo" >/dev/null 2>&1 || true
         done
       '';
     in {
@@ -209,20 +274,15 @@
           workspace_limit = 9;
           focus_mode = "manual";
           focus_close = "next";
-          # Margins (2026-09-24 evening, mango parity): mango runs
-          # borderpx=0 with 6px inner and outer gaps (gappih/gappiv/
-          # gappoh/gappov=6). spectrwm mapping: border_width=0,
-          # tile_gap=6 (inner gap between tiles; replaces the 2px
-          # trial), region_padding=6 (outer margin — user restored
-          # outer margins, reverting the earlier zero-outer-margin
-          # decision). spectrwm's bar window still spans the full
-          # region width (no bar-inset knob exists; region_padding
-          # does not move it — measured live: bar 1366x26 at +0+0 with
-          # region_padding=2), so the bar keeps its own 2px frame as
-          # its visual edge.
+          # Margins (2026-09-25): border_width=0 since 0d8784f; outer
+          # margin region_padding walked 0 → 6 (mango parity) → 4
+          # (2026-09-25 user: "windows must have margin to outer screen
+          # borders", amended 2px → 4px within the minute). tile_gap
+          # stays 6 (mango inner gap; user asked only about the OUTER
+          # margin).
           border_width = 0;
           tile_gap = 6;
-          region_padding = 6;
+          region_padding = 4;
           verbose_layout = 0;
           # Tile layout is the default; spectrwm has no scroller/dwindle
           # split — leave the default (tile).
@@ -247,11 +307,18 @@
           bar_action_expand = 1;
           # Workspace list capped at 9 (mango-parity tag count).
           bar_workspace_limit = 9;
-          bar_border_width = 2;
-          # Bar frame in the base0B accent (stylix), matching the
-          # selected-workspace marker.
-          bar_border = "rgb:${hexToRgb config.lib.stylix.colors.base0B-hex}";
-          bar_padding_horizontal = 6;
+          # 2026-09-25: frame removed — the 2px base0B border read as a
+          # "bar bottom margin" against the base00 background. Bar is
+          # now a flush base00 strip; alignment still comes from the
+          # selected-workspace marker (base0B).
+          bar_border_width = 0;
+          # bar_ padding_* = text inset INSIDE the bar window (man:
+          # "status bar horizontal/vertical padding"); the bar window
+          # itself always spans the full region — no inset knob exists
+          # (knob inventory verified against the 3.7 man page). Matching
+          # the 4px window margin makes bar text align with window text
+          # against the screen edge.
+          bar_padding_horizontal = 4;
           bar_padding_vertical = 2;
           # Readable fg on the base00 bar; accent (base0B) for the
           # selected workspace marker. Same rgb:RR/GG/BB form as

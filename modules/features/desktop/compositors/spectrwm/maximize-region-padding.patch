@@ -1,0 +1,18 @@
+--- spectrwm.c
++++ spectrwm.c
+@@ -8433,6 +8433,15 @@
+ 	} else if (MAXIMIZED(win)) {
+ 		/* Maximize: like a single stacked window. */
+ 		win->g = rf->g_usable;
++		/* Keep the region padding: stack() insets the layout area
++		 * for every tiled window (g_usable + region_padding), but
++		 * this branch used g_usable raw, so a maximized window sat
++		 * flush against the screen edges while tiled neighbors
++		 * kept the margin. Mirror the stack() inset. */
++		win->g.x += region_padding;
++		win->g.y += region_padding;
++		win->g.w -= 2 * region_padding;
++		win->g.h -= 2 * region_padding;
+ 
+ 		if (bar_enabled && ws->bar_enabled && !maximize_hide_bar) {
+ 			if (!bar_at_bottom)
