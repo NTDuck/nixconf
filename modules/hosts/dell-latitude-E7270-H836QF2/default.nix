@@ -128,7 +128,24 @@
       # `vt1 -keeptty` when serverargs lack a vt token — see the
       # wrapper below.
       {
-        nixos = {pkgs, ...}: {
+        nixos = {
+          lib,
+          pkgs,
+          ...
+        }: {
+          # NO NixOS xserver module (2026-09-25): the tuigreet greeter
+          # aspect sets services.xserver.enable = true globally, but this
+          # host never runs a display-manager-managed server — the
+          # dell-x11-session wrapper below execs startx against the raw
+          # xorgserver. The module's payload is pure dead weight here:
+          # xorgserver + xorg apps (xterm/xset/xprop/xsetroot/xlsclients/
+          # xinput), xcb-util-xrm, xdotool, xsel, xinit pulled into
+          # systemPackages, xlock.pam (programs.xlock defaults on from
+          # services.xserver.enable), x11-ssh-askpass. X init still works:
+          # the wrapper's PATH prepends ${pkgs.xorg.xinit} (xinit+xauth).
+          # mkForce: aspect-level enable=true is a plain definition at
+          # lower priority; this must win.
+          services.xserver.enable = lib.mkForce false;
           environment.etc."X11/xorg.conf.d/00-modulepath.conf".text = ''
             Section "Files"
               ModulePath "/run/current-system/sw/lib/xorg/modules"
