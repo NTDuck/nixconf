@@ -16,9 +16,9 @@
       # The dwm session wrapper's feh paints config.stylix.image.
       # mkForce: the shared stylix aspect also defines image (mkDefault);
       # two plain definitions conflict at eval.
-      ({
+      {
         nixos.stylix.image = lib.mkForce "${inputs.self}/assets/wallpapers/isle-of-the-dead.jpg";
-      })
+      }
       # DELL browser (2026-09-24): firefox replaces falkon (parity with legion).
       den.aspects.apps.browsers.firefox
       den.aspects.apps.btop
@@ -30,9 +30,10 @@
       den.aspects.remote-desktop.moonlight
       den.aspects.system.network.tailscale
       den.aspects.apps.fastfetch
-      # DELL terminal stack (2026-09-24): urxvt (rxvt-unicode, stylix
-      # palette via xresources — replaced the patched st).
-      den.aspects.apps.terminals.urxvt
+      # DELL terminal stack (2026-09-25): st (suckless, X11 — sed/python
+      # patched with the stylix palette; reinstated after one day on
+      # urxvt).
+      den.aspects.apps.terminals.st
       den.aspects.apps.editors.obsidian
       # JetBrains IDE (proprietary `idea`, not the dead idea-oss).
       den.aspects.apps.editors.intellij
@@ -126,7 +127,7 @@
       # (not a different server binary), and startx still auto-adds
       # `vt1 -keeptty` when serverargs lack a vt token — see the
       # wrapper below.
-      ({
+      {
         nixos = {pkgs, ...}: {
           environment.etc."X11/xorg.conf.d/00-modulepath.conf".text = ''
             Section "Files"
@@ -188,7 +189,7 @@
             '';
           in [x11Session];
         };
-      })
+      }
       (den.aspects.desktop.greeters.tuigreet {
         command = _config: "dell-x11-session";
       })

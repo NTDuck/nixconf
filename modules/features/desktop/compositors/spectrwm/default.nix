@@ -353,13 +353,16 @@
 
         # Programs referenced by binds below. spectrwm resolves
         # `bind[KEY] = name` against `program[name]` first, so the binds
-        # stay readable. The terminal is urxvt (apps.terminals.urxvt,
-        # stylix palette via xresources); the fallback pins the same
-        # binary in case TERMINAL is unset.
+        # stay readable. The terminal is the PATCHED st
+        # (apps.terminals.st: stylix palette + Maple Mono NF CN baked
+        # into config.def.h); the fallback pins the patched binary's
+        # session path — the bare pkgs.st here would be the UNPATCHED
+        # binary, but TERMINAL is always set by the st aspect, so the
+        # fallback only exists to keep eval total.
         programs = {
           term =
             config.home.sessionVariables.TERMINAL
-            or "${pkgs.rxvt-unicode}/bin/urxvt";
+            or "${pkgs.st}/bin/st";
           launcher = "${pkgs.dmenu}/bin/dmenu_run";
           # Manual lock (W-Ctrl-l) = direct i3lock. The idle/suspend
           # lock chain is handled by the xss-lock systemd service in

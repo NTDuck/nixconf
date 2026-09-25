@@ -8,7 +8,7 @@
   den.aspects.dell-latitude-E7270-H836QF2 = {
     homeManager = {lib, ...}: {
       programs.zed-editor.userSettings = {
-        # 11 pt ≈ the urxvt/bar glyph size on this panel.
+        # 11 pt ≈ the st/bar glyph size on this panel.
         buffer_font_size = lib.mkForce 11.0;
         ui_font_size = lib.mkForce 10.0;
       };
