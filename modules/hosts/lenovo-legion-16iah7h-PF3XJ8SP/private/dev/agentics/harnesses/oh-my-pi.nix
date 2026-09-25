@@ -138,14 +138,14 @@
         # poll GET /models + GET /props; contextWindow comes from
         # meta.n_ctx in /v1/models (sniffs --ctx-size 262144 via
         # status.args / props default_generation_settings.n_ctx —
-        # no modelOverrides needed). The alias below matters: without
-        # --alias llama-server reports the /nix/store GGUF path as the
-        # model id (stale models.db row proves it), and omp's built-in
-        # bonsai fixup only matches ids containing "bonsai-27b" —
-        # "Ternary-Bonsai-2-27B-PQ2_0" does NOT match. Provider name
-        # "llama.cpp" is omp's built-in id; auth "none" keeps it
-        # keyless (server binds 127.0.0.1 only).
-        llama.cpp = {
+        # no modelOverrides needed). Provider name is dot-free
+        # "bonsai2": omp fixups key off discovery.type (not the id) and
+        # pkgs.formats.yaml splits a dotted attr into nested maps
+        # (2026-09-26). The implicit built-in "llama.cpp" discoverable is
+        # disabled in the shared defaultConfig to avoid a duplicate
+        # listing. auth "none" keeps it keyless (server binds 127.0.0.1
+        # only).
+        bonsai2 = {
           baseUrl = "http://127.0.0.1:8080";
           api = "openai-responses";
           auth = "none";
