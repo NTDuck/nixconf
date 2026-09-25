@@ -11,10 +11,11 @@
 #   - workspace_limit = 9 — mango uses 9 tags.
 #   - focus_mode = manual — mango's focus_on_activate = 0.
 #   - focus_close = next — closest mango analog (default is "prev").
-#   - border_width = 0, tile_gap = 6, region_padding = 6 — mango's
-#     borderpx = 0 with 6px inner/outer gaps (gappi*/gappo* = 6;
-#     2026-09-24 evening: user restored outer margins, reverting the
-#     same-day zero-outer-margin trial. See margins note below.)
+#   - border_width = 0, tile_gap = 4, region_padding = 4 — mango's
+#     borderpx = 0 with equal inner/outer gaps. Both walked 6 (mango
+#     gappi*/gappo* = 6) → 4 (2026-09-25: outer 4 per user; tile_gap
+#     equalized to 4 same day — user: "distance between 2 windows are
+#     2x margin, must be 1x margin". See margins note below.)
 #   - bar_enabled = 1 — spectrwm's NATIVE bar (bar.sh/lemonbar pipe
 #     model was fictional: bar_action stdout is the bar, stdin is
 #     /dev/null — no wsx events; deleted 2026-09-23). From 2026-09-24
@@ -274,14 +275,18 @@
           workspace_limit = 9;
           focus_mode = "manual";
           focus_close = "next";
-          # Margins (2026-09-25): border_width=0 since 0d8784f; outer
+          # Margins (2026-09-25): border_width=0 since 0d8784f. Outer
           # margin region_padding walked 0 → 6 (mango parity) → 4
           # (2026-09-25 user: "windows must have margin to outer screen
           # borders", amended 2px → 4px within the minute). tile_gap
-          # stays 6 (mango inner gap; user asked only about the OUTER
-          # margin).
+          # walked 6 → 4 same day: user reported "distance between 2
+          # windows are 2x margin, must be 1x margin" — source dive
+          # (spectrwm 3.7.0, stack_column/stack_master) confirmed
+          # tile_gap is applied exactly once between adjacent windows
+          # and region_padding exactly once at the region edge, so
+          # equal values = equal visual margins.
           border_width = 0;
-          tile_gap = 6;
+          tile_gap = 4;
           region_padding = 4;
           verbose_layout = 0;
           # Tile layout is the default; spectrwm has no scroller/dwindle
