@@ -127,6 +127,21 @@ in {
     in {
       home.file.".omp/agent/extensions/pi-reasonix.js".source = "${reasonixPkg}/share/omp/extensions/pi-reasonix.js";
 
+      # Ctrl+V remap (2026-09-25 user report: "when ctrl v it says keycap
+      # picture insert mode instead of pasting"): omp binds
+      # app.clipboard.pasteImage to ctrl+v by default (getDefaultPaste-
+      # ImageKeys, linux = ["ctrl+v"]) — with an image on the clipboard
+      # it inserts an image attachment chip instead of pasting text.
+      # Moving pasteImage to alt+v leaves ctrl+v to the composer's
+      # bracketed-paste path (plain text), which is what a terminal
+      # workflow expects. Lives in the agent dir as keybindings.yml
+      # (resolveKeybindingsConfigPaths reads keybindings.{yml,yaml,json}
+      # from the agent dir).
+      home.file.".omp/agent/keybindings.yml".text = ''
+        keybindings:
+          app.clipboard.pasteImage: "alt+v"
+      '';
+
       # NOT ".omp/agent/config.yml": omp treats that file as mutable state
       # (writes setupVersion, /model picks, wizard results) and saving through
       # an HM store symlink dies with EROFS, which re-triggers the setup wizard
