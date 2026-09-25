@@ -132,6 +132,25 @@
             maxTokens = 16384;
           };
         };
+
+        # Ternary Bonsai 2 27B (prism llama-server, :8080 — see
+        # ../prism/default.nix). discovery.type = "llama.cpp" makes omp
+        # poll GET /models + GET /props; contextWindow comes from
+        # meta.n_ctx in /v1/models (sniffs --ctx-size 262144 via
+        # status.args / props default_generation_settings.n_ctx —
+        # no modelOverrides needed). The alias below matters: without
+        # --alias llama-server reports the /nix/store GGUF path as the
+        # model id (stale models.db row proves it), and omp's built-in
+        # bonsai fixup only matches ids containing "bonsai-27b" —
+        # "Ternary-Bonsai-2-27B-PQ2_0" does NOT match. Provider name
+        # "llama.cpp" is omp's built-in id; auth "none" keeps it
+        # keyless (server binds 127.0.0.1 only).
+        llama.cpp = {
+          baseUrl = "http://127.0.0.1:8080";
+          api = "openai-responses";
+          auth = "none";
+          discovery.type = "llama.cpp";
+        };
       };
 
       models = {

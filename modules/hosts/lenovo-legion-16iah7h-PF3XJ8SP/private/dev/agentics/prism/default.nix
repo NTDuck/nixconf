@@ -157,6 +157,12 @@
               flags = pkgs.lib.concatStringsSep " " [
                 "-m ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf"
                 "--mmproj ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf"
+                # STABLE ID (2026-09-26): without --alias, /v1/models
+                # reports the /nix/store GGUF path as the model id —
+                # unstable across rebuilds AND unmatched by omp's
+                # bonsai qwen-thinking fixup (ids containing
+                # "bonsai-27b"; see ../harnesses/oh-my-pi.nix).
+                "--alias ternary-bonsai-27b"
                 "--host 127.0.0.1"
                 # PORT 8080, binds 127.0.0.1 only. Port 11434 is ollama; 8080
                 # is the Bonsai-demo default. NOTE: llama-server warns the
