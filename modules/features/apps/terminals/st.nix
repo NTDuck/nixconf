@@ -58,10 +58,14 @@
           (old.postPatch or "")
           + ''
             # Font: line 8 in upstream config.def.h. Match stylix
-            # monospace family + NF-CN size 11. `|| true` so a
-            # pattern mismatch (upstream changed the default font)
-            # doesn't fail the build.
-            sed -i 's|static char \*font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";|static char *font = "Maple Mono NF CN:pixelsize=11:antialias=true:autohint=true";|' config.def.h || true
+            # monospace family. PIXELSIZE 15 (2026-09-25): ghostty's
+            # font-size = 11 is 11 *points* — 11pt @ 96dpi ≈ 14.7px
+            # — while st's Xft "pixelsize" is literal pixels. The
+            # original pixelsize=11 rendered st ~25% smaller than
+            # ghostty (user report "st font too small vs ghostty").
+            # `|| true` so a pattern mismatch (upstream changed the
+            # default font) doesn't fail the build.
+            sed -i 's|static char \*font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";|static char *font = "Maple Mono NF CN:pixelsize=15:antialias=true:autohint=true";|' config.def.h || true
             # Border width: line 9. 14 mirrors ghostty's window-padding-x
             # (the padding IS the border in st since there's no gap).
             # NOTE: width 14 with border_width=0 in spectrwm is
@@ -74,6 +78,10 @@
             sed -i 's|char \*termname = "st-256color";|char *termname = "st-256color";|' config.def.h || true
             # Cursor shape: line 144. 2=Block, 4=Underline, 6=Bar.
             sed -i 's|static unsigned int cursorshape = 2;|static unsigned int cursorshape = 2;|' config.def.h || true
+            # Blink: ghostty sets cursor-style-blink = false. st
+            # config.def.h line 63: blinktimeout=800 (ms between blink
+            # phases; 0 disables blinking entirely).
+            sed -i 's|static unsigned int blinktimeout = 800;|static unsigned int blinktimeout = 0;|' config.def.h || true
             # Default cursor/background indices: lines 132-133. 258/259
             # are the "defaultfg"/"defaultbg" extended palette slots
             # (after the 256-entry table).
