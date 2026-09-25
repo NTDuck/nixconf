@@ -66,12 +66,22 @@
   # at INVOCATION time (not activation) so rotations apply immediately.
   # Env name ≠ store attr: agenix attrs are kebab-case, exported names
   # SCREAMING — hence the pair list.
+  #
+  # Each export GUARDS against an empty or placeholder secret: omp
+  # resolves `apiKey: "NAME"` as `$envExact(NAME) || NAME`, so an empty
+  # value makes omp send the literal name ("CODEV****_KEY") as the
+  # bearer token — a 401 from the gateway that looks like a config bug.
+  # Guarded export fails fast with the offending secret's path instead.
+  # (2026-09-26: orcarouter-api-key decrypted empty — saved empty by a
+  # past `agenix -e`; the guard turns that silent trap into a message.)
   secretExports = lib: osConfig:
     lib.concatStringsSep " \\\n" (map
       ({
         env,
         secret,
-      }: ''${env}="$(cat ${osConfig.age.secrets.${secret}.path})"'')
+      }: let
+        path = "${osConfig.age.secrets.${secret}.path}";
+      in ''${env}="$(cat ${path})"; if [ -z "$${${env}}" ] || [[ "$${${env}}" == *_KEY ]]; then echo "omp: secret ${path} is empty or a placeholder" >&2; return 1 2>/dev/null || exit 1; fi'')
       [
         {
           env = "CODEV_API_KEY";
