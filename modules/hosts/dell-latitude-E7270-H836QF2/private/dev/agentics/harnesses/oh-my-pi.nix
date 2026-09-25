@@ -59,14 +59,16 @@
         };
       };
 
-      # SYMBOL PRESET OMITTED (2026-09-25 user request "make ohmypi's
-      # defaultConfig omit the symbolPreset = nerd"): dell's
-      # config.default.yml regenerates from the SHARED attrset
-      # (./_omp-default-config.nix, imported by the shared aspect too)
-      # minus the key — legion keeps "nerd", dell gets omp's implicit
-      # default. mkForce wins the leaf collision with the shared
-      # aspect's home.file definition (same path, different content).
-      ompDefaultConfig = removeAttrs (import ../../../../../../features/dev/agentics/harnesses/_omp-default-config.nix) ["symbolPreset"];
+      # SYMBOL PRESET = ASCII (2026-09-25 user request, amended from
+      # "omit the key"): dell's config.default.yml regenerates from the
+      # SHARED attrset (./_omp-default-config.nix, imported by the
+      # shared aspect too) with symbolPreset overridden to "ascii" —
+      # legion keeps "nerd". mkForce wins the leaf collision with the
+      # shared aspect's home.file definition (same path, different
+      # content).
+      ompDefaultConfig = (import ../../../../../../features/dev/agentics/harnesses/_omp-default-config.nix) // {
+        symbolPreset = "ascii";
+      };
     in {
       # `enable = false` drops the entry entirely; an empty attrset would
       # fail ("source was accessed but has no value defined" at HM merge).
