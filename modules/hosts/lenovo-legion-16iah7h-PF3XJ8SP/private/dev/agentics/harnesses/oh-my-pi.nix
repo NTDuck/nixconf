@@ -10,7 +10,7 @@
     }: let
       yaml = pkgs.formats.yaml {};
 
-      # 3090 gating (2026-09-21, hotspot.nix pattern): the local ollama
+      # 3090 gating (2026-09-21, 3090 specialisation pattern): the local ollama
       # provider (:11434) exists ONLY inside the homelab specialisation —
       # the daemon it points at is gated there too (ollama.nix). osConfig.isSpecialisation is mkOverride-0
       # true inside spec evals (nixos/modules/system/activation/no-clone.nix)
@@ -20,29 +20,35 @@
       onHomelabSpec = osConfig.isSpecialisation or false;
 
       cloudProviders = {
+        # DISABLED 2026-09-26 (user decision): secrets/orcarouter-api-key.age
+        # decrypts to 0 bytes (saved empty by a past `agenix -e`) and the key
+        # itself is unrecoverable — the common harness's fail-fast guard
+        # (26d6ee1) would abort EVERY omp launch on the empty secret. Re-add
+        # this block (and models entry below) after `agenix -e
+        # secrets/orcarouter-api-key.age` with the real key.
         # https://docs.orcarouter.ai/integrations/oh-my-pi
-        orcarouter = {
-          baseUrl = "https://api.orcarouter.ai/v1";
-          api = "openai-completions";
-          apiKey = "ORCAROUTER_API_KEY";
-          authHeader = true;
-
-          models = [
-            {
-              id = "orcarouter/auto";
-              name = "OrcaRouter";
-              reasoning = false;
-              input = ["text"];
-              contextWindow = 200000;
-              maxTokens = 8192;
-
-              compat = {
-                supportsDeveloperRole = false;
-                maxTokensField = "max_tokens";
-              };
-            }
-          ];
-        };
+        # orcarouter = {
+        #   baseUrl = "https://api.orcarouter.ai/v1";
+        #   api = "openai-completions";
+        #   apiKey = "ORCAROUTER_API_KEY";
+        #   authHeader = true;
+        #
+        #   models = [
+        #     {
+        #       id = "orcarouter/auto";
+        #       name = "OrcaRouter";
+        #       reasoning = false;
+        #       input = ["text"];
+        #       contextWindow = 200000;
+        #       maxTokens = 8192;
+        #
+        #       compat = {
+        #         supportsDeveloperRole = false;
+        #         maxTokensField = "max_tokens";
+        #       };
+        #     }
+        #   ];
+        # };
 
         # https://tabitoken.com/pricing
         tabitoken = {
@@ -127,7 +133,11 @@
           # quant too — same overclaim -> trim -> "no user query found
           # in messages" 500-loop as qwen3.8:27b (ollama #17778). Pin
           # to the daemon's real window (OLLAMA_CONTEXT_LENGTH).
-          modelOverrides."hf.co/bartowski/Altworld_Hemmingway-1-GGUF:Q4_K_M" = {
+          # Tag case MUST match /api/tags verbatim (2026-09-26): the
+          # daemon lists `:q4_K_M` (lowercase q) — the old `:Q4_K_M`
+          # key matched nothing, so the override was silently inert
+          # (omp models showed the discovered 128K, not this pin).
+          modelOverrides."hf.co/bartowski/Altworld_Hemmingway-1-GGUF:q4_K_M" = {
             contextWindow = 131072;
             maxTokens = 16384;
           };

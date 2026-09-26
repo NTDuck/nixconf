@@ -72,8 +72,9 @@
   # value makes omp send the literal name ("CODEV****_KEY") as the
   # bearer token — a 401 from the gateway that looks like a config bug.
   # Guarded export fails fast with the offending secret's path instead.
-  # (2026-09-26: orcarouter-api-key decrypted empty — saved empty by a
-  # past `agenix -e`; the guard turns that silent trap into a message.)
+  # (2026-09-26: orcarouter-api-key decrypted empty — provider disabled
+  # in legion's models.yml and the export commented out here; re-enable
+  # when the key is restored.)
   secretExports = lib: osConfig:
     lib.concatStringsSep " \\\n" (map
       ({
@@ -87,10 +88,15 @@
           env = "CODEV_API_KEY";
           secret = "codev-api-key";
         }
-        {
-          env = "ORCAROUTER_API_KEY";
-          secret = "orcarouter-api-key";
-        }
+        # ORCAROUTER DISABLED (2026-09-26): orcarouter-api-key.age is 0
+        # bytes (key lost; re-fetch from orcarouter.ai and run `agenix -e
+        # secrets/orcarouter-api-key.age`). Re-enable by uncommenting this
+        # entry AND the orcarouter provider block in the legion host's
+        # private harness aspect.
+        # {
+        #   env = "ORCAROUTER_API_KEY";
+        #   secret = "orcarouter-api-key";
+        # }
         {
           env = "OPENCODE_API_KEY";
           secret = "opencode-api-key";

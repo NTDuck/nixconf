@@ -2,7 +2,7 @@
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     # ENTIRE 3090 INFERENCE STACK IS HOMELAB-ONLY (2026-09-21 user request):
     # every service/package here lives inside specialisation.homelab
-    # (hotspot.nix pattern — specialisation.X.configuration merges over the
+    # (3090 specialisation pattern — specialisation.X.configuration merges over the
     # inherited parent config, and options NOT set in the default generation
     # don't exist there). Boot the default spec and ollama/the CUDA builds
     # are absent; pick "homelab" in the bootloader menu for inference.
@@ -35,6 +35,14 @@
 
           loadModels = [
             # Slayer of Opus 4.6!
+            # OFFICIAL tag MUST be declared (2026-09-26): syncModels = true
+            # regex-removes every installed model NOT in this list
+            # (ollama-module script: `undeclared=$(... /regex/d); ollama rm`).
+            # The official tag was undeclared, so the loader deleted it, and
+            # omp's bundled catalog + user sessions still address
+            # qwen3.8:27b -> 404 "model not found" (journal 2026-09-21,
+            # 6x). Registry verified 200 before adding.
+            "qwen3.8:27b"
             "qwen3.8:27b-mtp-q4_K_M"
             "jetelain/Qwen3.8-27B:latest" # Unsloth Dynamic V3.0 GGUFs, UD-Q4_K_XL, 128k
             "mannix/omnimerge-v6:vision-Q4_K_M" # Weight tuned from qwen3.8:27b, vision
@@ -50,7 +58,13 @@
             # 3090. Catalog overclaims contextWindow 262144 like every
             # qwen3.8 quant; the omp override below pins the real daemon
             # window (ollama #17778 500-loop hazard).
-            "hf.co/bartowski/Altworld_Hemmingway-1-GGUF:Q4_K_M"
+            # LOWERCASE q (2026-09-26): ollama stores/returns the tag as
+            # `:q4_K_M` — the syncModels prune regex is CASE-SENSITIVE, so
+            # the old `:Q4_K_M` here made the loader delete the installed
+            # lowercase tag on every activation (observed live in the
+            # ollama-model-loader journal, 12:29). Must match /api/tags
+            # verbatim, same as the modelOverrides key.
+            "hf.co/bartowski/Altworld_Hemmingway-1-GGUF:q4_K_M"
 
             "Distendo/zen-pro" # Unknown pull
 
