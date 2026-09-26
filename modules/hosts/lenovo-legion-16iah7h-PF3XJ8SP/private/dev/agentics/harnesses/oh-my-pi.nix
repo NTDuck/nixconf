@@ -65,6 +65,16 @@
                 contextWindow: 196608
                 maxTokens: 65536
 
+              # Gateway-reported id (curl /v1/models 2026-09-26); the gateway
+              # omits max_input_tokens/max_output_tokens for this entry, so
+              # pin to the same conservative window as MiniMax/MiniMax-M3
+              # (gateway reports 1M/128K for that one but trims in practice).
+              - id: zai-org/GLM-5.3-Flash
+                name: GLM 5.3 Flash (NetMind)
+                reasoning: true
+                contextWindow: 196608
+                maxTokens: 65536
+
           freetoken:
             baseUrl: http://127.0.0.1:1919/v1
             api: openai-completions
