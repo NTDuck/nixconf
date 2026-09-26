@@ -21,20 +21,12 @@
 # at the wrapper (journal 2026-09-18 showed libx264 because the running
 # generation predated the capSysAdmin commit).
 #
-# Applications (2026-09-18, 3-app set): (1) "Desktop (Native)" — plain capture
-# of the running session, no prep; (2) "Desktop (dell-latitude-E7270-H836QF2)"
-# — creates a mango HEADLESS virtual output (mmsg dispatch
-# create_virtual_output,SUNHEAD) pinned to the DELL's native 1366x768@60 via
-# a monitorrule in the host's mango config, and points the stream at it.
-# Sunshine's Linux `output_name` is a GLOBAL setting (display_device is
-# Windows-only), but wlgrab matches captures by xdg_output name and falls
-# back to the first real output when the name is absent (wlgrab.cpp) — so
-# with output_name = "SUNHEAD": the DELL app creates the output and streams
-# it 1:1 (zero host-side scaling, native 768p60), while Native streams keep
-# capturing eDP-1. undo destroys all virtual outputs. wlr-randr is only a
-# safety re-assert: the monitorrule alone gives the headless output its
-# custom mode at creation (mango monitor.c applies custom modes to headless
-# outputs). (3) "Steam (Big Picture)" detaches steam BP from the stream
+# Applications (2-app set since 2026-09-26; the "Desktop
+# (dell-latitude-E7270-H836QF2)" SUNHEAD virtual-output app was removed at
+# user request — moonlight just mirrors whatever the host session shows):
+# (1) "Desktop (Native)" — plain capture of the running session, no prep;
+# wlgrab falls back to the first real output (eDP-1) since no output_name
+# is pinned. (2) "Steam (Big Picture)" detaches steam BP from the stream
 # launch and closes it on detach.
 #
 # Settings reference: https://docs.lizardbyte.dev/projects/sunshine/latest/md_docs_2configuration.html
@@ -44,19 +36,7 @@
       pkgs,
       config,
       ...
-    }: let
-      # Prep-cmds run through boost::process on the raw string (no shell):
-      # compound shell syntax is unsafe there, so the create+retry sequence
-      # lives in this script and the app's `do` stays one absolute path.
-      sunDellPrep = pkgs.writeShellScriptBin "sun-dell-prep" ''
-        ${config.programs.mango.package}/bin/mmsg dispatch create_virtual_output,SUNHEAD
-        # The virtual output appears asynchronously after the dispatch.
-        for i in 1 2 3 4 5; do
-          sleep 0.2
-          ${pkgs.wlr-randr}/bin/wlr-randr --output SUNHEAD --custom-mode 1366x768@60Hz && break
-        done
-      '';
-    in {
+    }: {
       services.sunshine = {
         enable = true;
         package = pkgs.unstable.sunshine;
@@ -85,11 +65,8 @@
           upnp = "disabled";
           min_log_level = 2;
 
-          # Global on Linux (no per-app override exists). "SUNHEAD" is the
-          # mango virtual output the DELL app creates in its prep-cmd; when
-          # it does not exist, wlgrab falls back to the first real output
-          # (eDP-1), which is exactly what "Desktop (Native)" wants.
-          output_name = "SUNHEAD";
+          # No output_name pin: wlgrab probes the first real output (eDP-1),
+          # which is what every app here streams.
 
           # Encoder/capture: cap_sys_admin is granted (see above), so
           # sunshine auto-probes NVENC on the 4060 and DRM/KMS capture; the
@@ -109,33 +86,11 @@
 
           apps =
             [
-              # Plain desktop stream: no prep commands, sunshine captures the
-              # current session whatever it is. output_name "SUNHEAD" does
-              # not exist here -> wlgrab falls back to eDP-1 (see above).
+              # Plain desktop stream: no prep commands, sunshine captures
+              # the current session whatever it is (wlgrab -> eDP-1).
               {
                 name = "Desktop (Native)";
                 image-path = "desktop.png";
-              }
-            ]
-            ++ [
-              # DELL-tuned stream: create the named virtual output (mango
-              # IPC, mmsg ships in the mango package), let the host mango
-              # monitorrule pin it to 1366x768@60 (DELL's native mode), and
-              # give wlr-randr a safety re-assert with a short retry (the
-              # output appears asynchronously after the dispatch). undo
-              # destroys all virtual outputs; auto-detach mirrors the old
-              # 3-app set.
-              {
-                name = "Desktop (dell-latitude-E7270-H836QF2)";
-                image-path = "desktop.png";
-                prep-cmd = [
-                  {
-                    do = "${sunDellPrep}/bin/sun-dell-prep";
-                    undo = "${config.programs.mango.package}/bin/mmsg dispatch destroy_all_virtual_output";
-                  }
-                ];
-                exclude-global-prep-cmd = "false";
-                auto-detach = "true";
               }
             ]
             ++ [
