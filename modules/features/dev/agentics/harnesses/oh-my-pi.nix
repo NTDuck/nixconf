@@ -82,7 +82,7 @@
         secret,
       }: let
         path = "${osConfig.age.secrets.${secret}.path}";
-      in ''${env}="$(cat ${path})"; if [ -z "$${${env}}" ] || [[ "$${${env}}" == *_KEY ]]; then echo "omp: secret ${path} is empty or a placeholder" >&2; return 1 2>/dev/null || exit 1; fi'')
+      in ''${env}="$(cat ${path})"; if [ -z "$${${env}}" ] || [[ "$${${env}}" == *_KEY ]]; then echo "omp: secret ${path} is empty or a placeholder" >&2; return 1 2>/dev/null || exit 1; fi;'')
       [
         {
           env = "CODEV_API_KEY";
