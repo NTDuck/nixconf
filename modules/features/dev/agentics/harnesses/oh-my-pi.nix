@@ -82,7 +82,7 @@
         secret,
       }: let
         path = "${osConfig.age.secrets.${secret}.path}";
-      in ''${env}="$(cat ${path})"; if [ -z "$${${env}}" ] || [[ "$${${env}}" == *_KEY ]]; then echo "omp: secret ${path} is empty or a placeholder" >&2; return 1 2>/dev/null || exit 1; fi;'')
+      in ''${env}="$(cat ${path})"; if [ -z "''${${env}}" ] || [[ "''${${env}}" == *_KEY ]]; then echo "omp: secret ${path} is empty or a placeholder" >&2; return 1 2>/dev/null || exit 1; fi;'')
       [
         {
           env = "CODEV_API_KEY";
@@ -176,13 +176,18 @@ in {
         # the alias without a module-system duplicate-definition error.
         # Two bare `omp =` definitions (one here, one host-side) WOULD
         # collide at eval — that's the conflict this structure avoids.
-        omp = lib.mkDefault ''
+        #
+        # .trim (2026-09-26): a trailing newline in the alias VALUE is a
+        # command SEPARATOR in zsh — `omp -p …` then runs `-p …` as its
+        # own command ("zsh: command not found: -p"). The value must end
+        # exactly at the binary path.
+        omp = lib.mkDefault (lib.removeSuffix "\n" ''
           ${lib.optionalString hasSecrets ''
             ${secretExports lib osConfig} \
           ''}
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml" \
           ${ompPkg}/bin/omp
-        '';
+        '');
       };
     };
   };

@@ -97,8 +97,19 @@
             {
               id = "MiniMax/MiniMax-M3";
               name = "MiniMax M3 (NetMind)";
-              contextWindow = 196608;
-              maxTokens = 65536;
+              # REAL LIMITS (2026-09-26, probed against the gateway):
+              # vllm backend enforces context_window = 262144 TOTAL
+              # (input + completion, minus ~6.3K reserved) — the
+              # gateway /v1/models metadata LIES (max_input_tokens
+              # 1000000). The old contextWindow=196608 + maxTokens=
+              # 65536 made omp believe 262048 was available; at
+              # ~198K input the 64K output cap crossed the server's
+              # real boundary (~257K) -> ContextWindowExceededError
+              # (logged 400s, 2026-09-26). 131072 total window + 32K
+              # out = 163840 < 257K, safe at any prompt the window
+              # admits.
+              contextWindow = 131072;
+              maxTokens = 32768;
             }
 
             {
