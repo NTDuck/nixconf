@@ -15,35 +15,9 @@
 # comment in this file's history refers to OLLAMA failing on the file, not
 # to this fork — the fork loaded it fine the whole time.
 #
-# 2026-09-25 changes vs the pre-removal stack:
-# - NO /run/egpu/bonsai.env tiering: the egpu adopter/release machinery
-#   stays deleted (9199e92). The user asked for homelab-spec visibility of
-#   the 3090 only, so the unit gets a static CUDA_VISIBLE_DEVICES of the
-#   3090 UUID (same pin style as services.ollama in ../ollama.nix) and a
-#   static 128K context sized for the 3090. Undocked boots leave the unit
-#   stopped anyway (no autostart); starting it undocked fails CUDA init
-#   — that is the documented trade-off of a static pin.
-# - Context: 128K (LLAMA_ARG_CTX_SIZE=131072), the user's floor
-#   ("sufficiently large, 128K or 256K"). KV math (2026-09-20 measured):
-#   64 KiB/token unified cache -> 8.0 GiB at 128K. Budget on the 3090:
-#   PQ2_0 weights 6.71 GiB + KV 8.0 GiB + mmproj/CUDA ctx ~0.4 GiB ~= 15.1
-#   GiB of 24.5 -> ~9 GiB headroom. 256K would be 16 GiB KV + 6.7 weights
-#   ~= 23.1 GiB — technically fits an EMPTY 3090 but starves the fit-params
-#   margin and cannot co-exist with anything; 128K chosen.
-# - Parallelism: -np 8 (user: "enable as much parallelism as possible").
-#   -c is the TOTAL window shared across slots by continuous batching, so
-#   each of the 8 slots sees 16K; total KV cost is unchanged (a function of
-#   -c, not -np). 8 slots at 16K each matches the omp/zed fan-out workload
-#   that drove the ollama 65K context earlier.
-# - Idle unload (user: "offload automatically after 5 minutes if
-#   possible"): the fork HAS a native mechanism — --sleep-idle-seconds
-#   (verified in this build's llama-server --help, 2026-09-25; default -1
-#   = disabled). After N idle seconds the server enters its sleeping
-#   state (handle_sleeping_state -> server_models::unload_all/unload_lru
-#   in libllama-server-impl.so), freeing model+KV; the next request
-#   triggers "exiting sleeping state" + reload from the OS page cache
-#   (~6 s, measured in the 2026-09-20 swap era). 300 = the user's 5
-#   minutes. No watchdog needed.
+# Context/slot/VRAM budget and the idle-unload mechanism are documented at
+# the ExecStart flags (the single source of truth — the 2026-09-25 header
+# math drifted when -np 8/128K became -np 2/256K).
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     # HOMELAB-ONLY (2026-09-21 user request, 3090 specialisation pattern): the whole
@@ -125,11 +99,14 @@
           # NO AUTOSTART (2026-09-21 user request, kept 2026-09-25): the 27B
           # daemon is a scarce-resource unit — it contends with ollama for
           # the 3090. Started on demand via `llamacpp-prism-up` (which first
-          # stops ollama); auto-unloaded by arbiter.bonsai-idle after 5 idle
-          # minutes (see module comment).
-          wantedBy = [];
+          # stops ollama); model+KV auto-freed after 5 idle minutes by
+          # --sleep-idle-seconds 300 below (the unit process itself stays
+          # up).
           after = ["network-online.target"];
           wants = ["network-online.target"];
+          # Mutual exclusion with ollama (see ../ollama.nix +
+          # ../swap.nix): starting either unit natively stops the other.
+          conflicts = ["ollama.service"];
 
           serviceConfig = {
             # Static 3090 pin (2026-09-25, homelab-spec visibility request):
