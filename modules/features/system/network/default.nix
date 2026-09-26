@@ -6,6 +6,7 @@
       den.aspects.system.network.resolved
       den.aspects.system.network.ssh
       den.aspects.system.network.tailscale
+      den.aspects.system.network.wait-online
     ];
   };
 }
