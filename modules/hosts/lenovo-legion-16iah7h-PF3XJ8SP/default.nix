@@ -24,6 +24,7 @@
       den.aspects.apps.gaming.roleplaying.sillytavern
       den.aspects.apps.gaming.roleplaying.rp
       den.aspects.apps.gaming.steam
+      den.aspects.apps.lemonhunt
       den.aspects.remote-desktop.sunshine
       den.aspects.system.network.tailscale
       den.aspects.system.network.wait-online
