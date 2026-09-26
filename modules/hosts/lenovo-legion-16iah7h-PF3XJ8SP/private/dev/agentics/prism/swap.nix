@@ -16,7 +16,7 @@
 # llama-server --help), so there was no counter to poll.
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-    # HOMELAB-ONLY (2026-09-21 user request, hotspot.nix pattern): the swap
+    # HOMELAB-ONLY (2026-09-21 user request, 3090 specialisation pattern): the swap
     # helpers stop/start ollama + bonsai2 — both live only inside
     # specialisation.homelab.
     nixos = {

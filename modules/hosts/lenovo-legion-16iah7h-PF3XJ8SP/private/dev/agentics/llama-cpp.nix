@@ -1,6 +1,6 @@
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-    # HOMELAB-ONLY (2026-09-21 user request, hotspot.nix pattern): the CUDA
+    # HOMELAB-ONLY (2026-09-21 user request, 3090 specialisation pattern): the CUDA
     # llama-cpp build (+ memlock limits it needs) lives inside
     # specialisation.homelab. Default generation stays CUDA-free.
     nixos = {pkgs, ...}: {

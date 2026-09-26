@@ -141,7 +141,7 @@
       '';
     in {
       specialisation.homelab.configuration = {
-        # HOMELAB-ONLY (2026-09-21 user request, hotspot.nix pattern): the
+        # HOMELAB-ONLY (2026-09-21 user request, 3090 specialisation pattern): the
         # 3090's i2c RGB controller hangs off the tunneled card — no tunnel,
         # no controller. Lives inside specialisation.homelab with the rest of
         # the eGPU stack.

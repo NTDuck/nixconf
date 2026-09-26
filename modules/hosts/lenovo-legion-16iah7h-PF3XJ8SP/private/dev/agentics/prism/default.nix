@@ -46,7 +46,7 @@
 #   minutes. No watchdog needed.
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-    # HOMELAB-ONLY (2026-09-21 user request, hotspot.nix pattern): the whole
+    # HOMELAB-ONLY (2026-09-21 user request, 3090 specialisation pattern): the whole
     # Bonsai 2 stack (prism llama-server, weights, service) lives inside
     # specialisation.homelab — absent from the default generation.
     nixos = {pkgs, ...}: let

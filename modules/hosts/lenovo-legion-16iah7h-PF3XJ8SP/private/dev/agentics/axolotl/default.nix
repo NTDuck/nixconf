@@ -29,7 +29,7 @@
 # callPackage of every dep) is the escape hatch if that ever bites.
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-    # HOMELAB-ONLY (2026-09-21 user request, hotspot.nix pattern): training
+    # HOMELAB-ONLY (2026-09-21 user request, 3090 specialisation pattern): training
     # gear lives inside specialisation.homelab with the rest of the 3090
     # stack.
     nixos = {pkgs, ...}: let
