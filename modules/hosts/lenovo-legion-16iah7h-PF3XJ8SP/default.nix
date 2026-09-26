@@ -5,14 +5,6 @@
 
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     includes = [
-      # power-profiles-daemon deliberately EXCLUDED (2026-09-15): its
-      # profile set (low-power/balanced/performance) cannot represent
-      # legion's "custom" profile, and its reassertion overwrites a
-      # custom-mode write seconds later — legion_gui's custom mode
-      # "jumps back" to the previous mode with PPD running (proven:
-      # custom sticks indefinitely with PPD stopped, reverts ~2s with it
-      # active). legion_laptop drives platform_profile itself. upower
-      # stays for battery telemetry.
       den.aspects.apps.browsers.chromium
       den.aspects.apps.browsers.zen-browser
       den.aspects.apps.btop
@@ -26,15 +18,15 @@
       den.aspects.apps.file-managers.tfm
       den.aspects.apps.gaming.itch
       den.aspects.apps.gaming.mangohud
-      den.aspects.apps.gaming.rpgmakermlinux-cicpoffs
+      # wlib umbrella: includes gaming.wine + rpgmakermlinux-cicpoffs
+      den.aspects.apps.gaming.wlib
       den.aspects.apps.gaming.roleplaying.risuai
       den.aspects.apps.gaming.roleplaying.sillytavern
       den.aspects.apps.gaming.roleplaying.rp
       den.aspects.apps.gaming.steam
-      den.aspects.apps.gaming.wine
-      den.aspects.apps.gaming.wlib
       den.aspects.remote-desktop.sunshine
       den.aspects.system.network.tailscale
+      den.aspects.system.network.wait-online
       den.aspects.apps.messaging.discord
       den.aspects.apps.messaging.lark-cli
       den.aspects.apps.messaging.telegram
@@ -81,16 +73,20 @@
       den.aspects.system.storage.udisks2
       den.aspects.system.storage.fstrim
       den.aspects.system.swap.zram
+      # power-profiles-daemon/thermald/throttled/tlp/powertop deliberately
+      # EXCLUDED. PPD's profile set (low-power/balanced/performance)
+      # cannot represent legion's "custom" profile and its reassertion
+      # overwrites a custom-mode write seconds later — legion_gui's
+      # custom mode "jumps back" with PPD running (proven 2026-09-15:
+      # custom sticks indefinitely with PPD stopped, reverts ~2s with it
+      # active). thermald/throttled/tlp fight custom platform_profile
+      # writes the same way; powertop's USB autosuspend breaks the eGPU
+      # link and input devices mid-session. legion_laptop drives
+      # platform_profile itself; upower arrives via noctalia's includes.
       den.aspects.system.virtualization.docker
       den.aspects.system.virtualization.kubernetes
       den.aspects.system.virtualization.qemu
       den.aspects.system.virtualization.waydroid
-      # power: power-profiles-daemon stays EXCLUDED (see header comment —
-      # it reverts legion_gui custom modes); thermald/throttled are Intel
-      # laptop guards that also fight custom platform_profile writes here,
-      # powertop auto-tune likewise (USB autosuspend breaks the eGPU link
-      # and input devices mid-session). tlp excluded with PPD for the same
-      # reason. upower arrives via noctalia's includes.
       den.aspects.system.virtualization.podman
       (den.aspects.desktop.compositors.mangowm {
         terminal = pkgs: "${pkgs.unstable.ghostty}/bin/ghostty";
@@ -102,33 +98,27 @@
       den.aspects.desktop.clipboard.cliphist
       den.aspects.desktop.fs.gvfs
       (den.aspects.desktop.greeters.tuigreet {
-        command = config: "${config.programs.mango.package}/bin/mango";
+        session = config: "${config.programs.mango.package}/bin/mango";
+        autologin = true;
       })
-      den.aspects.desktop.input.fcitx5
       den.aspects.desktop.input.keyd
-      {
-        internalOutput = "eDP-1";
-
-        externalOutputs = [
-          "HDMI-A-1"
-          "HDMI-A-2"
-          "HDMI-1"
-          "HDMI-2"
-        ];
-      }
+      # kanshi: display geometry is owned by mango's monitorrules (host
+      # private/compositors/mangowm) — they mirror HDMI externals onto
+      # eDP-1's position and re-assert on hotplug. A bare include of the
+      # parameterized kanshi aspect is silently inert (its required args
+      # are never fed by sibling list entries), so it is deliberately NOT
+      # included here.
       den.aspects.desktop.launchers.dmenu
       den.aspects.desktop.panels.noctalia
       # panels: waybar/quickshell deliberately EXCLUDED on legion — noctalia
       # is the shell here (its own notification daemon replaces mako too;
       # enable_daemon = true). waybar/quickshell remain DELL/labwc aspects.
-      (den.aspects.desktop.portals.xdg {internalOutput = "eDP-1";})
       den.aspects.desktop.screenshots.flameshot
       den.aspects.desktop.screenshots.gpu-screen-recorder
       den.aspects.desktop.settings.dconf
       den.aspects.desktop.shells.prompts.starship
       den.aspects.desktop.shells.zsh
       den.aspects.desktop.theming.stylix
-      den.aspects.desktop.wayland.kanshi
       # Wayland extras: mango has native xwayland (xwayland_ignore_scale),
       # so the standalone xwayland-satellite user service (HM) is redundant
       # here; it stays for labwc hosts if needed.

@@ -83,8 +83,9 @@
           mouse_click_method = 2; # Clickfinger
           trackpad_disable_while_typing = 1;
 
-          xwayland_ignore_scale = 1; # DO_NOT_REMOVE otherwise XWayland apps suffer from low resolution
-          # syncobj_enable = 1;
+          # XWayland apps self-scale via Xft.dpi (xresources); the
+          # compositor must not scale them again.
+          xwayland_ignore_scale = 1;
           allow_lock_transparent = 1;
           drag_tile_to_tile = 1;
           drag_corner = 4;
@@ -175,21 +176,9 @@
           focus_on_activate = 0;
         };
 
+        # xrdb merge keeps st/xterm-class clients on the host DPI. Noctalia
+        # (panel/lock/launcher shell) and fcitx5 start with the session.
         autostart_sh = ''
-          ${pkgs.dbus}/bin/dbus-update-activation-environment --systemd \
-            WAYLAND_DISPLAY \
-            DISPLAY \
-            XDG_CURRENT_DESKTOP \
-            XDG_SESSION_DESKTOP \
-            XDG_SESSION_TYPE
-
-          ${pkgs.systemd}/bin/systemctl --user import-environment \
-            WAYLAND_DISPLAY \
-            DISPLAY \
-            XDG_CURRENT_DESKTOP \
-            XDG_SESSION_DESKTOP \
-            XDG_SESSION_TYPE
-
           ${pkgs.xrdb}/bin/xrdb -merge ~/.Xresources || true
 
           ${config.programs.noctalia.package}/bin/noctalia &
