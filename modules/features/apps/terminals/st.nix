@@ -7,6 +7,11 @@
 # colorname[] regex matches n=1) and a new nixos terminfo block (see
 # below).
 #
+# SCROLLBACK (2026-09-26, "st not scrollable"): upstream st has none;
+# the vendored sibling .diff files (base + mouse + mouse-altscreen,
+# 0.9.2 diffs verified to apply to 0.9.3) add Shift+PgUp/PgDn and
+# wheel scrolling — see the comment on `patches` in patchedSt.
+#
 # st has no HM module (verified against
 # https://github.com/nix-community/home-manager/tree/release-26.05/modules/programs
 # — no st.nix). The package is `pkgs.st`; we override `config.def.h`
@@ -49,6 +54,24 @@
       cursor = "#${colors.base05-hex}";
       selBg = "#${colors.base02-hex}";
       patchedSt = pkgs.st.overrideAttrs (old: {
+        # Scrollback (2026-09-26 "st not scrollable" on DELL): upstream st
+        # has NO scrollback (removed in 0b73612c) — only the community
+        # patch restores it. Newest published diffs target 0.9.2; verified
+        # to apply to the pinned 0.9.3 with offsets only, in this order
+        # (altscreen rewrites the entries the mouse patch just added).
+        # Gives Shift+PgUp/PgDn, Shift+wheel, and wheel scrolling outside
+        # the alternate screen (alt-screen apps like less/tmux keep their
+        # own handling — that is the altscreen patch's point).
+        # Patch phase runs BEFORE the postPatch sed/python config edits,
+        # so the two coexist on config.def.h.
+        patches =
+          (old.patches or [])
+          ++ [
+            ./st-scrollback-0.9.2.diff
+            ./st-scrollback-mouse-0.9.2.diff
+            ./st-scrollback-mouse-altscreen-20220127-2c5edf2.diff
+          ];
+
         # Ensure python3 is available for the colorname[] replacement.
         nativeBuildInputs =
           (old.nativeBuildInputs or [])
