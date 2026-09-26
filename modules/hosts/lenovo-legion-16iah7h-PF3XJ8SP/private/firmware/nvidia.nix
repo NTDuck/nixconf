@@ -6,11 +6,6 @@
       # hardware.nvidia.open was the profile's default; kept explicit.
       hardware.nvidia.open = true;
 
-      # hardware.opengl = {
-      #   enable = true;
-      #   driSupport = true;
-      # };
-
       hardware.nvidia = {
         modesetting.enable = true;
         nvidiaSettings = true;
@@ -20,27 +15,16 @@
 
       services.xserver = {
         videoDrivers = ["nvidia"];
-        deviceSection = ''
-          Option "Coolbits" "28"
-        '';
       };
 
+      # initrd modules so the display hands over without a mode reset.
       boot.initrd.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm"];
-      boot.kernelParams = [
-        "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
-        # Attempt 2026-09-12: nvidia_drm.fbdev=0 to keep fbcon off the eGPU
-        # (rm external-client deadlock on unplug). REVERTED: mango/wlroots
-        # then fails EGL at tuigreet and falls back to llvmpipe — the
-        # compositor depends on the fbdev sideband. (The eGPU adopter that
-        # continued freeze work here was removed 2026-09-21 with the Bonsai
-        # stack.)
-        # NMI watchdog: kernel hard-locks (driver spinlock deadlock)
-        # self-reboot via the intel_oc_wdt hardware watchdog.
-        "nmi_watchdog=1"
-      ];
+      # NMI watchdog: kernel hard-locks (driver spinlock deadlock)
+      # self-reboot via the intel_oc_wdt hardware watchdog.
+      boot.kernelParams = ["nmi_watchdog=1"];
 
-      # Freeze safety net: the eGPU driver-deadlock freezes the display
-      # but SysRq still works — Alt+SysRq+R,E,I,S,U,B (REISUB) recovers
+      # Freeze safety net: driver-deadlock freezes kill the display but
+      # SysRq still works — Alt+SysRq+R,E,I,S,U,B (REISUB) recovers
       # without power-cycling. Full sysrq bitmask.
       boot.kernel.sysctl."kernel.sysrq" = 1;
 
@@ -62,11 +46,6 @@
       environment.sessionVariables = {
         __GLX_VENDOR_LIBRARY_NAME = "nvidia";
         LIBVA_DRIVER_NAME = "nvidia";
-        # Dead variable (nothing in the tree reads it — wine's filters are
-        # set inside the wine3090 wrappers): kept because wine's WSI comment
-        # documents the eGPU story. Remove with the wine3090 wrappers if
-        # those ever move into the homelab spec.
-        WINEGPU_FILTER = "NVIDIA GeForce RTX 3090";
       };
     };
   };
