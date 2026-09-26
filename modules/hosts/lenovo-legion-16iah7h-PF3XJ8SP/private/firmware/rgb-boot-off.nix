@@ -57,7 +57,12 @@
         }
 
         off() {
-          [ -n "$1" ] && $og -d "$1" -m off >/dev/null 2>&1
+          # "Lenovo 5 2022" (16IAH7H EC controller) has NO off mode
+          # (verified live 2026-09-26: "Mode 'off' not available") — fall
+          # back to direct all-black, which the same run accepts.
+          [ -n "$1" ] || return 0
+          $og -d "$1" -m off >/dev/null 2>&1 && return 0
+          $og -d "$1" -m direct -c 000000 >/dev/null 2>&1
         }
 
         record_off() {
