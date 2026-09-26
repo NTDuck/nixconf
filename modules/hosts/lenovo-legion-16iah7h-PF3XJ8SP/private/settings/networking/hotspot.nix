@@ -10,7 +10,11 @@
 # and an undocked boot has the station up — create_ap would set the
 # interface unmanaged and deauth the client link (DEAUTH_LEAVING,
 # journal 2026-09-21 15:30:59; five live activations, five dead
-# uplinks, five forced reboots). The preStart gate refuses to start
+# uplinks, five forced reboots). The ExecCondition gate waits up to
+# 15s for the dock's carrier, then SKIPS cleanly when undocked (unit
+# → inactive, no failure/restart storm — the 2026-09-26 preStart
+# variant left the unit `failed` via start-limit on docked boots
+# where carrier hadn't negotiated yet at gate time).
 # unless the ethernet uplink (enp49s0, dock-only) has carrier, so
 # undocked boots/activations stay on station wifi; docked boots bring
 # the hotspot up automatically. restartIfChanged = false: a docked
@@ -18,7 +22,10 @@
 # recovery path.
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-    nixos = let
+    nixos = {
+      pkgs,
+      ...
+    }: let
       name = "Hotto Doggo";
       password = "20041889";
 
@@ -122,11 +129,21 @@
         wants = ["NetworkManager.service"];
         after = ["NetworkManager.service"];
         # Dock gate — see the file header for the wifi-kill history.
-        preStart = ''
-          if ! cat /sys/class/net/enp49s0/carrier 2>/dev/null | grep -q 1; then
-            echo "create_ap: undocked (enp49s0 no carrier) — refusing to grab wlp0s20f3; client wifi stays up"
-            exit 1
-          fi
+        # 2026-09-26 rework: the original preStart `exit 1` refusal is a
+        # FAILURE under the upstream Restart=on-failure — five restarts in
+        # one second burn the start-limit budget and leave the unit
+        # `failed` (journal 2026-09-26 19:50, and even a DOCKED boot hit
+        # it: the gate ran before the dock link had negotiated carrier,
+        # then no retry ever came). Now an ExecCondition carries its own
+        # bounded carrier wait: exit 0 proceeds to the AP, exit 1-254 is
+        # a CLEAN SKIP (unit → inactive, no restart, no start-limit).
+        serviceConfig.ExecCondition = pkgs.writeShellScript "create_ap-dock-gate" ''
+          for _ in $(seq 1 15); do
+            [ "$(cat /sys/class/net/${internetInterface}/carrier 2>/dev/null)" = 1 ] && exit 0
+            sleep 1
+          done
+          echo "create_ap: undocked (${internetInterface} no carrier after 15s) — skipping; client wifi stays up"
+          exit 1
         '';
         restartIfChanged = false;
       };
