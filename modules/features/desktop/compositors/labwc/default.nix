@@ -112,12 +112,15 @@
           };
 
           # Key-input parity with the legion mango aspect (repeat_rate=50,
-          # repeat_delay=150, numlockon=1): labwc units match mango's
+          # repeat_delay=150, numlockon=0): labwc units match mango's
           # (chars/s, ms; labwc 0.9.7 rc.xml reference, keyboard section).
+          # numlock "off" (2026-09-27): numlock gates the keyd nav layer
+          # (togglem(nav, numlock)); session must start numlock OFF so the
+          # LED phase matches the layer phase (LED on ⇔ remap active).
           keyboard = {
             repeatRate = 50;
             repeatDelay = 150;
-            numlock = "on";
+            numlock = "off";
             default = true;
             keybind =
               [

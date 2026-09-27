@@ -76,7 +76,12 @@
 
           ipc = "${config.programs.noctalia.package}/bin/noctalia msg";
         in {
-          numlockon = 1; # numpad live from login; toggling stays manual (2026-09-19)
+          # numlockon=0 (2026-09-27): numlock now gates the keyd nav layer
+          # (togglem(nav, numlock)). Session start must be numlock OFF so
+          # the LED phase matches the layer phase: LED on ⇔ remap active
+          # at all times. Kernel numlock comes back on with the first
+          # toggle; kp digits then work while the remap is active.
+          numlockon = 0;
           repeat_rate = 50;
           repeat_delay = 150;
           trackpad_natural_scrolling = 1;
