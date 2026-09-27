@@ -70,12 +70,16 @@
 
       # Weights, pinned via HF lfs.oid (== content sha256, cross-checked by
       # downloading both and sha256sum; the 06af754 hash-mismatch fix).
-      # PQ2_0 = 2.0-ish bpw speed band (2026-09-20 user switch from PTQ1_0,
-      # the 1.75 bpw max-quality band: AGENTS.md) — faster decode for the
-      # daily driver at slightly lower quality.
+      # PTQ1_0 (2026-09-27 switch BACK from PQ2_0, user decision): PQ2_0
+      # measured 2.87 tok/s decode on the 3090 (model fully GPU-resident,
+      # 1860 MHz, CUDA graphs reused) — the fork's PQ2_0 kernel path is
+      # ~16x slower than PTQ1_0's. The 45 tok/s baseline (2026-09-18
+      # smoke) was measured on PTQ1_0; the 2026-09-20 "PQ2 = faster
+      # decode band" note was never benchmarked and is wrong for this
+      # fork build.
       weights = pkgs.fetchurl {
-        url = "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/main/Ternary-Bonsai-2-27B-PQ2_0.gguf";
-        sha256 = "sha256-OQfcFljbH3ipgmv41by43GXbDUZjiJN69X8ilPrmLsE=";
+        url = "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/main/Ternary-Bonsai-2-27B-PTQ1_0.gguf";
+        sha256 = "sha256-UxB/UwqlLrAJEiY6se4pvRmSYch817StTKExjB/jPuM=";
       };
       mmproj = pkgs.fetchurl {
         url = "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/main/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf";
@@ -84,7 +88,7 @@
 
       bonsaiModels = pkgs.runCommand "bonsai2-27b-gguf" {} ''
         mkdir -p $out/share/bonsai2
-        cp ${weights} $out/share/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf
+        cp ${weights} $out/share/bonsai2/Ternary-Bonsai-2-27B-PTQ1_0.gguf
         cp ${mmproj} $out/share/bonsai2/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf
       '';
     in {
@@ -125,14 +129,14 @@
               # per request; "as much parallelism as possible". 256K total +
               # 2 slots = 2 x 128K requests in flight — the maximum
               # parallelism that keeps the per-request floor. VRAM: KV 64
-              # KiB/token x 256K = 16 GiB + PQ2_0 weights 6.71 GiB + mmproj/
-              # ctx overhead ~0.4 GiB ~= 23.1 GiB of 24.5 — fits the
+              # KiB/token x 256K = 16 GiB + PTQ1_0 weights 5.54 GiB + mmproj/
+              # ctx overhead ~0.4 GiB ~= 21.9 GiB of 24.5 — fits the
               # otherwise-empty 3090 (ollama is stopped by llamacpp-prism-up;
               # the desktop runs on the 3060). Safe fallback if the fit ever
               # trims below the floor: drop to "-np 1" + "--ctx-size
               # 131072" (1 x 128K, ~7.5 GiB less KV).
               flags = pkgs.lib.concatStringsSep " " [
-                "-m ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf"
+                "-m ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-PTQ1_0.gguf"
                 "--mmproj ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf"
                 # STABLE ID (2026-09-26): without --alias, /v1/models
                 # reports the /nix/store GGUF path as the model id —
