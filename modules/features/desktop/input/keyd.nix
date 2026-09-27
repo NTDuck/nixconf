@@ -30,12 +30,18 @@
             ids = ["*"];
 
             settings = {
-              # NumLock must stay a REAL NumLock (2026-09-16): keyd's
-              # toggle(nav) on it swallows the raw KEY_NUMLOCK/LED_NUML
-              # events, so the laptop's NumLock indicator never lights.
-              # The nav layer is held with rightalt instead — hold
-              # rightalt+w/a/s/d for arrows, e/q for enter/esc.
+              # 2026-09-27: user wants numlock to gate the nav layer
+              # (numlock on => wasd = arrows). Numpad digits stay
+              # functional: both WMs set numlock on at session start
+              # (mango numlockon=1, labwc numlock=on) and kp keys are
+              # not bound inside [nav], so they emit through and the
+              # session keeps treating them as digits. The physical
+              # numlock LED no longer tracks this key (keyd swallows
+              # LED_NUML on toggle); the keyd-numlock-sync mirror below
+              # keeps physical LEDs pinned to the session's (always-on)
+              # state, so the LED reading stays truthful.
               main = {
+                numlock = "toggle(nav)";
                 rightalt = "layer(nav)";
               };
 
