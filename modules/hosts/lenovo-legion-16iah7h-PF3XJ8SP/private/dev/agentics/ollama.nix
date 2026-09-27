@@ -1,4 +1,8 @@
-{den, ...}: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     # ENTIRE 3090 INFERENCE STACK IS HOMELAB-ONLY (2026-09-21 user request):
     # every service/package here lives inside specialisation.homelab. Boot
@@ -11,7 +15,8 @@
       # Patch forwards draft_spec_type / draft_ngram_map_k4v_* verbatim; see
       # patches/ollama-spec-params-passthrough.patch.
       ollama-cuda = pkgs.unstable.ollama-cuda.overrideAttrs (old: {
-        patches = (old.patches or []) ++ [../../../../../../patches/ollama-spec-params-passthrough.patch];
+        patches = (old.patches or [])
+          ++ [(inputs.self + "/patches/ollama-spec-params-passthrough.patch")];
       });
     in {
       specialisation.homelab.configuration = {

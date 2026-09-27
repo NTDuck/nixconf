@@ -1,4 +1,8 @@
-{den, ...}: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.apps.gaming.wlib = {
     includes = [
       den.aspects.apps.gaming.wine
@@ -21,7 +25,7 @@
       appimageContents = pkgs.appimageTools.extractType2 {
         inherit pname version src;
         postExtract = ''
-          ${pkgs.patch}/bin/patch -p1 -d $out < ${./wlib-extension-permissions.patch}
+          ${pkgs.patch}/bin/patch -p1 -d $out < ${inputs.self}/modules/features/apps/gaming/wlib-extension-permissions.patch
         '';
       };
 

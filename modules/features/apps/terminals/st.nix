@@ -42,7 +42,11 @@
 # urxvt aspect's nixos block, see git history). The nixos block below
 # installs st at the system level so `infocmp st-256color` works for
 # SSH/tmux/less.
-{den, ...}: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.apps.terminals.st = {
     homeManager = {
       config,
@@ -67,9 +71,9 @@
         patches =
           (old.patches or [])
           ++ [
-            ./st-scrollback-0.9.2.diff
-            ./st-scrollback-mouse-0.9.2.diff
-            ./st-scrollback-mouse-altscreen-20220127-2c5edf2.diff
+            "${inputs.self}/modules/features/apps/terminals/st-scrollback-0.9.2.diff"
+            "${inputs.self}/modules/features/apps/terminals/st-scrollback-mouse-0.9.2.diff"
+            "${inputs.self}/modules/features/apps/terminals/st-scrollback-mouse-altscreen-20220127-2c5edf2.diff"
           ];
 
         # Ensure python3 is available for the colorname[] replacement.

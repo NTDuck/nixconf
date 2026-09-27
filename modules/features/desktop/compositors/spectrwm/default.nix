@@ -48,7 +48,11 @@
 # (xss-lock, dunst, clipmenu) never start. The wrapper mirrors the old
 # labwc aspect: export session env vars, start the HM graphical target,
 # then exec spectrwm.
-{den, ...}: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.desktop.compositors.spectrwm = {
     includes = [
       den.aspects.desktop.shells.zsh
@@ -95,7 +99,7 @@
               # read-only) AND on the DIRECTORY for its temp files.
               chmod u+w .. ../spectrwm.c
               patch -d .. -p0 < ${
-                ./maximize-region-padding.patch
+                inputs.self + "/modules/features/desktop/compositors/spectrwm/maximize-region-padding.patch"
               }
             '';
           });

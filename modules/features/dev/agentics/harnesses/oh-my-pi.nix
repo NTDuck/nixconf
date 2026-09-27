@@ -58,7 +58,7 @@
   # the shared "nerd" 2026-09-25). modelRoles stay out — /model picks
   # belong in the mutable config.yml (PI_CONFIG_FILES merges this file
   # OVER it).
-  defaultConfig = import ./_omp-default-config.nix;
+  defaultConfig = import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-default-config.nix";
 
   # API keys live in agenix on legion; dell has no agenix identity
   # enrolled (host comment: "keys are legion-only"), so the alias exports
