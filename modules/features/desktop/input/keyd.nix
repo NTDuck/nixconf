@@ -35,13 +35,20 @@
               # functional: both WMs set numlock on at session start
               # (mango numlockon=1, labwc numlock=on) and kp keys are
               # not bound inside [nav], so they emit through and the
-              # session keeps treating them as digits. The physical
-              # numlock LED no longer tracks this key (keyd swallows
-              # LED_NUML on toggle); the keyd-numlock-sync mirror below
-              # keeps physical LEDs pinned to the session's (always-on)
-              # state, so the LED reading stays truthful.
+              # session keeps treating them as digits.
+              # togglem + numlock macro (2026-09-27): plain toggle(nav)
+              # swallows the numlock keycode, so the kernel never
+              # toggles the virtual device's LED and every physical
+              # numlock LED stays pinned at session-start state
+              # (always-on — user report). togglem executes the macro
+              # BEFORE toggling: emitting numlock here flips the kernel
+              # numlock on the virtual uinput device, and keyd's
+              # virtual->physical LED propagation (src/daemon.c:572)
+              # mirrors it to every grabbed keyboard. The LED now
+              # tracks the layer toggle; the keyd-numlock-sync mirror
+              # stays for resume/hotplug convergence.
               main = {
-                numlock = "toggle(nav)";
+                numlock = "togglem(nav, numlock)";
                 rightalt = "layer(nav)";
               };
 
@@ -67,18 +74,16 @@
       # resets/sets physical LEDs outside the compositor — resume from
       # suspend (hardware LEDs reset), VT switch (kernel TTY layer),
       # keyd restart (new uinput device, no initial push), hotplug —
-      # leaves the physical LED stale while mango/wlroots keep their
-      # own state on the virtual device (mango numlockon=1, 2026-09-19).
-      # Fix: mirror every physical numlock LED from the keyd virtual
-      # keyboard node. The virtual node is the session's source of
-      # truth (wlroots writes it on every toggle and it survives
-      # resume), so this converges without ever inventing state.
+      # leaves the physical LED stale. Since 2026-09-27 the virtual
+      # device's numlock LED itself tracks the nav-layer toggle
+      # (togglem above), so this mirror is only a convergence sweep for
+      # resume/hotplug/restart cases; it never invents state.
       # Sweep cadence covers boot (OnBootSec races keyd's uinput
       # creation), keyd restarts and slow hotplug; a direct sysfs write
       # (no brightnessctl dep) only fires when the value actually
-      # differs. TTY-side numlock toggles get re-converged to the
-      # session state within one tick — accepted, this box has no
-      # console workflow.
+      # differs. TTY-side numlock toggles still flow through keyd
+      # (it grabs keyboards system-wide), so the virtual LED and the
+      # mirror stay in sync there too.
       systemd.timers.keyd-numlock-sync = {
         wantedBy = ["timers.target"];
 
