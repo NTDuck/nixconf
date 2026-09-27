@@ -25,6 +25,21 @@
           enable = true;
           package = ollama-cuda;
 
+          # Boot race fix (2026-09-27): ollama.service started at 08:14:38 but
+          # the 3090's BAR reassignment finished at 08:14:38.6 and NVRM bound
+          # after that — ollama's CUDA discovery saw ZERO GPUs (journal
+          # 08:14:40 "nvidia-smi --list-gpus: no compute ids"), fell back to
+          # CPU, and the first client POST loaded qwen3.8:27b into RAM
+          # (31 GB) -> OOM-kill 08:16:21, daemon down. The dock/egpu boot
+          # registers the 3090 a few seconds AFTER ollama's start whenever
+          # thunderbolt is slower than systemd. Gate the unit on the 3090's
+          # /proc/driver/nvidia/gpus/<uuid>/information existing: wait up to
+          # 60s, exit 1 = clean skip (no restart storm) when undocked —
+          # better than the old fail-loop AND than serving CPU-OOM'd 27B.
+          # GPU UUID pins ollama to the 3090 only; see CUDA_VISIBLE_DEVICES
+          # below. Written as a Nix string (not writeShellScript) so the
+          # gate text lives next to the pin it guards; stdenv shell is
+          # assumed on PATH in the unit context.
           # 0.0.0.0 + firewall scoped to tailscale0: DELL reaches ollama over
           # the tailnet (moonlight-era plan: DELL consumes legion's ollama via
           # tailscale, 2026-09-16). Binding the tailscale IP itself (100.x)
@@ -40,8 +55,9 @@
           # verbatim (case included — the prune regex is case-sensitive; a
           # mismatched tag makes the loader delete the installed variant on
           # every activation, journal 2026-09-26). The same strings are the
-          # keys of the omp modelOverrides in the shared ollama provider
-          # (features/dev/agentics/harnesses/_omp-ollama-provider.nix).
+          # keys of the omp modelOverrides in the host-private omp harness
+          # (../harnesses/oh-my-pi.nix — the ollama provider block, restored
+          # 2026-09-27).
           loadModels = [
             "qwen3.8:27b" # Slayer of Opus 4.6!
             "qwen3.8:27b-mtp-q4_K_M"
@@ -98,8 +114,8 @@
             # 131072 (2026-09-20): 128k is the floor per user. With q8_0 KV
             # the fit fell 707 MiB short of 66/66 layers at 131072 (see the
             # KV note); q4_0 KV closes the gap with ~700 MiB spare. The omp
-            # client's contextWindow pins in _omp-ollama-provider.nix MUST
-            # match this value.
+            # client's contextWindow pins MUST match this value (now in the
+            # host-private harness ../harnesses/oh-my-pi.nix).
             OLLAMA_CONTEXT_LENGTH = "131072";
 
             OLLAMA_NO_CLOUD = "1";
@@ -107,6 +123,32 @@
             OLLAMA_MAX_LOADED_MODELS = "1";
           };
         };
+
+        # The gate below is the unit-level ExecCondition for the service
+        # configured above (systemd.services.ollama is the upstream
+        # module's unit; services.ollama is the module option namespace —
+        # serviceConfig under the latter does not exist). grep comes from
+        # pkgs.gnugrep: pkgs.coreutils is a multi-call binary WITHOUT a
+        # grep symlink (verified live 2026-09-27 — grep existed only as
+        # gnugrep on the unit PATH).
+        systemd.services.ollama.serviceConfig.ExecCondition =
+          pkgs.lib.concatStringsSep " " [
+            "/bin/sh"
+            "-c"
+            "'${pkgs.gnugrep}/bin/grep -q"
+            "GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
+            "/proc/driver/nvidia/gpus/*/information"
+            "&& exit 0;"
+            "for i in $(seq 1 60);"
+            "do"
+            "${pkgs.gnugrep}/bin/grep -q"
+            "GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
+            "/proc/driver/nvidia/gpus/*/information"
+            "&& exit 0;"
+            "${pkgs.coreutils}/bin/sleep 1;"
+            "done;"
+            "exit 1'"
+          ];
 
         # DELL consumes ollama over the tailnet (see host = "0.0.0.0" above):
         # open 11434 ONLY on tailscale0, never the LAN. networking.firewall
