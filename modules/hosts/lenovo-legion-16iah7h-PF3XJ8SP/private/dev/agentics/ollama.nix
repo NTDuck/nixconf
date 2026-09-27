@@ -59,7 +59,7 @@
           # (../harnesses/oh-my-pi.nix — the ollama provider block, restored
           # 2026-09-27).
           loadModels = [
-            "qwen3.8:27b" # Slayer of Opus 4.6!
+            "qwen3.8:27b" # Slayer of Opus 4.6! (restored 2026-09-27: its removal orphaned the pulled model — syncModels deletes nothing but pulls won't re-verify; the tag must exist for `ollama run qwen3.8:27b`)
             "qwen3.8:27b-mtp-q4_K_M"
             "jetelain/Qwen3.8-27B:latest" # Unsloth Dynamic V3.0 GGUFs, UD-Q4_K_XL, 128k
             "mannix/omnimerge-v6:vision-Q4_K_M" # Weight tuned from qwen3.8:27b, vision
@@ -68,8 +68,10 @@
             "smtek/Swift-Qwen3.8-27B:map-k4v" # Engram
             "hf.co/bartowski/Altworld_Hemmingway-1-GGUF:q4_K_M" # 27B Qwen3.8 finetune, everyday writing (EQ-Bench 4 ~1330)
             "Distendo/zen-pro" # Unknown pull
+
             "SparkLLM/Spark-X2.5-4B" # reasoning, coding
             "openbmb/minicpm5-2b:f16" # reasoning, coding
+
             "openbmb/minicpm5-2b:q8_0" # More comfortable fit for 3060
             "lfm2.5:8b-a1b-bf16" # hallucination-resistant, tool-calling
             "granite4.1:3b-bf16" # hallucination-resistant, tool-calling
@@ -127,28 +129,36 @@
         # The gate below is the unit-level ExecCondition for the service
         # configured above (systemd.services.ollama is the upstream
         # module's unit; services.ollama is the module option namespace —
-        # serviceConfig under the latter does not exist). grep comes from
-        # pkgs.gnugrep: pkgs.coreutils is a multi-call binary WITHOUT a
-        # grep symlink (verified live 2026-09-27 — grep existed only as
-        # gnugrep on the unit PATH).
+        # serviceConfig under the latter does not exist).
+        #
+        # 2026-09-27 v2 — the procfs-UUID grep was NOT enough. Boot
+        # 13:03:33: NVRM bound the 3090 at 13:03:39 so /proc/driver/
+        # nvidia/gpus/<uuid>/information existed by 13:03:40 (gate passed,
+        # ollama started) — but the char node /dev/nvidia1 (minor = the
+        # procfs "Device Minor", 1 for the 3090) was only created at
+        # 13:03:48.399. ollama's cuInit at 13:03:41.6 opened CUDA
+        # devices by char node, found none matching CUDA_VISIBLE_DEVICES,
+        # and reported `inference compute id=cpu` → preload loaded
+        # qwen3.8:27b into RAM+swap → kernel OOM-killed the unit at
+        # 13:05:33. procfs only proves NVRM attached the PCI function;
+        # the char node is what CUDA actually consumes.
+        #
+        # So the gate now waits for BOTH:
+        #   /dev/nvidia-uvm      — udev creates it after nvidia_uvm loads
+        #                          (13:03:37 this boot; every CUDA client
+        #                          needs it)
+        #   /dev/nvidia1         — the 3090's char node. Minor 1 is stable
+        #                          here (3060 = 0 at PCI 01:00.0, 3090 = 1
+        #                          at 06:00.0; Device Minor in procfs
+        #                          confirms 2026-09-27). Undocked the node
+        #                          never appears → exit 1 = clean skip, no
+        #                          restart storm.
+        # `[ -e ... ]` is a /bin/sh builtin — no PATH dependency. The
+        # initial probe plus a 60×1s re-check loop covers the 8s+ tail
+        # this boot showed; then the service starts and cuInit succeeds.
         systemd.services.ollama.serviceConfig.ExecCondition =
-          pkgs.lib.concatStringsSep " " [
-            "/bin/sh"
-            "-c"
-            "'${pkgs.gnugrep}/bin/grep -q"
-            "GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
-            "/proc/driver/nvidia/gpus/*/information"
-            "&& exit 0;"
-            "for i in $(seq 1 60);"
-            "do"
-            "${pkgs.gnugrep}/bin/grep -q"
-            "GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
-            "/proc/driver/nvidia/gpus/*/information"
-            "&& exit 0;"
-            "${pkgs.coreutils}/bin/sleep 1;"
-            "done;"
-            "exit 1'"
-          ];
+          "/bin/sh -c 'i=0; until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do"
+          + " i=$((i+1)); [ $i -gt 60 ] && exit 1; ${pkgs.coreutils}/bin/sleep 1; done; exit 0'";
 
         # DELL consumes ollama over the tailnet (see host = "0.0.0.0" above):
         # open 11434 ONLY on tailscale0, never the LAN. networking.firewall
