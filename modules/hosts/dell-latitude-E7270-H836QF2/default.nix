@@ -24,6 +24,7 @@
       den.aspects.apps.btop
       den.aspects.apps.p7zip
       den.aspects.apps.ripgrep
+      den.aspects.apps.tmux
       den.aspects.apps.zoxide
       den.aspects.apps.file-managers.pcmanfm
       den.aspects.apps.file-managers.tfm
