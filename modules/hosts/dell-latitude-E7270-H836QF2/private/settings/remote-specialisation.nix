@@ -31,9 +31,9 @@
           # minimal env, and cage is NOT in systemPackages on this spec
           # (verified 2026-09-28 — only the moonlight aspect's package
           # lands in sw/bin), so a PATH-based `exec cage` would die with
-          # "command not found". Same shape as the .desktop Exec below
-          # (cage takes APPLICATION + args after --).
-          command = pkgs.writeShellScript "moonlight-kiosk" ''
+          # "command not found". Same shape as the x11 wrapper.
+          command = pkgs.writeShellScript
+            "dell-latitude-E7270-H836QF2-moonlight-session" ''
             exec ${pkgs.cage}/bin/cage -s -- /run/current-system/sw/bin/moonlight --video-codec H.264 --no-yuv444 --display-mode fullscreen
           '';
           user = "ayin";
