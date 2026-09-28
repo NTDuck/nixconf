@@ -27,8 +27,9 @@
 #   - numlockon — skipped deliberately: the E7270 has no numpad, so the
 #     parity setting would be a no-op here (2026-09-24).
 #   - repeat_rate/repeat_delay — no WM knob, set at the X SERVER level
-#     instead: -ardelay 150 -arinterval 20 on the dell-x11-session
-#     wrapper (2026-09-24; X defaults were 660 ms / 25 cps).
+#     instead: -ardelay 150 -arinterval 20 on the
+#     dell-latitude-E7270-H836QF2-x11-session wrapper (2026-09-24; X
+#     defaults were 660 ms / 25 cps).
 #   - blur, animations, opacity curves, scroller layouts, gapp*, drag_* —
 #     spectrwm is a minimal dwm-style tiler; no such knobs.
 #

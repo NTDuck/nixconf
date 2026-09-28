@@ -160,8 +160,9 @@
         in {
           # NO NixOS xserver module (2026-09-25; module-tree fallout fixed
           # 2026-09-28 via xorgModules above): this host never runs a
-          # display-manager-managed server — the dell-x11-session wrapper
-          # below execs startx against the raw xorgserver. X init works
+          # display-manager-managed server — the
+          # dell-latitude-E7270-H836QF2-x11-session wrapper below execs
+          # startx against the raw xorgserver. X init works
           # without the module: the wrapper's PATH prepends
           # ${pkgs.xorg.xinit} (xinit+xauth).
           services.xserver.enable = lib.mkForce false;
@@ -210,7 +211,7 @@
             EndSection
           '';
           environment.systemPackages = let
-            x11Session = pkgs.writeShellScriptBin "dell-x11-session" ''
+            x11Session = pkgs.writeShellScriptBin "dell-latitude-E7270-H836QF2-x11-session" ''
               # startx's server args: after `--` the first token is the
               # SERVER COMMAND, so `-- vt1` would exec a binary named
               # "vt1". Only FLAGS go after `--` (autorepeat below); the
@@ -238,7 +239,7 @@
         };
       }
       (den.aspects.desktop.greeters.tuigreet {
-        session = _config: "dell-x11-session";
+        session = _config: "dell-latitude-E7270-H836QF2-x11-session";
       })
     ];
   };
