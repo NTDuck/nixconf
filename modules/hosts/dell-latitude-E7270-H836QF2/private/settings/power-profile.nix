@@ -9,11 +9,13 @@
 # nothing may rewrite profiles behind its back.
 {
   den,
-  pkgs,
   ...
 }: {
   den.aspects.dell-latitude-E7270-H836QF2 = {
-    nixos = {pkgs, ...}: {
+    nixos = {
+      pkgs,
+      ...
+    }: {
       # PPD never moves off its default profile by itself — profile
       # switching on power-source changes is the desktop environment's
       # job, and DELL runs a bare WM (spectrwm). A udev rule on
