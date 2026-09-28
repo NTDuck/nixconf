@@ -1,9 +1,13 @@
 # "remote" specialisation: DELL as a pure remote-desktop client.
 #
-# Boots into a tuigreet whose session menu offers moonlight-qt directly
-# (cage kiosk — no compositor, no desktop furniture, maximum GPU/RAM for
-# decoding legion's stream), with tailscale guaranteed up before greetd so
-# the client can always reach legion off-LAN.
+# Boots STRAIGHT into the moonlight kiosk (cage fullscreen — no greeter,
+# no compositor, no desktop furniture, maximum GPU/RAM for decoding
+# legion's stream), with tailscale guaranteed up before greetd so the
+# client can always reach legion off-LAN. greetd's restart defaults off
+# when initial_session is set (nixpkgs greetd.nix), so an app exit lands
+# on the plain default_session greeter (tuigreet listing all sessions,
+# including the full x11 desktop) instead of re-entering moonlight in a
+# loop.
 #
 # Select with: sudo /run/current-system/bin/switch-to-configuration boot
 #   + reboot → pick "remote" in the bootloader specialisation menu.
@@ -15,6 +19,26 @@
       ...
     }: {
       specialisation.remote.configuration = {
+        # --- greetd: autologin into the kiosk ---------------------------
+        # The tuigreet aspect (inherited into this specialisation) sets
+        # default_session = tuigreet --cmd <x11-session>. Adding
+        # initial_session makes greetd start the KIOSK as ayin directly at
+        # boot (autologin) and flips the service's restart default off, so
+        # when the app exits greetd falls back to default_session — the
+        # greeter — instead of looping the kiosk.
+        services.greetd.settings.initial_session = {
+          # Absolute store paths throughout: greetd hands sessions a
+          # minimal env, and cage is NOT in systemPackages on this spec
+          # (verified 2026-09-28 — only the moonlight aspect's package
+          # lands in sw/bin), so a PATH-based `exec cage` would die with
+          # "command not found". Same shape as the .desktop Exec below
+          # (cage takes APPLICATION + args after --).
+          command = pkgs.writeShellScript "moonlight-kiosk" ''
+            exec ${pkgs.cage}/bin/cage -s -- /run/current-system/sw/bin/moonlight --video-codec H.264 --no-yuv444 --display-mode fullscreen
+          '';
+          user = "ayin";
+        };
+
         # --- tailscale autostart ---------------------------------------
         # The tailscale aspect enables tailscaled; bringing the mesh up is
         # normally interactive (`sudo tailscale up`, see aspect header). In
@@ -45,16 +69,23 @@
           unitConfig.ConditionPathExists = "/var/lib/tailscale/tailscaled.state";
         };
 
-        # --- moonlight-qt as a greeter session -------------------------
-        # tuigreet lists .desktop files from services.displayManager
-        # .sessionPackages (share/wayland-sessions). A session runs as the
-        # logged-in user via greetd, without the HM user PATH — so Exec
-        # pins absolute store paths.
+        # --- moonlight-qt as a greeter-listed session -------------------
+        # With initial_session above this entry is NOT the boot path — it
+        # is what the fallback greeter's session menu (tuigreet lists
+        # services.displayManager.sessionPackages) offers for manually
+        # re-entering the kiosk after an app exit, without a reboot.
+        # A session runs as the logged-in user via greetd, without the HM
+        # user PATH — so Exec pins absolute paths.
         #
         # cage -s: single-app kiosk Wayland compositor. moonlight-qt is a
         # Qt/SDL app; the labwc desktop is deliberately NOT started in this
         # spec, so the session needs a minimal compositor to host it.
-        # --no-yuv444: the HD 520 decode constraint (see moonlight.nix).
+        # Flags (2026-09-28, verified against moonlight 6.1.0 --help):
+        # --no-h265/--no-av1 do not exist ("Unknown options: no-h265");
+        # codec selection is --video-codec. /run/current-system/sw/bin/
+        # moonlight is the HD 520-patched package from the moonlight
+        # aspect (forces H.264 + YUV444 off at the settings level; the CLI
+        # flags mirror that defense-in-depth).
         services.displayManager.sessionPackages = let
           # Same shape as the labwc aspect's overrideAttrs: a bare script
           # has no passthru.providedSessions, which the displayManager
@@ -66,7 +97,7 @@
             [Desktop Entry]
             Name=Moonlight (legion stream)
             Comment=Remote desktop client to legion (cage kiosk)
-            Exec=${pkgs.cage}/bin/cage -s -- ${pkgs.moonlight-qt}/bin/moonlight --no-h265 --no-av1 --no-yuv444
+            Exec=${pkgs.cage}/bin/cage -s -- /run/current-system/sw/bin/moonlight --video-codec H.264 --no-yuv444 --display-mode fullscreen
             Type=Application
             DesktopNames=cage;moonlight
             EOF
