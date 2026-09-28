@@ -134,23 +134,53 @@
           lib,
           pkgs,
           ...
-        }: {
-          # NO NixOS xserver module (2026-09-25): the tuigreet greeter
-          # aspect sets services.xserver.enable = true globally, but this
-          # host never runs a display-manager-managed server — the
-          # dell-x11-session wrapper below execs startx against the raw
-          # xorgserver. The module's payload is pure dead weight here:
-          # xorgserver + xorg apps (xterm/xset/xprop/xsetroot/xlsclients/
-          # xinput), xcb-util-xrm, xdotool, xsel, xinit pulled into
-          # systemPackages, xlock.pam (programs.xlock defaults on from
-          # services.xserver.enable), x11-ssh-askpass. X init still works:
-          # the wrapper's PATH prepends ${pkgs.xorg.xinit} (xinit+xauth).
+        }: let
+          # Merged Xorg module tree for the raw startx server (2026-09-28).
+          # services.xserver.enable = false below keeps the DM payload
+          # (xterm/xset/xprop/xsetroot/xlsclients/xinput, xlock.pam,
+          # x11-ssh-askpass) out of systemPackages — but it ALSO stopped
+          # the NixOS xserver module from materializing the merged
+          # sw/lib/xorg/modules tree (xorgserver's modules + libinput +
+          # evdev drivers). A config "ModulePath" REPLACES the server's
+          # default search path, so once that directory vanished (first
+          # boot of the 2026-09-28 generation) the raw Xorg could not
+          # even load "modesetting" → "(EE) no screens found" → startx
+          # died and the boot never got past tuigreet. Build the tree
+          # explicitly and point ModulePath at the store path: complete
+          # (modesetting + libinput + evdev), per-generation, and
+          # independent of what happens to land in systemPackages.
+          xorgModules = pkgs.symlinkJoin {
+            name = "xorg-modules";
+            paths = with pkgs; [
+              xorg-server
+              xf86-input-libinput
+              xf86-input-evdev
+            ];
+          };
+        in {
+          # NO NixOS xserver module (2026-09-25; module-tree fallout fixed
+          # 2026-09-28 via xorgModules above): this host never runs a
+          # display-manager-managed server — the dell-x11-session wrapper
+          # below execs startx against the raw xorgserver. X init works
+          # without the module: the wrapper's PATH prepends
+          # ${pkgs.xorg.xinit} (xinit+xauth).
           services.xserver.enable = lib.mkForce false;
           environment.etc."X11/xorg.conf.d/00-modulepath.conf".text = ''
             Section "Files"
-              ModulePath "/run/current-system/sw/lib/xorg/modules"
+              ModulePath "${xorgModules}/lib/xorg/modules"
             EndSection
           '';
+          # Driver-package catchall InputClass snippets (2026-09-28): the
+          # xserver module used to ship these into /etc/X11/xorg.conf.d as
+          # a side effect of enable=true; without them the 10/40 binding
+          # sections ("evdev keyboard catchall", "libinput touchpad
+          # catchall", ...) are gone and only the hand-written 50- option
+          # section remains. They sort BEFORE 50-libinput-touchpad.conf so
+          # its options still win (last-match-wins per option).
+          environment.etc."X11/xorg.conf.d/10-evdev.conf".source =
+            "${pkgs.xf86-input-evdev}/share/X11/xorg.conf.d/10-evdev.conf";
+          environment.etc."X11/xorg.conf.d/40-libinput.conf".source =
+            "${pkgs.xf86-input-libinput}/share/X11/xorg.conf.d/40-libinput.conf";
           # Touchpad defaults (2026-09-24, "sane defaults & like legion"):
           # tap-to-click + natural scrolling + disable-while-typing, ported
           # from the legion mango settings (trackpad_natural_scrolling=1,
