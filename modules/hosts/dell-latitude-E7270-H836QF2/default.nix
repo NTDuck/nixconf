@@ -53,6 +53,7 @@
       den.aspects.dev.postman
       den.aspects.dev.gits.git
       den.aspects.dev.gits.gh
+      den.aspects.dev.gits.glab
       den.aspects.system.bluetooth
       den.aspects.system.boot.systemd
       den.aspects.system.network.cloudflare-warp
@@ -179,10 +180,8 @@
           # catchall", ...) are gone and only the hand-written 50- option
           # section remains. They sort BEFORE 50-libinput-touchpad.conf so
           # its options still win (last-match-wins per option).
-          environment.etc."X11/xorg.conf.d/10-evdev.conf".source =
-            "${pkgs.xf86-input-evdev}/share/X11/xorg.conf.d/10-evdev.conf";
-          environment.etc."X11/xorg.conf.d/40-libinput.conf".source =
-            "${pkgs.xf86-input-libinput}/share/X11/xorg.conf.d/40-libinput.conf";
+          environment.etc."X11/xorg.conf.d/10-evdev.conf".source = "${pkgs.xf86-input-evdev}/share/X11/xorg.conf.d/10-evdev.conf";
+          environment.etc."X11/xorg.conf.d/40-libinput.conf".source = "${pkgs.xf86-input-libinput}/share/X11/xorg.conf.d/40-libinput.conf";
           # Touchpad defaults (2026-09-24, "sane defaults & like legion"):
           # tap-to-click + natural scrolling + disable-while-typing, ported
           # from the legion mango settings (trackpad_natural_scrolling=1,

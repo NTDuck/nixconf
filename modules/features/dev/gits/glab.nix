@@ -9,6 +9,8 @@
     homeManager = {pkgs, ...}: {
       programs.git.settings = {
         credential."https://gitlab.com".helper = "!${pkgs.unstable.glab}/bin/glab auth git-credential";
+        # Temp patch
+        credential."https://gitlab.viettelsoftware.com".helper = "!${pkgs.unstable.glab}/bin/glab auth git-credential";
       };
     };
   };
