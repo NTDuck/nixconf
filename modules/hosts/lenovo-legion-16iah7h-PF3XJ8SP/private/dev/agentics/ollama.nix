@@ -8,7 +8,16 @@
     # every service/package here lives inside specialisation.homelab. Boot
     # the default spec and ollama/the CUDA builds are absent; pick "homelab"
     # in the bootloader menu for inference.
-    nixos = {pkgs, ...}: let
+    #
+    # 2026-09-29: ninfer-serve is now the RESIDENT engine (../ninfer.nix);
+    # this unit is demoted to on-demand (wantedBy = [] below). Small models
+    # (minicpm, granite, lfm2.5) need `systemctl start ollama` or
+    # `ninfer-down` first — autostarting both would fight for the card.
+    nixos = {
+      pkgs,
+      lib,
+      ...
+    }: let
       # Upstream 0.33.3 silently drops model-authored speculative-decoding
       # PARAMETERs at Options.FromMap ("invalid option provided"), so the ngram
       # half of e.g. smtek/Swift-Qwen3.8-27B:map-k4v never reaches llama-server.
@@ -63,15 +72,15 @@
           # keys of the omp modelOverrides in the host-private omp harness
           # (../harnesses/oh-my-pi.nix — the ollama provider block, restored
           # 2026-09-27).
+          #
+          # 2026-09-29 ninfer main-engine switch: all Qwen3.8-27B variants
+          # pruned from the daemon (ollama rm; ~110 GiB freed — the 27B
+          # role belongs to ninfer's groupwise artifact now, see
+          # ../ninfer.nix). They were REMOVED from this allowlist too, or
+          # syncModels would re-pull ~110 GiB on next activation. Re-add +
+          # `ollama pull` if a variant is ever needed again.
           loadModels = [
-            "qwen3.8:27b" # Slayer of Opus 4.6! (restored 2026-09-27: its removal orphaned the pulled model — syncModels deletes nothing but pulls won't re-verify; the tag must exist for `ollama run qwen3.8:27b`)
-            "qwen3.8:27b-mtp-q4_K_M"
-            "jetelain/Qwen3.8-27B:latest" # Unsloth Dynamic V3.0 GGUFs, UD-Q4_K_XL, 128k
             "mannix/omnimerge-v6:vision-Q4_K_M" # Weight tuned from qwen3.8:27b, vision
-            "orcarouter/Qwen3.8-27B-Uncensored:q4_K_M" # Abliterated
-            "smtek/Swift-Qwen3.8-27B:dflash2" # Block-diffusion draft model
-            "smtek/Swift-Qwen3.8-27B:map-k4v" # Engram
-            "hf.co/bartowski/Altworld_Hemmingway-1-GGUF:q4_K_M" # 27B Qwen3.8 finetune, everyday writing (EQ-Bench 4 ~1330)
             "Distendo/zen-pro" # Unknown pull
 
             "SparkLLM/Spark-X2.5-4B" # reasoning, coding
@@ -169,6 +178,17 @@
         # open 11434 ONLY on tailscale0, never the LAN. networking.firewall
         # merges fine with the sunshine/ssh aspects' port lists.
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [11434];
+
+        # DEMOTED FROM AUTOSTART (2026-09-29, ninfer main-engine switch):
+        # ninfer-serve is THE resident 3090 engine on the homelab spec (see
+        # ../ninfer.nix) — its unit conflicts ollama.service, so an
+        # autostarted ollama would fight it for the card at every boot.
+        # The upstream module sets WantedBy = multi-user.target; overriding
+        # wantedBy with an empty list removes the autostart symlink while
+        # keeping the unit startable on demand (`systemctl start ollama`,
+        # which natively stops ninfer via the Conflicts pair — ninfer's
+        # side declares the mutual exclusion).
+        systemd.services.ollama.wantedBy = lib.mkForce [];
       };
     };
   };
