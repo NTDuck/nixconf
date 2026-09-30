@@ -45,6 +45,7 @@
       den.aspects.apps.office.zathura
       den.aspects.apps.mermaid
       den.aspects.apps.editors.obsidian
+      den.aspects.apps.editors.emeraldian
       den.aspects.apps.taskwarrior
       den.aspects.apps.tomato
       den.aspects.apps.world-monitor

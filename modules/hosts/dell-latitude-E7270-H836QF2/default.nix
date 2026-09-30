@@ -36,6 +36,7 @@
       # urxvt).
       den.aspects.apps.terminals.st
       den.aspects.apps.editors.obsidian
+      den.aspects.apps.editors.emeraldian
       # JetBrains IDE (proprietary `idea`, not the dead idea-oss).
       den.aspects.apps.editors.intellij
       den.aspects.apps.editors.zed-editor
