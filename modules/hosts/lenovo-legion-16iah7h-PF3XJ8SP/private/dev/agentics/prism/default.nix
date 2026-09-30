@@ -80,10 +80,14 @@
       weights = pkgs.fetchurl {
         url = "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/main/Ternary-Bonsai-2-27B-PTQ1_0.gguf";
         sha256 = "sha256-UxB/UwqlLrAJEiY6se4pvRmSYch817StTKExjB/jPuM=";
+        # HF over H2 dies mid-stream on lossy routes (curl 92 CANCEL at
+        # 4.8 KB/s, 2026-10-01); HTTP/1.1 sustained 1.1 MB/s.
+        curlOptsList = ["--http1.1"];
       };
       mmproj = pkgs.fetchurl {
         url = "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf/resolve/main/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf";
         sha256 = "sha256-aAft5h1XC7hro0t1ag+hCe3DNmhgTehnxuptjx1jGQM=";
+        curlOptsList = ["--http1.1"];
       };
 
       bonsaiModels = pkgs.runCommand "bonsai2-27b-gguf" {} ''

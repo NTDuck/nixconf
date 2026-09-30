@@ -79,10 +79,16 @@
 
         postPatch = ''
           cp ${inputs.self}/modules/features/dev/agentics/harnesses/codev/package-lock.json package-lock.json
+          # registry.npmjs.org over H2 resets mid-stream on lossy routes
+          # (prefetch-npm-deps/isahc has no per-request fallback; a ~200-
+          # tarball FOD needs one clean pass). npmmirror serves the same
+          # content over a clean route (2026-10-01). cacache keys index by
+          # URL, so npmDepsHash differs from the npmjs hash.
+          sed -i 's#https://registry.npmjs.org/#https://registry.npmmirror.com/#g' package-lock.json
           ${pkgs.unstable.jq}/bin/jq '.scripts = {}' package.json > package.json.tmp && mv package.json.tmp package.json
         '';
 
-        npmDepsHash = "sha256-9UN9A0piPO+gX8Lpq2ULXRyPl4Q8XDoAmcDJVVgQllc=";
+        npmDepsHash = "sha256-rdOariAintkR/vyPyNDlhYcbEon0pzLwuf36F2UT/Zs=";
         dontNpmBuild = true;
 
         nativeBuildInputs = [pkgs.makeWrapper];
