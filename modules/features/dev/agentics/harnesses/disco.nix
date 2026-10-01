@@ -17,7 +17,16 @@
         hash = "sha512-1+PTv5fkIctUM8HPRPGc6byMHVh5hxXLIuz5sBVrwXQPNdPqwzhBU0SZYerby7lqgRGRc4muU4pODoQ+Tl8zxg==";
       };
 
-      npmDepsHash = "sha256-3lg2KwmoLggeRNjdRkXs+DjqXWMb/lCFY+6cazZQa58=";
+      # registry.npmjs.org over H2 resets mid-stream on lossy routes
+      # (same 2026-10-01 finding as codev-ai: prefetch-npm-deps/isahc has
+      # no H1 fallback). npmmirror serves identical content over a clean
+      # route. cacache keys by URL → npmDepsHash differs. The tarball
+      # ships npm-shrinkwrap.json (no package-lock.json).
+      postPatch = ''
+        sed -i 's#https://registry.npmjs.org/#https://registry.npmmirror.com/#g' npm-shrinkwrap.json
+      '';
+
+      npmDepsHash = "sha256-TBgRN+FJbkNMVOo/dNaN2/yaFsHp/RLleyhyl0gK5Yo=";
 
       # The published tarball is prebuilt; no compilation or npm run needed.
       dontNpmBuild = true;
