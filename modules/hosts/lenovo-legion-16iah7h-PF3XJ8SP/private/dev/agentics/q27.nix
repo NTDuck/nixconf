@@ -67,7 +67,7 @@ in {
         src = q27src;
 
         nativeBuildInputs = [cuda.cuda_nvcc pkgs.python3];
-        buildInputs = [pkgs.stdenv.cc.cc.lib pkgs.glibc.static or pkgs.glibc];
+        buildInputs = [cuda.cuda_cudart cuda.cuda_profiler_api pkgs.stdenv.cc.cc.lib pkgs.glibc.static or pkgs.glibc];
 
         # The Makefile hardcodes /usr/local/cuda; point it at the nix store.
         # build/q27-server-w8 only (the 3090-class width-8 binary): skips
@@ -78,11 +78,17 @@ in {
           # pf4.o needs the arch-specific sm_120a target (plain
           # compute_120 gencode REJECTS the mxf4nvf4 instruction —
           # README "fp4 NO-GO" note); runtime-gated to sm_120 only.
-          $NVCC -O2 -std=c++17 -gencode arch=compute_120a,code=sm_120a -Xcompiler -Wall -c src/pf4.cu -o build/pf4.o
-          $NVCC -O2 -std=c++17 -gencode arch=compute_86,code=sm_86 \
+          # $NVCC is NOT exported by the cuda_nvcc hook here (2026-10-03
+          # build: "line 1770: -O2: command not found") — absolute path.
+          ${cuda.cuda_nvcc}/bin/nvcc -O2 -std=c++17 -gencode arch=compute_120a,code=sm_120a -Xcompiler -Wall -c src/pf4.cu -o build/pf4.o
+          # __tls_get_addr lives in ld-linux itself; the glibc dynamic
+          # linker DSO must be on the link line explicitly under nix
+          # (upstream assumes FHS /usr/lib defaults).
+          ${cuda.cuda_nvcc}/bin/nvcc -O2 -std=c++17 -gencode arch=compute_86,code=sm_86 \
                 -gencode arch=compute_89,code=sm_89 \
                 -gencode arch=compute_120,code=sm_120 -Xcompiler -Wall \
                 -DQ27_W_MAX=8 -Xcompiler -pthread \
+                -Xlinker "${pkgs.glibc}/lib/ld-linux-x86-64.so.2" \
                 src/server.cu src/dflash2.cu src/blocks.cu src/prefill.cu src/kernels.cu \
                 src/spec3.cu src/vgemm.cu src/device_model.cu src/loader.cpp src/tokenizer.cpp build/pf4.o \
                 -o build/q27-server-w8
