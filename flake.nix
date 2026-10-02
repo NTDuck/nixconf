@@ -67,10 +67,12 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
-    # Inference: ninfer-3090 (SM86 Qwen3.8-27B engine) — pinned to the
-    # validated v0.6.1-rtx3090 tag commit (no branch tracking; master is
-    # untested). See modules/hosts/.../agentics/ninfer.nix.
-    ninfer.url = "github:Don-Chad/ninfer-3090/47d71067afa20571c34b1e8f1d187aa2b48ff6f8";
+    # Inference: q27 (signalnine/q27) is the main 3090 engine since
+    # 2026-10-03 (see modules/hosts/.../agentics/q27.nix) — it is fetched
+    # via fetchTarball inside the module, not a flake input (single
+    # consumer, no override surface).
+    # The old ninfer input (Don-Chad/ninfer-3090, 2026-09-29 engine) was
+    # removed with ../agentics/ninfer.nix in the same switch.
 
     # Noctalia
     noctalia = {

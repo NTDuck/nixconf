@@ -57,25 +57,26 @@
             };
           };
 
-          # NInfer-3090 (2026-09-29 main-engine switch): legion's RESIDENT
-          # 3090 engine on :8081 (tailscale0-only firewall, see
-          # ninfer.nix on legion). OpenAI Chat Completions, declared model
-          # (no discovery protocol); 65536 = the engine's live serving
-          # window (131072 does not fit the 3090 — see ninfer.nix
-          # 2026-09-29 measurement). An overclaim triggers server-side
+          # q27 (2026-10-03 main-engine switch): legion's RESIDENT 3090
+          # engine on :8081 (tailscale0-only firewall, see q27.nix on
+          # legion). OpenAI Chat Completions, declared model (no discovery
+          # protocol); served id = pack filename minus ".q27"
+          # ("bonsai2-27b-t3-mtp-slim"); 262144 = the engine's live serving
+          # window (8 elastic slots share one 9.53 GiB paged KV pool — see
+          # q27.nix 2026-10-02 bench). An overclaim triggers server-side
           # trim loops (ollama #17778 lesson).
-          ninfer = {
+          q27 = {
             baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8081/v1";
             api = "openai-completions";
             auth = "none";
 
             models = [
               {
-                id = "qwen3.8-27b";
-                name = "Qwen3.8 27B (NInfer)";
+                id = "bonsai2-27b-t3-mtp-slim";
+                name = "Ternary Bonsai 2 27B (q27)";
                 reasoning = true;
                 input = ["text"];
-                contextWindow = 65536;
+                contextWindow = 262144;
                 maxTokens = 16384;
               }
             ];

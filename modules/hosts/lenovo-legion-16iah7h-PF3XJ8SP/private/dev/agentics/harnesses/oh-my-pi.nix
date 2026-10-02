@@ -298,33 +298,30 @@
           discovery.type = "llama.cpp";
         };
 
-        # NInfer-3090 (2026-09-29 main-engine switch, see ../ninfer.nix).
-        # Port 8081 (8080 = bonsai2). Plain OpenAI Chat Completions (api
-        # "openai-completions", NOT responses: the fork ships Chat
-        # Completions + Responses + Anthropic, but no /v1/models-based
-        # discovery — endpoints verified against the fork README). No
-        # discovery.type: omp would poll a discovery protocol the server
-        # may not speak; declare the model explicitly instead.
-        ninfer = {
+        # q27 (2026-10-03 main-engine switch, see ../q27.nix). Port 8081
+        # (8080 = bonsai2). Plain OpenAI Chat Completions + Anthropic +
+        # Responses shapes all served (README "Three API shapes"); no
+        # /v1/models-based discovery beyond the static list — declare the
+        # model explicitly instead. Served id = pack filename minus ".q27"
+        # (src/server.cu served_name): "bonsai2-27b-t3-mtp-slim".
+        q27 = {
           baseUrl = "http://127.0.0.1:8081/v1";
           api = "openai-completions";
           auth = "none";
 
           models = [
             {
-              # 65536 = the engine's live serving window (ninfer.nix
-              # 2026-09-29 measurement: 131072 does not fit the 3090 —
-              # fixed 8.17 GiB minimum runtime reservation + 1 GiB
-              # headroom exceeds free VRAM after 16.7 GiB weights;
-              # /v1/models served id "qwen3.8-27b" at --max-context
-              # 65536). Pin EXACTLY this — an overclaim triggers omp's
-              # trim -> "no user query found in messages" 500-loop
-              # (ollama #17778 lesson).
-              id = "qwen3.8-27b";
-              name = "Qwen3.8 27B (NInfer)";
+              # 262144 = the engine's live serving window (q27.nix
+              # 2026-10-02 bench: 8 elastic slots share a 9.53 GiB paged
+              # KV pool; /v1/models reports max_model_len 262144).
+              # Pin EXACTLY this — an overclaim triggers omp's trim ->
+              # "no user query found in messages" 500-loop (ollama #17778
+              # lesson).
+              id = "bonsai2-27b-t3-mtp-slim";
+              name = "Ternary Bonsai 2 27B (q27)";
               reasoning = true;
               input = ["text"];
-              contextWindow = 65536;
+              contextWindow = 262144;
               maxTokens = 16384;
             }
           ];

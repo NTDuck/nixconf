@@ -9,10 +9,10 @@
     # the default spec and ollama/the CUDA builds are absent; pick "homelab"
     # in the bootloader menu for inference.
     #
-    # 2026-09-29: ninfer-serve is now the RESIDENT engine (../ninfer.nix);
+    # 2026-10-03: q27-serve is now the RESIDENT engine (../q27.nix);
     # this unit is demoted to on-demand (wantedBy = [] below). Small models
     # (minicpm, granite, lfm2.5) need `systemctl start ollama` or
-    # `ninfer-down` first — autostarting both would fight for the card.
+    # `q27-down` first — autostarting both would fight for the card.
     nixos = {
       pkgs,
       lib,
@@ -73,10 +73,10 @@
           # (../harnesses/oh-my-pi.nix — the ollama provider block, restored
           # 2026-09-27).
           #
-          # 2026-09-29 ninfer main-engine switch: all Qwen3.8-27B variants
-          # pruned from the daemon (ollama rm; ~110 GiB freed — the 27B
-          # role belongs to ninfer's groupwise artifact now, see
-          # ../ninfer.nix). They were REMOVED from this allowlist too, or
+          # 2026-10-03 q27 main-engine switch (was ninfer 2026-09-29): all
+          # Qwen3.8-27B variants pruned from the daemon (ollama rm; ~110 GiB
+          # freed — the 27B role belongs to q27's Bonsai-2 pack now, see
+          # ../q27.nix). They were REMOVED from this allowlist too, or
           # syncModels would re-pull ~110 GiB on next activation. Re-add +
           # `ollama pull` if a variant is ever needed again.
           loadModels = [
@@ -179,15 +179,15 @@
         # merges fine with the sunshine/ssh aspects' port lists.
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [11434];
 
-        # DEMOTED FROM AUTOSTART (2026-09-29, ninfer main-engine switch):
-        # ninfer-serve is THE resident 3090 engine on the homelab spec (see
-        # ../ninfer.nix) — its unit conflicts ollama.service, so an
-        # autostarted ollama would fight it for the card at every boot.
-        # The upstream module sets WantedBy = multi-user.target; overriding
-        # wantedBy with an empty list removes the autostart symlink while
-        # keeping the unit startable on demand (`systemctl start ollama`,
-        # which natively stops ninfer via the Conflicts pair — ninfer's
-        # side declares the mutual exclusion).
+        # DEMOTED FROM AUTOSTART (2026-10-03, q27 main-engine switch; was
+        # ninfer 2026-09-29): q27-serve is THE resident 3090 engine on the
+        # homelab spec (see ../q27.nix) — its unit conflicts ollama.service,
+        # so an autostarted ollama would fight it for the card at every
+        # boot. The upstream module sets WantedBy = multi-user.target;
+        # overriding wantedBy with an empty list removes the autostart
+        # symlink while keeping the unit startable on demand
+        # (`systemctl start ollama`, which natively stops q27 via the
+        # Conflicts pair — q27's side declares the mutual exclusion).
         systemd.services.ollama.wantedBy = lib.mkForce [];
       };
     };
