@@ -112,14 +112,14 @@ in {
       # than the T2 pack buys the 262K elastic window.
       pack = pkgs.fetchurl {
         url = "https://huggingface.co/signalnine/Bonsai-2-27B-q27/resolve/b50cbb33406732bebfe628f0d5205aaebc96a69c/bonsai2-27b-t3-mtp-slim.q27";
-        sha256 = "sha256-Yo5ur0D+jXqTKyoC5FaMCRoWdxOiIIRFAtJFU4ssxlo=";
+        sha256 = "sha256-Yo5urg5/ilVxmjKC5InQoQSmcUKiIMRFOPUisswsalg=";
         # HF over H2 dies mid-stream on lossy routes (the prism module's
         # curl 92 CANCEL at 4.8 KB/s, 2026-10-01); HTTP/1.1 sustained.
         curlOptsList = ["--http1.1"];
       };
       tok = pkgs.fetchurl {
         url = "https://huggingface.co/signalnine/Bonsai-2-27B-q27/resolve/b50cbb33406732bebfe628f0d5205aaebc96a69c/qwen38-27b-mtp.tok";
-        sha256 = "sha256-K2yBAmhvjzK+JveZbgUDKQ2llLQ3Q2kKJ2EXZaQpEkY=";
+        sha256 = "sha256-+K2sIAFmjzumjgQOXBPwmC1qGU4rTZBHzAUP3G18k/I=";
       };
     in {
       specialisation.homelab.configuration = {
