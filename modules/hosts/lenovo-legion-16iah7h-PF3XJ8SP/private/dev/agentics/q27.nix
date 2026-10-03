@@ -83,15 +83,22 @@ in {
           ${cuda.cuda_nvcc}/bin/nvcc -O2 -std=c++17 -gencode arch=compute_120a,code=sm_120a -Xcompiler -Wall -c src/pf4.cu -o build/pf4.o
           # __tls_get_addr lives in ld-linux itself; the glibc dynamic
           # linker DSO must be on the link line explicitly under nix
-          # (upstream assumes FHS /usr/lib defaults). -z lazy: the
-          # executable's own libc-string IFUNC resolvers must not be
-          # resolved against libgcc_s's UND memset during eager
-          # relocation ("memset ... unsatisfiable circular
-          # dependency", first activation 2026-10-03).
+          # (upstream assumes FHS /usr/lib defaults). The executable
+          # exports its inline libc-string IFUNC resolvers with default
+          # visibility; glibc 2.42 aborts at relocation time when any
+          # DSO's UND memset resolves to an IFUNC defined in the
+          # executable ("memset ... unsatisfiable circular dependency").
+          # -z lazy alone does not clear this: IFUNC JUMP_SLOT
+          # relocations are processed eagerly regardless of bind mode
+          # (proven 2026-10-03 on the -z lazy build), and a memset-free
+          # dummy libgcc_s merely moved the abort to libstdc++'s memset
+          # UND. Static libgcc/libstdc++ removes all DSO memset
+          # references; the CUDA runtime stays dynamic (C ABI).
           ${cuda.cuda_nvcc}/bin/nvcc -O2 -std=c++17 -gencode arch=compute_86,code=sm_86 \
                 -gencode arch=compute_89,code=sm_89 \
                 -gencode arch=compute_120,code=sm_120 -Xcompiler -Wall \
                 -DQ27_W_MAX=8 -Xcompiler -pthread \
+                -Xcompiler -static-libgcc -Xcompiler -static-libstdc++ \
                 -Xlinker "${pkgs.glibc}/lib/ld-linux-x86-64.so.2" \
                 -Xlinker -z -Xlinker lazy \
                 src/server.cu src/dflash2.cu src/blocks.cu src/prefill.cu src/kernels.cu \
