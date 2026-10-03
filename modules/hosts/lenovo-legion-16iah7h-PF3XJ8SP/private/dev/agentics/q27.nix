@@ -67,7 +67,7 @@ in {
         src = q27src;
 
         nativeBuildInputs = [cuda.cuda_nvcc pkgs.python3];
-        buildInputs = [cuda.cuda_cudart cuda.cuda_profiler_api pkgs.stdenv.cc.cc.lib pkgs.glibc.static or pkgs.glibc];
+        buildInputs = [cuda.cuda_cudart cuda.cuda_profiler_api pkgs.stdenv.cc.cc.lib];
 
         # The Makefile hardcodes /usr/local/cuda; point it at the nix store.
         # build/q27-server-w8 only (the 3090-class width-8 binary): skips
@@ -83,12 +83,17 @@ in {
           ${cuda.cuda_nvcc}/bin/nvcc -O2 -std=c++17 -gencode arch=compute_120a,code=sm_120a -Xcompiler -Wall -c src/pf4.cu -o build/pf4.o
           # __tls_get_addr lives in ld-linux itself; the glibc dynamic
           # linker DSO must be on the link line explicitly under nix
-          # (upstream assumes FHS /usr/lib defaults).
+          # (upstream assumes FHS /usr/lib defaults). -z lazy: the
+          # executable's own libc-string IFUNC resolvers must not be
+          # resolved against libgcc_s's UND memset during eager
+          # relocation ("memset ... unsatisfiable circular
+          # dependency", first activation 2026-10-03).
           ${cuda.cuda_nvcc}/bin/nvcc -O2 -std=c++17 -gencode arch=compute_86,code=sm_86 \
                 -gencode arch=compute_89,code=sm_89 \
                 -gencode arch=compute_120,code=sm_120 -Xcompiler -Wall \
                 -DQ27_W_MAX=8 -Xcompiler -pthread \
                 -Xlinker "${pkgs.glibc}/lib/ld-linux-x86-64.so.2" \
+                -Xlinker -z -Xlinker lazy \
                 src/server.cu src/dflash2.cu src/blocks.cu src/prefill.cu src/kernels.cu \
                 src/spec3.cu src/vgemm.cu src/device_model.cu src/loader.cpp src/tokenizer.cpp build/pf4.o \
                 -o build/q27-server-w8
@@ -201,8 +206,13 @@ in {
           environment = {
             # libcuda.so.1 resolves from the driver outside the store
             # (nvidia aspect binds /run/opengl-driver); the binary links
-            # nothing CUDA (ldd-verified).
-            LD_LIBRARY_PATH = "/run/opengl-driver/lib";
+            # nothing CUDA (ldd-verified). cc.lib provides the matching
+            # gcc-15 libstdc++/libgcc_s; LD_LIBRARY_PATH cc-lib-only is
+            # REQUIRED: any libgcc_s on the path other than the boot
+            # gcc's triggers the glibc-2.42 IFUNC circular-dep check
+            # ("memset ... unsatisfiable circular dependency",
+            # 2026-10-03).
+            LD_LIBRARY_PATH = "/run/opengl-driver/lib:${pkgs.stdenv.cc.cc.lib or pkgs.gcc13Stdenv.cc.cc.lib}/lib";
             # Single-GPU pin: the 3090 only (same UUID as ninfer/ollama/
             # bonsai2 pins — one card, arbitrating daemons).
             CUDA_VISIBLE_DEVICES = "GPU-a4e36250-873d-62c5-912e-fde18d238a6c";
