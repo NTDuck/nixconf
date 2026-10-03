@@ -161,6 +161,11 @@ in {
               done
             '';
 
+            # Elastic KV shmem pool spills to host RAM under slot pressure;
+            # systemd-oomd culled the unit 4x on 2026-10-03 over PSI spikes.
+            # High throttles softly at 10G; Max is the hard wall at 12G.
+            MemoryMax = "12G";
+            MemoryHigh = "10G";
             Type = "simple";
             # Packs + binary are store paths (world-readable); no state.
             DynamicUser = true;
