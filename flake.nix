@@ -47,8 +47,13 @@
     agenix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Compositor
+    # Pinned: 99e6ba3 (2026-10-05, "Standardize all configuration formats") renames
+    # config keywords (tagrule→tag_rule, exec-once→exec_once) but its HM module
+    # (nix/hm-modules.nix) still emits `exec-once=`, so any config fails its
+    # validator → mango-config.conf.drv → home-manager-files.drv → switch fails.
+    # Unpin + migrate settings keys when upstream fixes the module.
     mangowm = {
-      url = "github:mangowm/mango";
+      url = "github:mangowm/mango/74dcc153122e6707d2c027e88a2e4d88264a2d09";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
