@@ -40,7 +40,10 @@
     # flake-file.url = "github:vic/flake-file";
 
     # Secrets
-    agenix.url = "github:ryantm/agenix";
+    # Pinned: 0.15.0 @ 3daa710 has a rekey regression (agenix.sh DEFAULT_DECRYPT
+    # accumulates a -o per edited file; rage rejects repeated --output) that fails
+    # the package installCheck and runtime `agenix -r`. Drop when upstream fixes.
+    agenix.url = "github:ryantm/agenix/b027ee29d959fda4b60b57566d64c98a202e0feb";
     agenix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Compositor
