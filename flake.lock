@@ -528,6 +528,23 @@
         "type": "github"
       }
     },
+    "llano-v12ultra-ctrl": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1786575538,
+        "narHash": "sha256-VGNpRgAV77ILPw8RrX0fDtPjBiCEtf04lkImgV8sWu8=",
+        "owner": "Quahuay",
+        "repo": "llano-v12ultra-ctrl",
+        "rev": "2f2bce7ae20f452a3c4cdcb89db01c53e198023f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Quahuay",
+        "repo": "llano-v12ultra-ctrl",
+        "rev": "2f2bce7ae20f452a3c4cdcb89db01c53e198023f",
+        "type": "github"
+      }
+    },
     "llm-agents": {
       "inputs": {
         "bun2nix": "bun2nix",
@@ -797,11 +814,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1791204930,
-        "narHash": "sha256-lpfTmc1QKBu92qY7VnC0Jb7CUgtAamgDhj77STevMZU=",
+        "lastModified": 1791214342,
+        "narHash": "sha256-08xD2zCkGGGFYfgAtnTT0yQGKcae1J54VEHcfBKwDmc=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "82f46d73b9b4331ba2cf3bf81cd3bea189726deb",
+        "rev": "dfd09fa8faa91447fcc4ebf9bf6d259fea2cac5d",
         "type": "github"
       },
       "original": {
@@ -845,6 +862,7 @@
         "flake-parts": "flake-parts_2",
         "home-manager": "home-manager_2",
         "import-tree": "import-tree",
+        "llano-v12ultra-ctrl": "llano-v12ultra-ctrl",
         "llm-agents": "llm-agents",
         "mangowm": "mangowm",
         "ninfer": "ninfer",
