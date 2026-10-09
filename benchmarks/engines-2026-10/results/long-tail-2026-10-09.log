@@ -1,0 +1,31 @@
+=== gguf-q4xs ctx=32768 c=1 ===
+{"rep": 0, "ok": 1, "wall": 33.86, "peak_vram_mib": 24354, "mean_decode_tps": 37.93, "agg_decode_tps": 37.93, "agg_e2e_tps": 7.56, "mean_ttft_s": 27.09, "errors": []}
+=== gguf-q4xs ctx=32768 c=4 ===
+{"rep": 0, "ok": 4, "wall": 124.8, "peak_vram_mib": 24358, "mean_decode_tps": 8.39, "agg_decode_tps": 33.56, "agg_e2e_tps": 8.21, "mean_ttft_s": 73.069, "errors": []}
+=== gguf-q4xs ctx=32768 c=8 ===
+{"rep": 0, "ok": 8, "wall": 245.72, "peak_vram_mib": 24360, "mean_decode_tps": 3.87, "agg_decode_tps": 30.97, "agg_e2e_tps": 8.33, "mean_ttft_s": 129.971, "errors": []}
+=== buun-qwen ctx=32768 c=1 ===
+{"rep": 0, "ok": 1, "wall": 68.12, "peak_vram_mib": 19978, "mean_decode_tps": 28.71, "agg_decode_tps": 28.71, "agg_e2e_tps": 3.76, "mean_ttft_s": 59.199, "errors": []}
+=== buun-qwen ctx=32768 c=4 ===
+{"rep": 0, "ok": 4, "wall": 262.31, "peak_vram_mib": 19982, "mean_decode_tps": 4.76, "agg_decode_tps": 19.03, "agg_e2e_tps": 3.9, "mean_ttft_s": 153.62, "errors": []}
+=== buun-qwen ctx=32768 c=8 ===
+{"rep": 0, "ok": 8, "wall": 521.6, "peak_vram_mib": 19986, "mean_decode_tps": 2.06, "agg_decode_tps": 16.51, "agg_e2e_tps": 3.92, "mean_ttft_s": 276.641, "errors": []}
+=== buun-qwen ctx=65536 c=1 ===
+{"rep": 0, "ok": 1, "wall": 200.58, "peak_vram_mib": 19974, "mean_decode_tps": 21.77, "agg_decode_tps": 21.77, "agg_e2e_tps": 1.28, "mean_ttft_s": 188.82, "errors": []}
+=== buun-qwen ctx=65536 c=4 ===
+{"rep": 0, "ok": 4, "wall": 796.49, "peak_vram_mib": 19982, "mean_decode_tps": 2.81, "agg_decode_tps": 11.22, "agg_e2e_tps": 1.29, "mean_ttft_s": 480.856, "errors": []}
+=== buun-qwen ctx=65536 c=8 ===
+{"rep": 0, "ok": 0, "wall": 1547.62, "peak_vram_mib": 19984, "mean_decode_tps": 0.0, "agg_decode_tps": 0, "agg_e2e_tps": 0.0, "mean_ttft_s": null, "errors": ["cell budget 1200s exceeded; aborting stuck stream", "cell budget 1200s exceeded; aborting stuck stream", "cell budget 1200s exceeded; aborting stuck stream"]}
+DEADLOCK buun-qwen ctx=65536 c=8; skipping higher conc at this ctx
+skip done q27-t3-solo ctx=32768 c=1
+skip done q27-t3-solo ctx=32768 c=4
+skip done q27-t3-solo ctx=32768 c=8
+skip done q27-t3-solo ctx=65536 c=1
+skip done q27-t3-solo ctx=65536 c=4
+skip done q27-t3-solo ctx=65536 c=8
+skip done q27-t3-solo ctx=131072 c=1
+skip done q27-t3-solo ctx=131072 c=4
+skip done q27-t3-solo ctx=131072 c=8
+skip done q27-t3-solo ctx=262144 c=1
+skip done q27-t3-solo ctx=262144 c=4
+skip done q27-t3-solo ctx=262144 c=8

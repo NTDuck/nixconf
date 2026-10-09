@@ -1,0 +1,133 @@
+=== q27-t3-mtp ctx=32768 c=1 ===
+{"rep": 0, "ok": 1, "wall": 39.85, "peak_vram_mib": 22902, "mean_decode_tps": 68.62, "agg_decode_tps": 68.62, "agg_e2e_tps": 6.42, "mean_ttft_s": 36.116, "errors": []}
+=== q27-t3-mtp ctx=32768 c=4 ===
+{"rep": 0, "ok": 4, "wall": 159.07, "peak_vram_mib": 23040, "mean_decode_tps": 18.53, "agg_decode_tps": 74.13, "agg_e2e_tps": 6.44, "mean_ttft_s": 145.081, "errors": []}
+=== q27-t3-mtp ctx=32768 c=8 ===
+{"rep": 0, "ok": 8, "wall": 317.11, "peak_vram_mib": 23310, "mean_decode_tps": 9.95, "agg_decode_tps": 79.63, "agg_e2e_tps": 6.46, "mean_ttft_s": 291.138, "errors": []}
+=== q27-t3-mtp ctx=65536 c=1 ===
+{"rep": 0, "ok": 1, "wall": 98.62, "peak_vram_mib": 22902, "mean_decode_tps": 54.56, "agg_decode_tps": 54.56, "agg_e2e_tps": 2.6, "mean_ttft_s": 93.911, "errors": []}
+=== q27-t3-mtp ctx=65536 c=4 ===
+{"rep": 0, "ok": 4, "wall": 397.02, "peak_vram_mib": 23040, "mean_decode_tps": 12.55, "agg_decode_tps": 50.19, "agg_e2e_tps": 2.58, "mean_ttft_s": 376.601, "errors": []}
+OVERFLOW q27-t3-mtp ctx=65536 c=8: overflow: q27-t3-mtp ctx65536 x C8 = 524288 KV rows exceeds measured 400K host-RAM staging bound
+=== q27-t3-mtp ctx=131072 c=1 ===
+{"rep": 0, "ok": 1, "wall": 282.19, "peak_vram_mib": 22902, "mean_decode_tps": 34.12, "agg_decode_tps": 34.12, "agg_e2e_tps": 0.91, "mean_ttft_s": 274.678, "errors": []}
+OVERFLOW q27-t3-mtp ctx=131072 c=4: overflow: q27-t3-mtp ctx131072 x C4 = 524288 KV rows exceeds measured 400K host-RAM staging bound
+OVERFLOW q27-t3-mtp ctx=131072 c=8: overflow: q27-t3-mtp ctx131072 x C8 = 1048576 KV rows exceeds measured 400K host-RAM staging bound
+=== q27-t3-mtp ctx=262144 c=1 ===
+{"rep": 0, "ok": 1, "wall": 908.35, "peak_vram_mib": 24327, "mean_decode_tps": 20.81, "agg_decode_tps": 20.81, "agg_e2e_tps": 0.28, "mean_ttft_s": 896.025, "errors": []}
+OVERFLOW q27-t3-mtp ctx=262144 c=4: overflow: q27-t3-mtp ctx262144 x C4 = 1048576 KV rows exceeds measured 400K host-RAM staging bound
+OVERFLOW q27-t3-mtp ctx=262144 c=8: overflow: q27-t3-mtp ctx262144 x C8 = 2097152 KV rows exceeds measured 400K host-RAM staging bound
+skip done q27-t3-solo ctx=32768 c=1
+skip done q27-t3-solo ctx=32768 c=4
+skip done q27-t3-solo ctx=32768 c=8
+skip done q27-t3-solo ctx=65536 c=1
+skip done q27-t3-solo ctx=65536 c=4
+skip done q27-t3-solo ctx=65536 c=8
+skip done q27-t3-solo ctx=131072 c=1
+skip done q27-t3-solo ctx=131072 c=4
+skip done q27-t3-solo ctx=131072 c=8
+skip done q27-t3-solo ctx=262144 c=1
+skip done q27-t3-solo ctx=262144 c=4
+skip done q27-t3-solo ctx=262144 c=8
+=== prism-ptq10 ctx=32768 c=1 ===
+{"rep": 0, "ok": 0, "wall": 0.07, "peak_vram_mib": 8780, "mean_decode_tps": 0.0, "agg_decode_tps": 0, "agg_e2e_tps": 0.0, "mean_ttft_s": null, "errors": ["HTTPError: HTTP Error 400: Bad Request"]}
+DEADLOCK prism-ptq10 ctx=32768 c=1; skipping higher conc at this ctx
+=== prism-ptq10 ctx=65536 c=1 ===
+{"rep": 0, "ok": 0, "wall": 0.09, "peak_vram_mib": 8780, "mean_decode_tps": 0.0, "agg_decode_tps": 0, "agg_e2e_tps": 0.0, "mean_ttft_s": null, "errors": ["HTTPError: HTTP Error 400: Bad Request"]}
+DEADLOCK prism-ptq10 ctx=65536 c=1; skipping higher conc at this ctx
+=== prism-ptq10 ctx=131072 c=1 ===
+{"rep": 0, "ok": 0, "wall": 0.18, "peak_vram_mib": 8780, "mean_decode_tps": 0.0, "agg_decode_tps": 0, "agg_e2e_tps": 0.0, "mean_ttft_s": null, "errors": ["HTTPError: HTTP Error 400: Bad Request"]}
+DEADLOCK prism-ptq10 ctx=131072 c=1; skipping higher conc at this ctx
+=== prism-ptq10 ctx=262144 c=1 ===
+{"rep": 0, "ok": 0, "wall": 0.36, "peak_vram_mib": 8780, "mean_decode_tps": 0.0, "agg_decode_tps": 0, "agg_e2e_tps": 0.0, "mean_ttft_s": null, "errors": ["HTTPError: HTTP Error 400: Bad Request"]}
+DEADLOCK prism-ptq10 ctx=262144 c=1; skipping higher conc at this ctx
+skip done ninfer-all-b2 ctx=32768 c=1
+skip done ninfer-all-b2 ctx=32768 c=4
+skip done ninfer-all-b2 ctx=32768 c=8
+skip done ninfer-all-b2 ctx=65536 c=1
+skip done ninfer-all-b2 ctx=65536 c=4
+skip done ninfer-all-b2 ctx=65536 c=8
+=== ninfer-061 ctx=32768 c=1 ===
+{"rep": 0, "ok": 1, "wall": 37.09, "peak_vram_mib": 22734, "mean_decode_tps": 68.76, "agg_decode_tps": 68.76, "agg_e2e_tps": 6.9, "mean_ttft_s": 33.363, "errors": []}
+=== ninfer-061 ctx=32768 c=4 ===
+{"rep": 0, "ok": 1, "wall": 37.06, "peak_vram_mib": 22734, "mean_decode_tps": 68.14, "agg_decode_tps": 68.14, "agg_e2e_tps": 6.91, "mean_ttft_s": 33.304, "errors": [null, null, null]}
+=== ninfer-061 ctx=32768 c=8 ===
+{"rep": 0, "ok": 1, "wall": 37.49, "peak_vram_mib": 22734, "mean_decode_tps": 63.5, "agg_decode_tps": 63.5, "agg_e2e_tps": 6.83, "mean_ttft_s": 33.447, "errors": [null, null, null]}
+=== ninfer-061 ctx=65536 c=1 ===
+{"rep": 0, "ok": 1, "wall": 78.12, "peak_vram_mib": 22734, "mean_decode_tps": 66.18, "agg_decode_tps": 66.18, "agg_e2e_tps": 3.28, "mean_ttft_s": 74.233, "errors": []}
+=== ninfer-061 ctx=65536 c=4 ===
+{"rep": 0, "ok": 1, "wall": 77.99, "peak_vram_mib": 22734, "mean_decode_tps": 66.28, "agg_decode_tps": 66.28, "agg_e2e_tps": 3.28, "mean_ttft_s": 74.125, "errors": [null, null, null]}
+=== ninfer-061 ctx=65536 c=8 ===
+{"rep": 0, "ok": 1, "wall": 78.32, "peak_vram_mib": 22734, "mean_decode_tps": 61.22, "agg_decode_tps": 61.22, "agg_e2e_tps": 3.27, "mean_ttft_s": 74.129, "errors": [null, null, null]}
+=== ninfer-061 ctx=131072 c=1 ===
+{"rep": 0, "ok": 0, "wall": 0.19, "peak_vram_mib": 22732, "mean_decode_tps": 0.0, "agg_decode_tps": 0, "agg_e2e_tps": 0.0, "mean_ttft_s": null, "errors": ["HTTPError: HTTP Error 400: Bad Request"]}
+DEADLOCK ninfer-061 ctx=131072 c=1; skipping higher conc at this ctx
+=== ninfer-061 ctx=262144 c=1 ===
+{"rep": 0, "ok": 0, "wall": 0.38, "peak_vram_mib": 22732, "mean_decode_tps": 0.0, "agg_decode_tps": 0, "agg_e2e_tps": 0.0, "mean_ttft_s": null, "errors": ["HTTPError: HTTP Error 400: Bad Request"]}
+DEADLOCK ninfer-061 ctx=262144 c=1; skipping higher conc at this ctx
+skip done ashalliants-df2 ctx=32768 c=1
+skip done ashalliants-df2 ctx=32768 c=4
+skip done ashalliants-df2 ctx=32768 c=8
+skip done ashalliants-df2 ctx=65536 c=1
+skip done ashalliants-df2 ctx=65536 c=4
+skip done ashalliants-df2 ctx=65536 c=8
+skip done ashalliants-df2 ctx=131072 c=1
+skip done ashalliants-df2 ctx=131072 c=4
+skip done ashalliants-df2 ctx=131072 c=8
+skip done ashalliants-df2 ctx=262144 c=1
+skip done ashalliants-df2 ctx=262144 c=4
+skip done ashalliants-df2 ctx=262144 c=8
+=== ashalliants-mtp ctx=32768 c=1 ===
+{"rep": 0, "ok": 1, "wall": 15.99, "peak_vram_mib": 21912, "mean_decode_tps": 110.49, "agg_decode_tps": 110.49, "agg_e2e_tps": 16.01, "mean_ttft_s": 13.668, "errors": []}
+=== ashalliants-mtp ctx=32768 c=4 ===
+{"rep": 0, "ok": 4, "wall": 64.24, "peak_vram_mib": 21912, "mean_decode_tps": 78.84, "agg_decode_tps": 315.35, "agg_e2e_tps": 15.94, "mean_ttft_s": 37.793, "errors": []}
+=== ashalliants-mtp ctx=32768 c=8 ===
+{"rep": 0, "ok": 8, "wall": 128.15, "peak_vram_mib": 21912, "mean_decode_tps": 74.86, "agg_decode_tps": 598.87, "agg_e2e_tps": 15.98, "mean_ttft_s": 69.755, "errors": []}
+=== ashalliants-mtp ctx=65536 c=1 ===
+{"rep": 0, "ok": 1, "wall": 36.81, "peak_vram_mib": 21912, "mean_decode_tps": 102.79, "agg_decode_tps": 102.79, "agg_e2e_tps": 6.95, "mean_ttft_s": 34.306, "errors": []}
+=== ashalliants-mtp ctx=65536 c=4 ===
+{"rep": 0, "ok": 4, "wall": 147.21, "peak_vram_mib": 21912, "mean_decode_tps": 82.81, "agg_decode_tps": 331.23, "agg_e2e_tps": 6.96, "mean_ttft_s": 89.508, "errors": []}
+=== ashalliants-mtp ctx=65536 c=8 ===
+{"rep": 0, "ok": 8, "wall": 296.18, "peak_vram_mib": 21912, "mean_decode_tps": 73.56, "agg_decode_tps": 588.47, "agg_e2e_tps": 6.91, "mean_ttft_s": 164.041, "errors": []}
+=== ashalliants-mtp ctx=131072 c=1 ===
+{"rep": 0, "ok": 1, "wall": 98.78, "peak_vram_mib": 21912, "mean_decode_tps": 88.05, "agg_decode_tps": 88.05, "agg_e2e_tps": 2.59, "mean_ttft_s": 95.851, "errors": []}
+=== ashalliants-mtp ctx=131072 c=4 ===
+{"rep": 0, "ok": 4, "wall": 395.08, "peak_vram_mib": 21912, "mean_decode_tps": 72.3, "agg_decode_tps": 289.2, "agg_e2e_tps": 2.59, "mean_ttft_s": 243.913, "errors": []}
+=== ashalliants-mtp ctx=131072 c=8 ===
+{"rep": 0, "ok": 7, "wall": 690.6, "peak_vram_mib": 21912, "mean_decode_tps": 67.57, "agg_decode_tps": 473.0, "agg_e2e_tps": 2.59, "mean_ttft_s": 391.826, "errors": [null]}
+=== ashalliants-mtp ctx=262144 c=1 ===
+{"rep": 0, "ok": 1, "wall": 303.46, "peak_vram_mib": 21912, "mean_decode_tps": 68.33, "agg_decode_tps": 68.33, "agg_e2e_tps": 0.84, "mean_ttft_s": 299.701, "errors": []}
+=== ashalliants-mtp ctx=262144 c=4 ===
+{"rep": 0, "ok": 2, "wall": 608.27, "peak_vram_mib": 23418, "mean_decode_tps": 66.69, "agg_decode_tps": 133.37, "agg_e2e_tps": 0.84, "mean_ttft_s": 452.703, "errors": [null, null]}
+=== ashalliants-mtp ctx=262144 c=8 ===
+{"rep": 0, "ok": 2, "wall": 608.1, "peak_vram_mib": 23528, "mean_decode_tps": 66.89, "agg_decode_tps": 133.78, "agg_e2e_tps": 0.84, "mean_ttft_s": 452.637, "errors": [null, null, null]}
+=== gguf-q4xs ctx=32768 c=1 ===
+Traceback (most recent call last):
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 158, in <module>
+    main()
+    ~~~~^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 153, in main
+    run([tag], windows.get(tag, LONG_CTX), [1, 4, 8],
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        a.max_tokens, a.reps)
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 98, in run
+    engines.start(cfg)
+    ~~~~~~~~~~~~~^^^^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/engines.py", line 197, in start
+    proc = subprocess.Popen(cmd, stdout=logf, stderr=subprocess.STDOUT,
+                            stdin=subprocess.DEVNULL, env=env,
+                            start_new_session=True)
+  File "/nix/store/lb41b0anx1f98y9y5s9mdv97gjgsq740-python3-3.14.7/lib/python3.14/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/lb41b0anx1f98y9y5s9mdv97gjgsq740-python3-3.14.7/lib/python3.14/subprocess.py", line 1990, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: '/run/current-system/specialisation/homelab/sw/bin/bonsai-llama-server'

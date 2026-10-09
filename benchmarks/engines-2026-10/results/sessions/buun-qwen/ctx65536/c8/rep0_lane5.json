@@ -1,0 +1,1 @@
+{"ok": false, "err": "cell budget 1200s exceeded; aborting stuck stream", "ct": 0, "chars": 247, "n_deltas": 73, "ttft_s": 773.553, "decode_s": 424.157, "decode_tps": 0.0, "e2e_tps": 0.0, "wall": 1202.86, "rep": 0, "lane": 5}

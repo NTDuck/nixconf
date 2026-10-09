@@ -1,12 +1,13 @@
 # Inference engine benchmark — RTX 3090 (TB4 eGPU, SM86, 24 GB)
 
-_Generated 2026-10-09 · harness: `benchmarks/engines-2026-10/` · metric: **per-agent decode tok/s** (chars/4.1 streaming proxy, engine-validated 2026-10-08) · greedy, 256 max tokens · GPU-resident weights/KV only (no CPU offload)._
+_Generated 2026-10-10 · harness: `benchmarks/engines-2026-10/` · metric: **per-agent decode tok/s** (chars/4.1 streaming proxy, engine-validated 2026-10-08) · greedy, 256 max tokens · GPU-resident weights/KV only (no CPU offload)._
 
 ## Summary
 
 - **bonsai2-27b**: peak `ninfer-all-b2` 267.5 tok/s per-agent; at high parallelism×deep ctx — C8 × 32k: `ninfer-all-b2` 210.9 tok/s vs `q27-t3-solo` 71.0.
-- **qwen3.8-27b**: peak `ashalliants-df2` 162.7 tok/s per-agent; at high parallelism×deep ctx — C8 × 16k: `ashalliants-df2` 145.5 tok/s vs `ashalliants-mtp` 76.7.
-- **qwen38-27b-gguf**: peak `gguf-q4xs` 45.5 tok/s per-agent; at high parallelism×deep ctx — C8 × 16k: only `gguf-q4xs` measured (5.8 tok/s).
+- **qwen3.8-27b**: peak `ashalliants-df2` 162.7 tok/s per-agent; at high parallelism×deep ctx — C8 × 256k: `ashalliants-df2` 91.9 tok/s vs `ashalliants-mtp` 66.9.
+- **qwen38-27b-gguf**: peak `gguf-q4xs` 45.5 tok/s per-agent; at high parallelism×deep ctx — C8 × 32k: only `gguf-q4xs` measured (3.9 tok/s).
+- **qwen38-27b-buun**: peak `buun-qwen` 43.1 tok/s per-agent; at high parallelism×deep ctx — C8 × 32k: only `buun-qwen` measured (2.1 tok/s).
 
 Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and peak VRAM MiB per cell. `—` = not measured or overflow (see ledger).
 
@@ -29,13 +30,21 @@ Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and pe
 |---|---|---|---|---|---|
 | fresh | 61.7 | 36.5 | 20.1 | 20.2 | 8690 |
 | 16k | 0.0 | — | — | — | 8678 |
+| 32k | 0.0 | — | — | — | 8780 |
+| 64k | 0.0 | — | — | — | 8780 |
+| 128k | 0.0 | — | — | — | 8780 |
+| 256k | 0.0 | — | — | — | 8780 |
 
 #### `q27-t3-mtp`
 
 | context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
 |---|---|---|---|---|---|
 | fresh | 120.5 | 69.3 | 40.6 | 21.6 | 23028 |
-| 16k | 86.7 | 47.6 | — | — | 23060 |
+| 16k | 86.7 | 47.6 | 25.9 | 13.6 | 23422 |
+| 32k | 68.6 | — | 18.5 | 9.9 | 23310 |
+| 64k | 54.6 | — | 12.6 | — | 23040 |
+| 128k | 34.1 | — | — | — | 22902 |
+| 256k | 20.8 | — | — | — | 24327 |
 
 #### `q27-t3-solo`
 
@@ -76,6 +85,10 @@ Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and pe
 |---|---|---|---|---|---|
 | fresh | 118.5 | 116.5 | 103.5 | 106.8 | 21634 |
 | 16k | 119.3 | 97.2 | 84.5 | 76.7 | 21644 |
+| 32k | 110.5 | — | 78.8 | 74.9 | 21912 |
+| 64k | 102.8 | — | 82.8 | 73.6 | 21912 |
+| 128k | 88.0 | — | 72.3 | 67.6 | 21912 |
+| 256k | 68.3 | — | 66.7 | 66.9 | 23528 |
 
 #### `ninfer-061`
 
@@ -83,6 +96,10 @@ Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and pe
 |---|---|---|---|---|---|
 | fresh | 70.9 | 49.2 | 24.6 | 22.9 | 22630 |
 | 16k | 67.5 | 30.8 | 31.2 | 30.1 | 22692 |
+| 32k | 68.8 | — | 68.1 | 63.5 | 22734 |
+| 64k | 66.2 | — | 66.3 | 61.2 | 22734 |
+| 128k | 0.0 | — | — | — | 22732 |
+| 256k | 0.0 | — | — | — | 22732 |
 
 ### Plots
 
@@ -101,6 +118,7 @@ Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and pe
 |---|---|---|---|---|---|
 | fresh | 45.5 | 38.5 | 27.8 | 16.6 | 26410 |
 | 16k | 41.4 | 23.9 | 12.1 | 5.8 | 26414 |
+| 32k | 37.9 | — | 8.4 | 3.9 | 24360 |
 
 ### Plots
 
@@ -109,17 +127,29 @@ Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and pe
 ![perC_qwen38-27b-gguf_c4](engines-2026-10/results/perC_qwen38-27b-gguf_c4.png)
 ![perC_qwen38-27b-gguf_c8](engines-2026-10/results/perC_qwen38-27b-gguf_c8.png)
 
+## qwen38-27b-buun
+
+### Table views (per-agent decode tok/s)
+
+#### `buun-qwen`
+
+| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
+|---|---|---|---|---|---|
+| fresh | 43.1 | 35.9 | 25.2 | 15.2 | 19978 |
+| 16k | 34.1 | 17.4 | 8.1 | 3.8 | 19986 |
+| 32k | 28.7 | — | 4.8 | 2.1 | 19986 |
+| 64k | 21.8 | — | 2.8 | 0.0 | 19984 |
+
+### Plots
+
+![perC_qwen38-27b-buun_c1](engines-2026-10/results/perC_qwen38-27b-buun_c1.png)
+![perC_qwen38-27b-buun_c2](engines-2026-10/results/perC_qwen38-27b-buun_c2.png)
+![perC_qwen38-27b-buun_c4](engines-2026-10/results/perC_qwen38-27b-buun_c4.png)
+![perC_qwen38-27b-buun_c8](engines-2026-10/results/perC_qwen38-27b-buun_c8.png)
+
 ## Overflowed cells (retried once 2026-10-09; permanent rejections kept)
 
-| engine | ctx | conc | reason |
-|---|---|---|---|
-| q27-t3-mtp | 16384 | C4 | overflow: q27-t3-mtp 16K prefill x C4 exceeds host RAM |
-| q27-t3-mtp | 16384 | C8 | overflow: q27-t3-mtp 16K prefill x C8 exceeds host RAM |
-| q27-t3-solo | 65536 | C8 | overflow: q27-t3-solo ctx65536 x C8 = 524288 KV rows exceeds measured 400K host-RAM staging bound |
-| q27-t3-solo | 131072 | C4 | overflow: q27-t3-solo ctx131072 x C4 = 524288 KV rows exceeds measured 400K host-RAM staging bound |
-| q27-t3-solo | 131072 | C8 | overflow: q27-t3-solo ctx131072 x C8 = 1048576 KV rows exceeds measured 400K host-RAM staging bound |
-| q27-t3-solo | 262144 | C4 | overflow: q27-t3-solo ctx262144 x C4 = 1048576 KV rows exceeds measured 400K host-RAM staging bound |
-| q27-t3-solo | 262144 | C8 | overflow: q27-t3-solo ctx262144 x C8 = 2097152 KV rows exceeds measured 400K host-RAM staging bound |
+_None outstanding._
 
 ## Engine configurations
 

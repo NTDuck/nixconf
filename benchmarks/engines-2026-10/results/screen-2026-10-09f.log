@@ -1,0 +1,15 @@
+skip done buun-qwen ctx=0 c=1
+=== buun-qwen ctx=0 c=2 ===
+{"rep": 0, "ok": 2, "wall": 7.59, "peak_vram_mib": 19968, "mean_decode_tps": 35.88, "agg_decode_tps": 71.75, "agg_e2e_tps": 67.43, "mean_ttft_s": 0.455, "errors": []}
+=== buun-qwen ctx=0 c=4 ===
+{"rep": 0, "ok": 4, "wall": 11.03, "peak_vram_mib": 19974, "mean_decode_tps": 25.21, "agg_decode_tps": 100.84, "agg_e2e_tps": 92.82, "mean_ttft_s": 0.874, "errors": []}
+=== buun-qwen ctx=0 c=8 ===
+{"rep": 0, "ok": 8, "wall": 18.31, "peak_vram_mib": 19978, "mean_decode_tps": 15.25, "agg_decode_tps": 122.0, "agg_e2e_tps": 111.88, "mean_ttft_s": 1.513, "errors": []}
+=== buun-qwen ctx=16384 c=1 ===
+{"rep": 0, "ok": 1, "wall": 28.23, "peak_vram_mib": 19974, "mean_decode_tps": 34.08, "agg_decode_tps": 34.08, "agg_e2e_tps": 9.07, "mean_ttft_s": 20.71, "errors": []}
+=== buun-qwen ctx=16384 c=2 ===
+{"rep": 0, "ok": 2, "wall": 52.0, "peak_vram_mib": 19978, "mean_decode_tps": 17.36, "agg_decode_tps": 34.73, "agg_e2e_tps": 9.85, "mean_ttft_s": 33.143, "errors": []}
+=== buun-qwen ctx=16384 c=4 ===
+{"rep": 0, "ok": 4, "wall": 99.99, "peak_vram_mib": 19984, "mean_decode_tps": 8.11, "agg_decode_tps": 32.43, "agg_e2e_tps": 10.24, "mean_ttft_s": 55.346, "errors": []}
+=== buun-qwen ctx=16384 c=8 ===
+{"rep": 0, "ok": 8, "wall": 197.34, "peak_vram_mib": 19986, "mean_decode_tps": 3.8, "agg_decode_tps": 30.37, "agg_e2e_tps": 10.38, "mean_ttft_s": 99.202, "errors": []}

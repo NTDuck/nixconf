@@ -1,0 +1,18 @@
+=== buun-qwen ctx=0 c=1 ===
+{"rep": 0, "ok": 1, "wall": 6.24, "peak_vram_mib": 19964, "mean_decode_tps": 43.12, "agg_decode_tps": 43.12, "agg_e2e_tps": 41.06, "mean_ttft_s": 0.296, "errors": []}
+=== buun-qwen ctx=0 c=2 ===
+kill: sending signal to 8679 failed: Operation not permitted
+Traceback (most recent call last):
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 158, in <module>
+    main()
+    ~~~~^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 133, in main
+    run(tags, SCREEN_CTX, SCREEN_CONC, a.max_tokens, a.reps)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 98, in run
+    engines.start(cfg)
+    ~~~~~~~~~~~~~^^^^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/engines.py", line 189, in start
+    assert clear_gpu(), "GPU did not drain after killing holders"
+           ~~~~~~~~~^^
+AssertionError: GPU did not drain after killing holders

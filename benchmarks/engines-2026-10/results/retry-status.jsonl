@@ -1,0 +1,12 @@
+{"key": ["q27-t3-mtp", 16384, 4], "verdict": "ok", "err": null}
+{"key": ["q27-t3-mtp", 16384, 8], "verdict": "ok", "err": null}
+{"key": ["q27-t3-solo", 65536, 8], "verdict": "permanent", "err": "exceeds measured 400K staging bound"}
+{"key": ["q27-t3-solo", 131072, 4], "verdict": "permanent", "err": "exceeds measured 400K staging bound"}
+{"key": ["q27-t3-solo", 131072, 8], "verdict": "permanent", "err": "exceeds measured 400K staging bound"}
+{"key": ["q27-t3-solo", 262144, 4], "verdict": "permanent", "err": "exceeds measured 400K staging bound"}
+{"key": ["q27-t3-solo", 262144, 8], "verdict": "permanent", "err": "exceeds measured 400K staging bound"}
+{"key": ["q27-t3-mtp", 65536, 8], "verdict": "permanent", "err": "exceeds measured 400K staging bound"}
+{"key": ["q27-t3-mtp", 131072, 4], "verdict": "permanent", "err": "exceeds measured 400K staging bound"}
+{"key": ["q27-t3-mtp", 131072, 8], "verdict": "permanent", "err": "exceeds measured 400K staging bound"}
+{"key": ["q27-t3-mtp", 262144, 4], "verdict": "permanent", "err": "exceeds measured 400K staging bound"}
+{"key": ["q27-t3-mtp", 262144, 8], "verdict": "permanent", "err": "exceeds measured 400K staging bound"}
