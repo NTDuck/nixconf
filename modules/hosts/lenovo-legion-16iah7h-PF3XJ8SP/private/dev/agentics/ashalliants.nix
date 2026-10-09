@@ -100,9 +100,14 @@
             # would silently diverge from the declared provider window).
             # NINFER_HOST_STATE_SLOTS=8 + hostkv-shim (2 GiB) = the exact
             # benchmarked shape; NINFER_SPEC=dflash2 pins the winner lane.
+            # run.sh has `#!/usr/bin/env bash`; ProtectSystem=strict +
+            # the minimal systemd default PATH ("env: 'bash': No such
+            # file or directory", journal 2026-10-10 01:16) can't find
+            # bash — feed the host profile bin and coreutils.
             Environment = let
               ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
             in [
+              "PATH=/run/current-system/sw/bin:/nix/store/lb41b0anx1f98y9y5s9mdv97gjgsq740-python3-3.14.7/bin"
               "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
               "LD_LIBRARY_PATH=${ld}"
               "NINFER_SPEC=dflash2"
