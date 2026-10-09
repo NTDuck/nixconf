@@ -19,10 +19,20 @@ SCREEN_CONC = [1, 2, 4, 8]
 SCREEN_CTX = [0, 16384]     # 0 = fresh (tiny prompt)
 LONG_CTX = [32768, 65536, 131072, 262144]
 BONSAI = ["q27-t3-mtp", "q27-t3-solo", "prism-ptq10", "ninfer-all-b2"]
+# buun-ptq10 dropped 2026-10-09: buun-llama-cpp @ b9637 lacks PrismML
+# weight types (PTQ1_0 = ggml type 143 unsupported) - bonsai2 GGUF will
+# not load. buun line continues as the Qwen3.8 TCQ-KV arm instead.
 # q27-q4s / ninfer-all-q38 dropped: no Qwen3.8 artifact staged for either
 # engine (only bonsai2 t2/t3 .q27 and bonsai2 .ninfer exist; qwen38 lives in
 # .ninfer form under ninfer-061/ashalliants only).
-QWEN = ["ninfer-061", "ashalliants-df2", "ashalliants-mtp"]
+QWEN = ["ninfer-061", "ashalliants-df2", "ashalliants-mtp", "gguf-q4xs",
+        "buun-qwen"]
+# 2026-10-09 scouting drops (scout-reports.log cand-scout#1-3): EXL3
+# (serve_openai has no SSE streaming, 1.22 GiB verify-history per C8 slot,
+# FIFO batch=1 serializes >=32k cells), HyperQwen vLLM 0.30 (per-agent C8
+# 47-51 t/s vs ashalliants-df2 155.7, torch.compile RAM on 15 GiB host,
+# KV pool caps ctx*conc at ~205k), sybil sglang (TP1 preset: 8k ctx cap,
+# 43 t/s flat C1-C8).
 
 
 def done_keys():

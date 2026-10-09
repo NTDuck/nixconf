@@ -102,6 +102,40 @@ ENGINES = {
                 "NINFER_HOST_STATE_SLOTS": "8",
                 "NINFER_SERVER": f"{ASH}/ninfer-serve.hostkv-shim"},
     },
+    # ---------------- 2026-10-09 additions (cand-scout#1/#2) ----------------
+    "buun-qwen": {
+        # spiritbuun/buun-llama-cpp @ b9637 (bc9340b9), source build.
+        # TCQ KV (turbo3_tcq, ~5x compression) stays on GPU - no host-RAM
+        # staging, so deep-ctx x C8 cells are VRAM-bound instead of
+        # overflow-bound. Qwen3.8 arch via upstream qwen3_5 support.
+        "model": "auto", "port": 8098,
+        "cmd": ["env", "LD_LIBRARY_PATH=/run/opengl-driver/lib",
+                f"{Q27}/buun-llama-cpp/build/bin/llama-server",
+                "-m", f"{MODELS}/Qwen3.8-27B-UD-IQ4_XS.gguf",
+                "-ngl", "99", "-fa", "on", "--jinja",
+                "--alias", "qwen38-27b-buun",
+                # Per-slot = 32768 (prism lesson: -c is split by -np).
+                # KV dtype picked after smoke: turbo3_tcq if the TURBO
+                # ladder loads on qwen3_5 GDN heads, else f16.
+                "-c", "262144", "-np", "8",
+                "-ctk", "turbo3_tcq", "-ctv", "turbo3_tcq",
+                "--host", "127.0.0.1", "--port", "8098"],
+    },
+    "gguf-q4xs": {
+        # Prism llama.cpp (bonsai-llama-server) on unsloth UD-IQ4_XS
+        # (14.25 GiB, imatrix dynamic Q4; sha 40fac405...). First Qwen3.8
+        # arm with an on-GPU-KV llama.cpp backend; qwen3_5 arch verified in
+        # prism-b10685 sources (LLM_ARCH_QWEN35).
+        "model": "auto", "port": 8099,
+        "cmd": ["/run/current-system/sw/bin/bonsai-llama-server",
+                "-m", f"{MODELS}/Qwen3.8-27B-UD-IQ4_XS.gguf",
+                "-ngl", "99", "-fa", "on", "--jinja",
+                "--alias", "qwen38-27b-gguf",
+                # Per-slot = 32768; q8 KV (32 KiB/tok) so 32k x C8 fits:
+                # 262144 x 32 KiB = 8 GiB + 14.25 GiB weights ~ 22.3 GiB.
+                "-c", "262144", "-np", "8", "-ctk", "q8_0", "-ctv", "q8_0",
+                "--host", "127.0.0.1", "--port", "8099"],
+    },
 }
 
 VICTIMS = ["ninfer-serve", "q27-server", "llama-server", "vllm", "serve_openai",
