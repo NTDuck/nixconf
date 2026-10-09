@@ -1,0 +1,49 @@
+=== ninfer-061 ctx=0 c=1 ===
+{"rep": 0, "ok": 1, "wall": 3.82, "peak_vram_mib": 22630, "mean_decode_tps": 70.9, "agg_decode_tps": 70.9, "agg_e2e_tps": 67.06, "mean_ttft_s": 0.206, "errors": []}
+=== ninfer-061 ctx=0 c=2 ===
+{"rep": 0, "ok": 2, "wall": 5.68, "peak_vram_mib": 22630, "mean_decode_tps": 49.19, "agg_decode_tps": 98.38, "agg_e2e_tps": 90.07, "mean_ttft_s": 0.339, "errors": []}
+=== ninfer-061 ctx=0 c=4 ===
+{"rep": 0, "ok": 4, "wall": 11.27, "peak_vram_mib": 22630, "mean_decode_tps": 24.59, "agg_decode_tps": 98.36, "agg_e2e_tps": 90.82, "mean_ttft_s": 0.656, "errors": []}
+=== ninfer-061 ctx=0 c=8 ===
+{"rep": 0, "ok": 8, "wall": 13.17, "peak_vram_mib": 22630, "mean_decode_tps": 22.93, "agg_decode_tps": 183.44, "agg_e2e_tps": 155.54, "mean_ttft_s": 1.431, "errors": []}
+=== ninfer-061 ctx=16384 c=1 ===
+{"rep": 0, "ok": 1, "wall": 19.93, "peak_vram_mib": 22632, "mean_decode_tps": 67.47, "agg_decode_tps": 67.47, "agg_e2e_tps": 12.85, "mean_ttft_s": 16.133, "errors": []}
+=== ninfer-061 ctx=16384 c=2 ===
+{"rep": 0, "ok": 2, "wall": 38.21, "peak_vram_mib": 22692, "mean_decode_tps": 30.78, "agg_decode_tps": 61.55, "agg_e2e_tps": 13.4, "mean_ttft_s": 24.599, "errors": []}
+=== ninfer-061 ctx=16384 c=4 ===
+{"rep": 0, "ok": 2, "wall": 38.08, "peak_vram_mib": 22466, "mean_decode_tps": 31.18, "agg_decode_tps": 62.36, "agg_e2e_tps": 13.44, "mean_ttft_s": 24.567, "errors": [null, null]}
+=== ninfer-061 ctx=16384 c=8 ===
+{"rep": 0, "ok": 2, "wall": 38.33, "peak_vram_mib": 22466, "mean_decode_tps": 30.07, "agg_decode_tps": 60.15, "agg_e2e_tps": 13.36, "mean_ttft_s": 24.572, "errors": [null, null, null]}
+=== ashalliants-df2 ctx=0 c=1 ===
+{"rep": 0, "ok": 1, "wall": 1.88, "peak_vram_mib": 23364, "mean_decode_tps": 162.67, "agg_decode_tps": 162.67, "agg_e2e_tps": 136.36, "mean_ttft_s": 0.218, "errors": []}
+=== ashalliants-df2 ctx=0 c=2 ===
+{"rep": 0, "ok": 2, "wall": 3.84, "peak_vram_mib": 23364, "mean_decode_tps": 154.28, "agg_decode_tps": 308.56, "agg_e2e_tps": 133.42, "mean_ttft_s": 1.231, "errors": []}
+=== ashalliants-df2 ctx=0 c=4 ===
+{"rep": 0, "ok": 4, "wall": 7.58, "peak_vram_mib": 23364, "mean_decode_tps": 157.89, "agg_decode_tps": 631.55, "agg_e2e_tps": 135.13, "mean_ttft_s": 3.063, "errors": []}
+=== ashalliants-df2 ctx=0 c=8 ===
+{"rep": 0, "ok": 8, "wall": 15.17, "peak_vram_mib": 23364, "mean_decode_tps": 155.74, "agg_decode_tps": 1245.92, "agg_e2e_tps": 135.01, "mean_ttft_s": 6.723, "errors": []}
+=== ashalliants-df2 ctx=16384 c=1 ===
+{"rep": 0, "ok": 1, "wall": 7.93, "peak_vram_mib": 23374, "mean_decode_tps": 154.2, "agg_decode_tps": 154.2, "agg_e2e_tps": 32.29, "mean_ttft_s": 6.239, "errors": []}
+=== ashalliants-df2 ctx=16384 c=2 ===
+{"rep": 0, "ok": 2, "wall": 15.79, "peak_vram_mib": 23374, "mean_decode_tps": 143.37, "agg_decode_tps": 286.73, "agg_e2e_tps": 32.42, "mean_ttft_s": 10.123, "errors": []}
+=== ashalliants-df2 ctx=16384 c=4 ===
+{"rep": 0, "ok": 4, "wall": 31.81, "peak_vram_mib": 23374, "mean_decode_tps": 141.93, "agg_decode_tps": 567.7, "agg_e2e_tps": 32.2, "mean_ttft_s": 18.293, "errors": []}
+=== ashalliants-df2 ctx=16384 c=8 ===
+{"rep": 0, "ok": 8, "wall": 61.77, "peak_vram_mib": 23374, "mean_decode_tps": 145.46, "agg_decode_tps": 1163.69, "agg_e2e_tps": 33.16, "mean_ttft_s": 33.146, "errors": []}
+=== ashalliants-mtp ctx=0 c=1 ===
+{"rep": 0, "ok": 1, "wall": 2.37, "peak_vram_mib": 21634, "mean_decode_tps": 118.45, "agg_decode_tps": 118.45, "agg_e2e_tps": 107.9, "mean_ttft_s": 0.209, "errors": []}
+=== ashalliants-mtp ctx=0 c=2 ===
+{"rep": 0, "ok": 2, "wall": 4.12, "peak_vram_mib": 21634, "mean_decode_tps": 116.47, "agg_decode_tps": 232.93, "agg_e2e_tps": 124.27, "mean_ttft_s": 1.073, "errors": []}
+=== ashalliants-mtp ctx=0 c=4 ===
+{"rep": 0, "ok": 4, "wall": 7.84, "peak_vram_mib": 21634, "mean_decode_tps": 103.48, "agg_decode_tps": 413.91, "agg_e2e_tps": 130.53, "mean_ttft_s": 2.877, "errors": []}
+=== ashalliants-mtp ctx=0 c=8 ===
+{"rep": 0, "ok": 8, "wall": 14.71, "peak_vram_mib": 21634, "mean_decode_tps": 106.79, "agg_decode_tps": 854.33, "agg_e2e_tps": 139.18, "mean_ttft_s": 6.412, "errors": []}
+=== ashalliants-mtp ctx=16384 c=1 ===
+{"rep": 0, "ok": 1, "wall": 8.63, "peak_vram_mib": 21644, "mean_decode_tps": 119.29, "agg_decode_tps": 119.29, "agg_e2e_tps": 29.68, "mean_ttft_s": 6.465, "errors": []}
+=== ashalliants-mtp ctx=16384 c=2 ===
+{"rep": 0, "ok": 2, "wall": 16.83, "peak_vram_mib": 21644, "mean_decode_tps": 97.17, "agg_decode_tps": 194.34, "agg_e2e_tps": 30.43, "mean_ttft_s": 10.509, "errors": []}
+=== ashalliants-mtp ctx=16384 c=4 ===
+{"rep": 0, "ok": 4, "wall": 34.08, "peak_vram_mib": 21644, "mean_decode_tps": 84.5, "agg_decode_tps": 338.02, "agg_e2e_tps": 30.05, "mean_ttft_s": 19.256, "errors": []}
+=== ashalliants-mtp ctx=16384 c=8 ===
+{"rep": 0, "ok": 8, "wall": 68.53, "peak_vram_mib": 21644, "mean_decode_tps": 76.73, "agg_decode_tps": 613.86, "agg_e2e_tps": 29.87, "mean_ttft_s": 36.449, "errors": []}
+rc=0

@@ -1,0 +1,2115 @@
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen-done] n_max: 128 tokens in 1.0s (129.3 t/s), n_max=128
+[req] rid=0 api=oai conv=185a3297b12e12d0 qw_ms=1 tok_ms=14 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=196 dec=128 dec_ms=990 cb_ms=0 rounds=38 tps=129.3 end=n_max gw=0 yields=0 slot=0 t=3727 seed=0 md4=38 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=5,6,2,2,18,0,0,0 gnh=10,9,4,1,9,0,0,0 glf=28,22,20,18,0,0,0 gla=22,14,10,9,0,0,0 phd=119.9 phv=685.0 phs=103 phwn=11,2,2,18,0,0,0 phwm=165.7,37.2,41.7,440.4,0.0,0.0,0.0 sfxm=183.8 sfxn=5 phfd=0.0 sfx=5,39 bat=1.0,0
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=66 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen-done] n_max: 24 tokens in 0.2s (114.8 t/s), n_max=24
+[req] rid=0 api=oai conv=c719c289644d21e2 qw_ms=3 tok_ms=27 prompt=66 hit=0 ckpt=-1 pf=66 pf_ms=152 dec=24 dec_ms=209 cb_ms=0 rounds=8 tps=114.8 end=n_max gw=0 yields=0 slot=0 t=1191 seed=0 md4=8 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=1,0,2,2,3,0,0,0 gnh=3,0,2,0,3,0,0,0 glf=7,7,5,3,0,0,0 gla=5,5,3,3,0,0,0 phd=30.2 phv=178.3 phs=27 phwn=1,2,2,3,0,0,0 phwm=15.5,38.5,49.6,74.8,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=0.0 sfx=0,0 bat=1.0,0
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen-done] n_max: 128 tokens in 1.0s (129.4 t/s), n_max=128
+[req] rid=0 api=oai conv=8eba07471e347817 qw_ms=1 tok_ms=14 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=194 dec=128 dec_ms=989 cb_ms=0 rounds=37 tps=129.4 end=n_max gw=0 yields=0 slot=0 t=3033 seed=0 md4=37 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=5,5,3,2,17,0,0,0 gnh=9,10,2,1,10,0,0,0 glf=27,22,19,17,0,0,0 gla=21,13,11,10,0,0,0 phd=117.6 phv=682.9 phs=100 phwn=10,3,2,17,0,0,0 phwm=155.9,59.6,43.8,423.6,0.0,0.0,0.0 sfxm=186.7 sfxn=5 phfd=0.0 sfx=5,39 bat=1.0,0
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=89 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen-done] n_max: 256 tokens in 2.4s (105.4 t/s), n_max=256
+[req] rid=0 api=oai conv=cf4cc04e599a1a13 qw_ms=2 tok_ms=14 prompt=89 hit=0 ckpt=-1 pf=89 pf_ms=200 dec=256 dec_ms=2429 cb_ms=0 rounds=105 tps=105.4 end=n_max gw=0 yields=0 slot=0 t=4551 seed=0 md4=105 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=31,14,12,10,36,0,0,0 gnh=34,35,12,8,14,0,0,0 glf=72,58,46,36,0,0,0 gla=59,34,22,14,0,0,0 phd=324.7 phv=2018.0 phs=279 phwn=45,12,10,36,0,0,0 phwm=696.3,217.8,216.9,887.1,0.0,0.0,0.0 sfxm=81.9 sfxn=2 phfd=0.0 sfx=2,15 bat=1.0,0
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen-done] n_max: 128 tokens in 1.0s (129.6 t/s), n_max=128
+[req] rid=0 api=oai conv=431188fcc853f530 qw_ms=0 tok_ms=13 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=194 dec=128 dec_ms=988 cb_ms=0 rounds=39 tps=129.6 end=n_max gw=0 yields=0 slot=0 t=3106 seed=0 md4=39 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=8,6,4,2,14,0,0,0 gnh=10,11,4,0,9,0,0,0 glf=26,20,16,14,0,0,0 gla=21,13,9,9,0,0,0 phd=114.0 phv=674.5 phs=96 phwn=14,4,2,14,0,0,0 phwm=215.7,72.6,41.7,344.5,0.0,0.0,0.0 sfxm=187.6 sfxn=5 phfd=0.0 sfx=5,39 bat=1.0,0
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen-done] n_max: 256 tokens in 2.2s (117.2 t/s), n_max=256
+[req] rid=0 api=oai conv=a7cf212e9baa8f1d qw_ms=0 tok_ms=1 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=199 dec=256 dec_ms=2185 cb_ms=0 rounds=89 tps=117.2 end=n_max gw=0 yields=0 slot=0 t=4386 seed=0 md4=89 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=13,16,9,11,35,0,0,0 gnh=24,25,11,8,16,0,0,0 glf=71,55,46,35,0,0,0 gla=54,35,24,16,0,0,0 phd=297.4 phv=1697.9 phs=256 phwn=29,9,11,35,0,0,0 phwm=437.4,164.8,230.2,865.5,0.0,0.0,0.0 sfxm=187.0 sfxn=5 phfd=0.0 sfx=5,39 bat=1.0,0
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen-done] n_max: 256 tokens in 3.7s (68.3 t/s), n_max=256
+[req] rid=1 api=oai conv=76e40eb77c5015db qw_ms=126 tok_ms=14 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=259 dec=256 dec_ms=3748 cb_ms=0 rounds=95 tps=68.3 end=n_max gw=141 yields=2 slot=1 t=6621 seed=0 md4=87 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=16,16,5,33,16,0,0,0 gnh=20,32,6,21,7,0,0,0 glf=70,54,49,16,0,0,0 gla=60,34,28,7,0,0,0 phd=18.7 phv=3231.1 phs=259 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=461.0 sfx=9,37 bat=2.0,95
+[gen-done] n_max: 256 tokens in 3.8s (66.5 t/s), n_max=256
+[req] rid=0 api=oai conv=8c54c4d62eaeb5fc qw_ms=2 tok_ms=15 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=363 dec=256 dec_ms=3849 cb_ms=0 rounds=100 tps=66.5 end=n_max gw=240 yields=2 slot=0 t=6702 seed=0 md4=89 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=17,13,11,33,15,0,0,0 gnh=30,24,8,19,8,0,0,0 glf=72,59,48,15,0,0,0 gla=54,35,27,8,0,0,0 phd=32.3 phv=3327.4 phs=268 phwn=3,0,0,2,0,0,0 phwm=47.2,0.0,0.0,49.1,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=461.0 sfx=11,38 bat=1.9,95
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen-done] n_max: 256 tokens in 6.3s (40.9 t/s), n_max=256
+[req] rid=1 api=oai conv=90e017926e8bfbbe qw_ms=2 tok_ms=15 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=704 dec=256 dec_ms=6264 cb_ms=0 rounds=141 tps=40.9 end=n_max gw=580 yields=2 slot=0 t=9296 seed=0 md4=1 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=18,93,0,0,1,0,0,0 gnh=27,84,0,0,1,0,0,0 glf=94,1,1,1,0,0,0 gla=77,1,1,1,0,0,0 phd=33.1 phv=5490.7 phs=208 phwn=0,0,0,1,0,0,0 phwm=0.0,0.0,0.0,32.8,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=671.0 sfx=29,56 bat=4.0,140
+[gen-done] n_max: 256 tokens in 6.5s (39.4 t/s), n_max=256
+[req] rid=2 api=oai conv=2c24fabfcfa0b9df qw_ms=248 tok_ms=15 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=498 dec=256 dec_ms=6505 cb_ms=0 rounds=145 tps=39.4 end=n_max gw=380 yields=2 slot=2 t=9568 seed=0 md4=5 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=23,92,2,0,0,0,0,0 gnh=31,85,1,0,0,0,0,0 glf=94,2,0,0,0,0,0 gla=78,1,0,0,0,0,0 phd=27.8 phv=5692.0 phs=215 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=706.4 sfx=28,53 bat=4.0,145
+[gen-done] n_max: 256 tokens in 6.6s (38.7 t/s), n_max=256
+[gen-done] n_max: 256 tokens in 6.6s (39.0 t/s), n_max=256
+[req] rid=3 api=oai conv=79b57f9ad83405e1 qw_ms=128 tok_ms=15 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=598 dec=256 dec_ms=6610 cb_ms=0 rounds=147 tps=38.7 end=n_max gw=479 yields=2 slot=1 t=9653 seed=0 md4=7 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=24,99,2,2,0,0,0,0 gnh=38,87,2,0,0,0,0,0 glf=103,4,2,0,0,0,0 gla=78,2,0,0,0,0,0 phd=27.8 phv=5767.9 phs=237 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=715.7 sfx=20,39 bat=3.9,147
+[req] rid=0 api=oai conv=6aec63bf7ea14e74 qw_ms=367 tok_ms=15 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=399 dec=256 dec_ms=6570 cb_ms=0 rounds=147 tps=39.0 end=n_max gw=281 yields=2 slot=3 t=9653 seed=0 md4=7 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=23,99,2,2,0,0,0,0 gnh=36,88,1,1,0,0,0,0 glf=103,4,2,0,0,0,0 gla=83,2,1,0,0,0,0 phd=27.8 phv=5767.9 phs=239 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=715.7 sfx=21,40 bat=3.9,147
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen-done] n_max: 256 tokens in 11.9s (21.5 t/s), n_max=256
+[req] rid=1 api=oai conv=860728c5e7490ed1 qw_ms=128 tok_ms=0 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=1291 dec=256 dec_ms=11905 cb_ms=0 rounds=143 tps=21.5 end=n_max gw=1179 yields=2 slot=1 t=15729 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=19,104,0,0,0,0,0,0 gnh=29,94,0,0,0,0,0,0 glf=104,0,0,0,0,0,0 gla=88,0,0,0,0,0,0 phd=52.6 phv=10469.8 phs=227 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1243.2 sfx=20,39 bat=8.0,143
+[gen-done] n_max: 256 tokens in 12.0s (21.3 t/s), n_max=256
+[gen-done] n_max: 256 tokens in 12.0s (21.4 t/s), n_max=256
+[gen-done] n_max: 256 tokens in 11.9s (21.5 t/s), n_max=256
+[req] rid=3 api=oai conv=96bf3968c00157eb qw_ms=247 tok_ms=0 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=1186 dec=256 dec_ms=11978 cb_ms=0 rounds=144 tps=21.4 end=n_max gw=1074 yields=2 slot=2 t=15807 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=23,92,0,0,0,0,0,0 gnh=28,87,0,0,0,0,0,0 glf=92,0,0,0,0,0,0 gla=77,0,0,0,0,0,0 phd=52.6 phv=10547.1 phs=207 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1252.6 sfx=29,55 bat=8.0,144
+[req] rid=0 api=oai conv=23d62c01c45b95aa qw_ms=2 tok_ms=0 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=1404 dec=256 dec_ms=12006 cb_ms=0 rounds=145 tps=21.3 end=n_max gw=1270 yields=2 slot=0 t=15807 seed=0 md4=1 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=20,98,0,0,1,0,0,0 gnh=36,82,0,0,1,0,0,0 glf=99,1,1,1,0,0,0 gla=75,1,1,1,0,0,0 phd=57.1 phv=10580.3 phs=220 phwn=0,0,0,1,0,0,0 phwm=0.0,0.0,0.0,33.3,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1252.6 sfx=26,51 bat=7.9,144
+[req] rid=7 api=oai conv=c39f1b85c426a27f qw_ms=854 tok_ms=0 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=651 dec=256 dec_ms=11904 cb_ms=0 rounds=144 tps=21.5 end=n_max gw=540 yields=2 slot=7 t=15807 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=24,91,0,0,0,0,0,0 gnh=28,87,0,0,0,0,0,0 glf=91,0,0,0,0,0,0 gla=79,0,0,0,0,0,0 phd=52.6 phv=10547.1 phs=206 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1252.6 sfx=29,55 bat=8.0,144
+[gen-done] n_max: 256 tokens in 12.1s (21.2 t/s), n_max=256
+[gen-done] n_max: 256 tokens in 12.0s (21.3 t/s), n_max=256
+[gen-done] n_max: 256 tokens in 12.0s (21.3 t/s), n_max=256
+[req] rid=5 api=oai conv=3d383897f25682e5 qw_ms=485 tok_ms=0 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=981 dec=256 dec_ms=12043 cb_ms=0 rounds=146 tps=21.3 end=n_max gw=870 yields=2 slot=4 t=15905 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=27,98,0,0,0,0,0,0 gnh=33,92,0,0,0,0,0,0 glf=98,0,0,0,0,0,0 gla=86,0,0,0,0,0,0 phd=52.6 phv=10633.5 phs=223 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1264.7 sfx=21,40 bat=7.9,146
+[req] rid=2 api=oai conv=740bc7c81e4f9eec qw_ms=367 tok_ms=0 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=1087 dec=256 dec_ms=12056 cb_ms=0 rounds=146 tps=21.2 end=n_max gw=969 yields=2 slot=3 t=15905 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=18,108,0,0,0,0,0,0 gnh=34,92,0,0,0,0,0,0 glf=108,0,0,0,0,0,0 gla=88,0,0,0,0,0,0 phd=52.6 phv=10633.5 phs=234 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1264.7 sfx=20,39 bat=7.9,146
+[req] rid=4 api=oai conv=caeb670fd26ff06 qw_ms=605 tok_ms=0 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=870 dec=256 dec_ms=12029 cb_ms=0 rounds=146 tps=21.3 end=n_max gw=754 yields=2 slot=5 t=15905 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=23,94,0,0,0,0,0,0 gnh=33,84,0,0,0,0,0,0 glf=94,0,0,0,0,0,0 gla=79,0,0,0,0,0,0 phd=52.6 phv=10633.5 phs=211 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1264.7 sfx=29,55 bat=7.9,146
+[gen-done] n_max: 256 tokens in 12.0s (21.3 t/s), n_max=256
+[req] rid=6 api=oai conv=518e19dfeaec4308 qw_ms=733 tok_ms=0 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=758 dec=256 dec_ms=12043 cb_ms=0 rounds=147 tps=21.3 end=n_max gw=647 yields=2 slot=6 t=15933 seed=0 md4=1 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=21,103,0,1,0,0,0,0 gnh=35,89,1,0,0,0,0,0 glf=104,1,1,0,0,0,0 gla=86,1,0,0,0,0,0 phd=58.2 phv=10655.0 phs=231 phwn=0,0,1,0,0,0,0 phwm=0.0,0.0,21.5,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1264.7 sfx=22,41 bat=7.9,146
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=163383 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen-done] n_max: 256 tokens in 8.7s (29.5 t/s), n_max=256
+[req] rid=0 api=oai conv=3a82538e0c2da519 qw_ms=1 tok_ms=21 prompt=163383 hit=0 ckpt=-1 pf=163383 pf_ms=406630 dec=256 dec_ms=8686 cb_ms=0 rounds=99 tps=29.5 end=n_max gw=0 yields=0 slot=0 t=415621 seed=0 md4=95 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=16,18,8,10,40,0,0,0 gnh=25,33,14,10,10,0,0,0 glf=76,58,50,40,0,0,0 gla=64,34,20,10,0,0,0 phd=892.0 phv=7173.5 phs=276 phwn=34,8,10,40,0,0,0 phwm=2625.0,854.5,706.1,2988.0,0.0,0.0,0.0 sfxm=611.1 sfxn=7 phfd=0.0 sfx=7,33 bat=1.0,0
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=163383 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen] prompt=163383 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[wait] rid=1 prefill of 163383 tokens took 813.0 s with 161 GPU handovers (time-sliced with other requests; 1 waiting on the gate now)
+[wait] rid=0 prefill of 163383 tokens took 812.3 s with 161 GPU handovers (time-sliced with other requests; 1 waiting on the gate now)
+[gen-done] n_max: 256 tokens in 16.7s (15.3 t/s), n_max=256
+[gen-done] n_max: 256 tokens in 16.7s (15.4 t/s), n_max=256
+[req] rid=0 api=oai conv=daf1f677b80b78c3 qw_ms=790 tok_ms=128 prompt=163383 hit=0 ckpt=-1 pf=163383 pf_ms=812262 dec=256 dec_ms=16667 cb_ms=0 rounds=102 tps=15.4 end=n_max gw=583153 yields=161 slot=1 t=830111 seed=0 md4=94 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=20,14,9,35,13,0,0,0 gnh=25,30,13,18,5,0,0,0 glf=71,57,48,13,0,0,0 gla=61,36,23,5,0,0,0 phd=51.7 phv=14918.9 phs=267 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1583.7 sfx=11,39 bat=2.0,102
+[req] rid=1 api=oai conv=c6725838cd989564 qw_ms=1 tok_ms=127 prompt=163383 hit=0 ckpt=-1 pf=163383 pf_ms=812987 dec=256 dec_ms=16722 cb_ms=0 rounds=103 tps=15.3 end=n_max gw=583880 yields=161 slot=0 t=830111 seed=0 md4=89 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=19,16,10,34,10,0,0,0 gnh=28,26,10,21,4,0,0,0 glf=70,54,44,10,0,0,0 gla=53,35,25,4,0,0,0 phd=65.7 phv=15003.5 phs=257 phwn=0,0,0,1,0,0,0 phwm=0.0,0.0,0.0,84.6,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1583.7 sfx=14,43 bat=2.0,102
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=163383 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen] prompt=163383 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=163383 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[wait] rid=3 not started after 5.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 35.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 65.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 95.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 125.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 155.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 185.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 215.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 245.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 275.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 305.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 335.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 365.1 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 395.3 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 425.3 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 455.3 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 485.3 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 515.3 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 545.3 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 575.3 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 605.3 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 635.3 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 665.3 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 695.3 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 725.5 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 756.9 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=163383 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen] prompt=163383 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=163383 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[wait] rid=3 not started after 5.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 35.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 65.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 95.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 125.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 155.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 185.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 215.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 245.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 275.0 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+[wait] rid=3 not started after 305.6 s (prompt 163383 tokens): KV pool would be unsafe: 163649 rows to start, up to 163649 with max_tokens, would leave no order in which every running request can finish; 3/8 slots busy, KV pool 10453 free + 136 idle-cache pages
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[gen] prompt=163383 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen-done] n_max: 256 tokens in 2.2s (118.9 t/s), n_max=256
+[req] rid=0 api=oai conv=51d44aa341a9c57e qw_ms=0 tok_ms=14 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=181 dec=256 dec_ms=2152 cb_ms=0 rounds=88 tps=118.9 end=n_max gw=0 yields=0 slot=0 t=2940 seed=0 md4=87 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=21,10,10,6,34,0,0,0 gnh=25,23,11,4,18,0,0,0 glf=60,50,40,34,0,0,0 gla=48,33,22,18,0,0,0 phd=269.8 phv=1620.2 phs=231 phwn=31,10,6,34,0,0,0 phwm=472.8,182.4,125.1,839.8,0.0,0.0,0.0 sfxm=260.8 sfxn=7 phfd=0.0 sfx=7,50 bat=1.0,0
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen-done] n_max: 256 tokens in 3.7s (68.6 t/s), n_max=256
+[req] rid=0 api=oai conv=7b056a8205ea00b8 qw_ms=120 tok_ms=15 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=244 dec=256 dec_ms=3732 cb_ms=0 rounds=95 tps=68.6 end=n_max gw=133 yields=2 slot=1 t=4648 seed=0 md4=87 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=18,13,3,32,20,0,0,0 gnh=21,30,8,19,8,0,0,0 glf=68,55,52,20,0,0,0 gla=57,35,27,8,0,0,0 phd=14.2 phv=3210.0 phs=261 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=475.8 sfx=9,37 bat=2.0,95
+[gen-done] n_max: 256 tokens in 3.8s (67.9 t/s), n_max=256
+[req] rid=1 api=oai conv=9b9ca13f1e8ee99b qw_ms=0 tok_ms=15 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=351 dec=256 dec_ms=3771 cb_ms=0 rounds=97 tps=67.9 end=n_max gw=240 yields=2 slot=0 t=4674 seed=0 md4=87 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=13,19,8,31,16,0,0,0 gnh=22,30,9,18,8,0,0,0 glf=74,55,47,16,0,0,0 gla=58,35,26,8,0,0,0 phd=23.3 phv=3255.2 phs=263 phwn=0,0,1,1,0,0,0 phwm=0.0,0.0,21.1,24.1,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=475.8 sfx=10,37 bat=2.0,95
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen-done] n_max: 256 tokens in 6.2s (41.3 t/s), n_max=256
+[req] rid=1 api=oai conv=63ab8870ecea082e qw_ms=121 tok_ms=16 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=580 dec=256 dec_ms=6192 cb_ms=0 rounds=139 tps=41.3 end=n_max gw=470 yields=2 slot=1 t=7559 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=16,103,0,0,0,0,0,0 gnh=21,98,0,0,0,0,0,0 glf=103,0,0,0,0,0,0 gla=91,0,0,0,0,0,0 phd=28.0 phv=5420.4 phs=222 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=682.3 sfx=20,39 bat=4.0,139
+[gen-done] n_max: 256 tokens in 6.4s (40.0 t/s), n_max=256
+[req] rid=2 api=oai conv=b46fa9278fe37150 qw_ms=0 tok_ms=15 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=688 dec=256 dec_ms=6407 cb_ms=0 rounds=144 tps=40.0 end=n_max gw=572 yields=2 slot=0 t=7760 seed=0 md4=5 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=21,98,2,2,1,0,0,0 gnh=36,86,0,1,1,0,0,0 glf=103,5,3,1,0,0,0 gla=80,2,2,1,0,0,0 phd=32.2 phv=5616.9 phs=237 phwn=0,0,0,1,0,0,0 phwm=0.0,0.0,0.0,24.1,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=711.5 sfx=20,40 bat=4.0,143
+[gen-done] n_max: 256 tokens in 6.5s (39.6 t/s), n_max=256
+[req] rid=0 api=oai conv=6d467e98e4ed773d qw_ms=359 tok_ms=16 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=368 dec=256 dec_ms=6463 cb_ms=0 rounds=145 tps=39.6 end=n_max gw=258 yields=2 slot=3 t=7854 seed=0 md4=6 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=28,93,2,2,0,0,0,0 gnh=39,82,2,2,0,0,0,0 glf=97,4,2,0,0,0,0 gla=80,4,2,0,0,0,0 phd=28.0 phv=5673.9 phs=230 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=724.2 sfx=20,39 bat=3.9,145
+[gen-done] n_max: 256 tokens in 6.5s (39.3 t/s), n_max=256
+[req] rid=3 api=oai conv=7ca87cea22c2edb7 qw_ms=240 tok_ms=15 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=474 dec=256 dec_ms=6516 cb_ms=0 rounds=147 tps=39.3 end=n_max gw=364 yields=2 slot=2 t=7894 seed=0 md4=8 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=22,103,1,1,0,0,0,0 gnh=37,89,1,0,0,0,0,0 glf=105,2,1,0,0,0,0 gla=86,1,0,0,0,0,0 phd=34.0 phv=5707.9 phs=235 phwn=1,1,0,0,0,0,0 phwm=15.0,19.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=724.2 sfx=20,39 bat=3.9,145
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen] prompt=111 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[gen-done] n_max: 256 tokens in 11.6s (22.1 t/s), n_max=256
+[req] rid=0 api=oai conv=a70305efc5adc6b0 qw_ms=488 tok_ms=13 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=950 dec=256 dec_ms=11601 cb_ms=0 rounds=140 tps=22.1 end=n_max gw=841 yields=2 slot=4 t=14730 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=19,101,0,0,0,0,0,0 gnh=23,97,0,0,0,0,0,0 glf=101,0,0,0,0,0,0 gla=88,0,0,0,0,0,0 phd=51.1 phv=10244.6 phs=221 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1223.3 sfx=20,39 bat=8.0,140
+[gen-done] n_max: 256 tokens in 11.9s (21.5 t/s), n_max=256
+[req] rid=5 api=oai conv=376af6986b85fdac qw_ms=1 tok_ms=4 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=1386 dec=256 dec_ms=11892 cb_ms=0 rounds=144 tps=21.5 end=n_max gw=1259 yields=2 slot=0 t=14959 seed=0 md4=1 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=22,93,0,0,1,0,0,0 gnh=32,83,0,0,1,0,0,0 glf=94,1,1,1,0,0,0 gla=78,1,1,1,0,0,0 phd=55.3 phv=10472.0 phs=212 phwn=0,0,0,1,0,0,0 phwm=0.0,0.0,0.0,24.6,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1249.5 sfx=28,54 bat=7.9,143
+[gen-done] n_max: 256 tokens in 12.0s (21.3 t/s), n_max=256
+[req] rid=2 api=oai conv=1350a2c653a6d7dd qw_ms=127 tok_ms=6 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=1272 dec=256 dec_ms=12022 cb_ms=0 rounds=145 tps=21.3 end=n_max gw=1159 yields=2 slot=1 t=15102 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=17,108,0,0,0,0,0,0 gnh=32,93,0,0,0,0,0,0 glf=108,0,0,0,0,0,0 gla=87,0,0,0,0,0,0 phd=51.2 phv=10572.6 phs=233 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1267.1 sfx=20,39 bat=8.0,145
+[gen-done] n_max: 256 tokens in 12.2s (21.0 t/s), n_max=256
+[gen-done] n_max: 256 tokens in 12.2s (21.0 t/s), n_max=256
+[gen-done] n_max: 256 tokens in 12.1s (21.1 t/s), n_max=256
+[gen-done] n_max: 256 tokens in 12.1s (21.1 t/s), n_max=256
+[gen-done] n_max: 256 tokens in 12.1s (21.1 t/s), n_max=256
+[req] rid=3 api=oai conv=2fcf04ea6fb7b2aa qw_ms=369 tok_ms=6 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=1056 dec=256 dec_ms=12170 cb_ms=0 rounds=148 tps=21.0 end=n_max gw=946 yields=2 slot=3 t=15276 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=30,98,0,0,0,0,0,0 gnh=38,90,0,0,0,0,0,0 glf=98,0,0,0,0,0,0 gla=79,0,0,0,0,0,0 phd=51.2 phv=10725.7 phs=226 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1287.8 sfx=20,39 bat=7.9,148
+[req] rid=4 api=oai conv=41f72a929a2a00a7 qw_ms=607 tok_ms=5 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=844 dec=256 dec_ms=12144 cb_ms=0 rounds=148 tps=21.1 end=n_max gw=734 yields=2 slot=5 t=15276 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=25,95,0,0,0,0,0,0 gnh=36,84,0,0,0,0,0,0 glf=95,0,0,0,0,0,0 gla=79,0,0,0,0,0,0 phd=51.2 phv=10725.7 phs=215 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1287.8 sfx=28,53 bat=7.9,148
+[req] rid=1 api=oai conv=916529a11a9b22d3 qw_ms=250 tok_ms=13 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=1162 dec=256 dec_ms=12183 cb_ms=0 rounds=148 tps=21.0 end=n_max gw=1052 yields=2 slot=2 t=15276 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=23,104,0,0,0,0,0,0 gnh=37,90,0,0,0,0,0,0 glf=104,0,0,0,0,0,0 gla=85,0,0,0,0,0,0 phd=51.2 phv=10725.7 phs=231 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1287.8 sfx=21,40 bat=7.9,148
+[req] rid=7 api=oai conv=ec4a7539404cf8d6 qw_ms=844 tok_ms=4 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=632 dec=256 dec_ms=12118 cb_ms=0 rounds=148 tps=21.1 end=n_max gw=522 yields=2 slot=7 t=15276 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=26,97,0,0,0,0,0,0 gnh=36,87,0,0,0,0,0,0 glf=97,0,0,0,0,0,0 gla=80,0,0,0,0,0,0 phd=51.2 phv=10725.7 phs=220 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1287.8 sfx=25,46 bat=7.9,148
+[req] rid=6 api=oai conv=b597b65faee74811 qw_ms=725 tok_ms=5 prompt=111 hit=0 ckpt=-1 pf=111 pf_ms=738 dec=256 dec_ms=12131 cb_ms=0 rounds=148 tps=21.1 end=n_max gw=628 yields=2 slot=6 t=15276 seed=0 md4=0 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=27,101,0,0,0,0,0,0 gnh=39,89,0,0,0,0,0,0 glf=101,0,0,0,0,0,0 gla=79,0,0,0,0,0,0 phd=51.2 phv=10725.7 phs=229 phwn=0,0,0,0,0,0,0 phwm=0.0,0.0,0.0,0.0,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=1287.8 sfx=20,39 bat=7.9,148
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=16495 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen-done] n_max: 256 tokens in 3.0s (85.6 t/s), n_max=256
+[req] rid=0 api=oai conv=3c0d4629862dc814 qw_ms=1 tok_ms=20 prompt=16495 hit=0 ckpt=-1 pf=16495 pf_ms=15853 dec=256 dec_ms=2989 cb_ms=0 rounds=98 tps=85.6 end=n_max gw=0 yields=0 slot=0 t=19206 seed=0 md4=96 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=18,16,12,8,39,0,0,0 gnh=29,29,14,6,15,0,0,0 glf=75,59,47,39,0,0,0 gla=60,35,21,15,0,0,0 phd=374.8 phv=2403.3 phs=274 phwn=34,12,8,39,0,0,0 phwm=725.4,319.9,206.5,1151.6,0.0,0.0,0.0 sfxm=209.4 sfxn=5 phfd=0.0 sfx=5,29 bat=1.0,0
+profile: cc (sm_86) | kv=turbo5k fd=mma pmin=0.5 maxd=auto7 suffix=1/w8 fast-head=1 think=1 batch-gemm=auto(k>=3) sampler=greedy
+loading tokenizer...
+loading model...
+tool dialect: xml (trained-format default) (general.name "Bonsai2 Ternary Qwen38 27b")
+uploading weights...
+resident: 6.46 GB (checksummed)
+vram: free 18.22 GB post-weights
+--ctx auto: elastic -- 8 slots share one KV pool, each may hold up to 262144 tokens (clamped to the pool below; 2048 per slot if the pool fails)
+[prefill] shared arena 0.84 GB (one per process)
+[pool] 8 slots, floor 2.35 GB (16384 rows x slots), pool 9.53 GB
+[pool] paged KV: 9.53 GB (K 141047 pages x 41984 B, V 141047 pages x 25600 B)
+[pool] elastic windows: each of 8 slots may hold up to 262144 tokens of the shared pool (slots 1+: 262144)
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 0 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 1 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 2 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 3 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 4 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 5 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 6 ready: ctx=262144
+KV cache: turbo5 5-bit K + turbo3 V (opt-in, ~18.6 KB/token)
+bonsai2: Hadamard-folded pack (block 1024, gdn_v_grouped=1); activation rotation ON, MTP ladder ON (unrotated MTP block)
+T3_G128 pack: prefill GEMMs read a 22.3 MB T2 scratch per matrix
+token graph captured
+sample graph captured
+q27: Q27_PF_BATCH_MIN=2 < 32 -- tiny prompts take the CHUNKED prefill path; the 5-token canonical md5 does NOT hold here
+suffix drafter ON: L>=12, width 8 (greedy gated rounds only)
+spec graphs captured (ONE set, M1b; depth-4; mono D/V SKIPPED (dexit on, no --constrain-tools); +per-width verify 2..8; +sampled per-width verify 2..maxd+1; +per-step draft 0..6); Q27_PMIN=0.500 (gated), gate_maxd=7 (auto: ladder 4..7), dexit=1
+slot 7 ready: ctx=262144
+vram: free 1.56 GB at ready
+interleave: round-granularity
+[gcache] fused-verify graph cache ON (Q27_BATCH_GRAPH=1, cap 64)
+continuous batching: ON (Q27_BATCH=1 explicit env, union cap 8)
+[pool] incremental reservation ON: prompt + 4096 rows at admission, +4096 per growth, every grant under a banker's safety check (Q27_KV_INCREMENTAL=0 reserves prompt + max_tokens up front)
+q27-server listening on http://127.0.0.1:8093 (ctx 262144, fast head)
+http: 19 worker threads, 8 slots
+wait diagnostics: [wait] lines after 5000 ms (Q27_WAIT_LOG_MS; 0 = off)
+[http] GET /v1/models -> 200
+[http] GET /v1/models -> 200
+[http] POST /v1/chat/completions -> 200
+[http] POST /v1/chat/completions -> 200
+[gen] prompt=16495 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[pfattn] loaded image sm_86 < sm_89: fp8-MMA prefill unavailable, using f16-MMA
+[gen] prompt=16495 prefix_hit=0 snap=0 ckpt=-1 pfx=0
+[wait] rid=0 prefill of 16495 tokens took 31.7 s with 18 GPU handovers (time-sliced with other requests; 1 waiting on the gate now)
+[wait] rid=1 prefill of 16495 tokens took 31.0 s with 18 GPU handovers (time-sliced with other requests; 1 waiting on the gate now)
+[gen-done] n_max: 256 tokens in 5.4s (47.5 t/s), n_max=256
+[req] rid=0 api=oai conv=80584c807980ceac qw_ms=1 tok_ms=20 prompt=16495 hit=0 ckpt=-1 pf=16495 pf_ms=31714 dec=256 dec_ms=5395 cb_ms=0 rounds=107 tps=47.5 end=n_max gw=22641 yields=18 slot=0 t=38067 seed=0 md4=98 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=22,12,12,32,20,0,0,0 gnh=33,31,12,18,4,0,0,0 glf=76,64,52,20,0,0,0 gla=55,34,22,4,0,0,0 phd=31.4 phv=4709.3 phs=290 phwn=0,0,0,1,0,0,0 phwm=0.0,0.0,0.0,30.1,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=633.1 sfx=9,34 bat=2.0,106
+[gen-done] n_max: 256 tokens in 5.5s (46.4 t/s), n_max=256
+[req] rid=1 api=oai conv=d24f2b23f7b97057 qw_ms=777 tok_ms=20 prompt=16495 hit=0 ckpt=-1 pf=16495 pf_ms=30955 dec=256 dec_ms=5512 cb_ms=0 rounds=110 tps=46.4 end=n_max gw=21841 yields=18 slot=1 t=38201 seed=0 md4=102 md5=0 md6=0 md7=0 mprom=0 mdem=0 gch=27,16,11,32,16,0,0,0 gnh=40,25,16,17,4,0,0,0 glf=75,59,48,16,0,0,0 gla=57,37,21,4,0,0,0 phd=46.3 phv=4792.5 phs=284 phwn=1,0,1,2,0,0,0 phwm=22.2,0.0,28.8,62.4,0.0,0.0,0.0 sfxm=0.0 sfxn=0 phfd=633.1 sfx=8,31 bat=2.0,106

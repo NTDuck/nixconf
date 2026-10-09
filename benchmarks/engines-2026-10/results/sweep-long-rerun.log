@@ -1,0 +1,8 @@
+skip done ninfer-all-b2 ctx=32768 c=1
+skip done ninfer-all-b2 ctx=32768 c=4
+skip done ninfer-all-b2 ctx=32768 c=8
+=== ninfer-all-b2 ctx=65536 c=1 ===
+{"rep": 0, "ok": 1, "wall": 31.06, "peak_vram_mib": 15310, "mean_decode_tps": 197.92, "agg_decode_tps": 197.92, "agg_e2e_tps": 8.24, "mean_ttft_s": 29.753, "errors": []}
+skip done ninfer-all-b2 ctx=65536 c=4
+skip done ninfer-all-b2 ctx=65536 c=8
+rc=0

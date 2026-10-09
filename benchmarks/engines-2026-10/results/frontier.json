@@ -1,0 +1,544 @@
+{
+ "bonsai2-27b-t3-mtp-slim": [
+  {
+   "conc": 1,
+   "best_tps": 120.55,
+   "winners": [
+    "q27-t3-mtp"
+   ]
+  },
+  {
+   "conc": 2,
+   "best_tps": 119.45,
+   "winners": [
+    "q27-t3-solo"
+   ]
+  },
+  {
+   "conc": 4,
+   "best_tps": 115.41,
+   "winners": [
+    "q27-t3-solo"
+   ]
+  },
+  {
+   "conc": 8,
+   "best_tps": 115.65,
+   "winners": [
+    "q27-t3-solo"
+   ]
+  }
+ ],
+ "bonsai2-27b-t3-mtp-slim@ctx": {
+  "0": [
+   {
+    "conc": 1,
+    "best_tps": 120.55,
+    "winners": [
+     "q27-t3-mtp"
+    ]
+   },
+   {
+    "conc": 2,
+    "best_tps": 119.45,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 115.41,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 115.65,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   }
+  ],
+  "16384": [
+   {
+    "conc": 1,
+    "best_tps": 86.65,
+    "winners": [
+     "q27-t3-mtp"
+    ]
+   },
+   {
+    "conc": 2,
+    "best_tps": 82.23,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 88.08,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 88.14,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   }
+  ],
+  "32768": [
+   {
+    "conc": 1,
+    "best_tps": 70.6,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 71.79,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 70.95,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   }
+  ],
+  "65536": [
+   {
+    "conc": 1,
+    "best_tps": 53.21,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 53.64,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   }
+  ],
+  "131072": [
+   {
+    "conc": 1,
+    "best_tps": 33.45,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   }
+  ],
+  "262144": [
+   {
+    "conc": 1,
+    "best_tps": 18.23,
+    "winners": [
+     "q27-t3-solo"
+    ]
+   }
+  ]
+ },
+ "/nix/store/795fmdnyi2152j30b9z2w9z9qv8gi29r-bonsai2-27b-gguf/share/bonsai2/Ternary-Bonsai-2-27B-PTQ1_0.gguf": [
+  {
+   "conc": 1,
+   "best_tps": 61.68,
+   "winners": [
+    "prism-ptq10"
+   ]
+  },
+  {
+   "conc": 2,
+   "best_tps": 36.5,
+   "winners": [
+    "prism-ptq10"
+   ]
+  },
+  {
+   "conc": 4,
+   "best_tps": 20.11,
+   "winners": [
+    "prism-ptq10"
+   ]
+  },
+  {
+   "conc": 8,
+   "best_tps": 20.2,
+   "winners": [
+    "prism-ptq10"
+   ]
+  }
+ ],
+ "/nix/store/795fmdnyi2152j30b9z2w9z9qv8gi29r-bonsai2-27b-gguf/share/bonsai2/Ternary-Bonsai-2-27B-PTQ1_0.gguf@ctx": {
+  "0": [
+   {
+    "conc": 1,
+    "best_tps": 61.68,
+    "winners": [
+     "prism-ptq10"
+    ]
+   },
+   {
+    "conc": 2,
+    "best_tps": 36.5,
+    "winners": [
+     "prism-ptq10"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 20.11,
+    "winners": [
+     "prism-ptq10"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 20.2,
+    "winners": [
+     "prism-ptq10"
+    ]
+   }
+  ],
+  "16384": [
+   {
+    "conc": 1,
+    "best_tps": 0.0,
+    "winners": [
+     "prism-ptq10"
+    ]
+   }
+  ]
+ },
+ "bonsai2-27b": [
+  {
+   "conc": 1,
+   "best_tps": 267.47,
+   "winners": [
+    "ninfer-all-b2"
+   ]
+  },
+  {
+   "conc": 2,
+   "best_tps": 194.0,
+   "winners": [
+    "ninfer-all-b2"
+   ]
+  },
+  {
+   "conc": 4,
+   "best_tps": 111.17,
+   "winners": [
+    "ninfer-all-b2"
+   ]
+  },
+  {
+   "conc": 8,
+   "best_tps": 61.76,
+   "winners": [
+    "ninfer-all-b2"
+   ]
+  }
+ ],
+ "bonsai2-27b@ctx": {
+  "0": [
+   {
+    "conc": 1,
+    "best_tps": 267.47,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   },
+   {
+    "conc": 2,
+    "best_tps": 194.0,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 111.17,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 61.76,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   }
+  ],
+  "16384": [
+   {
+    "conc": 1,
+    "best_tps": 204.72,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   },
+   {
+    "conc": 2,
+    "best_tps": 100.34,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 63.92,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 40.13,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   }
+  ],
+  "32768": [
+   {
+    "conc": 1,
+    "best_tps": 225.79,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 199.85,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 210.87,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   }
+  ],
+  "65536": [
+   {
+    "conc": 1,
+    "best_tps": 197.92,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 42.71,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 24.63,
+    "winners": [
+     "ninfer-all-b2"
+    ]
+   }
+  ]
+ },
+ "qwen3.8-27b": [
+  {
+   "conc": 1,
+   "best_tps": 162.67,
+   "winners": [
+    "ashalliants-df2"
+   ]
+  },
+  {
+   "conc": 2,
+   "best_tps": 154.28,
+   "winners": [
+    "ashalliants-df2"
+   ]
+  },
+  {
+   "conc": 4,
+   "best_tps": 157.89,
+   "winners": [
+    "ashalliants-df2"
+   ]
+  },
+  {
+   "conc": 8,
+   "best_tps": 155.74,
+   "winners": [
+    "ashalliants-df2"
+   ]
+  }
+ ],
+ "qwen3.8-27b@ctx": {
+  "0": [
+   {
+    "conc": 1,
+    "best_tps": 162.67,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 2,
+    "best_tps": 154.28,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 157.89,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 155.74,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   }
+  ],
+  "16384": [
+   {
+    "conc": 1,
+    "best_tps": 154.2,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 2,
+    "best_tps": 143.37,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 141.93,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 145.46,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   }
+  ],
+  "32768": [
+   {
+    "conc": 1,
+    "best_tps": 134.96,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 144.46,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 139.0,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   }
+  ],
+  "65536": [
+   {
+    "conc": 1,
+    "best_tps": 131.01,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 124.68,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 134.14,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   }
+  ],
+  "131072": [
+   {
+    "conc": 1,
+    "best_tps": 118.16,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 118.54,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 117.18,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   }
+  ],
+  "262144": [
+   {
+    "conc": 1,
+    "best_tps": 90.86,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 4,
+    "best_tps": 89.53,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   },
+   {
+    "conc": 8,
+    "best_tps": 91.88,
+    "winners": [
+     "ashalliants-df2"
+    ]
+   }
+  ]
+ }
+}

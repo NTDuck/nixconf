@@ -1,0 +1,1 @@
+{"ok": true, "err": null, "ct": 256, "chars": 1114, "n_deltas": 92, "ttft_s": 0.209, "decode_s": 2.161, "decode_tps": 118.45, "e2e_tps": 108.01, "wall": 2.37, "rep": 0, "lane": 0}

@@ -1,0 +1,51 @@
+skip done ninfer-all-b2 ctx=32768 c=1
+skip done ninfer-all-b2 ctx=32768 c=4
+skip done ninfer-all-b2 ctx=32768 c=8
+skip done ninfer-all-b2 ctx=65536 c=1
+=== ninfer-all-b2 ctx=65536 c=4 ===
+{"rep": 0, "ok": 4, "wall": 123.61, "peak_vram_mib": 15310, "mean_decode_tps": 42.71, "agg_decode_tps": 170.86, "agg_e2e_tps": 8.28, "mean_ttft_s": 75.695, "errors": []}
+=== ninfer-all-b2 ctx=65536 c=8 ===
+{"rep": 0, "ok": 8, "wall": 247.57, "peak_vram_mib": 15310, "mean_decode_tps": 24.63, "agg_decode_tps": 197.03, "agg_e2e_tps": 8.27, "mean_ttft_s": 137.721, "errors": []}
+skip done q27-t3-solo ctx=32768 c=1
+=== q27-t3-solo ctx=32768 c=4 ===
+{"rep": 0, "ok": 4, "wall": 159.73, "peak_vram_mib": 22520, "mean_decode_tps": 71.79, "agg_decode_tps": 287.15, "agg_e2e_tps": 6.41, "mean_ttft_s": 96.335, "errors": []}
+=== q27-t3-solo ctx=32768 c=8 ===
+{"rep": 0, "ok": 8, "wall": 319.74, "peak_vram_mib": 22520, "mean_decode_tps": 70.95, "agg_decode_tps": 567.57, "agg_e2e_tps": 6.41, "mean_ttft_s": 176.034, "errors": []}
+=== q27-t3-solo ctx=65536 c=1 ===
+{"rep": 0, "ok": 1, "wall": 98.89, "peak_vram_mib": 22520, "mean_decode_tps": 53.21, "agg_decode_tps": 53.21, "agg_e2e_tps": 2.59, "mean_ttft_s": 94.068, "errors": []}
+=== q27-t3-solo ctx=65536 c=4 ===
+{"rep": 0, "ok": 4, "wall": 395.63, "peak_vram_mib": 22520, "mean_decode_tps": 53.64, "agg_decode_tps": 214.54, "agg_e2e_tps": 2.59, "mean_ttft_s": 242.378, "errors": []}
+OVERFLOW q27-t3-solo ctx=65536 c=8: overflow: q27-t3-solo ctx65536 x C8 = 524288 KV rows exceeds measured 400K host-RAM staging bound
+=== q27-t3-solo ctx=131072 c=1 ===
+{"rep": 0, "ok": 1, "wall": 282.62, "peak_vram_mib": 22520, "mean_decode_tps": 33.45, "agg_decode_tps": 33.45, "agg_e2e_tps": 0.91, "mean_ttft_s": 274.959, "errors": []}
+OVERFLOW q27-t3-solo ctx=131072 c=4: overflow: q27-t3-solo ctx131072 x C4 = 524288 KV rows exceeds measured 400K host-RAM staging bound
+OVERFLOW q27-t3-solo ctx=131072 c=8: overflow: q27-t3-solo ctx131072 x C8 = 1048576 KV rows exceeds measured 400K host-RAM staging bound
+=== q27-t3-solo ctx=262144 c=1 ===
+{"rep": 0, "ok": 1, "wall": 910.81, "peak_vram_mib": 22520, "mean_decode_tps": 18.23, "agg_decode_tps": 18.23, "agg_e2e_tps": 0.28, "mean_ttft_s": 896.749, "errors": []}
+OVERFLOW q27-t3-solo ctx=262144 c=4: overflow: q27-t3-solo ctx262144 x C4 = 1048576 KV rows exceeds measured 400K host-RAM staging bound
+OVERFLOW q27-t3-solo ctx=262144 c=8: overflow: q27-t3-solo ctx262144 x C8 = 2097152 KV rows exceeds measured 400K host-RAM staging bound
+=== ashalliants-df2 ctx=32768 c=1 ===
+{"rep": 0, "ok": 1, "wall": 15.18, "peak_vram_mib": 23374, "mean_decode_tps": 134.96, "agg_decode_tps": 134.96, "agg_e2e_tps": 16.86, "mean_ttft_s": 13.272, "errors": []}
+=== ashalliants-df2 ctx=32768 c=4 ===
+{"rep": 0, "ok": 4, "wall": 59.5, "peak_vram_mib": 23374, "mean_decode_tps": 144.46, "agg_decode_tps": 577.84, "agg_e2e_tps": 17.21, "mean_ttft_s": 35.508, "errors": []}
+=== ashalliants-df2 ctx=32768 c=8 ===
+{"rep": 0, "ok": 8, "wall": 119.0, "peak_vram_mib": 23374, "mean_decode_tps": 139.0, "agg_decode_tps": 1112.01, "agg_e2e_tps": 17.21, "mean_ttft_s": 65.217, "errors": []}
+=== ashalliants-df2 ctx=65536 c=1 ===
+{"rep": 0, "ok": 1, "wall": 34.67, "peak_vram_mib": 23374, "mean_decode_tps": 131.01, "agg_decode_tps": 131.01, "agg_e2e_tps": 7.38, "mean_ttft_s": 32.695, "errors": []}
+=== ashalliants-df2 ctx=65536 c=4 ===
+{"rep": 0, "ok": 4, "wall": 138.44, "peak_vram_mib": 23374, "mean_decode_tps": 124.68, "agg_decode_tps": 498.71, "agg_e2e_tps": 7.4, "mean_ttft_s": 84.645, "errors": []}
+=== ashalliants-df2 ctx=65536 c=8 ===
+{"rep": 0, "ok": 8, "wall": 275.43, "peak_vram_mib": 23374, "mean_decode_tps": 134.14, "agg_decode_tps": 1073.11, "agg_e2e_tps": 7.44, "mean_ttft_s": 153.413, "errors": []}
+=== ashalliants-df2 ctx=131072 c=1 ===
+{"rep": 0, "ok": 1, "wall": 93.44, "peak_vram_mib": 23374, "mean_decode_tps": 118.16, "agg_decode_tps": 118.16, "agg_e2e_tps": 2.74, "mean_ttft_s": 91.258, "errors": []}
+=== ashalliants-df2 ctx=131072 c=4 ===
+{"rep": 0, "ok": 4, "wall": 373.26, "peak_vram_mib": 23374, "mean_decode_tps": 118.54, "agg_decode_tps": 474.17, "agg_e2e_tps": 2.74, "mean_ttft_s": 231.4, "errors": []}
+=== ashalliants-df2 ctx=131072 c=8 ===
+{"rep": 0, "ok": 7, "wall": 652.88, "peak_vram_mib": 23374, "mean_decode_tps": 117.18, "agg_decode_tps": 820.27, "agg_e2e_tps": 2.74, "mean_ttft_s": 371.42, "errors": [null]}
+=== ashalliants-df2 ctx=262144 c=1 ===
+{"rep": 0, "ok": 1, "wall": 290.16, "peak_vram_mib": 23374, "mean_decode_tps": 90.86, "agg_decode_tps": 90.86, "agg_e2e_tps": 0.88, "mean_ttft_s": 287.297, "errors": []}
+=== ashalliants-df2 ctx=262144 c=4 ===
+{"rep": 0, "ok": 3, "wall": 874.89, "peak_vram_mib": 23374, "mean_decode_tps": 89.53, "agg_decode_tps": 268.58, "agg_e2e_tps": 0.88, "mean_ttft_s": 581.299, "errors": [null]}
+=== ashalliants-df2 ctx=262144 c=8 ===
+{"rep": 0, "ok": 3, "wall": 872.63, "peak_vram_mib": 23374, "mean_decode_tps": 91.88, "agg_decode_tps": 275.64, "agg_e2e_tps": 0.88, "mean_ttft_s": 579.461, "errors": [null, null, null]}
+rc=0

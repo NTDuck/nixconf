@@ -1,0 +1,4 @@
+{"tag": "q27-t3-mtp", "ctx": 16384, "conc": 4, "reason": "overflow: q27-t3-mtp 16K prefill x C4 exceeds host RAM"}
+{"tag": "q27-t3-mtp", "ctx": 16384, "conc": 8, "reason": "overflow: q27-t3-mtp 16K prefill x C8 exceeds host RAM"}
+{"tag": "q27-t3-solo", "ctx": 16384, "conc": 4, "reason": "overflow: q27-t3-solo 16K prefill x C4 exceeds host RAM"}
+{"tag": "q27-t3-solo", "ctx": 16384, "conc": 8, "reason": "overflow: q27-t3-solo 16K prefill x C8 exceeds host RAM"}

@@ -1,0 +1,49 @@
+skip done q27-t3-mtp ctx=0 c=1
+skip done q27-t3-mtp ctx=0 c=2
+skip done q27-t3-mtp ctx=0 c=4
+skip done q27-t3-mtp ctx=0 c=8
+skip done q27-t3-mtp ctx=16384 c=1
+skip done q27-t3-mtp ctx=16384 c=2
+skip done q27-t3-mtp ctx=16384 c=4
+skip done q27-t3-mtp ctx=16384 c=8
+skip done q27-t3-solo ctx=0 c=1
+skip done q27-t3-solo ctx=0 c=2
+skip done q27-t3-solo ctx=0 c=4
+=== q27-t3-solo ctx=0 c=8 ===
+{"rep": 0, "ok": 8, "wall": 19.43, "peak_vram_mib": 22683, "mean_decode_tps": 115.65, "agg_decode_tps": 925.23, "agg_e2e_tps": 105.39, "mean_ttft_s": 8.76, "errors": []}
+=== q27-t3-solo ctx=16384 c=1 ===
+{"rep": 0, "ok": 1, "wall": 18.91, "peak_vram_mib": 22682, "mean_decode_tps": 85.01, "agg_decode_tps": 85.01, "agg_e2e_tps": 13.54, "mean_ttft_s": 15.894, "errors": []}
+=== q27-t3-solo ctx=16384 c=2 ===
+{"rep": 0, "ok": 2, "wall": 38.04, "peak_vram_mib": 22717, "mean_decode_tps": 82.23, "agg_decode_tps": 164.47, "agg_e2e_tps": 13.46, "mean_ttft_s": 25.479, "errors": []}
+=== q27-t3-solo ctx=16384 c=4 ===
+{"rep": 0, "ok": 4, "wall": 75.36, "peak_vram_mib": 22727, "mean_decode_tps": 88.08, "agg_decode_tps": 352.31, "agg_e2e_tps": 13.59, "mean_ttft_s": 44.216, "errors": []}
+=== q27-t3-solo ctx=16384 c=8 ===
+{"rep": 0, "ok": 8, "wall": 150.81, "peak_vram_mib": 22686, "mean_decode_tps": 88.14, "agg_decode_tps": 705.16, "agg_e2e_tps": 13.58, "mean_ttft_s": 81.832, "errors": []}
+=== prism-ptq10 ctx=0 c=1 ===
+{"rep": 0, "ok": 1, "wall": 4.59, "peak_vram_mib": 8690, "mean_decode_tps": 61.68, "agg_decode_tps": 61.68, "agg_e2e_tps": 55.82, "mean_ttft_s": 0.424, "errors": []}
+=== prism-ptq10 ctx=0 c=2 ===
+{"rep": 0, "ok": 2, "wall": 7.98, "peak_vram_mib": 8690, "mean_decode_tps": 36.5, "agg_decode_tps": 73.01, "agg_e2e_tps": 64.19, "mean_ttft_s": 0.96, "errors": []}
+=== prism-ptq10 ctx=0 c=4 ===
+{"rep": 0, "ok": 4, "wall": 14.2, "peak_vram_mib": 8690, "mean_decode_tps": 20.11, "agg_decode_tps": 80.46, "agg_e2e_tps": 72.11, "mean_ttft_s": 1.466, "errors": []}
+=== prism-ptq10 ctx=0 c=8 ===
+{"rep": 0, "ok": 8, "wall": 29.18, "peak_vram_mib": 8690, "mean_decode_tps": 20.2, "agg_decode_tps": 161.57, "agg_e2e_tps": 70.18, "mean_ttft_s": 8.957, "errors": []}
+=== prism-ptq10 ctx=16384 c=1 ===
+{"rep": 0, "ok": 0, "wall": 0.04, "peak_vram_mib": 8678, "mean_decode_tps": 0.0, "agg_decode_tps": 0, "agg_e2e_tps": 0.0, "mean_ttft_s": null, "errors": ["HTTPError: HTTP Error 400: Bad Request"]}
+DEADLOCK prism-ptq10 ctx=16384 c=1; skipping higher conc at this ctx
+=== ninfer-all-b2 ctx=0 c=1 ===
+{"rep": 0, "ok": 1, "wall": 1.11, "peak_vram_mib": 12116, "mean_decode_tps": 267.47, "agg_decode_tps": 267.47, "agg_e2e_tps": 231.63, "mean_ttft_s": 0.138, "errors": []}
+=== ninfer-all-b2 ctx=0 c=2 ===
+{"rep": 0, "ok": 2, "wall": 1.46, "peak_vram_mib": 12116, "mean_decode_tps": 194.0, "agg_decode_tps": 387.99, "agg_e2e_tps": 351.79, "mean_ttft_s": 0.126, "errors": []}
+=== ninfer-all-b2 ctx=0 c=4 ===
+{"rep": 0, "ok": 4, "wall": 2.63, "peak_vram_mib": 12116, "mean_decode_tps": 111.17, "agg_decode_tps": 444.67, "agg_e2e_tps": 388.01, "mean_ttft_s": 0.21, "errors": []}
+=== ninfer-all-b2 ctx=0 c=8 ===
+{"rep": 0, "ok": 8, "wall": 4.78, "peak_vram_mib": 12116, "mean_decode_tps": 61.76, "agg_decode_tps": 494.1, "agg_e2e_tps": 428.9, "mean_ttft_s": 0.433, "errors": []}
+=== ninfer-all-b2 ctx=16384 c=1 ===
+{"rep": 0, "ok": 1, "wall": 7.36, "peak_vram_mib": 12116, "mean_decode_tps": 204.72, "agg_decode_tps": 204.72, "agg_e2e_tps": 34.78, "mean_ttft_s": 6.099, "errors": []}
+=== ninfer-all-b2 ctx=16384 c=2 ===
+{"rep": 0, "ok": 2, "wall": 13.86, "peak_vram_mib": 12116, "mean_decode_tps": 100.34, "agg_decode_tps": 200.68, "agg_e2e_tps": 36.94, "mean_ttft_s": 9.194, "errors": []}
+=== ninfer-all-b2 ctx=16384 c=4 ===
+{"rep": 0, "ok": 4, "wall": 27.69, "peak_vram_mib": 12116, "mean_decode_tps": 63.92, "agg_decode_tps": 255.69, "agg_e2e_tps": 36.99, "mean_ttft_s": 15.859, "errors": []}
+=== ninfer-all-b2 ctx=16384 c=8 ===
+{"rep": 0, "ok": 8, "wall": 55.37, "peak_vram_mib": 12116, "mean_decode_tps": 40.13, "agg_decode_tps": 321.01, "agg_e2e_tps": 36.99, "mean_ttft_s": 29.688, "errors": []}
+rc=0

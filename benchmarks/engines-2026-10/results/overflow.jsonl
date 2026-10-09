@@ -1,0 +1,7 @@
+{"tag": "q27-t3-mtp", "ctx": 16384, "conc": 4, "reason": "overflow: q27-t3-mtp 16K prefill x C4 exceeds host RAM"}
+{"tag": "q27-t3-mtp", "ctx": 16384, "conc": 8, "reason": "overflow: q27-t3-mtp 16K prefill x C8 exceeds host RAM"}
+{"tag": "q27-t3-solo", "ctx": 65536, "conc": 8, "reason": "overflow: q27-t3-solo ctx65536 x C8 = 524288 KV rows exceeds measured 400K host-RAM staging bound"}
+{"tag": "q27-t3-solo", "ctx": 131072, "conc": 4, "reason": "overflow: q27-t3-solo ctx131072 x C4 = 524288 KV rows exceeds measured 400K host-RAM staging bound"}
+{"tag": "q27-t3-solo", "ctx": 131072, "conc": 8, "reason": "overflow: q27-t3-solo ctx131072 x C8 = 1048576 KV rows exceeds measured 400K host-RAM staging bound"}
+{"tag": "q27-t3-solo", "ctx": 262144, "conc": 4, "reason": "overflow: q27-t3-solo ctx262144 x C4 = 1048576 KV rows exceeds measured 400K host-RAM staging bound"}
+{"tag": "q27-t3-solo", "ctx": 262144, "conc": 8, "reason": "overflow: q27-t3-solo ctx262144 x C8 = 2097152 KV rows exceeds measured 400K host-RAM staging bound"}
