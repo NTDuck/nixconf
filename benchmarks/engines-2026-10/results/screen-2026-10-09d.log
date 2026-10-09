@@ -1,0 +1,53 @@
+=== gguf-q4xs ctx=0 c=1 ===
+{"rep": 0, "ok": 1, "wall": 6.05, "peak_vram_mib": 26406, "mean_decode_tps": 45.47, "agg_decode_tps": 45.47, "agg_e2e_tps": 42.33, "mean_ttft_s": 0.404, "errors": []}
+=== gguf-q4xs ctx=0 c=2 ===
+{"rep": 0, "ok": 2, "wall": 7.31, "peak_vram_mib": 26408, "mean_decode_tps": 38.47, "agg_decode_tps": 76.93, "agg_e2e_tps": 70.08, "mean_ttft_s": 0.646, "errors": []}
+=== gguf-q4xs ctx=0 c=4 ===
+{"rep": 0, "ok": 4, "wall": 10.32, "peak_vram_mib": 26408, "mean_decode_tps": 27.84, "agg_decode_tps": 111.36, "agg_e2e_tps": 99.21, "mean_ttft_s": 1.112, "errors": []}
+=== gguf-q4xs ctx=0 c=8 ===
+{"rep": 0, "ok": 8, "wall": 17.57, "peak_vram_mib": 26410, "mean_decode_tps": 16.58, "agg_decode_tps": 132.64, "agg_e2e_tps": 116.55, "mean_ttft_s": 2.123, "errors": []}
+=== gguf-q4xs ctx=16384 c=1 ===
+{"rep": 0, "ok": 1, "wall": 18.91, "peak_vram_mib": 26408, "mean_decode_tps": 41.42, "agg_decode_tps": 41.42, "agg_e2e_tps": 13.54, "mean_ttft_s": 12.722, "errors": []}
+=== gguf-q4xs ctx=16384 c=2 ===
+{"rep": 0, "ok": 2, "wall": 33.36, "peak_vram_mib": 26410, "mean_decode_tps": 23.91, "agg_decode_tps": 47.81, "agg_e2e_tps": 15.35, "mean_ttft_s": 20.734, "errors": []}
+=== gguf-q4xs ctx=16384 c=4 ===
+{"rep": 0, "ok": 4, "wall": 62.96, "peak_vram_mib": 26414, "mean_decode_tps": 12.12, "agg_decode_tps": 48.47, "agg_e2e_tps": 16.26, "mean_ttft_s": 34.708, "errors": []}
+=== gguf-q4xs ctx=16384 c=8 ===
+{"rep": 0, "ok": 8, "wall": 124.15, "peak_vram_mib": 26414, "mean_decode_tps": 5.81, "agg_decode_tps": 46.48, "agg_e2e_tps": 16.5, "mean_ttft_s": 62.614, "errors": []}
+=== buun-qwen ctx=0 c=1 ===
+START-FAIL buun-qwen: server buun-qwen exited rc=-6
+27-bench/buun-llama-cpp/build/bin/libggml-cuda.so.0(+0x2d2f3c) [0x734503cd2f3c]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libggml-cuda.so.0(+0x2d2f97) [0x734503cd2f97]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama.so.0(_ZN16llama_model_base12load_tensorsER18llama_model_loader+0x2e26) [0x73450bd82ed6]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama.so.0(+0xb9321) [0x73450bcb9321]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama.so.0(+0xba491) [0x73450bcba491]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama.so.0(llama_model_load_from_file+0xc5) [0x73450bcbb295]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama-common.so.0(_ZN18common_init_resultC2ER13common_paramsb+0x14e) [0x73450c20bd4e]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama-common.so.0(_Z23common_init_from_paramsR13common_paramsb+0x4c) [0x73450c20ec7c]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama-server-impl.so(_ZN19server_context_impl10load_modelER13common_params+0x1d0) [0x73450c78e1e0]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama-server-impl.so(_Z12llama_serveriPPc+0x2a42) [0x73450c6cedb2]
+/nix/store/znb3q6g1ik34454j3vcjx824h1871asg-glibc-2.42-84/lib/libc.so.6(+0x2b285) [0x7344fda2b285]
+/nix/store/znb3q6g1ik34454j3vcjx824h1871asg-glibc-2.42-84/lib/libc.so.6(__libc_start_main+0x88) [0x7344fda2b338]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/llama-server(+0x1085) [0x56e205a74085]
+
+=== buun-qwen ctx=16384 c=1 ===
+Traceback (most recent call last):
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 158, in <module>
+    main()
+    ~~~~^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 133, in main
+    run(tags, SCREEN_CTX, SCREEN_CONC, a.max_tokens, a.reps)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 98, in run
+    engines.start(cfg)
+    ~~~~~~~~~~~~~^^^^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/engines.py", line 187, in start
+    assert clear_gpu(), "GPU did not drain after killing holders"
+           ~~~~~~~~~^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/engines.py", line 168, in clear_gpu
+    if not out.strip() or all(int(l.split(",")[0].strip().split()[0]) < 500
+                          ^^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/engines.py", line 168, in <genexpr>
+    if not out.strip() or all(int(l.split(",")[0].strip().split()[0]) < 500
+                              ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'No'

@@ -143,6 +143,11 @@ def main():
             "ninfer-all-b2": [32768, 65536],          # --max-context 65536 cap
             "q27-t3-solo": [32768, 65536, 131072, 262144],
             "ashalliants-df2": [32768, 65536, 131072, 262144],
+            # Smoke-verified per-slot ceilings (2026-10-09): buun TCQ KV
+            # 65536/slot (524288 total, 19.7 GiB); gguf q8 KV 32768/slot
+            # (262144 total, ~22.3 GiB est).
+            "buun-qwen": [32768, 65536],
+            "gguf-q4xs": [32768],
         }
         for tag in tags:
             run([tag], windows.get(tag, LONG_CTX), [1, 4, 8],

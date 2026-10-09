@@ -290,5 +290,71 @@
     "ashalliants-df2"
    ]
   }
+ ],
+ "qwen38-27b-gguf": [
+  {
+   "ctx": 0,
+   "conc": 1,
+   "tps": 45.47,
+   "winners": [
+    "gguf-q4xs"
+   ]
+  },
+  {
+   "ctx": 0,
+   "conc": 2,
+   "tps": 38.47,
+   "winners": [
+    "gguf-q4xs"
+   ]
+  },
+  {
+   "ctx": 0,
+   "conc": 4,
+   "tps": 27.84,
+   "winners": [
+    "gguf-q4xs"
+   ]
+  },
+  {
+   "ctx": 0,
+   "conc": 8,
+   "tps": 16.58,
+   "winners": [
+    "gguf-q4xs"
+   ]
+  },
+  {
+   "ctx": 16384,
+   "conc": 1,
+   "tps": 41.42,
+   "winners": [
+    "gguf-q4xs"
+   ]
+  },
+  {
+   "ctx": 16384,
+   "conc": 2,
+   "tps": 23.91,
+   "winners": [
+    "gguf-q4xs"
+   ]
+  },
+  {
+   "ctx": 16384,
+   "conc": 4,
+   "tps": 12.12,
+   "winners": [
+    "gguf-q4xs"
+   ]
+  },
+  {
+   "ctx": 16384,
+   "conc": 8,
+   "tps": 5.81,
+   "winners": [
+    "gguf-q4xs"
+   ]
+  }
  ]
 }

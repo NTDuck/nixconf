@@ -105,20 +105,20 @@ ENGINES = {
     # ---------------- 2026-10-09 additions (cand-scout#1/#2) ----------------
     "buun-qwen": {
         # spiritbuun/buun-llama-cpp @ b9637 (bc9340b9), source build.
-        # TCQ KV (turbo3_tcq, ~5x compression) stays on GPU - no host-RAM
-        # staging, so deep-ctx x C8 cells are VRAM-bound instead of
-        # overflow-bound. Qwen3.8 arch via upstream qwen3_5 support.
+        # SMOKE-VERIFIED 2026-10-09 on the 3090: loads IQ4_XS, serves,
+        # TCQ accepted (-ctk turbo2_tcq -ctv turbo2_tcq; help lists
+        # turbo2/3/4(_tcq)). Measured: -c 524288 -np 8 (8x65536 slots) =
+        # 19682 MiB total incl. 13.6 GiB weights => ~12.2 KiB/tok TCQ KV.
+        # Per-slot ceiling 65536: 131072/slot would need ~12.8 GiB KV +
+        # weights > 24 GiB. Long window therefore [32768, 65536].
         "model": "auto", "port": 8098,
         "cmd": ["env", "LD_LIBRARY_PATH=/run/opengl-driver/lib",
                 f"{Q27}/buun-llama-cpp/build/bin/llama-server",
                 "-m", f"{MODELS}/Qwen3.8-27B-UD-IQ4_XS.gguf",
                 "-ngl", "99", "-fa", "on", "--jinja",
                 "--alias", "qwen38-27b-buun",
-                # Per-slot = 32768 (prism lesson: -c is split by -np).
-                # KV dtype picked after smoke: turbo3_tcq if the TURBO
-                # ladder loads on qwen3_5 GDN heads, else f16.
-                "-c", "262144", "-np", "8",
-                "-ctk", "turbo3_tcq", "-ctv", "turbo3_tcq",
+                "-c", "524288", "-np", "8",
+                "-ctk", "turbo2_tcq", "-ctv", "turbo2_tcq",
                 "--host", "127.0.0.1", "--port", "8098"],
     },
     "gguf-q4xs": {
@@ -127,7 +127,7 @@ ENGINES = {
         # arm with an on-GPU-KV llama.cpp backend; qwen3_5 arch verified in
         # prism-b10685 sources (LLM_ARCH_QWEN35).
         "model": "auto", "port": 8099,
-        "cmd": ["/run/current-system/sw/bin/bonsai-llama-server",
+        "cmd": ["/run/current-system/specialisation/homelab/sw/bin/bonsai-llama-server",
                 "-m", f"{MODELS}/Qwen3.8-27B-UD-IQ4_XS.gguf",
                 "-ngl", "99", "-fa", "on", "--jinja",
                 "--alias", "qwen38-27b-gguf",
@@ -157,11 +157,18 @@ def clear_gpu():
             continue
         if any(v in name for v in VICTIMS):
             subprocess.run(["kill", "-9", str(pid)])
+    # Drain check scoped to the pinned 3090 (-i 1): other GPUs host the
+    # user's desktop/games (e.g. GPU0 game at 2+ GiB) and must not fail
+    # the assertion. Query returns "Unable to determine..." on missing
+    # GPUs, so fall back to per-GPU index.
     for _ in range(60):
         out = subprocess.run(["nvidia-smi", "--query-compute-apps=used_memory",
-                              "--format=csv,noheader"], capture_output=True, text=True).stdout
-        if not out.strip() or all(int(l.split(",")[0].strip().split()[0]) < 500
-                                  for l in out.strip().splitlines() if l.strip()):
+                              "--format=csv,noheader", "-i", "1"],
+                             capture_output=True, text=True).stdout
+        if not out.strip() or all(
+                not l.strip() or not l.split(",")[0].strip().split()[0].isdigit()
+                or int(l.split(",")[0].strip().split()[0]) < 500
+                for l in out.strip().splitlines() if l.strip()):
             return True
         time.sleep(1)
     return False

@@ -1,0 +1,15 @@
+buun-qwen ctx=0: server buun-qwen exited rc=-6
+27-bench/buun-llama-cpp/build/bin/libggml-cuda.so.0(+0x2d2f3c) [0x734503cd2f3c]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libggml-cuda.so.0(+0x2d2f97) [0x734503cd2f97]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama.so.0(_ZN16llama_model_base12load_tensorsER18llama_model_loader+0x2e26) [0x73450bd82ed6]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama.so.0(+0xb9321) [0x73450bcb9321]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama.so.0(+0xba491) [0x73450bcba491]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama.so.0(llama_model_load_from_file+0xc5) [0x73450bcbb295]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama-common.so.0(_ZN18common_init_resultC2ER13common_paramsb+0x14e) [0x73450c20bd4e]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama-common.so.0(_Z23common_init_from_paramsR13common_paramsb+0x4c) [0x73450c20ec7c]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama-server-impl.so(_ZN19server_context_impl10load_modelER13common_params+0x1d0) [0x73450c78e1e0]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/libllama-server-impl.so(_Z12llama_serveriPPc+0x2a42) [0x73450c6cedb2]
+/nix/store/znb3q6g1ik34454j3vcjx824h1871asg-glibc-2.42-84/lib/libc.so.6(+0x2b285) [0x7344fda2b285]
+/nix/store/znb3q6g1ik34454j3vcjx824h1871asg-glibc-2.42-84/lib/libc.so.6(__libc_start_main+0x88) [0x7344fda2b338]
+/home/ayin/models/q27-bench/buun-llama-cpp/build/bin/llama-server(+0x1085) [0x56e205a74085]
+

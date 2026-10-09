@@ -1,0 +1,15 @@
+=== gguf-q4xs ctx=0 c=1 ===
+Traceback (most recent call last):
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 158, in <module>
+    main()
+    ~~~~^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 133, in main
+    run(tags, SCREEN_CTX, SCREEN_CONC, a.max_tokens, a.reps)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 98, in run
+    engines.start(cfg)
+    ~~~~~~~~~~~~~^^^^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/engines.py", line 182, in start
+    assert clear_gpu(), "GPU did not drain after killing holders"
+           ~~~~~~~~~^^
+AssertionError: GPU did not drain after killing holders

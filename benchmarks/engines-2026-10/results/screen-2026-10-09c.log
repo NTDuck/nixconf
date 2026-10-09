@@ -1,0 +1,28 @@
+=== gguf-q4xs ctx=0 c=1 ===
+Traceback (most recent call last):
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 158, in <module>
+    main()
+    ~~~~^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 133, in main
+    run(tags, SCREEN_CTX, SCREEN_CONC, a.max_tokens, a.reps)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/run_sweep.py", line 98, in run
+    engines.start(cfg)
+    ~~~~~~~~~~~~~^^^^^
+  File "/home/ayin/projs/nixconf/benchmarks/engines-2026-10/engines.py", line 195, in start
+    proc = subprocess.Popen(cmd, stdout=logf, stderr=subprocess.STDOUT,
+                            stdin=subprocess.DEVNULL, env=env,
+                            start_new_session=True)
+  File "/nix/store/lb41b0anx1f98y9y5s9mdv97gjgsq740-python3-3.14.7/lib/python3.14/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/lb41b0anx1f98y9y5s9mdv97gjgsq740-python3-3.14.7/lib/python3.14/subprocess.py", line 1990, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: '/run/current-system/sw/bin/bonsai-llama-server'
