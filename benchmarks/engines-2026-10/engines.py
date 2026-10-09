@@ -127,7 +127,11 @@ ENGINES = {
         # arm with an on-GPU-KV llama.cpp backend; qwen3_5 arch verified in
         # prism-b10685 sources (LLM_ARCH_QWEN35).
         "model": "auto", "port": 8099,
-        "cmd": ["/run/current-system/specialisation/homelab/sw/bin/bonsai-llama-server",
+        # 2026-10-09 reboot: prism CUDA build moved into the DEFAULT
+        # generation (specialisation/homelab no longer exists on
+        # /run/current-system; /run/current-system/sw/bin/bonsai-llama-server
+        # is the CUDA fork with cublas linked).
+        "cmd": ["/run/current-system/sw/bin/bonsai-llama-server",
                 "-m", f"{MODELS}/Qwen3.8-27B-UD-IQ4_XS.gguf",
                 "-ngl", "99", "-fa", "on", "--jinja",
                 "--alias", "qwen38-27b-gguf",
