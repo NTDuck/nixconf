@@ -329,6 +329,36 @@
             }
           ];
         };
+
+        # ashalliants ninfer-0.15.0 DFlash2 (:8092 — see
+        # ../ashalliants.nix; 2026-10-09 benchmark WINNER for Qwen3.8 on
+        # both criteria: peak 162.7 tok/s fresh C1 AND high-parallelism x
+        # deep-ctx — C8x32k 1112.0 agg tok/s vs ninfer-061's best 168.7,
+        # 3-7x). Same OpenAI Chat Completions shape as ninfer-061 (the
+        # vendor binary serves completions/responses/anthropic; no
+        # /v1/models discovery — declared model instead). id matches the
+        # server banner ("listening ... | model qwen3.8-27b"). 262144 =
+        # tuned-profile context (NINFER_FALLBACK=off keeps it exact;
+        # overclaim triggers omp's trim 500-loop — never overclaim).
+        # On-demand unit (23.3 GiB VRAM + 2 GiB pinned host KV): start
+        # via `ashalliants-up` (Conflicts stop ninfer-serve/bonsai2/
+        # ollama natively); provider 404s until the unit is up.
+        ashalliants = {
+          baseUrl = "http://127.0.0.1:8092/v1";
+          api = "openai-completions";
+          auth = "none";
+
+          models = [
+            {
+              id = "qwen3.8-27b";
+              name = "Qwen3.8 27B (ashalliants DFlash2)";
+              reasoning = true;
+              input = ["text"];
+              contextWindow = 262144;
+              maxTokens = 16384;
+            }
+          ];
+        };
       };
 
       models = {
