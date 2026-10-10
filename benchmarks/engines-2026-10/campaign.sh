@@ -16,6 +16,9 @@ MODELS=/home/ayin/models/q27-bench/models
 mkdir -p "$DL" "$MODELS"
 
 log() { echo "[$(date -u +%H:%M:%S)] $*"; }
+# aria2 is not on the host PATH; pinned store path (curl fallback
+# measured 3-8 MiB/s vs aria2 16-connection ~25 MiB/s on HF artifacts).
+ARIA2=/nix/store/3m04gh06rfqj917212jarbk53gm45j9m-aria2-1.37.0-bin/bin/aria2c
 have() { grep -q "\"tag\": \"$1\"" "$ROOT/results/cells.jsonl" 2>/dev/null; }
 
 cells_for() { grep -c "\"tag\": \"$1\"" "$ROOT/results/cells.jsonl" 2>/dev/null || true; }
@@ -42,8 +45,12 @@ fetch() { # fetch <url> <dest>
   if [ "$free" -lt 20 ]; then log "  DISK GUARD: ${free}G free, abort"; return 1; fi
   log "  downloading $(basename "$dest") (${free}G free)"
   mkdir -p "$(dirname "$dest")"
-  if command -v aria2c >/dev/null; then
-    aria2c -q -x 16 -s 16 -o "$dest" "$url" || return 1
+  if [ -x "$ARIA2" ]; then
+    # aria2c -o takes a FILENAME (relative to --dir), not a path —
+    # passing "models/coder390.ninfer" created engines-2026-10/home/...
+    # and downloaded there (2026-10-10 10:44 probe). Use --dir=parent.
+    ( cd "$(dirname "$dest")" && "$ARIA2" -q -x 16 -s 16 \
+        -o "$(basename "$dest")" "$url" ) || return 1
   else
     curl -sL --fail -o "$dest" "$url" || return 1
   fi
@@ -79,12 +86,28 @@ run_variant() { local tag=$1; sweep_one "$tag"; }
 # ---------------- per-variant stages ----------------
 
 stage_coder390() {
-  # nerkyor/...-RLOO-MTP-DFlash2 ships .ninfer tiers in GGUF-NInfer/.
-  # Q4LynnStyle-Q8MTP: 18.74 GB, MTP head inside.
-  local url="https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2/resolve/main/GGUF-NInfer/Qwen3.8-27B-Coder390-EfficientThink-Q4LynnStyle-Q8MTP.ninfer"
-  local f="$ASH/models/coder390_q4lynn_q8mtp.ninfer"
-  fetch "$url" "$f" || return 1
-  upgrade_v3 "$f" || return 1
+  # Publisher's .ninfer tiers are gguf_blocks_v1 — unsupported by the
+  # 0.15.0 engine (startup FATAL, 2026-10-10). Convert BF16 + DFlash2-FP8
+  # draft instead: dflash2 lane, comparable to ashalliants-df2.
+  local dir="$DL/nerkyor_coder390"
+  local out="$ASH/models/coder390_dflash2.ninfer"
+  [ -f "$out" ] || {
+    [ -f "$dir/BF16/model-00002-of-00002.safetensors" ] || {
+      local free; free=$(disk_free_g)
+      [ "$free" -lt 115 ] && { log "  DISK GUARD: ${free}G < 115 for bf16+draft, abort"; return 1; }
+      log "  cloning BF16 (~52G) + DFlash2-FP8 draft (2.4G)"
+      hf download nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2 \
+        --include "BF16/*" --local-dir "$dir" || return 1
+    }
+    log "  converting bf16 + dflash2 -> .ninfer (recipe qwen3_8_27b)"
+    ( cd "$CONV" && .venv/bin/python -m tools.convert \
+        --model "$dir/BF16" \
+        --recipe qwen3_8_27b \
+        --source dflash2="$dir/BF16/DFlash2-FP8" \
+        --components text,vision,mtp,dflash2 \
+        --resource chat_template.jinja="$ASH/tools/chat_templates/qwen3_8.jinja" \
+        --proposal --name qwen3.8-27b-coder390 --out "$out" ) || return 1
+  }
   run_variant coder390
 }
 
@@ -96,7 +119,7 @@ stage_swift15() {
       local free; free=$(disk_free_g)
       [ "$free" -lt 80 ] && { log "  DISK GUARD: ${free}G < 80 for bf16, abort"; return 1; }
       log "  cloning bf16 repo (~54G)"
-      HF_HUB_ENABLE_HF_TRANSFER=0 huggingface-cli download \
+      HF_HUB_ENABLE_HF_TRANSFER=0 hf download \
         ukisai/Swift-1.5-Qwen3.8-27b --local-dir "$dir" || return 1
     }
     convert_bf16 "$dir" "$out" || return 1
@@ -112,7 +135,7 @@ stage_huihui() {
       local free; free=$(disk_free_g)
       [ "$free" -lt 80 ] && { log "  DISK GUARD: ${free}G < 80 for bf16, abort"; return 1; }
       log "  cloning bf16 repo (~54G)"
-      HF_HUB_ENABLE_HF_TRANSFER=0 huggingface-cli download \
+      HF_HUB_ENABLE_HF_TRANSFER=0 hf download \
         huihui-ai/Huihui-Qwen3.8-27B-abliterated --local-dir "$dir" || return 1
     }
     convert_bf16 "$dir" "$out" || return 1
@@ -128,7 +151,7 @@ stage_obliterated() {
       local free; free=$(disk_free_g)
       [ "$free" -lt 80 ] && { log "  DISK GUARD: ${free}G < 80 for bf16, abort"; return 1; }
       log "  cloning bf16 repo (~54G)"
-      HF_HUB_ENABLE_HF_TRANSFER=0 huggingface-cli download \
+      HF_HUB_ENABLE_HF_TRANSFER=0 hf download \
         OBLITERATUS/Qwen3.8-27B-OBLITERATED --local-dir "$dir" || return 1
     }
     convert_bf16 "$dir" "$out" || return 1
@@ -169,8 +192,7 @@ stage_fable5() {
 cleanup_artifacts() {
   # Free resident artifacts for variants whose sweep already completed.
   local f
-  for f in "$ASH/models/coder390_q4lynn_q8mtp_v3.ninfer" \
-           "$ASH/models/coder390_q4lynn_q8mtp.ninfer" \
+  for f in "$ASH/models/coder390_dflash2.ninfer" \
            "$ASH/models/swift15_qwen3_8_27b.ninfer" \
            "$ASH/models/huihui_abl_qwen3_8_27b.ninfer" \
            "$ASH/models/obliterated_qwen3_8_27b.ninfer"; do

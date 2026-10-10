@@ -177,16 +177,20 @@ ENGINES = {
     # campaign 2026-10-10). .ninfer arms reuse the ashalliants binary +
     # hostkv-shim shape (NINFER_MODEL override); GGUF arms reuse the
     # gguf-q4xs prism shape. One holder at a time; start() clears the GPU.
-    # Coder390 ships both draft paths; its .ninfer Q4LynnStyle-Q8MTP
-    # (18.74 GB) carries an MTP head -> mtp lane; dflash2 would need the
-    # BF16/DFlash2-FP8 source repo, not shipped as .ninfer.
+    # Coder390: the publisher's ready-made .ninfer tiers store their
+    # lynn-style quants with layout "gguf_blocks_v1", which the 0.15.0
+    # engine does NOT implement (startup FATAL "unknown tensor layout:
+    # gguf_blocks_v1", 2026-10-10 17:58; the binary knows contiguous_le/
+    # row_split_k128/block_scale_k16/row_scale only). So this arm uses
+    # the BF16 safetensors + BF16/DFlash2-FP8 draft through the vendored
+    # converter — dflash2 lane, directly comparable to ashalliants-df2.
     "coder390": {
         "model": "auto", "port": 8110,
         "launcher": ["env",
                      "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
-        "env": {"NINFER_MODEL": f"{ASH}/models/coder390_q4lynn_q8mtp_v3.ninfer",
-                "NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
+        "env": {"NINFER_MODEL": f"{ASH}/models/coder390_dflash2.ninfer",
+                "NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8110", "NINFER_FALLBACK": "off",
                 "NINFER_HOST_STATE_SLOTS": "8",
                 "NINFER_SERVER": f"{ASH}/ninfer-serve.hostkv-shim"},
