@@ -233,14 +233,19 @@ ENGINES = {
     },
     # GGUF-only variants: prism llama.cpp, same shape as gguf-q4xs.
     # ThinkingCap ships no draft artifacts; OBLITERATUS notes its V3
-    # restores MTP in safetensors only. All four: q8 KV, per-slot 32768.
+    # restores MTP in safetensors only. All four: per-slot 32768.
+    # KV was q8_0/q8_0 — 8.7 GiB KV + 15.5 GiB Q4_K_M weights + compute
+    # buffers > 24 GB (OOM "failed to allocate buffer for kv cache",
+    # 2026-10-10). q6_k/q4_0 REJECTED by this prism fork (-ctk help lists
+    # only f32/f16/bf16/q8_0/q4_0/q4_1/iq4_nl/q5_0/q5_1 — no q6_k;
+    # 2026-10-11 instant-usage-exit). q5_1/q4_0 KV ≈ 5.1 GiB fits.
     "thinkingcap": {
         "model": "auto", "port": 8114,
         "cmd": ["/run/current-system/sw/bin/bonsai-llama-server",
                 "-m", f"{MODELS}/ThinkingCap-Qwen3.8-27B-Q4_K_M.gguf",
                 "-ngl", "99", "-fa", "on", "--jinja",
                 "--alias", "qwen38-27b-thinkingcap",
-                "-c", "262144", "-np", "8", "-ctk", "q8_0", "-ctv", "q8_0",
+                "-c", "262144", "-np", "8", "-ctk", "q5_1", "-ctv", "q4_0",
                 "--host", "127.0.0.1", "--port", "8114"],
     },
     "davidau-fable": {
@@ -249,7 +254,7 @@ ENGINES = {
                 "-m", f"{MODELS}/Qwen3.8-27B-TurboFCFusion-735-882-Here-Uncen-NEO-CODER-MAX-MTP-Q4_K_M.gguf",
                 "-ngl", "99", "-fa", "on", "--jinja",
                 "--alias", "qwen38-27b-davidau",
-                "-c", "262144", "-np", "8", "-ctk", "q8_0", "-ctv", "q8_0",
+                "-c", "262144", "-np", "8", "-ctk", "q5_1", "-ctv", "q4_0",
                 "--host", "127.0.0.1", "--port", "8115"],
     },
     "humanlike": {
@@ -258,7 +263,7 @@ ENGINES = {
                 "-m", f"{MODELS}/Qwen3.8-27B-Humanlike-Chat-IQ4_XS.gguf",
                 "-ngl", "99", "-fa", "on", "--jinja",
                 "--alias", "qwen38-27b-humanlike",
-                "-c", "262144", "-np", "8", "-ctk", "q8_0", "-ctv", "q8_0",
+                "-c", "262144", "-np", "8", "-ctk", "q5_1", "-ctv", "q4_0",
                 "--host", "127.0.0.1", "--port", "8116"],
     },
     "fable5": {
@@ -269,7 +274,7 @@ ENGINES = {
                 "-m", f"{MODELS}/Qwen3.8-27B-LoRA-IQ4_XS-MTP.gguf",
                 "-ngl", "99", "-fa", "on", "--jinja",
                 "--alias", "qwen38-27b-fable5",
-                "-c", "262144", "-np", "8", "-ctk", "q8_0", "-ctv", "q8_0",
+                "-c", "262144", "-np", "8", "-ctk", "q5_1", "-ctv", "q4_0",
                 "--host", "127.0.0.1", "--port", "8117"],
     },
 }

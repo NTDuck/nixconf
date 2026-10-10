@@ -96,6 +96,9 @@ stage_coder390() {
   # Publisher's .ninfer tiers are gguf_blocks_v1 — unsupported by the
   # 0.15.0 engine (startup FATAL, 2026-10-10). Convert BF16 + DFlash2-FP8
   # draft instead: dflash2 lane, comparable to ashalliants-df2.
+  # 2026-10-11: vision dropped — artifact + vision (1.45G) exceeded the
+  # 24G card's runtime reservation by 1.13G ("requested Engine runtime
+  # reservation requires 6449318144 bytes"); coder prompts are text-only.
   local dir="$DL/nerkyor_coder390"
   local out="$ASH/models/coder390_dflash2.ninfer"
   [ -f "$out" ] || {
@@ -127,7 +130,7 @@ stage_coder390() {
         --model "$dir/BF16" \
         --recipe qwen3_8_27b \
         --source dflash2="$conv_src" \
-        --components text,vision,mtp,dflash2 \
+        --components text,mtp,dflash2 \
         --resource chat_template.jinja="$ASH/tools/chat_templates/qwen3_8.jinja" \
         --resource tokenizer.json=/home/ayin/models/q27-bench/stock-tokenizer/qwen38-stock-tokenizer.json \
         --resource tokenizer_config.json=/home/ayin/models/q27-bench/stock-tokenizer/qwen38-stock-tokenizer_config.json \
