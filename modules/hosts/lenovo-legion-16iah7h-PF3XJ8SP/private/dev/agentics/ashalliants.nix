@@ -78,16 +78,14 @@
 
           conflicts = ["ollama.service" "bonsai2.service"];
 
-          # `path` is a UNIT-LEVEL systemd(7) option — inside
-          # serviceConfig it emits an ignored `Path=` key (journal
-          # 2026-10-10 09:45: "env: 'bash': No such file or directory",
-          # status=127). Located before serviceConfig: unit attrs and
-          # serviceConfig are merged into one attrset, so a duplicate
-          # `path` here would shadow itself. Store bin dirs are
-          # rebuild-stable via the module wrapper, not a hardcoded
-          # /run/current-system string.
-          path = with pkgs; [bash coreutils];
-
+          # run.sh resolves bash via `#!/usr/bin/env bash`. The NixOS
+          # unit-level `path` option did NOT survive the den-module
+          # merge (built unit xsfi7qpjdx921 carries only the default
+          # PATH: coreutils/findutils/gnugrep/gnused/systemd, no bash;
+          # journal 2026-10-10 09:45 status=127 "env: 'bash'"). Raw
+          # systemd `Environment=` from serviceConfig provably renders
+          # into the unit (LD_LIBRARY_PATH line) and, emitted after the
+          # default PATH line, wins by systemd's last-set-wins rule.
           serviceConfig = {
             Type = "simple";
             User = "ayin"; # artifact tree is ayin-owned; run.sh probes $HOME trees
@@ -116,6 +114,7 @@
             Environment = let
               ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
             in [
+              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
               "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
               "LD_LIBRARY_PATH=${ld}"
               "NINFER_SPEC=dflash2"
