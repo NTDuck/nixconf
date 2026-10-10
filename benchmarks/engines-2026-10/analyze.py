@@ -203,7 +203,9 @@ def main():
     # lanes would compare spec acceleration, not weights. Extend
     # QWEN_VARIANTS as further variant arms (vision, ...) land.
     QWEN_VARIANTS = {"ashalliants-mtp": "base",
-                     "swift-uncensored": "uncensored"}
+                     "swift-uncensored": "uncensored",
+                     "swift15": "swift-1.5",
+                     "huihui-abl": "abliterated"}
     fig = plt.figure(figsize=(11, 7.5))
     ax = fig.add_subplot(111, projection="3d")
     qrows = models.get("qwen3.8-27b", [])

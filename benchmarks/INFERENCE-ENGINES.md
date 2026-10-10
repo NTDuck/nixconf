@@ -127,8 +127,8 @@ Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One su
 
 ### `huihui-abl`
 
-- **Artifact:** —
-- **Flags:** —
+- **Artifact:** `huihui_abl_qwen3_8_27b.ninfer` (Huihui-Qwen3.8-27B-abliterated; same 0.15.0 binary as ashalliants-mtp)
+- **Flags:** spec=mtp, ctx 262144, NINFER_MODEL override, host KV shim 2048 MiB, FALLBACK=off
 
 | context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
 |---|---|---|---|---|---|
@@ -169,8 +169,8 @@ Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One su
 
 ### `swift15`
 
-- **Artifact:** —
-- **Flags:** —
+- **Artifact:** `swift15_qwen3_8_27b.ninfer` (ukisai Swift-1.5-Qwen3.8-27b; same 0.15.0 binary as ashalliants-mtp)
+- **Flags:** spec=mtp, ctx 262144, NINFER_MODEL override, host KV shim 2048 MiB, FALLBACK=off
 
 | context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
 |---|---|---|---|---|---|
@@ -184,6 +184,8 @@ Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One su
 ## Lane comparability
 
 `swift-uncensored` runs the **mtp lane** (spec=mtp), not the tuned dflash2 profile of `ashalliants-df2`: the converted artifact is the 1124-object flavor — full MTP draft weights but no dflash2 draft weights (0 of the baseline's 56 dflash2-bound weights, 1.11 GiB) — so the dflash2 profile is structurally impossible and the engine rejects it. The apples-to-apples comparison is therefore **swift-uncensored vs `ashalliants-mtp`** (same binary, spec, and profile; abliterated weights are the only variable). Do not rank swift-uncensored against `ashalliants-df2`.
+
+The 2026-10-10 variant arms (`swift15`, `huihui-abl`) ran on the same **mtp lane** with `NINFER_MODEL` overrides of the same 0.15.0 binary, so they are comparable to `ashalliants-mtp`/`swift-uncensored` and to each other — not to `ashalliants-df2`. Campaign failures (diagnosed 2026-10-10, rerun pending): `coder390` (publisher tokenizer drift — converter now overrides tokenizer.json/tokenizer_config.json with stock qwen3.8 resources), `obliterated` (ENOSPC mid-download; repo ships 97G of multi-quant sets), and the four GGUF-only arms (`thinkingcap`, `davidau-fable`, `humanlike`, `fable5`) which OOM on the KV cache at ctx 262144 with q8_0 KV on the 24 GB card (needs reduced per-lane ctx or host-KV offload).
 
 ## Overflowed cells (retried once 2026-10-09; permanent rejections kept)
 

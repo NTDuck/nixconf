@@ -213,6 +213,14 @@ def main():
                              "binary as ashalliants-mtp)",
                              "spec=mtp, ctx 262144, NINFER_MODEL override, "
                              "host KV shim 2048 MiB, FALLBACK=off"),
+        "swift15": ("`swift15_qwen3_8_27b.ninfer` (ukisai Swift-1.5-Qwen3.8-"
+                    "27b; same 0.15.0 binary as ashalliants-mtp)",
+                    "spec=mtp, ctx 262144, NINFER_MODEL override, host KV "
+                    "shim 2048 MiB, FALLBACK=off"),
+        "huihui-abl": ("`huihui_abl_qwen3_8_27b.ninfer` (Huihui-Qwen3.8-27B-"
+                       "abliterated; same 0.15.0 binary as ashalliants-mtp)",
+                       "spec=mtp, ctx 262144, NINFER_MODEL override, host KV "
+                       "shim 2048 MiB, FALLBACK=off"),
         "buun-qwen": ("`Qwen3.8-27B-UD-IQ4_XS.gguf` (buun-llama-cpp b9637)",
                       "TCQ KV `turbo2_tcq`, `-c 524288 -np 8` "
                       "(per-slot 65536), flash-attn"),
