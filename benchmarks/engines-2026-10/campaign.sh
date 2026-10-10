@@ -73,12 +73,19 @@ convert_bf16() { # convert_bf16 <hf_repo_dir> <out.ninfer> <name>
   local free; free=$(disk_free_g)
   if [ "$free" -lt 25 ]; then log "  DISK GUARD: ${free}G free, abort"; return 1; fi
   log "  converting bf16 -> .ninfer (recipe qwen3_8_27b, text,vision,mtp,proposal)"
-  ( cd "$CONV" && .venv/bin/python -m tools.convert \
+  # torch needs libcuda.so.1 (driver lib) from /run/opengl-driver/lib;
+  # not on the default loader path on NixOS (see stage_coder390 note).
+  local conv_env="LD_LIBRARY_PATH=/run/opengl-driver/lib:${LD_LIBRARY_PATH:-}"
+  ( cd "$CONV" && env "$conv_env" .venv/bin/python -m tools.convert \
       --model "$src" \
       --recipe qwen3_8_27b \
       --components text,vision,mtp \
       --resource chat_template.jinja="$ASH/tools/chat_templates/qwen3_8.jinja" \
       --proposal --name qwen3.8-27b --out "$out" ) || return 1
+  # The bf16 staging tree (~55G) exhausted 7.5G disk on the 2026-10-10
+  # first run — discard once the artifact encodes it fully.
+  rm -rf "$src.tmpdl" "${src%/}" 
+  rmdir --ignore-fail-on-non-empty "$DL" 2>/dev/null || true
 }
 
 run_variant() { local tag=$1; sweep_one "$tag"; }
@@ -94,19 +101,38 @@ stage_coder390() {
   [ -f "$out" ] || {
     [ -f "$dir/BF16/model-00002-of-00002.safetensors" ] || {
       local free; free=$(disk_free_g)
-      [ "$free" -lt 115 ] && { log "  DISK GUARD: ${free}G < 115 for bf16+draft, abort"; return 1; }
+      [ "$free" -lt 110 ] && { log "  DISK GUARD: ${free}G < 115 for bf16+draft, abort"; return 1; }
       log "  cloning BF16 (~52G) + DFlash2-FP8 draft (2.4G)"
       hf download nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2 \
         --include "BF16/*" --local-dir "$dir" || return 1
     }
+    # Draft ships 128x128 block-scale FP8; the converter only understands
+    # per-row scales -> expand to plain BF16 first (dequant_dflash.py).
+    # Initializer prefers the deq dir so re-runs after purging the FP8
+    # original still resolve to the expanded draft, not the base model.
+    local conv_src="$dir/BF16/DFlash2-FP8-deq"
+    [ -d "$conv_src" ] || conv_src="$dir/BF16/DFlash2-FP8"
+    if [ -f "$dir/BF16/DFlash2-FP8/model.safetensors" ]; then
+      log "  expanding block-FP8 draft -> BF16"
+      "$CONV/.venv/bin/python" "$ROOT/dequant_dflash.py" \
+        "$dir/BF16/DFlash2-FP8" "$dir/BF16/DFlash2-FP8-deq" || return 1
+      conv_src="$dir/BF16/DFlash2-FP8-deq"
+    fi
     log "  converting bf16 + dflash2 -> .ninfer (recipe qwen3_8_27b)"
-    ( cd "$CONV" && .venv/bin/python -m tools.convert \
+    # torch needs libcuda.so.1 (driver lib) which lives in
+    # /run/opengl-driver/lib on NixOS and is NOT on the default loader
+    # path; without it conversions die with "Found no NVIDIA driver".
+    local conv_env="LD_LIBRARY_PATH=/run/opengl-driver/lib:${LD_LIBRARY_PATH:-}"
+    ( cd "$CONV" && env "$conv_env" .venv/bin/python -m tools.convert \
         --model "$dir/BF16" \
         --recipe qwen3_8_27b \
-        --source dflash2="$dir/BF16/DFlash2-FP8" \
+        --source dflash2="$conv_src" \
         --components text,vision,mtp,dflash2 \
         --resource chat_template.jinja="$ASH/tools/chat_templates/qwen3_8.jinja" \
         --proposal --name qwen3.8-27b-coder390 --out "$out" ) || return 1
+    # Discard the ~55G bf16 staging tree once encoded (disk-pressure
+    # lesson from the 2026-10-10 first run).
+    rm -rf "$dir"
   }
   run_variant coder390
 }
@@ -117,7 +143,7 @@ stage_swift15() {
   [ -f "$out" ] || {
     [ -d "$dir" ] && [ -n "$(ls -A "$dir" 2>/dev/null)" ] || {
       local free; free=$(disk_free_g)
-      [ "$free" -lt 80 ] && { log "  DISK GUARD: ${free}G < 80 for bf16, abort"; return 1; }
+      [ "$free" -lt 75 ] && { log "  DISK GUARD: ${free}G < 80 for bf16, abort"; return 1; }
       log "  cloning bf16 repo (~54G)"
       HF_HUB_ENABLE_HF_TRANSFER=0 hf download \
         ukisai/Swift-1.5-Qwen3.8-27b --local-dir "$dir" || return 1
@@ -133,7 +159,7 @@ stage_huihui() {
   [ -f "$out" ] || {
     [ -d "$dir" ] && [ -n "$(ls -A "$dir" 2>/dev/null)" ] || {
       local free; free=$(disk_free_g)
-      [ "$free" -lt 80 ] && { log "  DISK GUARD: ${free}G < 80 for bf16, abort"; return 1; }
+      [ "$free" -lt 75 ] && { log "  DISK GUARD: ${free}G < 80 for bf16, abort"; return 1; }
       log "  cloning bf16 repo (~54G)"
       HF_HUB_ENABLE_HF_TRANSFER=0 hf download \
         huihui-ai/Huihui-Qwen3.8-27B-abliterated --local-dir "$dir" || return 1
@@ -149,7 +175,7 @@ stage_obliterated() {
   [ -f "$out" ] || {
     [ -d "$dir" ] && [ -n "$(ls -A "$dir" 2>/dev/null)" ] || {
       local free; free=$(disk_free_g)
-      [ "$free" -lt 80 ] && { log "  DISK GUARD: ${free}G < 80 for bf16, abort"; return 1; }
+      [ "$free" -lt 75 ] && { log "  DISK GUARD: ${free}G < 80 for bf16, abort"; return 1; }
       log "  cloning bf16 repo (~54G)"
       HF_HUB_ENABLE_HF_TRANSFER=0 hf download \
         OBLITERATUS/Qwen3.8-27B-OBLITERATED --local-dir "$dir" || return 1
