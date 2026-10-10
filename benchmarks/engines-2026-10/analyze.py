@@ -194,32 +194,31 @@ def main():
         plt.close(fig)
         print(f"wrote {p.name}")
 
-    # Winner frontier surface: one plot for the whole report. Per model
-    # (not per engine) — Z = best measured per-agent tok/s at each
-    # (context, parallelism) cell across that model's engines, so the
-    # surface is the achievable-throughput frontier. Lanes with no
-    # measurement at a cell leave a hole (masked), never a zero.
+    # Winner-engine surface: one plot closing the report. Per model,
+    # plot the WINNING ENGINE's measured surface (peak per-agent tok/s
+    # criterion, mirroring report.py's Winner bullets; lane-excluded
+    # variants can never win). Z = per-agent decode tok/s, X = context,
+    # Y = parallelism k. One canvas, one surface per model family.
+    COMPARABLE_EXCLUDED = {"swift-uncensored"}
     fig = plt.figure(figsize=(11, 7.5))
     ax = fig.add_subplot(111, projection="3d")
+    all_ctxs = sorted({r["ctx"] for rs in models.values() for r in rs})
+    all_concs = sorted({r["conc"] for rs in models.values() for r in rs})
     drew = False
     for i, (model, mrows) in enumerate(models.items()):
-        grid = {}
+        grid_all = defaultdict(dict)
         for r in mrows:
             if not r["agents"]:
                 continue
             a = r["agents"][-1]
             if a["ok"] <= 0 or a["mean_decode_tps"] <= 0:
                 continue
-            k = (r["ctx"], r["conc"])
-            if k not in grid or a["mean_decode_tps"] > grid[k]:
-                grid[k] = a["mean_decode_tps"]
-        if not grid:
+            grid_all[r["tag"]][(r["ctx"], r["conc"])] = a["mean_decode_tps"]
+        rank_tags = [t for t in grid_all if t not in COMPARABLE_EXCLUDED]
+        if not rank_tags:
             continue
-        ctxs = sorted({c for c, _ in grid})
-        concs = sorted({c for _, c in grid})
-        # Global axes: every model maps onto the same context/k ticks.
-        all_ctxs = sorted({r["ctx"] for rs in models.values() for r in rs})
-        all_concs = sorted({r["conc"] for rs in models.values() for r in rs})
+        pk_tag = max(rank_tags, key=lambda t: max(grid_all[t].values()))
+        grid = grid_all[pk_tag]
         Z = np.full((len(all_concs), len(all_ctxs)), np.nan)
         for (ctx, conc), tps in grid.items():
             Z[all_concs.index(conc), all_ctxs.index(ctx)] = tps
@@ -237,7 +236,7 @@ def main():
         for (ctx, conc), tps in grid.items():
             ax.scatter(all_ctxs.index(ctx), all_concs.index(conc), tps,
                        color=col, s=16, depthshade=False)
-        ax.plot([], [], [], color=col, label=f"{model} (frontier)")
+        ax.plot([], [], [], color=col, label=f"{model}: {pk_tag} (winner)")
     if drew:
         ax.set_xticks(range(len(all_ctxs)))
         ax.set_xticklabels(
@@ -248,15 +247,15 @@ def main():
         ax.set_xlabel("context", fontsize=9, labelpad=8)
         ax.set_ylabel("parallelism (k)", fontsize=9, labelpad=8)
         ax.set_zlabel("per-agent decode tok/s", fontsize=9, labelpad=6)
-        ax.set_title("Winner frontier — best measured per-agent decode "
-                     "tok/s per model (Z rises = faster)")
+        ax.set_title("Winner engines — measured per-agent decode tok/s "
+                     "(Z rises = faster)")
         ax.view_init(elev=22, azim=-60)
         ax.legend(fontsize=8, loc="upper left")
         fig.tight_layout()
-        p = OUT / "surf3d_frontier.png"
+        p = OUT / "surf3d_winner.png"
         fig.savefig(p, dpi=120)
         plt.close(fig)
-        print("wrote surf3d_frontier.png")
+        print("wrote surf3d_winner.png")
     else:
         plt.close(fig)
     return 0

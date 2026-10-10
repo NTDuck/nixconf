@@ -178,7 +178,9 @@ def main():
     ]
 
     # Per-model 3D surfaces in the summary (user spec: paragraph + plots).
-    surf_pngs = sorted((ROOT / "results").glob("surf3d_*.png"))
+    # surf3d_winner.png is the Winner-section plot, never duplicated here.
+    surf_pngs = sorted(p for p in (ROOT / "results").glob("surf3d_*.png")
+                       if p.name != "surf3d_winner.png")
     if surf_pngs:
         lines += ["### Throughput surfaces", "",
                   "Z = per-agent decode tok/s (up = faster), X = context, "
@@ -292,12 +294,12 @@ def main():
         lines += winner_lines
     else:
         lines += ["_No model produced ok cells._"]
-    if (ROOT / "results" / "surf3d_frontier.png").exists():
-        lines += ["", "Throughput frontier — best measured per-agent decode "
-                  "tok/s per model (Z = tok/s up = faster, X = context, "
+    if (ROOT / "results" / "surf3d_winner.png").exists():
+        lines += ["", "Winner engines' measured throughput — per-agent decode "
+                  "tok/s (Z = tok/s up = faster, X = context, "
                   "Y = parallelism k):", "",
-                  "![winner frontier](engines-2026-10/results/"
-                  "surf3d_frontier.png)"]
+                  "![winner surface](engines-2026-10/results/"
+                  "surf3d_winner.png)"]
     lines += [
         "",
         "## Reproduce",
