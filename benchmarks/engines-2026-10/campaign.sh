@@ -129,6 +129,8 @@ stage_coder390() {
         --source dflash2="$conv_src" \
         --components text,vision,mtp,dflash2 \
         --resource chat_template.jinja="$ASH/tools/chat_templates/qwen3_8.jinja" \
+        --resource tokenizer.json=/home/ayin/models/q27-bench/stock-tokenizer/qwen38-stock-tokenizer.json \
+        --resource tokenizer_config.json=/home/ayin/models/q27-bench/stock-tokenizer/qwen38-stock-tokenizer_config.json \
         --proposal --name qwen3.8-27b-coder390 --out "$out" ) || return 1
     # Discard the ~55G bf16 staging tree once encoded (disk-pressure
     # lesson from the 2026-10-10 first run).
@@ -154,6 +156,13 @@ stage_swift15() {
 }
 
 stage_huihui() {
+  # Cells already measured (2026-10-10 morning gen): skip download+convert
+  # entirely — the artifact was cleanup_artifacts'd and rebuilding it would
+  # collide with the orphan .conversion.json and re-download 52G for nothing.
+  if [ "$(cells_for huihui-abl)" -ge 20 ]; then
+    log "huihui-abl: 20 cells already measured, skipping stage"
+    return 0
+  fi
   local dir="$DL/huihui_Huihui-Qwen3.8-27B-abliterated"
   local out="$ASH/models/huihui_abl_qwen3_8_27b.ninfer"
   [ -f "$out" ] || {

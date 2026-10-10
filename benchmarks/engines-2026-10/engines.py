@@ -296,8 +296,10 @@ def clear_gpu():
     # Drain check scoped to the pinned 3090 (-i 1): other GPUs host the
     # user's desktop/games (e.g. GPU0 game at 2+ GiB) and must not fail
     # the assertion. Query returns "Unable to determine..." on missing
-    # GPUs, so fall back to per-GPU index.
-    for _ in range(60):
+    # GPUs, so fall back to per-GPU index. 120s: a freshly-SIGKILLed
+    # 23G model holder can take over a minute to release VRAM
+    # (thinkingcap OOM lesson, 2026-10-10).
+    for _ in range(120):
         out = subprocess.run(["nvidia-smi", "--query-compute-apps=used_memory",
                               "--format=csv,noheader", "-i", "1"],
                              capture_output=True, text=True).stdout

@@ -4,7 +4,7 @@ _Generated 2026-10-10 · harness: `benchmarks/engines-2026-10/` · metric: **per
 
 ## Summary
 
-Sweep screened 10 engine configurations across two model families on one RTX 3090 (TB4 eGPU): screening (fresh + 16k, C1–C8) then a long ladder (32k–256k, C1/C4/C8) for survivors. Metric is per-agent decode tok/s: what one agent observes while N agents stream concurrently on the same engine. Cells that overflowed the 15 GiB host or deadlocked the engine are ledgered, not averaged in. Peak VRAM per cell is reported beside each table.
+Sweep screened 12 engine configurations across two model families on one RTX 3090 (TB4 eGPU): screening (fresh + 16k, C1–C8) then a long ladder (32k–256k, C1/C4/C8) for survivors. Metric is per-agent decode tok/s: what one agent observes while N agents stream concurrently on the same engine. Cells that overflowed the 15 GiB host or deadlocked the engine are ledgered, not averaged in. Peak VRAM per cell is reported beside each table.
 
 
 Per-engine sections below pair each engine's configuration with its result table: per-agent decode tok/s (rows = context, cols = C1–C8) and peak VRAM MiB per cell. `—` = not measured or overflow (see ledger).
@@ -125,6 +125,20 @@ Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One su
 | 16k | 41.4 | 23.9 | 12.1 | 5.8 | 26414 |
 | 32k | 37.9 | — | 8.4 | 3.9 | 24360 |
 
+### `huihui-abl`
+
+- **Artifact:** —
+- **Flags:** —
+
+| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
+|---|---|---|---|---|---|
+| fresh | 125.5 | 122.0 | 115.0 | 105.9 | 23214 |
+| 16k | 105.6 | 84.8 | 82.4 | 77.3 | 23480 |
+| 32k | 112.7 | — | 78.9 | 74.4 | 23480 |
+| 64k | 106.3 | — | 86.0 | 70.8 | 23480 |
+| 128k | 91.2 | — | 74.1 | 68.5 | 23480 |
+| 256k | 74.6 | — | 73.1 | 68.2 | 23480 |
+
 ### `ninfer-061`
 
 - **Artifact:** `/var/lib/ninfer/qwen3_8_27b.ninfer` (ninfer 0.6.1)
@@ -152,6 +166,20 @@ Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One su
 | 64k | 91.7 | — | 81.9 | 72.1 | 25639 |
 | 128k | 79.0 | — | 74.0 | 70.6 | 26260 |
 | 256k | 66.5 | — | 73.8 | 72.0 | 25483 |
+
+### `swift15`
+
+- **Artifact:** —
+- **Flags:** —
+
+| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
+|---|---|---|---|---|---|
+| fresh | 120.4 | 106.8 | 105.6 | 104.2 | 23214 |
+| 16k | 106.9 | 87.3 | 81.9 | 75.0 | 23224 |
+| 32k | 101.7 | — | 78.2 | 73.4 | 23224 |
+| 64k | 99.2 | — | 81.5 | 73.5 | 23224 |
+| 128k | 87.2 | — | 73.2 | 65.4 | 23224 |
+| 256k | 72.1 | — | 65.2 | 68.9 | 23224 |
 
 ## Lane comparability
 
@@ -188,7 +216,7 @@ _None outstanding._
 ## Winner
 
 - **bonsai2-27b**: peak `ninfer-all-b2` 267.5 tok/s per-agent; at high parallelism×deep ctx — C8 × 32k: `ninfer-all-b2` 210.9 tok/s vs `q27-t3-solo` 71.0.
-- **qwen3.8-27b**: peak `ashalliants-df2` 162.7 tok/s per-agent; at high parallelism×deep ctx — C8 × 256k: `ashalliants-df2` 91.9 tok/s vs `ashalliants-mtp` 66.9; swift-uncensored (mtp lane) C8 × 256k: 72.0 tok/s, +7.7% vs `ashalliants-mtp` 66.9.
+- **qwen3.8-27b**: peak `ashalliants-df2` 162.7 tok/s per-agent; at high parallelism×deep ctx — C8 × 256k: `ashalliants-df2` 91.9 tok/s vs `swift15` 68.9; swift-uncensored (mtp lane) C8 × 256k: 72.0 tok/s, +7.7% vs `ashalliants-mtp` 66.9.
 
 qwen3.8-27b variants on the ashalliants engine (shared mtp lane) — per-agent decode tok/s (Z = tok/s up = faster, X = context, Y = parallelism k):
 
