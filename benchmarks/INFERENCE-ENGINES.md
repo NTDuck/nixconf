@@ -4,18 +4,24 @@ _Generated 2026-10-10 · harness: `benchmarks/engines-2026-10/` · metric: **per
 
 ## Summary
 
-- **bonsai2-27b**: peak `ninfer-all-b2` 267.5 tok/s per-agent; at high parallelism×deep ctx — C8 × 32k: `ninfer-all-b2` 210.9 tok/s vs `q27-t3-solo` 71.0.
-- **qwen3.8-27b**: peak `ashalliants-df2` 162.7 tok/s per-agent; at high parallelism×deep ctx — C8 × 256k: `ashalliants-df2` 91.9 tok/s vs `ashalliants-mtp` 66.9.
-- **qwen38-27b-gguf**: peak `gguf-q4xs` 45.5 tok/s per-agent; at high parallelism×deep ctx — C8 × 32k: only `gguf-q4xs` measured (3.9 tok/s).
-- **qwen38-27b-buun**: peak `buun-qwen` 43.1 tok/s per-agent; at high parallelism×deep ctx — C8 × 32k: only `buun-qwen` measured (2.1 tok/s).
+Sweep screened 9 engine configurations across two model families on one RTX 3090 (TB4 eGPU): screening (fresh + 16k, C1–C8) then a long ladder (32k–256k, C1/C4/C8) for survivors. Metric is per-agent decode tok/s: what one agent observes while N agents stream concurrently on the same engine. Cells that overflowed the 15 GiB host or deadlocked the engine are ledgered, not averaged in. Peak VRAM per cell is reported beside each table.
 
-Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and peak VRAM MiB per cell. `—` = not measured or overflow (see ledger).
+
+Per-engine sections below pair each engine's configuration with its result table: per-agent decode tok/s (rows = context, cols = C1–C8) and peak VRAM MiB per cell. `—` = not measured or overflow (see ledger).
+
+### Throughput surfaces
+
+Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One surface per engine; measured cells are dotted, gaps are unmeasured/overflowed.
+
+![surf3d_bonsai2-27b](engines-2026-10/results/surf3d_bonsai2-27b.png)
+![surf3d_qwen3.8-27b](engines-2026-10/results/surf3d_qwen3.8-27b.png)
 
 ## bonsai2-27b
 
-### Table views (per-agent decode tok/s)
+### `ninfer-all-b2`
 
-#### `ninfer-all-b2`
+- **Artifact:** `Ternary-Bonsai-2-27B-ninfer-v3.ninfer` (ghcr.io/iamwavecut/ninfer-all, sm86)
+- **Flags:** `--kv-dtype rk4v4 --spec dflash2 --draft-tokens 5 --no-prefix-reuse`, ctx/kv 262144
 
 | context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
 |---|---|---|---|---|---|
@@ -24,7 +30,10 @@ Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and pe
 | 32k | 225.8 | — | 199.8 | 210.9 | 11950 |
 | 64k | 197.9 | — | 42.7 | 24.6 | 15310 |
 
-#### `prism-ptq10`
+### `prism-ptq10`
+
+- **Artifact:** `Ternary-Bonsai-2-27B-PTQ1_0.gguf` (prism llama.cpp)
+- **Flags:** PTQ1_0, flash-attn, ctx 32768, np 4
 
 | context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
 |---|---|---|---|---|---|
@@ -35,7 +44,10 @@ Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and pe
 | 128k | 0.0 | — | — | — | 8780 |
 | 256k | 0.0 | — | — | — | 8780 |
 
-#### `q27-t3-mtp`
+### `q27-t3-mtp`
+
+- **Artifact:** `bonsai2-27b-t3-mtp-slim.q27` (q27 v0.14.4)
+- **Flags:** spec=mtp draft 3, slots 8
 
 | context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
 |---|---|---|---|---|---|
@@ -46,7 +58,10 @@ Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and pe
 | 128k | 34.1 | — | — | — | 22902 |
 | 256k | 20.8 | — | — | — | 24327 |
 
-#### `q27-t3-solo`
+### `q27-t3-solo`
+
+- **Artifact:** `bonsai2-27b-t3-mtp-slim.q27` (q27 v0.14.4)
+- **Flags:** w8 stack 2.3 GiB, spec-off, ctx 262144, slots 1
 
 | context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
 |---|---|---|---|---|---|
@@ -57,18 +72,12 @@ Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and pe
 | 128k | 33.5 | — | — | — | 22520 |
 | 256k | 18.2 | — | — | — | 22520 |
 
-### Plots
-
-![perC_bonsai2-27b_c1](engines-2026-10/results/perC_bonsai2-27b_c1.png)
-![perC_bonsai2-27b_c2](engines-2026-10/results/perC_bonsai2-27b_c2.png)
-![perC_bonsai2-27b_c4](engines-2026-10/results/perC_bonsai2-27b_c4.png)
-![perC_bonsai2-27b_c8](engines-2026-10/results/perC_bonsai2-27b_c8.png)
-
 ## qwen3.8-27b
 
-### Table views (per-agent decode tok/s)
+### `ashalliants-df2`
 
-#### `ashalliants-df2`
+- **Artifact:** `qwen3_8_27b.ninfer` (ashalliants 0.15.0)
+- **Flags:** spec=dflash2, ctx 262144, rk4v4 KV, host KV clamped 2048 MiB via shim, FALLBACK=off
 
 | context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
 |---|---|---|---|---|---|
@@ -79,7 +88,10 @@ Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and pe
 | 128k | 118.2 | — | 118.5 | 117.2 | 23374 |
 | 256k | 90.9 | — | 89.5 | 91.9 | 23374 |
 
-#### `ashalliants-mtp`
+### `ashalliants-mtp`
+
+- **Artifact:** `qwen3_8_27b.ninfer` (ashalliants 0.15.0)
+- **Flags:** spec=mtp, ctx 262144, host KV shim 2048 MiB
 
 | context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
 |---|---|---|---|---|---|
@@ -90,7 +102,33 @@ Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and pe
 | 128k | 88.0 | — | 72.3 | 67.6 | 21912 |
 | 256k | 68.3 | — | 66.7 | 66.9 | 23528 |
 
-#### `ninfer-061`
+### `buun-qwen`
+
+- **Artifact:** `Qwen3.8-27B-UD-IQ4_XS.gguf` (buun-llama-cpp b9637)
+- **Flags:** TCQ KV `turbo2_tcq`, `-c 524288 -np 8` (per-slot 65536), flash-attn
+
+| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
+|---|---|---|---|---|---|
+| fresh | 43.1 | 35.9 | 25.2 | 15.2 | 19978 |
+| 16k | 34.1 | 17.4 | 8.1 | 3.8 | 19986 |
+| 32k | 28.7 | — | 4.8 | 2.1 | 19986 |
+| 64k | 21.8 | — | 2.8 | 0.0 | 19984 |
+
+### `gguf-q4xs`
+
+- **Artifact:** `Qwen3.8-27B-UD-IQ4_XS.gguf` (prism llama.cpp CUDA)
+- **Flags:** q8_0 KV, `-c 262144 -np 8` (per-slot 32768), flash-attn
+
+| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
+|---|---|---|---|---|---|
+| fresh | 45.5 | 38.5 | 27.8 | 16.6 | 26410 |
+| 16k | 41.4 | 23.9 | 12.1 | 5.8 | 26414 |
+| 32k | 37.9 | — | 8.4 | 3.9 | 24360 |
+
+### `ninfer-061`
+
+- **Artifact:** `/var/lib/ninfer/qwen3_8_27b.ninfer` (ninfer 0.6.1)
+- **Flags:** ctx 65536, kv int8, spec=mtp draft 3
 
 | context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
 |---|---|---|---|---|---|
@@ -101,67 +139,19 @@ Tables below show per-agent decode tok/s (rows = context, cols = C1–C8) and pe
 | 128k | 0.0 | — | — | — | 22732 |
 | 256k | 0.0 | — | — | — | 22732 |
 
-### Plots
-
-![perC_qwen3.8-27b_c1](engines-2026-10/results/perC_qwen3.8-27b_c1.png)
-![perC_qwen3.8-27b_c2](engines-2026-10/results/perC_qwen3.8-27b_c2.png)
-![perC_qwen3.8-27b_c4](engines-2026-10/results/perC_qwen3.8-27b_c4.png)
-![perC_qwen3.8-27b_c8](engines-2026-10/results/perC_qwen3.8-27b_c8.png)
-
-## qwen38-27b-gguf
-
-### Table views (per-agent decode tok/s)
-
-#### `gguf-q4xs`
-
-| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
-|---|---|---|---|---|---|
-| fresh | 45.5 | 38.5 | 27.8 | 16.6 | 26410 |
-| 16k | 41.4 | 23.9 | 12.1 | 5.8 | 26414 |
-| 32k | 37.9 | — | 8.4 | 3.9 | 24360 |
-
-### Plots
-
-![perC_qwen38-27b-gguf_c1](engines-2026-10/results/perC_qwen38-27b-gguf_c1.png)
-![perC_qwen38-27b-gguf_c2](engines-2026-10/results/perC_qwen38-27b-gguf_c2.png)
-![perC_qwen38-27b-gguf_c4](engines-2026-10/results/perC_qwen38-27b-gguf_c4.png)
-![perC_qwen38-27b-gguf_c8](engines-2026-10/results/perC_qwen38-27b-gguf_c8.png)
-
-## qwen38-27b-buun
-
-### Table views (per-agent decode tok/s)
-
-#### `buun-qwen`
-
-| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
-|---|---|---|---|---|---|
-| fresh | 43.1 | 35.9 | 25.2 | 15.2 | 19978 |
-| 16k | 34.1 | 17.4 | 8.1 | 3.8 | 19986 |
-| 32k | 28.7 | — | 4.8 | 2.1 | 19986 |
-| 64k | 21.8 | — | 2.8 | 0.0 | 19984 |
-
-### Plots
-
-![perC_qwen38-27b-buun_c1](engines-2026-10/results/perC_qwen38-27b-buun_c1.png)
-![perC_qwen38-27b-buun_c2](engines-2026-10/results/perC_qwen38-27b-buun_c2.png)
-![perC_qwen38-27b-buun_c4](engines-2026-10/results/perC_qwen38-27b-buun_c4.png)
-![perC_qwen38-27b-buun_c8](engines-2026-10/results/perC_qwen38-27b-buun_c8.png)
-
 ## Overflowed cells (retried once 2026-10-09; permanent rejections kept)
 
 _None outstanding._
 
-## Engine configurations
+## Winner
 
-| engine | artifact | key flags |
-|---|---|---|
-| q27-t3-solo | `bonsai2-27b-t3-mtp-slim.q27` (q27 v0.14.4) | w8, spec-off, ctx 262144 |
-| q27-t3-mtp | same | spec=mtp draft 3 |
-| ninfer-all-b2 | `Ternary-Bonsai-2-27B-ninfer-v3.ninfer` (ghcr.io/iamwavecut/ninfer-all, sm86) | `--kv-dtype rk4v4 --spec dflash2 --draft-tokens 5 --no-prefix-reuse`, ctx/kv 262144 |
-| prism-ptq10 | `Ternary-Bonsai-2-27B-PTQ1_0.gguf` (prism llama.cpp) | PTQ1_0, flash-attn |
-| ninfer-061 | `/var/lib/ninfer/qwen3_8_27b.ninfer` (ninfer 0.6.1) | ctx 65536 |
-| ashalliants-df2 | `qwen3_8_27b.ninfer` (ashalliants 0.15.0) | spec=dflash2, ctx 262144, host KV clamped 2048 MiB via shim |
-| ashalliants-mtp | same | spec=mtp |
+- **bonsai2-27b**: peak `ninfer-all-b2` 267.5 tok/s per-agent; at high parallelism×deep ctx — C8 × 32k: `ninfer-all-b2` 210.9 tok/s vs `q27-t3-solo` 71.0.
+- **qwen3.8-27b**: peak `ashalliants-df2` 162.7 tok/s per-agent; at high parallelism×deep ctx — C8 × 256k: `ashalliants-df2` 91.9 tok/s vs `ashalliants-mtp` 66.9.
+
+Final per-model throughput surfaces:
+
+![surf3d_bonsai2-27b](engines-2026-10/results/surf3d_bonsai2-27b.png)
+![surf3d_qwen3.8-27b](engines-2026-10/results/surf3d_qwen3.8-27b.png)
 
 ## Reproduce
 
@@ -169,6 +159,6 @@ _None outstanding._
 cd benchmarks/engines-2026-10
 python3 run_sweep.py --stage screening            # fresh+16K, C1-C8
 python3 run_sweep.py --stage long                 # survivors, 32K-256K
-.venv/bin/python analyze.py                       # CSV + plots
+.venv/bin/python analyze.py                       # CSV + 3D surfaces
 .venv/bin/python report.py                        # this file
 ```

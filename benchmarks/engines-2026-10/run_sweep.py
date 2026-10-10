@@ -26,7 +26,7 @@ BONSAI = ["q27-t3-mtp", "q27-t3-solo", "prism-ptq10", "ninfer-all-b2"]
 # engine (only bonsai2 t2/t3 .q27 and bonsai2 .ninfer exist; qwen38 lives in
 # .ninfer form under ninfer-061/ashalliants only).
 QWEN = ["ninfer-061", "ashalliants-df2", "ashalliants-mtp", "gguf-q4xs",
-        "buun-qwen"]
+        "buun-qwen", "swift-uncensored"]
 # 2026-10-09 scouting drops (scout-reports.log cand-scout#1-3): EXL3
 # (serve_openai has no SSE streaming, 1.22 GiB verify-history per C8 slot,
 # FIFO batch=1 serializes >=32k cells), HyperQwen vLLM 0.30 (per-agent C8
@@ -143,6 +143,10 @@ def main():
             "ninfer-all-b2": [32768, 65536],          # --max-context 65536 cap
             "q27-t3-solo": [32768, 65536, 131072, 262144],
             "ashalliants-df2": [32768, 65536, 131072, 262144],
+            # Same artifact family as ashalliants-df2 (uncensored
+            # abliteration of Qwen3.8-27B): tuned profile window is
+            # identical 262144 ctx, same ladder.
+            "swift-uncensored": [32768, 65536, 131072, 262144],
             # Smoke-verified per-slot ceilings (2026-10-09): buun TCQ KV
             # 65536/slot (524288 total, 19.7 GiB); gguf q8 KV 32768/slot
             # (262144 total, ~22.3 GiB est).

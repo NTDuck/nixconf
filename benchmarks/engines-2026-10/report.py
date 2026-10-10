@@ -38,6 +38,8 @@ def model_label(m):
     ml = m.lower()
     if "bonsai" in ml or "ternary" in ml:
         return "bonsai2-27b"
+    if "qwen38-27b" in ml or "qwen3.8-27b" in ml:
+        return "qwen3.8-27b"
     return m
 
 
@@ -72,13 +74,23 @@ def main():
         "",
         "## Summary",
         "",
+        "Sweep screened " + str(len({r['tag'] for r in rows}))
+        + " engine configurations across two model families on one RTX "
+        "3090 (TB4 eGPU): screening (fresh + 16k, C1–C8) then a long "
+        "ladder (32k–256k, C1/C4/C8) for survivors. Metric is per-agent "
+        "decode tok/s: what one agent observes while N agents stream "
+        "concurrently on the same engine. Cells that overflowed the 15 "
+        "GiB host or deadlocked the engine are ledgered, not averaged "
+        "in. Peak VRAM per cell is reported beside each table.",
+        "",
     ]
 
-    # Winner per model (user criterion: max throughput at high parallelism
-    # at high context). High-C×deep-ctx line: at the highest concurrency
-    # with ok data (C8), deepest context where >=2 engines have ok cells;
-    # if only one engine ever produced ok C8 data, say so at its deepest
-    # C8 cell. Peak line: max single-cell per-agent tok/s anywhere.
+    # Winner computation (user criterion: max throughput at high
+    # parallelism at high context). High-C×deep-ctx line: at the highest
+    # concurrency with ok data (C8), deepest context where >=2 engines
+    # have ok cells; if only one engine ever produced ok C8 data, say so
+    # at its deepest C8 cell. Peak line: max single-cell per-agent tok/s
+    # anywhere. Rendered in the closing "## Winner" section.
     winner = {}
     for model in by_model:
         grids = {tag: grid for (m, tag), grid in cells.items() if m == model}
@@ -108,6 +120,7 @@ def main():
         pk_tag, _, _, pk_t = max(okc, key=lambda x: x[3])
         winner[model] = (pk_tag, pk_t, hi)
 
+    winner_lines = []
     for model in by_model:
         if model not in winner:
             continue
@@ -115,23 +128,71 @@ def main():
         line = f"- **{model}**: peak `{pk_tag}` {fmt(pk_t)} tok/s per-agent"
         if hi:
             line += f"; at high parallelism×deep ctx — {hi}"
-        lines.append(line + ".")
+        winner_lines.append(line + ".")
     lines += [
         "",
-        "Tables below show per-agent decode tok/s (rows = context, "
+        "Per-engine sections below pair each engine's configuration with "
+        "its result table: per-agent decode tok/s (rows = context, "
         "cols = C1–C8) and peak VRAM MiB per cell. `—` = not measured or "
         "overflow (see ledger).",
         "",
     ]
 
-    # Per-model, per-engine table views.
+    # Per-model 3D surfaces in the summary (user spec: paragraph + plots).
+    surf_pngs = sorted((ROOT / "results").glob("surf3d_*.png"))
+    if surf_pngs:
+        lines += ["### Throughput surfaces", "",
+                  "Z = per-agent decode tok/s (up = faster), X = context, "
+                  "Y = parallelism k. One surface per engine; measured "
+                  "cells are dotted, gaps are unmeasured/overflowed.", ""]
+        lines += [f"![{p.stem}](engines-2026-10/results/{p.name})"
+                  for p in surf_pngs]
+        lines.append("")
+
+    ENGINE_CONFIG = {
+        "q27-t3-solo": ("`bonsai2-27b-t3-mtp-slim.q27` (q27 v0.14.4)",
+                        "w8 stack 2.3 GiB, spec-off, ctx 262144, slots 1"),
+        "q27-t3-mtp": ("`bonsai2-27b-t3-mtp-slim.q27` (q27 v0.14.4)",
+                       "spec=mtp draft 3, slots 8"),
+        "ninfer-all-b2": ("`Ternary-Bonsai-2-27B-ninfer-v3.ninfer` "
+                          "(ghcr.io/iamwavecut/ninfer-all, sm86)",
+                          "`--kv-dtype rk4v4 --spec dflash2 --draft-tokens 5 "
+                          "--no-prefix-reuse`, ctx/kv 262144"),
+        "prism-ptq10": ("`Ternary-Bonsai-2-27B-PTQ1_0.gguf` (prism llama.cpp)",
+                        "PTQ1_0, flash-attn, ctx 32768, np 4"),
+        "ninfer-061": ("`/var/lib/ninfer/qwen3_8_27b.ninfer` (ninfer 0.6.1)",
+                       "ctx 65536, kv int8, spec=mtp draft 3"),
+        "ashalliants-df2": ("`qwen3_8_27b.ninfer` (ashalliants 0.15.0)",
+                            "spec=dflash2, ctx 262144, rk4v4 KV, host KV "
+                            "clamped 2048 MiB via shim, FALLBACK=off"),
+        "ashalliants-mtp": ("`qwen3_8_27b.ninfer` (ashalliants 0.15.0)",
+                            "spec=mtp, ctx 262144, host KV shim 2048 MiB"),
+        "swift-uncensored": ("`swift_qwen3_8_27b.ninfer` (Swift-Qwen3.8-27B-"
+                             "Uncensored, d0xin abliteration; same 0.15.0 "
+                             "binary + tuned dflash2 profile as "
+                             "ashalliants-df2)",
+                             "spec=dflash2, ctx 262144, NINFER_MODEL "
+                             "override, host KV shim 2048 MiB, "
+                             "FALLBACK=off"),
+        "buun-qwen": ("`Qwen3.8-27B-UD-IQ4_XS.gguf` (buun-llama-cpp b9637)",
+                      "TCQ KV `turbo2_tcq`, `-c 524288 -np 8` "
+                      "(per-slot 65536), flash-attn"),
+        "gguf-q4xs": ("`Qwen3.8-27B-UD-IQ4_XS.gguf` (prism llama.cpp CUDA)",
+                      "q8_0 KV, `-c 262144 -np 8` (per-slot 32768), "
+                      "flash-attn"),
+    }
+
+    # Per-model -> per-engine sections: configuration + result table
+    # live in the same block (user spec 2026-10-10).
     for model in by_model:
-        lines += [f"## {model}", "", "### Table views (per-agent decode tok/s)",
-                  ""]
-        for (m, tag), grid in sorted(cells.items()):
-            if m != model:
-                continue
-            lines += [f"#### `{tag}`", "",
+        model_tags = sorted(t for (m, t) in cells if m == model)
+        lines += [f"## {model}", ""]
+        for tag in model_tags:
+            grid = cells[(model, tag)]
+            artifact, flags = ENGINE_CONFIG.get(tag, ("—", "—"))
+            lines += [f"### `{tag}`", "",
+                      f"- **Artifact:** {artifact}",
+                      f"- **Flags:** {flags}", "",
                       "| context | " + " | ".join(f"C{c}" for c in CONCS)
                       + " | peak VRAM (MiB) |", "|---|---|---|---|---|---|"]
             for ctx, lbl in CTX_BUCKETS:
@@ -145,14 +206,6 @@ def main():
                             if cx == ctx and v), default=None)
                 row.append(fmt(vram, 0) if vram else "—")
                 lines.append("| " + " | ".join(row) + " |")
-            lines.append("")
-
-        # Plot links: one PNG per C.
-        pngs = sorted((ROOT / "results").glob(f"perC_{model}_c*.png"))
-        if pngs:
-            lines += ["### Plots", ""]
-            lines += [f"![{p.stem}](engines-2026-10/results/{p.name})"
-                      for p in pngs]
             lines.append("")
 
     # Overflow ledger.
@@ -179,18 +232,18 @@ def main():
             lines += ["_None outstanding._"]
         lines.append("")
 
-    # Engine configurations.
+    # Winner section (user spec 2026-10-10: paragraph + per-model 3D
+    # plots close the report).
+    lines += ["## Winner", ""]
+    if winner_lines:
+        lines += winner_lines
+    else:
+        lines += ["_No model produced ok cells._"]
+    if surf_pngs:
+        lines += ["", "Final per-model throughput surfaces:", ""]
+        lines += [f"![{p.stem}](engines-2026-10/results/{p.name})"
+                  for p in surf_pngs]
     lines += [
-        "## Engine configurations",
-        "",
-        "| engine | artifact | key flags |", "|---|---|---|",
-        "| q27-t3-solo | `bonsai2-27b-t3-mtp-slim.q27` (q27 v0.14.4) | w8, spec-off, ctx 262144 |",
-        "| q27-t3-mtp | same | spec=mtp draft 3 |",
-        "| ninfer-all-b2 | `Ternary-Bonsai-2-27B-ninfer-v3.ninfer` (ghcr.io/iamwavecut/ninfer-all, sm86) | `--kv-dtype rk4v4 --spec dflash2 --draft-tokens 5 --no-prefix-reuse`, ctx/kv 262144 |",
-        "| prism-ptq10 | `Ternary-Bonsai-2-27B-PTQ1_0.gguf` (prism llama.cpp) | PTQ1_0, flash-attn |",
-        "| ninfer-061 | `/var/lib/ninfer/qwen3_8_27b.ninfer` (ninfer 0.6.1) | ctx 65536 |",
-        "| ashalliants-df2 | `qwen3_8_27b.ninfer` (ashalliants 0.15.0) | spec=dflash2, ctx 262144, host KV clamped 2048 MiB via shim |",
-        "| ashalliants-mtp | same | spec=mtp |",
         "",
         "## Reproduce",
         "",
@@ -198,7 +251,7 @@ def main():
         "cd benchmarks/engines-2026-10",
         "python3 run_sweep.py --stage screening            # fresh+16K, C1-C8",
         "python3 run_sweep.py --stage long                 # survivors, 32K-256K",
-        ".venv/bin/python analyze.py                       # CSV + plots",
+        ".venv/bin/python analyze.py                       # CSV + 3D surfaces",
         ".venv/bin/python report.py                        # this file",
         "```",
     ]

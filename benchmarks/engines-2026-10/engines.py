@@ -102,6 +102,25 @@ ENGINES = {
                 "NINFER_HOST_STATE_SLOTS": "8",
                 "NINFER_SERVER": f"{ASH}/ninfer-serve.hostkv-shim"},
     },
+    # ---------------- 2026-10-10 variant arm ----------------
+    "swift-uncensored": {
+        # Swift-Qwen3.8-27B-Uncensored (d0xin abliteration, wacomctl672
+        # HF conversion) as a .ninfer artifact on the SAME 0.15.0 binary
+        # + tuned dflash2 profile as the winner baseline. run.sh
+        # MODEL="${NINFER_MODEL:-...}" (line 105) takes the artifact
+        # path override; alias differs so report tables separate arms.
+        # Same env shape as ashalliants-df2 (hostkv-shim 2 GiB clamp,
+        # FALLBACK=off, 8 slots) for an apples-to-apples comparison.
+        "model": "auto", "port": 8093,
+        "launcher": ["env",
+                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     f"{ASH}/run.sh", "qwen38-27b", "tuned"],
+        "env": {"NINFER_MODEL": f"{ASH}/models/swift_qwen3_8_27b.ninfer",
+                "NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
+                "NINFER_PORT": "8093", "NINFER_FALLBACK": "off",
+                "NINFER_HOST_STATE_SLOTS": "8",
+                "NINFER_SERVER": f"{ASH}/ninfer-serve.hostkv-shim"},
+    },
     # ---------------- 2026-10-09 additions (cand-scout#1/#2) ----------------
     "buun-qwen": {
         # spiritbuun/buun-llama-cpp @ b9637 (bc9340b9), source build.
