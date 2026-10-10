@@ -194,35 +194,39 @@ def main():
         plt.close(fig)
         print(f"wrote {p.name}")
 
-    # Winner-engine surface: one plot closing the report. Per model,
-    # plot the WINNING ENGINE's measured surface (peak per-agent tok/s
-    # criterion, mirroring report.py's Winner bullets; lane-excluded
-    # variants can never win). Z = per-agent decode tok/s, X = context,
-    # Y = parallelism k. One canvas, one surface per model family.
-    COMPARABLE_EXCLUDED = {"swift-uncensored"}
+    # Variant-comparison surface closing the report (user spec
+    # 2026-10-10): qwen3.8-27b variants on the ashalliants engine —
+    # base vs uncensored (swift) — Z = per-agent decode tok/s,
+    # X = context, Y = parallelism k. Only the shared mtp lane is
+    # plottable: the tuned dflash2 lane has no uncensored counterpart
+    # (the swift artifact carries no dflash2 draft weights), so mixing
+    # lanes would compare spec acceleration, not weights. Extend
+    # QWEN_VARIANTS as further variant arms (vision, ...) land.
+    QWEN_VARIANTS = {"ashalliants-mtp": "base",
+                     "swift-uncensored": "uncensored"}
     fig = plt.figure(figsize=(11, 7.5))
     ax = fig.add_subplot(111, projection="3d")
-    all_ctxs = sorted({r["ctx"] for rs in models.values() for r in rs})
-    all_concs = sorted({r["conc"] for rs in models.values() for r in rs})
+    qrows = models.get("qwen3.8-27b", [])
+    all_ctxs = sorted({r["ctx"] for r in qrows} or {0})
+    all_concs = sorted({r["conc"] for r in qrows} or {1})
     drew = False
-    for i, (model, mrows) in enumerate(models.items()):
-        grid_all = defaultdict(dict)
-        for r in mrows:
-            if not r["agents"]:
+    for i, (tag, vlabel) in enumerate(QWEN_VARIANTS.items()):
+        grid = {}
+        for r in qrows:
+            if r["tag"] != tag or not r["agents"]:
                 continue
             a = r["agents"][-1]
             if a["ok"] <= 0 or a["mean_decode_tps"] <= 0:
                 continue
-            grid_all[r["tag"]][(r["ctx"], r["conc"])] = a["mean_decode_tps"]
-        rank_tags = [t for t in grid_all if t not in COMPARABLE_EXCLUDED]
-        if not rank_tags:
+            grid[(r["ctx"], r["conc"])] = a["mean_decode_tps"]
+        if not grid:
             continue
-        pk_tag = max(rank_tags, key=lambda t: max(grid_all[t].values()))
-        grid = grid_all[pk_tag]
         Z = np.full((len(all_concs), len(all_ctxs)), np.nan)
         for (ctx, conc), tps in grid.items():
             Z[all_concs.index(conc), all_ctxs.index(ctx)] = tps
         Zm = np.ma.masked_invalid(Z)
+        if Zm.count() == 0:
+            continue
         Xg, Yg = np.meshgrid(range(len(all_ctxs)), range(len(all_concs)))
         col = PALETTE[i % len(PALETTE)]
         drew = True
@@ -236,7 +240,7 @@ def main():
         for (ctx, conc), tps in grid.items():
             ax.scatter(all_ctxs.index(ctx), all_concs.index(conc), tps,
                        color=col, s=16, depthshade=False)
-        ax.plot([], [], [], color=col, label=f"{model}: {pk_tag} (winner)")
+        ax.plot([], [], [], color=col, label=f"{vlabel} ({tag})")
     if drew:
         ax.set_xticks(range(len(all_ctxs)))
         ax.set_xticklabels(
@@ -247,8 +251,8 @@ def main():
         ax.set_xlabel("context", fontsize=9, labelpad=8)
         ax.set_ylabel("parallelism (k)", fontsize=9, labelpad=8)
         ax.set_zlabel("per-agent decode tok/s", fontsize=9, labelpad=6)
-        ax.set_title("Winner engines — measured per-agent decode tok/s "
-                     "(Z rises = faster)")
+        ax.set_title("qwen3.8-27b variants on ashalliants (mtp lane) — "
+                     "per-agent decode tok/s (Z rises = faster)")
         ax.view_init(elev=22, azim=-60)
         ax.legend(fontsize=8, loc="upper left")
         fig.tight_layout()

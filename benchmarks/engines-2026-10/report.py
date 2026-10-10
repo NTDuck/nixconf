@@ -295,9 +295,10 @@ def main():
     else:
         lines += ["_No model produced ok cells._"]
     if (ROOT / "results" / "surf3d_winner.png").exists():
-        lines += ["", "Winner engines' measured throughput — per-agent decode "
-                  "tok/s (Z = tok/s up = faster, X = context, "
-                  "Y = parallelism k):", "",
+        lines += ["", "qwen3.8-27b variants on the ashalliants engine "
+                  "(shared mtp lane) — per-agent decode tok/s "
+                  "(Z = tok/s up = faster, X = context, Y = parallelism k):",
+                  "",
                   "![winner surface](engines-2026-10/results/"
                   "surf3d_winner.png)"]
     lines += [
