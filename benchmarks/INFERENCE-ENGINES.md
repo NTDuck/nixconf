@@ -14,6 +14,7 @@ Per-engine sections below pair each engine's configuration with its result table
 Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One surface per engine; measured cells are dotted, gaps are unmeasured/overflowed.
 
 ![surf3d_bonsai2-27b](engines-2026-10/results/surf3d_bonsai2-27b.png)
+![surf3d_frontier](engines-2026-10/results/surf3d_frontier.png)
 ![surf3d_qwen3.8-27b](engines-2026-10/results/surf3d_qwen3.8-27b.png)
 
 ## bonsai2-27b
@@ -166,10 +167,9 @@ _None outstanding._
 - **bonsai2-27b**: peak `ninfer-all-b2` 267.5 tok/s per-agent; at high parallelism×deep ctx — C8 × 32k: `ninfer-all-b2` 210.9 tok/s vs `q27-t3-solo` 71.0.
 - **qwen3.8-27b**: peak `ashalliants-df2` 162.7 tok/s per-agent; at high parallelism×deep ctx — C8 × 256k: `ashalliants-df2` 91.9 tok/s vs `ashalliants-mtp` 66.9; swift-uncensored (mtp lane) C8 × 256k: 72.0 tok/s, +7.7% vs `ashalliants-mtp` 66.9.
 
-Final per-model throughput surfaces:
+Throughput frontier — best measured per-agent decode tok/s per model (Z = tok/s up = faster, X = context, Y = parallelism k):
 
-![surf3d_bonsai2-27b](engines-2026-10/results/surf3d_bonsai2-27b.png)
-![surf3d_qwen3.8-27b](engines-2026-10/results/surf3d_qwen3.8-27b.png)
+![winner frontier](engines-2026-10/results/surf3d_frontier.png)
 
 ## Reproduce
 

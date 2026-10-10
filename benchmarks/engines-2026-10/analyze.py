@@ -15,6 +15,7 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 — registers 3d projection
 
@@ -192,6 +193,72 @@ def main():
         fig.savefig(p, dpi=120)
         plt.close(fig)
         print(f"wrote {p.name}")
+
+    # Winner frontier surface: one plot for the whole report. Per model
+    # (not per engine) — Z = best measured per-agent tok/s at each
+    # (context, parallelism) cell across that model's engines, so the
+    # surface is the achievable-throughput frontier. Lanes with no
+    # measurement at a cell leave a hole (masked), never a zero.
+    fig = plt.figure(figsize=(11, 7.5))
+    ax = fig.add_subplot(111, projection="3d")
+    drew = False
+    for i, (model, mrows) in enumerate(models.items()):
+        grid = {}
+        for r in mrows:
+            if not r["agents"]:
+                continue
+            a = r["agents"][-1]
+            if a["ok"] <= 0 or a["mean_decode_tps"] <= 0:
+                continue
+            k = (r["ctx"], r["conc"])
+            if k not in grid or a["mean_decode_tps"] > grid[k]:
+                grid[k] = a["mean_decode_tps"]
+        if not grid:
+            continue
+        ctxs = sorted({c for c, _ in grid})
+        concs = sorted({c for _, c in grid})
+        # Global axes: every model maps onto the same context/k ticks.
+        all_ctxs = sorted({r["ctx"] for rs in models.values() for r in rs})
+        all_concs = sorted({r["conc"] for rs in models.values() for r in rs})
+        Z = np.full((len(all_concs), len(all_ctxs)), np.nan)
+        for (ctx, conc), tps in grid.items():
+            Z[all_concs.index(conc), all_ctxs.index(ctx)] = tps
+        Zm = np.ma.masked_invalid(Z)
+        Xg, Yg = np.meshgrid(range(len(all_ctxs)), range(len(all_concs)))
+        col = PALETTE[i % len(PALETTE)]
+        drew = True
+        ax.plot_surface(Xg, Yg, Zm, color=col, alpha=0.8, linewidth=1,
+                        edgecolor="k", shade=True)
+        try:
+            ax.plot_wireframe(Xg, Yg, Zm, color=col, alpha=0.5,
+                              linewidth=0.7, rstride=1, cstride=1)
+        except ValueError:
+            pass
+        for (ctx, conc), tps in grid.items():
+            ax.scatter(all_ctxs.index(ctx), all_concs.index(conc), tps,
+                       color=col, s=16, depthshade=False)
+        ax.plot([], [], [], color=col, label=f"{model} (frontier)")
+    if drew:
+        ax.set_xticks(range(len(all_ctxs)))
+        ax.set_xticklabels(
+            [next((l for b, l in CTX_BUCKETS if b == c), str(c))
+             for c in all_ctxs], fontsize=8)
+        ax.set_yticks(range(len(all_concs)))
+        ax.set_yticklabels([f"k{c}" for c in all_concs], fontsize=8)
+        ax.set_xlabel("context", fontsize=9, labelpad=8)
+        ax.set_ylabel("parallelism (k)", fontsize=9, labelpad=8)
+        ax.set_zlabel("per-agent decode tok/s", fontsize=9, labelpad=6)
+        ax.set_title("Winner frontier — best measured per-agent decode "
+                     "tok/s per model (Z rises = faster)")
+        ax.view_init(elev=22, azim=-60)
+        ax.legend(fontsize=8, loc="upper left")
+        fig.tight_layout()
+        p = OUT / "surf3d_frontier.png"
+        fig.savefig(p, dpi=120)
+        plt.close(fig)
+        print("wrote surf3d_frontier.png")
+    else:
+        plt.close(fig)
     return 0
 
 

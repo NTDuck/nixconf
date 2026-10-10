@@ -292,10 +292,12 @@ def main():
         lines += winner_lines
     else:
         lines += ["_No model produced ok cells._"]
-    if surf_pngs:
-        lines += ["", "Final per-model throughput surfaces:", ""]
-        lines += [f"![{p.stem}](engines-2026-10/results/{p.name})"
-                  for p in surf_pngs]
+    if (ROOT / "results" / "surf3d_frontier.png").exists():
+        lines += ["", "Throughput frontier — best measured per-agent decode "
+                  "tok/s per model (Z = tok/s up = faster, X = context, "
+                  "Y = parallelism k):", "",
+                  "![winner frontier](engines-2026-10/results/"
+                  "surf3d_frontier.png)"]
     lines += [
         "",
         "## Reproduce",
