@@ -172,6 +172,102 @@ ENGINES = {
                 "-c", "262144", "-np", "8", "-ctk", "q8_0", "-ctv", "q8_0",
                 "--host", "127.0.0.1", "--port", "8099"],
     },
+    # ---------------- 2026-10-10 variant campaign ----------------
+    # Ports 8110-8117: qwen3.8-27B weight-variant arms (user-requested
+    # campaign 2026-10-10). .ninfer arms reuse the ashalliants binary +
+    # hostkv-shim shape (NINFER_MODEL override); GGUF arms reuse the
+    # gguf-q4xs prism shape. One holder at a time; start() clears the GPU.
+    # Coder390 ships both draft paths; its .ninfer Q4LynnStyle-Q8MTP
+    # (18.74 GB) carries an MTP head -> mtp lane; dflash2 would need the
+    # BF16/DFlash2-FP8 source repo, not shipped as .ninfer.
+    "coder390": {
+        "model": "auto", "port": 8110,
+        "launcher": ["env",
+                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     f"{ASH}/run.sh", "qwen38-27b", "tuned"],
+        "env": {"NINFER_MODEL": f"{ASH}/models/coder390_q4lynn_q8mtp_v3.ninfer",
+                "NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
+                "NINFER_PORT": "8110", "NINFER_FALLBACK": "off",
+                "NINFER_HOST_STATE_SLOTS": "8",
+                "NINFER_SERVER": f"{ASH}/ninfer-serve.hostkv-shim"},
+    },
+    # Swift 1.5 / Huihui / OBLITERATED: bf16 safetensors converted by the
+    # vendored upstream converter (tools/convert, recipe qwen3_8_27b,
+    # components text,vision,mtp + proposal) into v3 .ninfer artifacts.
+    "swift15": {
+        "model": "auto", "port": 8111,
+        "launcher": ["env",
+                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     f"{ASH}/run.sh", "qwen38-27b", "tuned"],
+        "env": {"NINFER_MODEL": f"{ASH}/models/swift15_qwen3_8_27b.ninfer",
+                "NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
+                "NINFER_PORT": "8111", "NINFER_FALLBACK": "off",
+                "NINFER_HOST_STATE_SLOTS": "8",
+                "NINFER_SERVER": f"{ASH}/ninfer-serve.hostkv-shim"},
+    },
+    "huihui-abl": {
+        "model": "auto", "port": 8112,
+        "launcher": ["env",
+                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     f"{ASH}/run.sh", "qwen38-27b", "tuned"],
+        "env": {"NINFER_MODEL": f"{ASH}/models/huihui_abl_qwen3_8_27b.ninfer",
+                "NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
+                "NINFER_PORT": "8112", "NINFER_FALLBACK": "off",
+                "NINFER_HOST_STATE_SLOTS": "8",
+                "NINFER_SERVER": f"{ASH}/ninfer-serve.hostkv-shim"},
+    },
+    "obliterated": {
+        "model": "auto", "port": 8113,
+        "launcher": ["env",
+                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     f"{ASH}/run.sh", "qwen38-27b", "tuned"],
+        "env": {"NINFER_MODEL": f"{ASH}/models/obliterated_qwen3_8_27b.ninfer",
+                "NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
+                "NINFER_PORT": "8113", "NINFER_FALLBACK": "off",
+                "NINFER_HOST_STATE_SLOTS": "8",
+                "NINFER_SERVER": f"{ASH}/ninfer-serve.hostkv-shim"},
+    },
+    # GGUF-only variants: prism llama.cpp, same shape as gguf-q4xs.
+    # ThinkingCap ships no draft artifacts; OBLITERATUS notes its V3
+    # restores MTP in safetensors only. All four: q8 KV, per-slot 32768.
+    "thinkingcap": {
+        "model": "auto", "port": 8114,
+        "cmd": ["/run/current-system/sw/bin/bonsai-llama-server",
+                "-m", f"{MODELS}/ThinkingCap-Qwen3.8-27B-Q4_K_M.gguf",
+                "-ngl", "99", "-fa", "on", "--jinja",
+                "--alias", "qwen38-27b-thinkingcap",
+                "-c", "262144", "-np", "8", "-ctk", "q8_0", "-ctv", "q8_0",
+                "--host", "127.0.0.1", "--port", "8114"],
+    },
+    "davidau-fable": {
+        "model": "auto", "port": 8115,
+        "cmd": ["/run/current-system/sw/bin/bonsai-llama-server",
+                "-m", f"{MODELS}/Qwen3.8-27B-TurboFCFusion-735-882-Here-Uncen-NEO-CODER-MAX-MTP-Q4_K_M.gguf",
+                "-ngl", "99", "-fa", "on", "--jinja",
+                "--alias", "qwen38-27b-davidau",
+                "-c", "262144", "-np", "8", "-ctk", "q8_0", "-ctv", "q8_0",
+                "--host", "127.0.0.1", "--port", "8115"],
+    },
+    "humanlike": {
+        "model": "auto", "port": 8116,
+        "cmd": ["/run/current-system/sw/bin/bonsai-llama-server",
+                "-m", f"{MODELS}/Qwen3.8-27B-Humanlike-Chat-IQ4_XS.gguf",
+                "-ngl", "99", "-fa", "on", "--jinja",
+                "--alias", "qwen38-27b-humanlike",
+                "-c", "262144", "-np", "8", "-ctk", "q8_0", "-ctv", "q8_0",
+                "--host", "127.0.0.1", "--port", "8116"],
+    },
+    "fable5": {
+        # IQ4_XS-MTP embeds the MTP head in GGUF; llama.cpp consumes it
+        # natively (no separate draft file needed for serving).
+        "model": "auto", "port": 8117,
+        "cmd": ["/run/current-system/sw/bin/bonsai-llama-server",
+                "-m", f"{MODELS}/Qwen3.8-27B-LoRA-IQ4_XS-MTP.gguf",
+                "-ngl", "99", "-fa", "on", "--jinja",
+                "--alias", "qwen38-27b-fable5",
+                "-c", "262144", "-np", "8", "-ctk", "q8_0", "-ctv", "q8_0",
+                "--host", "127.0.0.1", "--port", "8117"],
+    },
 }
 
 VICTIMS = ["ninfer-serve", "q27-server", "llama-server", "vllm", "serve_openai",
