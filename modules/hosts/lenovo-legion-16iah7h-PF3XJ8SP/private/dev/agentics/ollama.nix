@@ -9,10 +9,11 @@
     # the default spec and ollama/the CUDA builds are absent; pick "homelab"
     # in the bootloader menu for inference.
     #
-    # 2026-09-29: ninfer-serve is now the RESIDENT engine (../ninfer.nix);
-    # this unit is demoted to on-demand (wantedBy = [] below). Small models
-    # (minicpm, granite, lfm2.5) need `systemctl start ollama` or
-    # `ninfer-down` first — autostarting both would fight for the card.
+    # 2026-10-10: ashalliants-df2 is the RESIDENT engine (../ashalliants.nix,
+    # autostart on the homelab spec); this unit stays on-demand
+    # (wantedBy = [] below). Small models (minicpm, granite, lfm2.5) need
+    # `systemctl start ollama` or `ashalliants-down` first — autostarting
+    # both would fight for the card.
     nixos = {
       pkgs,
       lib,
@@ -73,12 +74,12 @@
           # (../harnesses/oh-my-pi.nix — the ollama provider block, restored
           # 2026-09-27).
           #
-          # 2026-09-29 ninfer main-engine switch: all Qwen3.8-27B variants
+          # 2026-09-29 main-engine switch: all Qwen3.8-27B variants
           # pruned from the daemon (ollama rm; ~110 GiB freed — the 27B
-          # role belongs to ninfer's groupwise artifact now, see
-          # ../ninfer.nix). They were REMOVED from this allowlist too, or
-          # syncModels would re-pull ~110 GiB on next activation. Re-add +
-          # `ollama pull` if a variant is ever needed again.
+          # role belongs to the ashalliants .ninfer artifact now, see
+          # ../ashalliants.nix). They were REMOVED from this allowlist
+          # too, or syncModels would re-pull ~110 GiB on next activation.
+          # Re-add + `ollama pull` if a variant is ever needed again.
           loadModels = [
             "mannix/omnimerge-v6:vision-Q4_K_M" # Weight tuned from qwen3.8:27b, vision
             "Distendo/zen-pro" # Unknown pull
@@ -179,15 +180,15 @@
         # merges fine with the sunshine/ssh aspects' port lists.
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [11434];
 
-        # DEMOTED FROM AUTOSTART (2026-09-29, ninfer main-engine switch):
-        # ninfer-serve is THE resident 3090 engine on the homelab spec (see
-        # ../ninfer.nix) — its unit conflicts ollama.service, so an
-        # autostarted ollama would fight it for the card at every boot.
-        # The upstream module sets WantedBy = multi-user.target; overriding
-        # wantedBy with an empty list removes the autostart symlink while
-        # keeping the unit startable on demand (`systemctl start ollama`,
-        # which natively stops ninfer via the Conflicts pair — ninfer's
-        # side declares the mutual exclusion).
+        # DEMOTED FROM AUTOSTART (2026-09-29, kept 2026-10-10):
+        # ashalliants-df2 is THE resident 3090 engine on the homelab spec
+        # (see ../ashalliants.nix) — both units declare mutual Conflicts,
+        # so an autostarted ollama would fight it for the card at every
+        # boot. The upstream module sets WantedBy = multi-user.target;
+        # overriding wantedBy with an empty list removes the autostart
+        # symlink while keeping the unit startable on demand
+        # (`systemctl start ollama` or `ashalliants-down`, which natively
+        # stops ashalliants via the Conflicts pair).
         systemd.services.ollama.wantedBy = lib.mkForce [];
       };
     };

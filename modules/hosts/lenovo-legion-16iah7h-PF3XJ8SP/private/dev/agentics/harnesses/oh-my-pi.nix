@@ -298,43 +298,10 @@
           discovery.type = "llama.cpp";
         };
 
-        # NInfer-3090 (2026-09-29 main-engine switch, see ../ninfer.nix).
-        # Port 8081 (8080 = bonsai2). Plain OpenAI Chat Completions (api
-        # "openai-completions", NOT responses: the fork ships Chat
-        # Completions + Responses + Anthropic, but no /v1/models-based
-        # discovery — endpoints verified against the fork README). No
-        # discovery.type: omp would poll a discovery protocol the server
-        # may not speak; declare the model explicitly instead.
-        ninfer = {
-          baseUrl = "http://127.0.0.1:8081/v1";
-          api = "openai-completions";
-          auth = "none";
-
-          models = [
-            {
-              # 65536 = the engine's live serving window (ninfer.nix
-              # 2026-09-29 measurement: 131072 does not fit the 3090 —
-              # fixed 8.17 GiB minimum runtime reservation + 1 GiB
-              # headroom exceeds free VRAM after 16.7 GiB weights;
-              # /v1/models served id "qwen3.8-27b" at --max-context
-              # 65536). Pin EXACTLY this — an overclaim triggers omp's
-              # trim -> "no user query found in messages" 500-loop
-              # (ollama #17778 lesson).
-              id = "qwen3.8-27b";
-              name = "Qwen3.8 27B (NInfer)";
-              reasoning = true;
-              input = ["text"];
-              contextWindow = 65536;
-              maxTokens = 16384;
-            }
-          ];
-        };
-
         # ashalliants ninfer-0.15.0 DFlash2 (:8092 — see
         # ../ashalliants.nix; 2026-10-09 benchmark WINNER for Qwen3.8 on
         # both criteria: peak 162.7 tok/s fresh C1 AND high-parallelism x
-        # deep-ctx — C8x32k 1112.0 agg tok/s vs ninfer-061's best 168.7,
-        # 3-7x). Same OpenAI Chat Completions shape as ninfer-061 (the
+        # deep-ctx). Same OpenAI Chat Completions shape (the
         # vendor binary serves completions/responses/anthropic; no
         # /v1/models discovery — declared model instead). id matches the
         # server banner ("listening ... | model qwen3.8-27b"). 262144 =

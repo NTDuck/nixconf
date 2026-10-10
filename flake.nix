@@ -75,11 +75,6 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
-    # Inference: ninfer-3090 (SM86 Qwen3.8-27B engine) — pinned to the
-    # validated v0.6.1-rtx3090 tag commit (no branch tracking; master is
-    # untested). See modules/hosts/.../agentics/ninfer.nix.
-    ninfer.url = "github:Don-Chad/ninfer-3090/47d71067afa20571c34b1e8f1d187aa2b48ff6f8";
-
     # llano V12 Ultra cooling pad control (Holtek USB-HID 374a:b101,
     # Myth.Cool protocol) — source-only input, pinned to the v0.1.4 tag
     # commit (protocol live-verified upstream; master is untested). Packaged

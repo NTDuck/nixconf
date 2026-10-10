@@ -57,25 +57,24 @@
             };
           };
 
-          # NInfer-3090 (2026-09-29 main-engine switch): legion's RESIDENT
-          # 3090 engine on :8081 (tailscale0-only firewall, see
-          # ninfer.nix on legion). OpenAI Chat Completions, declared model
-          # (no discovery protocol); 65536 = the engine's live serving
-          # window (131072 does not fit the 3090 — see ninfer.nix
-          # 2026-09-29 measurement). An overclaim triggers server-side
-          # trim loops (ollama #17778 lesson).
-          ninfer = {
-            baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8081/v1";
+          # ashalliants-df2 on legion (:8092 over tailscale0, 2026-10-10
+          # main-engine switch — legion's RESIDENT 3090 engine,
+          # ashalliants.nix). OpenAI Chat Completions, declared model (no
+          # discovery protocol); 262144 = the tuned-profile serving
+          # window (NINFER_FALLBACK=off keeps it exact). An overclaim
+          # triggers server-side trim loops (ollama #17778 lesson).
+          ashalliants = {
+            baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1";
             api = "openai-completions";
             auth = "none";
 
             models = [
               {
                 id = "qwen3.8-27b";
-                name = "Qwen3.8 27B (NInfer)";
+                name = "Qwen3.8 27B (ashalliants DFlash2)";
                 reasoning = true;
                 input = ["text"];
-                contextWindow = 65536;
+                contextWindow = 262144;
                 maxTokens = 16384;
               }
             ];

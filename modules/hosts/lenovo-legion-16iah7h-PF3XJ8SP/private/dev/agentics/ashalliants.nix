@@ -69,16 +69,26 @@
           after = ["network-online.target"];
           wants = ["network-online.target"];
 
-          # NO AUTOSTART: benchmark winner but scarce-resource unit like
-          # bonsai2 — 23.3 GiB VRAM + 2.9 GiB pinned host RAM. Start via
-          # `ashalliants-up` (Conflicts stop ninfer-serve/ollama/bonsai2
-          # natively). NOT wantedBy multi-user.
-          conflicts = ["ollama.service" "bonsai2.service" "ninfer-serve.service"];
+          # PRIMARY ENGINE (2026-10-10 user request: ninfer-061 removed
+          # entirely, ../swap.nix + flake input; this unit autostarts on
+          # the homelab spec). ollama is on-demand (../ollama.nix) and
+          # declares the reverse Conflicts, so an ollama start still
+          # stops this unit natively.
+          wantedBy = ["multi-user.target"];
+
+          # run.sh has `#!/usr/bin/env bash`; the systemd default PATH
+          # cannot resolve bash ("env: 'bash': No such file or
+          # directory", journal 2026-10-10 01:16). `path` (not a
+          # hardcoded store PATH string) is rebuild-stable.
+
+          conflicts = ["ollama.service" "bonsai2.service"];
 
           serviceConfig = {
             Type = "simple";
             User = "ayin"; # artifact tree is ayin-owned; run.sh probes $HOME trees
             WorkingDirectory = ashRoot;
+            # run.sh resolves bash via env; see conflicts note above.
+            path = with pkgs; [bash coreutils];
             # Boot gate: 60 s GPU wait (thunderbolt eGPU enumerates after
             # multi-user.target), then artifact hash verify. Exit 1 = clean
             # skip (undocked / unplugged GPU), no restart storm.
@@ -100,14 +110,9 @@
             # would silently diverge from the declared provider window).
             # NINFER_HOST_STATE_SLOTS=8 + hostkv-shim (2 GiB) = the exact
             # benchmarked shape; NINFER_SPEC=dflash2 pins the winner lane.
-            # run.sh has `#!/usr/bin/env bash`; ProtectSystem=strict +
-            # the minimal systemd default PATH ("env: 'bash': No such
-            # file or directory", journal 2026-10-10 01:16) can't find
-            # bash — feed the host profile bin and coreutils.
             Environment = let
               ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
             in [
-              "PATH=/run/current-system/sw/bin:/nix/store/lb41b0anx1f98y9y5s9mdv97gjgsq740-python3-3.14.7/bin"
               "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
               "LD_LIBRARY_PATH=${ld}"
               "NINFER_SPEC=dflash2"
@@ -134,6 +139,11 @@
             PrivateTmp = true;
           };
         };
+
+        # DELL consumes ashalliants over the tailnet (2026-10-10: swapped
+        # for the removed ninfer :8081 rule; mirror of the ollama :11434
+        # pattern in ../ollama.nix): open 8092 ONLY on tailscale0.
+        networking.firewall.interfaces.tailscale0.allowedTCPPorts = [8092];
       }; # specialisation.homelab.configuration
     };
   };

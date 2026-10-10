@@ -113,10 +113,10 @@
           after = ["network-online.target"];
           wants = ["network-online.target"];
           # Mutual exclusion with the 3090 daemons (see ../ollama.nix +
-          # ../swap.nix + ../ninfer.nix): starting any of the three units
-          # natively stops the others (ninfer's unit declares the full
-          # symmetric Conflicts pair set).
-          conflicts = ["ollama.service" "ninfer-serve.service"];
+          # ../swap.nix + ../ashalliants.nix): starting any of the units
+          # natively stops the others (ashalliants' unit declares the
+          # symmetric Conflicts set).
+          conflicts = ["ollama.service" "ashalliants-df2.service"];
 
           serviceConfig = {
             # Static 3090 pin (2026-09-25, homelab-spec visibility request):
