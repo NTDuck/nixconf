@@ -120,7 +120,10 @@ ENGINES = {
         # tools/upgrade_ninfer_v2_to_v3.py (weights preserved,
         # qwen3_8.jinja installed; sha256 of v2 source
         # 2b21316202d4cb6082625e1cd179f03b57d879cc72567063e48a6d5e744dc960,
-        # 18210531328 B = upstream content-length).
+        # 18210531328 B = upstream content-length). v3:
+        # swift_qwen3_8_27b_v3.ninfer sha256
+        # 2b2e644600ac5752d94c5850fbb6fcea4a1ffc3a26c8e718bca83b224b599f9a
+        # (18210749936 B); v2 original deleted after upgrade.
         "model": "auto", "port": 8093,
         "launcher": ["env",
                      "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
