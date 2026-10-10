@@ -167,13 +167,11 @@ def main():
                             "clamped 2048 MiB via shim, FALLBACK=off"),
         "ashalliants-mtp": ("`qwen3_8_27b.ninfer` (ashalliants 0.15.0)",
                             "spec=mtp, ctx 262144, host KV shim 2048 MiB"),
-        "swift-uncensored": ("`swift_qwen3_8_27b.ninfer` (Swift-Qwen3.8-27B-"
+        "swift-uncensored": ("`swift_qwen3_8_27b_v3.ninfer` (Swift-Qwen3.8-27B-"
                              "Uncensored, d0xin abliteration; same 0.15.0 "
-                             "binary + tuned dflash2 profile as "
-                             "ashalliants-df2)",
-                             "spec=dflash2, ctx 262144, NINFER_MODEL "
-                             "override, host KV shim 2048 MiB, "
-                             "FALLBACK=off"),
+                             "binary as ashalliants-mtp)",
+                             "spec=mtp, ctx 262144, NINFER_MODEL override, "
+                             "host KV shim 2048 MiB, FALLBACK=off"),
         "buun-qwen": ("`Qwen3.8-27B-UD-IQ4_XS.gguf` (buun-llama-cpp b9637)",
                       "TCQ KV `turbo2_tcq`, `-c 524288 -np 8` "
                       "(per-slot 65536), flash-attn"),
@@ -207,6 +205,22 @@ def main():
                 row.append(fmt(vram, 0) if vram else "—")
                 lines.append("| " + " | ".join(row) + " |")
             lines.append("")
+
+    # Lane comparability caveat (swift artifact lacks dflash2 weights).
+    lines += ["## Lane comparability", ""]
+    lines += [
+        "`swift-uncensored` runs the **mtp lane** (spec=mtp), not the "
+        "tuned dflash2 profile of `ashalliants-df2`: the converted "
+        "artifact is the 1124-object flavor — full MTP draft weights "
+        "but no dflash2 draft weights (0 of the baseline's 56 "
+        "dflash2-bound weights, 1.11 GiB) — so the dflash2 profile is "
+        "structurally impossible and the engine rejects it. The "
+        "apples-to-apples comparison is therefore **swift-uncensored vs "
+        "`ashalliants-mtp`** (same binary, spec, and profile; "
+        "abliterated weights are the only variable). Do not rank "
+        "swift-uncensored against `ashalliants-df2`.",
+        "",
+    ]
 
     # Overflow ledger.
     ov = ROOT / "results" / "overflow.jsonl"

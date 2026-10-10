@@ -9,3 +9,10 @@ result-*
 
 .env
 .codegraph/
+
+# benchmark harness run artifacts
+__pycache__/
+benchmarks/engines-2026-10/server-logs/
+benchmarks/engines-2026-10/results/start-failures.log
+benchmarks/engines-2026-10/results/sessions/
+benchmarks/engines-2026-10/results/variants-*.log
