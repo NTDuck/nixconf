@@ -4,7 +4,7 @@ _Generated 2026-10-10 · harness: `benchmarks/engines-2026-10/` · metric: **per
 
 ## Summary
 
-Sweep screened 9 engine configurations across two model families on one RTX 3090 (TB4 eGPU): screening (fresh + 16k, C1–C8) then a long ladder (32k–256k, C1/C4/C8) for survivors. Metric is per-agent decode tok/s: what one agent observes while N agents stream concurrently on the same engine. Cells that overflowed the 15 GiB host or deadlocked the engine are ledgered, not averaged in. Peak VRAM per cell is reported beside each table.
+Sweep screened 10 engine configurations across two model families on one RTX 3090 (TB4 eGPU): screening (fresh + 16k, C1–C8) then a long ladder (32k–256k, C1/C4/C8) for survivors. Metric is per-agent decode tok/s: what one agent observes while N agents stream concurrently on the same engine. Cells that overflowed the 15 GiB host or deadlocked the engine are ledgered, not averaged in. Peak VRAM per cell is reported beside each table.
 
 
 Per-engine sections below pair each engine's configuration with its result table: per-agent decode tok/s (rows = context, cols = C1–C8) and peak VRAM MiB per cell. `—` = not measured or overflow (see ledger).
@@ -139,6 +139,24 @@ Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One su
 | 128k | 0.0 | — | — | — | 22732 |
 | 256k | 0.0 | — | — | — | 22732 |
 
+### `swift-uncensored`
+
+- **Artifact:** `swift_qwen3_8_27b_v3.ninfer` (Swift-Qwen3.8-27B-Uncensored, d0xin abliteration; same 0.15.0 binary as ashalliants-mtp)
+- **Flags:** spec=mtp, ctx 262144, NINFER_MODEL override, host KV shim 2048 MiB, FALLBACK=off
+
+| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
+|---|---|---|---|---|---|
+| fresh | 120.8 | 114.3 | 109.7 | 102.5 | 25464 |
+| 16k | 111.3 | 87.7 | 82.3 | 75.8 | 25555 |
+| 32k | 104.4 | — | 79.2 | 71.1 | 25745 |
+| 64k | 91.7 | — | 81.9 | 72.1 | 25639 |
+| 128k | 79.0 | — | 74.0 | 70.6 | 26260 |
+| 256k | 66.5 | — | 73.8 | 72.0 | 25483 |
+
+## Lane comparability
+
+`swift-uncensored` runs the **mtp lane** (spec=mtp), not the tuned dflash2 profile of `ashalliants-df2`: the converted artifact is the 1124-object flavor — full MTP draft weights but no dflash2 draft weights (0 of the baseline's 56 dflash2-bound weights, 1.11 GiB) — so the dflash2 profile is structurally impossible and the engine rejects it. The apples-to-apples comparison is therefore **swift-uncensored vs `ashalliants-mtp`** (same binary, spec, and profile; abliterated weights are the only variable). Do not rank swift-uncensored against `ashalliants-df2`.
+
 ## Overflowed cells (retried once 2026-10-09; permanent rejections kept)
 
 _None outstanding._
@@ -146,7 +164,7 @@ _None outstanding._
 ## Winner
 
 - **bonsai2-27b**: peak `ninfer-all-b2` 267.5 tok/s per-agent; at high parallelism×deep ctx — C8 × 32k: `ninfer-all-b2` 210.9 tok/s vs `q27-t3-solo` 71.0.
-- **qwen3.8-27b**: peak `ashalliants-df2` 162.7 tok/s per-agent; at high parallelism×deep ctx — C8 × 256k: `ashalliants-df2` 91.9 tok/s vs `ashalliants-mtp` 66.9.
+- **qwen3.8-27b**: peak `ashalliants-df2` 162.7 tok/s per-agent; at high parallelism×deep ctx — C8 × 256k: `ashalliants-df2` 91.9 tok/s vs `swift-uncensored` 72.0.
 
 Final per-model throughput surfaces:
 
