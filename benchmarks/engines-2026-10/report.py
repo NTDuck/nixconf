@@ -287,6 +287,46 @@ def main():
             lines += ["_None outstanding._"]
         lines.append("")
 
+    # Per-model "table views" (user spec 2026-10-10): rows = context,
+    # cols = C1–C8, one cell = FRONTIER across that model's engines —
+    # best measured per-agent tok/s and which engine(s) achieved it.
+    # Mirrors the per-engine tables above but answers "at this
+    # context×parallelism, which engine wins this model family".
+    LANE_VARIANTS = {"swift-uncensored"}
+    lines += ["## Per-model frontiers", ""]
+    for model in by_model:
+        lines += [f"### {model}", "",
+                  "| context | " + " | ".join(f"C{c}" for c in CONCS)
+                  + " |", "|---|---|---|---|---|"]
+        grid_by_cell = defaultdict(dict)
+        for (m, tag), g in cells.items():
+            if m != model:
+                continue
+            for (ctx, conc), (t, v, ok) in g.items():
+                if ok > 0 and t > 0:
+                    grid_by_cell[(ctx, conc)][tag] = t
+        for ctx, lbl in CTX_BUCKETS:
+            if not any((ctx, c) in grid_by_cell for c in CONCS):
+                continue
+            row = [lbl]
+            for c in CONCS:
+                tags = grid_by_cell.get((ctx, c), {})
+                if not tags:
+                    row.append("—")
+                    continue
+                best = max(tags.values())
+                wins = sorted(t for t, v in tags.items() if v == best)
+                # Lane-aware display: swift-uncensored can only be
+                # compared against ashalliants-mtp, so when it wins a
+                # cell its tok/s gets the (mtp) marker.
+                parts = []
+                for t in wins:
+                    suffix = " (mtp)" if t in LANE_VARIANTS else ""
+                    parts.append(f"`{t}`{suffix} {fmt(best)}")
+                row.append(", ".join(parts))
+            lines.append("| " + " | ".join(row) + " |")
+        lines.append("")
+
     # Winner section (user spec 2026-10-10: paragraph + per-model 3D
     # plots close the report).
     lines += ["## Winner", ""]

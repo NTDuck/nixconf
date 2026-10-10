@@ -161,6 +161,30 @@ Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One su
 
 _None outstanding._
 
+## Per-model frontiers
+
+### bonsai2-27b
+
+| context | C1 | C2 | C4 | C8 |
+|---|---|---|---|---|
+| fresh | `ninfer-all-b2` 267.5 | `ninfer-all-b2` 194.0 | `q27-t3-solo` 115.4 | `q27-t3-solo` 115.7 |
+| 16k | `ninfer-all-b2` 204.7 | `ninfer-all-b2` 100.3 | `q27-t3-solo` 88.1 | `q27-t3-solo` 88.1 |
+| 32k | `ninfer-all-b2` 225.8 | — | `ninfer-all-b2` 199.8 | `ninfer-all-b2` 210.9 |
+| 64k | `ninfer-all-b2` 197.9 | — | `q27-t3-solo` 53.6 | `ninfer-all-b2` 24.6 |
+| 128k | `q27-t3-mtp` 34.1 | — | — | — |
+| 256k | `q27-t3-mtp` 20.8 | — | — | — |
+
+### qwen3.8-27b
+
+| context | C1 | C2 | C4 | C8 |
+|---|---|---|---|---|
+| fresh | `ashalliants-df2` 162.7 | `ashalliants-df2` 154.3 | `ashalliants-df2` 157.9 | `ashalliants-df2` 155.7 |
+| 16k | `ashalliants-df2` 154.2 | `ashalliants-df2` 143.4 | `ashalliants-df2` 141.9 | `ashalliants-df2` 145.5 |
+| 32k | `ashalliants-df2` 135.0 | — | `ashalliants-df2` 144.5 | `ashalliants-df2` 139.0 |
+| 64k | `ashalliants-df2` 131.0 | — | `ashalliants-df2` 124.7 | `ashalliants-df2` 134.1 |
+| 128k | `ashalliants-df2` 118.2 | — | `ashalliants-df2` 118.5 | `ashalliants-df2` 117.2 |
+| 256k | `ashalliants-df2` 90.9 | — | `ashalliants-df2` 89.5 | `ashalliants-df2` 91.9 |
+
 ## Winner
 
 - **bonsai2-27b**: peak `ninfer-all-b2` 267.5 tok/s per-agent; at high parallelism×deep ctx — C8 × 32k: `ninfer-all-b2` 210.9 tok/s vs `q27-t3-solo` 71.0.
