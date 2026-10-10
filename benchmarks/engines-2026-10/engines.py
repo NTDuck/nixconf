@@ -111,6 +111,9 @@ ENGINES = {
         # path override; alias differs so report tables separate arms.
         # Same env shape as ashalliants-df2 (hostkv-shim 2 GiB clamp,
         # FALLBACK=off, 8 slots) for an apples-to-apples comparison.
+        # Artifact verified 2026-10-10: 18210531328 B (upstream
+        # content-length), sha256 2b21316202d4cb6082625e1cd179f03b57d879c
+        # c72567063e48a6d5e744dc960.
         "model": "auto", "port": 8093,
         "launcher": ["env",
                      "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
