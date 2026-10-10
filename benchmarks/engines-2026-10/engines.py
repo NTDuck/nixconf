@@ -105,21 +105,28 @@ ENGINES = {
     # ---------------- 2026-10-10 variant arm ----------------
     "swift-uncensored": {
         # Swift-Qwen3.8-27B-Uncensored (d0xin abliteration, wacomctl672
-        # HF conversion) as a .ninfer artifact on the SAME 0.15.0 binary
-        # + tuned dflash2 profile as the winner baseline. run.sh
-        # MODEL="${NINFER_MODEL:-...}" (line 105) takes the artifact
-        # path override; alias differs so report tables separate arms.
-        # Same env shape as ashalliants-df2 (hostkv-shim 2 GiB clamp,
-        # FALLBACK=off, 8 slots) for an apples-to-apples comparison.
-        # Artifact verified 2026-10-10: 18210531328 B (upstream
-        # content-length), sha256 2b21316202d4cb6082625e1cd179f03b57d879c
-        # c72567063e48a6d5e744dc960.
+        # HF conversion) on the SAME 0.15.0 binary as the winner
+        # baseline. The converted artifact is the 1124-object v2 flavor:
+        # full MTP draft weights (16 bindings, identical to baseline)
+        # but NO dflash2 draft weights (0 of baseline's 56 dflash2-bound
+        # weights, 1.11 GiB) — the vendor converter never emitted the
+        # dflash2 draft, so NINFER_SPEC=tuned/dflash2 is structurally
+        # impossible and the engine rejects it ("Qwen3.5 config:
+        # missing component dflash2", 2026-10-10 11:37). Run the mtp
+        # lane instead: identical spec/profile to the ashalliants-mtp
+        # arm, isolating the abliterated weights as the only variable.
+        # run.sh MODEL="${NINFER_MODEL:-...}" takes the artifact
+        # override; upgraded to v3 framing with the vendor
+        # tools/upgrade_ninfer_v2_to_v3.py (weights preserved,
+        # qwen3_8.jinja installed; sha256 of v2 source
+        # 2b21316202d4cb6082625e1cd179f03b57d879cc72567063e48a6d5e744dc960,
+        # 18210531328 B = upstream content-length).
         "model": "auto", "port": 8093,
         "launcher": ["env",
                      "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
-        "env": {"NINFER_MODEL": f"{ASH}/models/swift_qwen3_8_27b.ninfer",
-                "NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
+        "env": {"NINFER_MODEL": f"{ASH}/models/swift_qwen3_8_27b_v3.ninfer",
+                "NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8093", "NINFER_FALLBACK": "off",
                 "NINFER_HOST_STATE_SLOTS": "8",
                 "NINFER_SERVER": f"{ASH}/ninfer-serve.hostkv-shim"},
