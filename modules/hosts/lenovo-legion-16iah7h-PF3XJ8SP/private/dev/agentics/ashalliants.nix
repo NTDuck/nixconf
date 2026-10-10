@@ -76,19 +76,22 @@
           # stops this unit natively.
           wantedBy = ["multi-user.target"];
 
-          # run.sh has `#!/usr/bin/env bash`; the systemd default PATH
-          # cannot resolve bash ("env: 'bash': No such file or
-          # directory", journal 2026-10-10 01:16). `path` (not a
-          # hardcoded store PATH string) is rebuild-stable.
-
           conflicts = ["ollama.service" "bonsai2.service"];
+
+          # `path` is a UNIT-LEVEL systemd(7) option — inside
+          # serviceConfig it emits an ignored `Path=` key (journal
+          # 2026-10-10 09:45: "env: 'bash': No such file or directory",
+          # status=127). Located before serviceConfig: unit attrs and
+          # serviceConfig are merged into one attrset, so a duplicate
+          # `path` here would shadow itself. Store bin dirs are
+          # rebuild-stable via the module wrapper, not a hardcoded
+          # /run/current-system string.
+          path = with pkgs; [bash coreutils];
 
           serviceConfig = {
             Type = "simple";
             User = "ayin"; # artifact tree is ayin-owned; run.sh probes $HOME trees
             WorkingDirectory = ashRoot;
-            # run.sh resolves bash via env; see conflicts note above.
-            path = with pkgs; [bash coreutils];
             # Boot gate: 60 s GPU wait (thunderbolt eGPU enumerates after
             # multi-user.target), then artifact hash verify. Exit 1 = clean
             # skip (undocked / unplugged GPU), no restart storm.
