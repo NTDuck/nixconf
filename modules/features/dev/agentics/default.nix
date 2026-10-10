@@ -7,8 +7,6 @@
       den.aspects.dev.agentics.codegraph
       den.aspects.dev.agentics.heretic
       den.aspects.dev.agentics.huggingface
-      den.aspects.dev.agentics.lmstudio
-      den.aspects.dev.agentics.unsloth-studio
       den.aspects.dev.agentics.spec-kit
     ];
   };
