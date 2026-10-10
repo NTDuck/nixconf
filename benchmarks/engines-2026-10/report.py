@@ -91,11 +91,19 @@ def main():
     # have ok cells; if only one engine ever produced ok C8 data, say so
     # at its deepest C8 cell. Peak line: max single-cell per-agent tok/s
     # anywhere. Rendered in the closing "## Winner" section.
+    #
+    # Lane-aware (2026-10-10): swift-uncensored runs the mtp lane — its
+    # artifact has no dflash2 draft weights, so it is comparable only
+    # to ashalliants-mtp, never to the ashalliants-df2 winner. Exclude
+    # it from the cross-engine ranking and rank it inside its own lane.
+    COMPARABLE_EXCLUDED = {"swift-uncensored"}
     winner = {}
     for model in by_model:
         grids = {tag: grid for (m, tag), grid in cells.items() if m == model}
+        rank = {tag: grid for tag, grid in grids.items()
+                if tag not in COMPARABLE_EXCLUDED}
         okc = [(tag, ctx, c, t)
-               for tag, grid in grids.items()
+               for tag, grid in rank.items()
                for (ctx, c), (t, v, ok) in grid.items() if ok > 0 and t > 0]
         if not okc:
             continue
@@ -118,6 +126,37 @@ def main():
                 lbl = next(l for c, l in CTX_BUCKETS if c == ctx)
                 hi = f"C8 × {lbl}: only `{tag}` measured ({fmt(t)} tok/s)"
         pk_tag, _, _, pk_t = max(okc, key=lambda x: x[3])
+        # Same-lane sibling for every excluded variant with data.
+        LANE_CONTROL = {"swift-uncensored": "ashalliants-mtp"}
+        for var in COMPARABLE_EXCLUDED:
+            vgrid = grids.get(var)
+            if not vgrid:
+                continue
+            vok = [(ctx, c, t) for (ctx, c), (t, v, ok) in vgrid.items()
+                   if ok > 0 and t > 0]
+            if not vok:
+                continue
+            vc8 = sorted(((ctx, c, t) for ctx, c, t in vok if c == 8),
+                         key=lambda x: (-x[0], -x[2]))
+            lane = ""
+            if vc8:
+                ctx, c, t = vc8[0]
+                lbl = next(l for cc, l in CTX_BUCKETS if cc == ctx)
+                ctl = next((t2 for (cx, cc), (t2, _, ok) in rank.get(
+                    LANE_CONTROL[var], {}).items()
+                    if cx == ctx and cc == c and ok > 0), None)
+                if ctl:
+                    delta = (t - ctl) / ctl * 100
+                    lane = (f"{var} (mtp lane) C8 × {lbl}: {fmt(t)} tok/s, "
+                            f"{delta:+.1f}% vs `{LANE_CONTROL[var]}` "
+                            f"{fmt(ctl)}")
+                else:
+                    lane = f"{var} (mtp lane) C8 × {lbl}: {fmt(t)} tok/s"
+            else:
+                ctx, c, t = max(vok, key=lambda x: (x[0], x[2]))
+                lbl = next(l for cc, l in CTX_BUCKETS if cc == ctx)
+                lane = f"{var} (mtp lane) deepest C8 cell at {lbl}: {fmt(t)} tok/s"
+            hi = (hi + "; " + lane) if hi else lane
         winner[model] = (pk_tag, pk_t, hi)
 
     winner_lines = []
