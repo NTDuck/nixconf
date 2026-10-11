@@ -16,3 +16,5 @@ benchmarks/engines-2026-10/server-logs/
 benchmarks/engines-2026-10/results/start-failures.log
 benchmarks/engines-2026-10/results/sessions/
 benchmarks/engines-2026-10/results/variants-*.log
+benchmarks/engines-2026-10/results/campaign-*.log
+benchmarks/engines-2026-10/results/campaign.pid

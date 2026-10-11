@@ -96,7 +96,10 @@ def main():
     # artifact has no dflash2 draft weights, so it is comparable only
     # to ashalliants-mtp, never to the ashalliants-df2 winner. Exclude
     # it from the cross-engine ranking and rank it inside its own lane.
-    COMPARABLE_EXCLUDED = {"swift-uncensored"}
+    COMPARABLE_EXCLUDED = {
+        "swift-uncensored", "swift15", "huihui-abl", "obliterated",
+        "thinkingcap", "davidau-fable", "humanlike", "fable5",
+    }
     winner = {}
     for model in by_model:
         grids = {tag: grid for (m, tag), grid in cells.items() if m == model}
@@ -127,8 +130,15 @@ def main():
                 hi = f"C8 × {lbl}: only `{tag}` measured ({fmt(t)} tok/s)"
         pk_tag, _, _, pk_t = max(okc, key=lambda x: x[3])
         # Same-lane sibling for every excluded variant with data.
-        LANE_CONTROL = {"swift-uncensored": "ashalliants-mtp"}
+        LANE_CONTROL = {
+            "swift-uncensored": "ashalliants-mtp",
+            "swift15": "ashalliants-mtp",
+            "huihui-abl": "ashalliants-mtp",
+            "obliterated": "ashalliants-mtp",
+        }
         for var in COMPARABLE_EXCLUDED:
+            if var not in LANE_CONTROL:
+                continue
             vgrid = grids.get(var)
             if not vgrid:
                 continue
@@ -221,12 +231,29 @@ def main():
                        "abliterated; same 0.15.0 binary as ashalliants-mtp)",
                        "spec=mtp, ctx 262144, NINFER_MODEL override, host KV "
                        "shim 2048 MiB, FALLBACK=off"),
+        "obliterated": ("`obliterated_qwen3_8_27b.ninfer` (OBLITERATUS "
+                        "Qwen3.8-27B-OBLITERATED; same 0.15.0 binary as "
+                        "ashalliants-mtp)",
+                        "spec=mtp, ctx 262144, NINFER_MODEL override, host KV "
+                        "shim 2048 MiB, FALLBACK=off"),
         "buun-qwen": ("`Qwen3.8-27B-UD-IQ4_XS.gguf` (buun-llama-cpp b9637)",
                       "TCQ KV `turbo2_tcq`, `-c 524288 -np 8` "
                       "(per-slot 65536), flash-attn"),
         "gguf-q4xs": ("`Qwen3.8-27B-UD-IQ4_XS.gguf` (prism llama.cpp CUDA)",
                       "q8_0 KV, `-c 262144 -np 8` (per-slot 32768), "
                       "flash-attn"),
+        "thinkingcap": ("`ThinkingCap-Qwen3.8-27B-Q4_K_M.gguf` (prism llama.cpp CUDA)",
+                        "`-ngl 99 -fa on -c 262144 -np 8 -ctk q5_1 -ctv q4_0` "
+                        "(per-slot 32768)"),
+        "davidau-fable": ("`DavidAU-TurboFCFusion-Qwen3.8-27B-Q4_K_M.gguf` (prism llama.cpp CUDA)",
+                          "`-ngl 99 -fa on -c 262144 -np 8 -ctk q5_1 -ctv q4_0` "
+                          "(per-slot 32768)"),
+        "humanlike": ("`Humanlike-Qwen3.8-27B-IQ4_XS.gguf` (prism llama.cpp CUDA)",
+                      "`-ngl 99 -fa on -c 262144 -np 8 -ctk q5_1 -ctv q4_0` "
+                      "(per-slot 32768)"),
+        "fable5": ("`Qwen3.8-27B-LoRA-IQ4_XS-MTP.gguf` (prism llama.cpp CUDA)",
+                   "`-ngl 99 -fa on -c 262144 -np 8 -ctk q5_1 -ctv q4_0` "
+                   "(per-slot 32768)"),
     }
 
     # Per-model -> per-engine sections: configuration + result table
@@ -269,6 +296,21 @@ def main():
         "abliterated weights are the only variable). Do not rank "
         "swift-uncensored against `ashalliants-df2`.",
         "",
+        "The 2026-10-10/11 variant arms (`swift15`, `huihui-abl`, "
+        "`obliterated`) ran on the same **mtp lane** with `NINFER_MODEL` "
+        "overrides of the same 0.15.0 binary, all achieving 20/20 cells: "
+        "they are directly comparable to `ashalliants-mtp`/`swift-uncensored` "
+        "and to each other — not to `ashalliants-df2`. "
+        "The four GGUF-only arms (`thinkingcap`, `davidau-fable`, `humanlike`, "
+        "`fable5`) ran on prism llama.cpp CUDA with `q5_1/q4_0` KV cache "
+        "(fitting the 24 GB card); with `-c 262144 -np 8`, each slot gets "
+        "32k context, measuring fresh C1–C8 cells while deep contexts "
+        "exceed single-slot bounds. "
+        "`coder390` carried publisher tokenizer drift (resolved via stock "
+        "resources), but its dequantized BF16 DFlash2 draft (20.44 GiB artifact) "
+        "plus the 0.15.0 DFlash2 runtime reservation (6.01 GiB) exceeds the "
+        "24 GiB card capacity by 1.05 GiB; dropping vision is rejected by the "
+        "engine config.",
     ]
 
     # Overflow ledger.
@@ -300,7 +342,7 @@ def main():
     # best measured per-agent tok/s and which engine(s) achieved it.
     # Mirrors the per-engine tables above but answers "at this
     # context×parallelism, which engine wins this model family".
-    LANE_VARIANTS = {"swift-uncensored"}
+    LANE_VARIANTS = {"swift-uncensored", "swift15", "huihui-abl", "obliterated"}
     lines += ["## Per-model frontiers", ""]
     for model in by_model:
         lines += [f"### {model}", "",

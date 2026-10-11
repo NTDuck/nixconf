@@ -1,10 +1,10 @@
 # Inference engine benchmark — RTX 3090 (TB4 eGPU, SM86, 24 GB)
 
-_Generated 2026-10-10 · harness: `benchmarks/engines-2026-10/` · metric: **per-agent decode tok/s** (chars/4.1 streaming proxy, engine-validated 2026-10-08) · greedy, 256 max tokens · GPU-resident weights/KV only (no CPU offload)._
+_Generated 2026-10-11 · harness: `benchmarks/engines-2026-10/` · metric: **per-agent decode tok/s** (chars/4.1 streaming proxy, engine-validated 2026-10-08) · greedy, 256 max tokens · GPU-resident weights/KV only (no CPU offload)._
 
 ## Summary
 
-Sweep screened 12 engine configurations across two model families on one RTX 3090 (TB4 eGPU): screening (fresh + 16k, C1–C8) then a long ladder (32k–256k, C1/C4/C8) for survivors. Metric is per-agent decode tok/s: what one agent observes while N agents stream concurrently on the same engine. Cells that overflowed the 15 GiB host or deadlocked the engine are ledgered, not averaged in. Peak VRAM per cell is reported beside each table.
+Sweep screened 17 engine configurations across two model families on one RTX 3090 (TB4 eGPU): screening (fresh + 16k, C1–C8) then a long ladder (32k–256k, C1/C4/C8) for survivors. Metric is per-agent decode tok/s: what one agent observes while N agents stream concurrently on the same engine. Cells that overflowed the 15 GiB host or deadlocked the engine are ledgered, not averaged in. Peak VRAM per cell is reported beside each table.
 
 
 Per-engine sections below pair each engine's configuration with its result table: per-agent decode tok/s (rows = context, cols = C1–C8) and peak VRAM MiB per cell. `—` = not measured or overflow (see ledger).
@@ -114,6 +114,34 @@ Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One su
 | 32k | 28.7 | — | 4.8 | 2.1 | 19986 |
 | 64k | 21.8 | — | 2.8 | 0.0 | 19984 |
 
+### `davidau-fable`
+
+- **Artifact:** `DavidAU-TurboFCFusion-Qwen3.8-27B-Q4_K_M.gguf` (prism llama.cpp CUDA)
+- **Flags:** `-ngl 99 -fa on -c 262144 -np 8 -ctk q5_1 -ctv q4_0` (per-slot 32768)
+
+| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
+|---|---|---|---|---|---|
+| fresh | 29.6 | 4.3 | 1.6 | 0.7 | 23722 |
+| 16k | 0.0 | — | — | — | 23720 |
+| 32k | 0.0 | — | — | — | 23718 |
+| 64k | 0.0 | — | — | — | 23710 |
+| 128k | 0.0 | — | — | — | 23710 |
+| 256k | 0.0 | — | — | — | 23710 |
+
+### `fable5`
+
+- **Artifact:** `Qwen3.8-27B-LoRA-IQ4_XS-MTP.gguf` (prism llama.cpp CUDA)
+- **Flags:** `-ngl 99 -fa on -c 262144 -np 8 -ctk q5_1 -ctv q4_0` (per-slot 32768)
+
+| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
+|---|---|---|---|---|---|
+| fresh | 28.6 | 4.3 | 1.6 | 0.7 | 20934 |
+| 16k | 0.0 | — | — | — | 20930 |
+| 32k | 0.0 | — | — | — | 20930 |
+| 64k | 0.0 | — | — | — | 20920 |
+| 128k | 0.0 | — | — | — | 20920 |
+| 256k | 0.0 | — | — | — | 20920 |
+
 ### `gguf-q4xs`
 
 - **Artifact:** `Qwen3.8-27B-UD-IQ4_XS.gguf` (prism llama.cpp CUDA)
@@ -139,6 +167,20 @@ Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One su
 | 128k | 91.2 | — | 74.1 | 68.5 | 23480 |
 | 256k | 74.6 | — | 73.1 | 68.2 | 23480 |
 
+### `humanlike`
+
+- **Artifact:** `Humanlike-Qwen3.8-27B-IQ4_XS.gguf` (prism llama.cpp CUDA)
+- **Flags:** `-ngl 99 -fa on -c 262144 -np 8 -ctk q5_1 -ctv q4_0` (per-slot 32768)
+
+| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
+|---|---|---|---|---|---|
+| fresh | 34.1 | 4.5 | 1.6 | 0.7 | 20944 |
+| 16k | 0.0 | — | — | — | 20942 |
+| 32k | 0.0 | — | — | — | 20940 |
+| 64k | 0.0 | — | — | — | 20932 |
+| 128k | 0.0 | — | — | — | 20932 |
+| 256k | 0.0 | — | — | — | 20932 |
+
 ### `ninfer-061`
 
 - **Artifact:** `/var/lib/ninfer/qwen3_8_27b.ninfer` (ninfer 0.6.1)
@@ -152,6 +194,20 @@ Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One su
 | 64k | 66.2 | — | 66.3 | 61.2 | 22734 |
 | 128k | 0.0 | — | — | — | 22732 |
 | 256k | 0.0 | — | — | — | 22732 |
+
+### `obliterated`
+
+- **Artifact:** `obliterated_qwen3_8_27b.ninfer` (OBLITERATUS Qwen3.8-27B-OBLITERATED; same 0.15.0 binary as ashalliants-mtp)
+- **Flags:** spec=mtp, ctx 262144, NINFER_MODEL override, host KV shim 2048 MiB, FALLBACK=off
+
+| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
+|---|---|---|---|---|---|
+| fresh | 113.9 | 103.1 | 100.6 | 102.3 | 23214 |
+| 16k | 108.4 | 100.0 | 85.0 | 77.0 | 23224 |
+| 32k | 114.3 | — | 81.8 | 74.5 | 23224 |
+| 64k | 101.4 | — | 83.6 | 74.9 | 23224 |
+| 128k | 93.8 | — | 72.6 | 68.3 | 23224 |
+| 256k | 83.3 | — | 68.9 | 68.5 | 23224 |
 
 ### `swift-uncensored`
 
@@ -181,12 +237,25 @@ Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One su
 | 128k | 87.2 | — | 73.2 | 65.4 | 23224 |
 | 256k | 72.1 | — | 65.2 | 68.9 | 23224 |
 
+### `thinkingcap`
+
+- **Artifact:** `ThinkingCap-Qwen3.8-27B-Q4_K_M.gguf` (prism llama.cpp CUDA)
+- **Flags:** `-ngl 99 -fa on -c 262144 -np 8 -ctk q5_1 -ctv q4_0` (per-slot 32768)
+
+| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
+|---|---|---|---|---|---|
+| fresh | 31.1 | 4.4 | 1.6 | 0.7 | 22930 |
+| 16k | 0.0 | — | — | — | 22938 |
+| 32k | 0.0 | — | — | — | 22928 |
+| 64k | 0.0 | — | — | — | 22904 |
+| 128k | 0.0 | — | — | — | 22904 |
+| 256k | 0.0 | — | — | — | 22904 |
+
 ## Lane comparability
 
 `swift-uncensored` runs the **mtp lane** (spec=mtp), not the tuned dflash2 profile of `ashalliants-df2`: the converted artifact is the 1124-object flavor — full MTP draft weights but no dflash2 draft weights (0 of the baseline's 56 dflash2-bound weights, 1.11 GiB) — so the dflash2 profile is structurally impossible and the engine rejects it. The apples-to-apples comparison is therefore **swift-uncensored vs `ashalliants-mtp`** (same binary, spec, and profile; abliterated weights are the only variable). Do not rank swift-uncensored against `ashalliants-df2`.
 
-The 2026-10-10 variant arms (`swift15`, `huihui-abl`) ran on the same **mtp lane** with `NINFER_MODEL` overrides of the same 0.15.0 binary, so they are comparable to `ashalliants-mtp`/`swift-uncensored` and to each other — not to `ashalliants-df2`. Campaign failures (diagnosed 2026-10-10, rerun pending): `coder390` (publisher tokenizer drift — converter now overrides tokenizer.json/tokenizer_config.json with stock qwen3.8 resources), `obliterated` (ENOSPC mid-download; repo ships 97G of multi-quant sets), and the four GGUF-only arms (`thinkingcap`, `davidau-fable`, `humanlike`, `fable5`) which OOM on the KV cache at ctx 262144 with q8_0 KV on the 24 GB card (needs reduced per-lane ctx or host-KV offload).
-
+The 2026-10-10/11 variant arms (`swift15`, `huihui-abl`, `obliterated`) ran on the same **mtp lane** with `NINFER_MODEL` overrides of the same 0.15.0 binary, all achieving 20/20 cells: they are directly comparable to `ashalliants-mtp`/`swift-uncensored` and to each other — not to `ashalliants-df2`. The four GGUF-only arms (`thinkingcap`, `davidau-fable`, `humanlike`, `fable5`) ran on prism llama.cpp CUDA with `q5_1/q4_0` KV cache (fitting the 24 GB card); with `-c 262144 -np 8`, each slot gets 32k context, measuring fresh C1–C8 cells while deep contexts exceed single-slot bounds. `coder390` carried publisher tokenizer drift (resolved via stock resources), but its dequantized BF16 DFlash2 draft (20.44 GiB artifact) plus the 0.15.0 DFlash2 runtime reservation (6.01 GiB) exceeds the 24 GiB card capacity by 1.05 GiB; dropping vision is rejected by the engine config.
 ## Overflowed cells (retried once 2026-10-09; permanent rejections kept)
 
 _None outstanding._
@@ -218,7 +287,7 @@ _None outstanding._
 ## Winner
 
 - **bonsai2-27b**: peak `ninfer-all-b2` 267.5 tok/s per-agent; at high parallelism×deep ctx — C8 × 32k: `ninfer-all-b2` 210.9 tok/s vs `q27-t3-solo` 71.0.
-- **qwen3.8-27b**: peak `ashalliants-df2` 162.7 tok/s per-agent; at high parallelism×deep ctx — C8 × 256k: `ashalliants-df2` 91.9 tok/s vs `swift15` 68.9; swift-uncensored (mtp lane) C8 × 256k: 72.0 tok/s, +7.7% vs `ashalliants-mtp` 66.9.
+- **qwen3.8-27b**: peak `ashalliants-df2` 162.7 tok/s per-agent; at high parallelism×deep ctx — C8 × 256k: `ashalliants-df2` 91.9 tok/s vs `ashalliants-mtp` 66.9; swift15 (mtp lane) C8 × 256k: 68.9 tok/s, +3.0% vs `ashalliants-mtp` 66.9; obliterated (mtp lane) C8 × 256k: 68.5 tok/s, +2.4% vs `ashalliants-mtp` 66.9; huihui-abl (mtp lane) C8 × 256k: 68.2 tok/s, +2.0% vs `ashalliants-mtp` 66.9; swift-uncensored (mtp lane) C8 × 256k: 72.0 tok/s, +7.7% vs `ashalliants-mtp` 66.9.
 
 qwen3.8-27b variants on the ashalliants engine (shared mtp lane) — per-agent decode tok/s (Z = tok/s up = faster, X = context, Y = parallelism k):
 

@@ -96,9 +96,12 @@ stage_coder390() {
   # Publisher's .ninfer tiers are gguf_blocks_v1 — unsupported by the
   # 0.15.0 engine (startup FATAL, 2026-10-10). Convert BF16 + DFlash2-FP8
   # draft instead: dflash2 lane, comparable to ashalliants-df2.
-  # 2026-10-11: vision dropped — artifact + vision (1.45G) exceeded the
-  # 24G card's runtime reservation by 1.13G ("requested Engine runtime
-  # reservation requires 6449318144 bytes"); coder prompts are text-only.
+  # 2026-10-11: With vision included, artifact (20.44 GiB) + 0.15.0 DFlash2
+  # runtime reservation (6.01 GiB) exceeds 24 GiB VRAM ("requested Engine
+  # runtime reservation requires 6449318144 bytes, but only 5321195520 bytes
+  # available"). Dropping vision (--components text,mtp,dflash2) yields
+  # "FATAL server failed during startup | Qwen3.5 config: missing component vision"
+  # because 0.15.0 model config hard-requires vision component at runtime.
   local dir="$DL/nerkyor_coder390"
   local out="$ASH/models/coder390_dflash2.ninfer"
   [ -f "$out" ] || {
@@ -143,6 +146,13 @@ stage_coder390() {
 }
 
 stage_swift15() {
+  # 20 cells measured (2026-10-10): skip rebuild — artifact was
+  # cleanup_artifacts'd; re-downloading 54G bf16 to reconvert serves
+  # no benchmark purpose and risks ENOSPC (huihui trap, 2026-10-10).
+  if [ "$(cells_for swift15)" -ge 20 ]; then
+    log "swift15: 20 cells already measured, skipping stage"
+    return 0
+  fi
   local dir="$DL/ukisai_Swift-1.5-Qwen3.8-27b"
   local out="$ASH/models/swift15_qwen3_8_27b.ninfer"
   [ -f "$out" ] || {
@@ -182,6 +192,12 @@ stage_huihui() {
 }
 
 stage_obliterated() {
+  # 20 cells measured (2026-10-11): skip rebuild — same rationale as
+  # swift15 (artifact cleanup + rebuild = pure disk churn).
+  if [ "$(cells_for obliterated)" -ge 20 ]; then
+    log "obliterated: 20 cells already measured, skipping stage"
+    return 0
+  fi
   local dir="$DL/OBLITERATUS_Qwen3.8-27B-OBLITERATED"
   local out="$ASH/models/obliterated_qwen3_8_27b.ninfer"
   [ -f "$out" ] || {
