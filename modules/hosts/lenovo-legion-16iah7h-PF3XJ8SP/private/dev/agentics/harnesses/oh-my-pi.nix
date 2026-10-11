@@ -209,24 +209,60 @@
           );
       };
 
-      # `ompl` = omp with every chat model role pinned to the local
-      # ashalliants Qwen3.8-27B engine (:8092, ../ashalliants.nix), so
-      # /model cycling, subagents, and the advisor all stay on the 3090
-      # instead of falling back to cloud providers. Selector precedence
-      # (omp://settings.md): CLI overlays (PI_CONFIG_FILES) override the
-      # global config.yml, so this layer beats /model role picks. `:high`
-      # is this model's top effort — the catalog has no `max` for it
+      # `ompl` = a Qwen3.8-27B-ONLY harness: every chat role pinned to
+      # the local ashalliants engine (:8092, ../ashalliants.nix), running
+      # under a dedicated `--profile ompl` agent dir
+      # (~/.omp/profiles/ompl/agent). The profile isolates ALL agent
+      # state — sessions, history.db, agent.db, models.db, stored auth,
+      # memories, blobs, terminal-sessions — from the default
+      # ~/.omp/agent dir ("no memory or persistence" user requirement,
+      # 2026-10-11): nothing ompl does lands in omp's shared store, and
+      # the fresh profile starts with NO stored cloud credentials.
+      #
+      # models.yml resolves from the ACTIVE agent dir, so the profile
+      # needs its own qwen-only models.yml (omplModels below) — the
+      # shared ~/.omp/agent/models.yml (cloud + ollama) is NOT visible
+      # to it. Without a profile-local file the ashalliants selector is
+      # unresolvable and the harness SILENTLY degrades to a cloud model:
+      # reproduced 2026-10-11, a profile launch with no models.yml
+      # routed to openrouter and died 402 "requires more credits" while
+      # the status line still said Qwen. The qwen-only file is the
+      # first gate; the overlay keys below are the rest.
+      #
+      # qwen-only gates (defense in depth — the fresh auth store alone
+      # cannot cover env-var keys such as OPENROUTER_API_KEY inherited
+      # from a shell that previously ran `omp`):
+      #   enabledModels     — chat selection (startup model, /model
+      #                       picker, Ctrl+P cycling) scoped to the one
+      #                       model.
+      #   disabledProviders — removes backends from selection even when
+      #                       credentials exist. Covers the env-var-
+      #                       backed cloud ids observed on this host
+      #                       plus the implicit KEYLESS local probes
+      #                       (ollama/llama.cpp/lm-studio are keyless,
+      #                       hence available with zero credentials —
+      #                       this replaces config.default.yml's
+      #                       [llama.cpp] entry; arrays replace, not
+      #                       append).
+      #   retry.modelFallback — false: a pinned role whose engine is
+      #                       down (`ashalliants-up`) must FAIL LOUDLY,
+      #                       never leak a turn to a cloud model (no
+      #                       fallbackChains by design — same intent).
+      #
+      # no-memory keys (overlay beats config.default.yml's mnemopi
+      # backend and the enabled autolearn nudge):
+      #   memory.backend: off — no Mnemopi long-term memory
+      #   autolearn.enabled: false — no post-stop lesson/skill capture
+      #
+      # Non-chat roles (image/speech/dictation/web, tiny, memory) are
+      # deliberately absent: no local engine serves those kinds, and
+      # pinning them to qwen3.8-27b would just 404 or hallucinate
+      # capabilities. `judge` accepts chat models, so it is pinned;
+      # `commit`/`task` are ordinary chat roles (auto-resolve from
+      # default when unset, but pinned for determinism). `:high` is
+      # this model's top effort — the catalog has no `max` for it
       # (minimal/low/medium/high only; verified against `omp models`
-      # + engine logs 2026-10-11, `:max` runs the default template
-      # unchanged). Non-chat roles (image/speech/dictation/web, tiny,
-      # memory) are deliberately absent: no local engine serves those
-      # kinds, and pinning them to qwen3.8-27b would just 404 or
-      # hallucinate capabilities. `judge` accepts chat models, so it is
-      # pinned; `commit`/`task` are ordinary chat roles (auto-resolve
-      # from default when unset, but pinned for determinism). No
-      # fallbackChains: a role pinned to the local engine must fail
-      # loudly when the engine is down (`ashalliants-up`), not
-      # silently leak a turn to a cloud provider.
+      # + engine logs 2026-10-11).
       omplOverlay = {
         modelRoles = {
           default = "ashalliants/qwen3.8-27b:high";
@@ -239,16 +275,98 @@
           advisor = "ashalliants/qwen3.8-27b:high";
           judge = "ashalliants/qwen3.8-27b:high";
         };
+
+        enabledModels = [ "ashalliants/qwen3.8-27b" ];
+
+        disabledProviders = [
+          # implicit keyless local probes
+          "ollama"
+          "llama.cpp"
+          "lm-studio"
+          "apple"
+          # env-var/stored-credential cloud ids observed on this host
+          "litellm"
+          "openrouter"
+          "opencode-go"
+          "opencode-zen"
+          "google-antigravity"
+          "openai-codex"
+        ];
+
+        retry.modelFallback = false;
+
+        memory.backend = "off";
+        autolearn.enabled = false;
+      };
+
+      # Profile-local qwen-only models.yml. Reuses local.ashalliants
+      # (single source of the provider block). On the default
+      # generation :8092 is simply down and ompl fails loudly — as
+      # designed, same as `ashalliants-up` gating the shared provider.
+      omplModels = {
+        providers.ashalliants = local.ashalliants;
+      };
+
+      # A named profile's agent dir resolves ITS OWN extensions/ and
+      # keybindings.yml — the shared aspect's copies in ~/.omp/agent/
+      # are invisible to it (verified 2026-10-11: no "[pi-reasonix]
+      # Loaded" line under --profile with an empty profile dir). So the
+      # profile gets its own: pi-reasonix (cache-first prefix work, cost
+      # metrics) and the ctrl+v pasteImage remap (app.clipboard.pasteImage
+      # -> alt+v, 2026-09-25 user bug: image chip instead of paste).
+      #
+      # Re-derived here rather than plucked from osConfig's
+      # environment.systemPackages: the homeManager aspect's osConfig
+      # does not carry systemPackages (findFirst returned null — build
+      # error 2026-10-11). Same fetchurl+hash as the shared aspect
+      # (oh-my-pi.nix:24-53), so content cannot diverge; keep the
+      # version in sync.
+      reasonixPkg = pkgs.stdenv.mkDerivation rec {
+        pname = "pi-reasonix";
+        version = "1.1.0";
+
+        src = pkgs.fetchurl {
+          url = "https://registry.npmjs.org/pi-reasonix/-/pi-reasonix-${version}.tgz";
+          hash = "sha512-pK9ig80y8l8shFoWGJx+ylg+dQ2qj9a/3z+nIkCDcsCW+3TsbqyeNrm0B/Pb4YcaczUjDBnVJHtByzbh+JJVzQ==";
+        };
+
+        dontBuild = true;
+
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/lib/node_modules/pi-reasonix
+          cp -r * $out/lib/node_modules/pi-reasonix/
+          mkdir -p $out/share/omp/extensions
+          ln -s $out/lib/node_modules/pi-reasonix/dist/extensions/index.js $out/share/omp/extensions/pi-reasonix.js
+          runHook postInstall
+        '';
+
+        meta = {
+          description = "DeepSeek-native optimizations for Pi / Oh-My-Pi: cache-first prefix stabilization, tool-call repair, and cost control";
+          homepage = "https://github.com/TheTrebor/pi-reasonix";
+          license = pkgs.lib.licenses.mit;
+        };
       };
     in {
       home.file.".omp/agent/models.yml".source =
         yaml.generate ".omp.agent.models.yml" models;
 
-      # models.yml REPLACES omp's implicit catalog (see the ollama block
-      # above), so cloud providers exist only through the declaration
-      # below — the overlay cannot re-enable them by omission.
+      # PI_CONFIG_FILES overlay (merged OVER config.yml/config.default.yml;
+      # later overlays win), see the omplOverlay comment above.
       home.file.".omp/agent/ompl.yml".source =
         yaml.generate ".omp.agent.ompl.yml" omplOverlay;
+
+      # --- ompl profile support files (~/.omp/profiles/ompl/agent/) ---
+      home.file.".omp/profiles/ompl/agent/models.yml".source =
+        yaml.generate ".omp.agent.ompl-models.yml" omplModels;
+
+      home.file.".omp/profiles/ompl/agent/keybindings.yml".text = ''
+        keybindings:
+          app.clipboard.pasteImage: "alt+v"
+      '';
+
+      home.file.".omp/profiles/ompl/agent/extensions/pi-reasonix.js".source =
+        "${reasonixPkg}/share/omp/extensions/pi-reasonix.js";
 
       home.shellAliases = {
         omp = ''
@@ -261,17 +379,17 @@
           REASONIX_RESULT_CAP_TOKENS=3000 \
           ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp'';
 
-        # Same wrapper as `omp` plus the role-pinning overlay appended to
-        # PI_CONFIG_FILES (later overlays override earlier ones, and both
-        # override the mutable config.yml — so /model role picks cannot
-        # leak a cloud model into an ompl session). Kept as a separate
-        # alias, not an override of `omp`: the shared aspect owns `omp`
-        # via mkDefault and the 5-secret export block is duplicated here
-        # by design (the existing comment on `omp` documents why the
-        # legion alias is a full literal).
+        # Same omp binary plus `--profile ompl`: isolated agent dir
+        # (see the omplOverlay comment — no shared sessions/history/
+        # auth, i.e. no persistence) and the qwen-only overlay. NO
+        # secret exports: auth is none (local engine) and no cloud
+        # provider is reachable, so there is nothing to authenticate.
+        # Kept as a separate alias (the shared aspect owns `omp` via
+        # mkDefault; the 5-secret export block above is duplicated by
+        # design for `omp` — see its comment).
         ompl = ''
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml" \
-          ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp'';
+          ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp --profile ompl'';
       };
     };
   };
