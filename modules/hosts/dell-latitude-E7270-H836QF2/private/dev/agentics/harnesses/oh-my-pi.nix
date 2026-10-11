@@ -71,7 +71,7 @@
             models = [
               {
                 id = "qwen3.8-27b";
-                name = "Qwen3.8 27B (ashalliants DFlash2)";
+                name = "Qwen 3.8 27B";
                 reasoning = true;
                 input = ["text"];
                 contextWindow = 262144;

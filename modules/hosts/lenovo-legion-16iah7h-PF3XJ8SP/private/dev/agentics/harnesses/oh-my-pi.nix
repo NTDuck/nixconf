@@ -318,7 +318,7 @@
           models = [
             {
               id = "qwen3.8-27b";
-              name = "Qwen3.8 27B (ashalliants DFlash2)";
+              name = "Qwen 3.8 27B";
               reasoning = true;
               input = ["text"];
               contextWindow = 262144;
@@ -337,9 +337,47 @@
             else {}
           );
       };
+
+      # `ompl` = omp with every chat model role pinned to the local
+      # ashalliants Qwen3.8-27B engine (:8092, ../ashalliants.nix), so
+      # /model cycling, subagents, and the advisor all stay on the 3090
+      # instead of falling back to cloud providers. Selector precedence
+      # (omp://settings.md): CLI overlays (PI_CONFIG_FILES) override the
+      # global config.yml, so this layer beats /model role picks. `:high`
+      # is this model's top effort — the catalog has no `max` for it
+      # (minimal/low/medium/high only; verified against `omp models`
+      # + engine logs 2026-10-11, `:max` runs the default template
+      # unchanged). Non-chat roles (image/speech/dictation/web, tiny,
+      # memory) are deliberately absent: no local engine serves those
+      # kinds, and pinning them to qwen3.8-27b would just 404 or
+      # hallucinate capabilities. `judge` accepts chat models, so it is
+      # pinned; `commit`/`task` are ordinary chat roles (auto-resolve
+      # from default when unset, but pinned for determinism). No
+      # fallbackChains: a role pinned to the local engine must fail
+      # loudly when the engine is down (`ashalliants-up`), not
+      # silently leak a turn to a cloud provider.
+      omplOverlay = {
+        modelRoles = {
+          default = "ashalliants/qwen3.8-27b:high";
+          smol = "ashalliants/qwen3.8-27b:high";
+          slow = "ashalliants/qwen3.8-27b:high";
+          vision = "ashalliants/qwen3.8-27b:high";
+          plan = "ashalliants/qwen3.8-27b:high";
+          commit = "ashalliants/qwen3.8-27b:high";
+          task = "ashalliants/qwen3.8-27b:high";
+          advisor = "ashalliants/qwen3.8-27b:high";
+          judge = "ashalliants/qwen3.8-27b:high";
+        };
+      };
     in {
       home.file.".omp/agent/models.yml".source =
         yaml.generate ".omp.agent.models.yml" models;
+
+      # models.yml REPLACES omp's implicit catalog (see the ollama block
+      # above), so cloud providers exist only through the declaration
+      # below — the overlay cannot re-enable them by omission.
+      home.file.".omp/agent/ompl.yml".source =
+        yaml.generate ".omp.agent.ompl.yml" omplOverlay;
 
       home.shellAliases = {
         omp = ''
@@ -350,6 +388,25 @@
           TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path})" \
           REASONIX_SCAVENGE=1 \
           REASONIX_RESULT_CAP_TOKENS=3000 \
+          ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp'';
+
+        # Same wrapper as `omp` plus the role-pinning overlay appended to
+        # PI_CONFIG_FILES (later overlays override earlier ones, and both
+        # override the mutable config.yml — so /model role picks cannot
+        # leak a cloud model into an ompl session). Kept as a separate
+        # alias, not an override of `omp`: the shared aspect owns `omp`
+        # via mkDefault and the 5-secret export block is duplicated here
+        # by design (the existing comment on `omp` documents why the
+        # legion alias is a full literal).
+        ompl = ''
+          CODEV_API_KEY="$(cat ${osConfig.age.secrets."codev-api-key".path})" \
+          ORCAROUTER_API_KEY="$(cat ${osConfig.age.secrets."orcarouter-api-key".path})" \
+          OPENCODE_API_KEY="$(cat ${osConfig.age.secrets."opencode-api-key".path})" \
+          OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."openrouter-api-key".path})" \
+          TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path})" \
+          REASONIX_SCAVENGE=1 \
+          REASONIX_RESULT_CAP_TOKENS=3000 \
+          PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml" \
           ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp'';
       };
     };
