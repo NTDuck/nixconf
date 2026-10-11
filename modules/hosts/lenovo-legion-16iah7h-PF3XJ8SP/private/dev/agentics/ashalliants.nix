@@ -30,13 +30,15 @@
 # Qwen3.8 winner (23.3 GiB peak with weights+KV, measured), ninfer-061
 # 19.6 GiB, bonsai2 21.9 GiB. All four daemons declare symmetric
 # Conflicts — starting any stops the others natively.
-{
-  ...
-}: {
+{...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     # HOMELAB-ONLY (3090 specialisation pattern, see ninfer.nix header):
     # the unit + wrapper exist only inside specialisation.homelab.
-    nixos = {pkgs, lib, ...}: let
+    nixos = {
+      pkgs,
+      lib,
+      ...
+    }: let
       ashRoot = "/home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090";
 
       # The four non-bundled ldd deps of the 0.15.0 binary (skill:
@@ -65,7 +67,7 @@
         environment.systemPackages = [ashalliants-up ashalliants-down];
 
         systemd.services.ashalliants-df2 = {
-          description = "ashalliants ninfer-0.15.0 Qwen3.8-27B DFlash2 (Qwen3.8 benchmark winner)";
+          description = "ashalliants ninfer-0.15.0 Qwen3.8-27B DFlash2";
           after = ["network-online.target"];
           wants = ["network-online.target"];
 
