@@ -169,25 +169,6 @@
           };
         };
 
-        # Ternary Bonsai 2 27B (prism llama-server, :8080 — see
-        # ../prism/default.nix). discovery.type = "llama.cpp" makes omp
-        # poll GET /models + GET /props; contextWindow comes from
-        # meta.n_ctx in /v1/models (sniffs --ctx-size 262144 via
-        # status.args / props default_generation_settings.n_ctx —
-        # no modelOverrides needed). Provider name is dot-free
-        # "bonsai2": omp fixups key off discovery.type (not the id) and
-        # pkgs.formats.yaml splits a dotted attr into nested maps
-        # (2026-09-26). The implicit built-in "llama.cpp" discoverable is
-        # disabled in the shared defaultConfig to avoid a duplicate
-        # listing. auth "none" keeps it keyless (server binds 127.0.0.1
-        # only).
-        bonsai2 = {
-          baseUrl = "http://127.0.0.1:8080";
-          api = "openai-responses";
-          auth = "none";
-          discovery.type = "llama.cpp";
-        };
-
         # ashalliants ninfer-0.15.0 DFlash2 (:8092 — see
         # ../ashalliants.nix; 2026-10-09 benchmark WINNER for Qwen3.8 on
         # both criteria: peak 162.7 tok/s fresh C1 AND high-parallelism x
