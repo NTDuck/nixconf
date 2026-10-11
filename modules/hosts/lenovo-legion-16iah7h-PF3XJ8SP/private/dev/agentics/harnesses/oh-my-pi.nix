@@ -10,10 +10,7 @@
 # homelab spec. Fix: local blocks restored as a spec-gated attrset (the
 # literal .text shape cannot express the specialisation gate); the
 # 4e3be54 alias (5-secret export) and cloud providers are kept verbatim.
-{
-  inputs,
-  ...
-}: {
+{inputs, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     homeManager = {
       osConfig,
@@ -122,113 +119,6 @@
               reasoning = true;
               contextWindow = 196608;
               maxTokens = 65536;
-            }
-          ];
-        };
-
-        freetoken = {
-          baseUrl = "http://127.0.0.1:1919/v1";
-          api = "openai-completions";
-          apiKey = "freetoken";
-
-          models = [
-            {
-              id = "Qwen/Qwen3-30B-A3B";
-              name = "Qwen3 30B A3B (FreeToken)";
-              reasoning = true;
-              input = ["text"];
-              contextWindow = 131072;
-              maxTokens = 8192;
-            }
-
-            {
-              id = "Qwen/Qwen3.6-35B-A3B";
-              name = "Qwen3.6 35B A3B (FreeToken)";
-              reasoning = true;
-              input = ["text"];
-              contextWindow = 131072;
-              maxTokens = 8192;
-            }
-
-            {
-              id = "Qwen/Qwen3.5-35B-A3B";
-              name = "Qwen3.5 35B A3B (FreeToken)";
-              reasoning = true;
-              input = ["text"];
-              contextWindow = 131072;
-              maxTokens = 8192;
-            }
-
-            {
-              id = "openai/gpt-oss-20b";
-              name = "GPT-OSS 20B (FreeToken)";
-              reasoning = true;
-              input = ["text"];
-              contextWindow = 131072;
-              maxTokens = 8192;
-            }
-
-            {
-              id = "openai/gpt-oss-120b";
-              name = "GPT-OSS 120B (FreeToken)";
-              reasoning = true;
-              input = ["text"];
-              contextWindow = 131072;
-              maxTokens = 8192;
-            }
-
-            {
-              id = "deepseek-ai/DeepSeek-V4-Flash-0731";
-              name = "DeepSeek V4 Flash (FreeToken)";
-              reasoning = true;
-              input = ["text"];
-              contextWindow = 131072;
-              maxTokens = 8192;
-            }
-
-            {
-              id = "google/gemma-4-26B-A4B-it";
-              name = "Gemma 4 26B A4B (FreeToken)";
-              reasoning = true;
-              input = ["text"];
-              contextWindow = 131072;
-              maxTokens = 8192;
-            }
-
-            {
-              id = "nvidia/GLM-5.2-NVFP4";
-              name = "GLM 5.2 NVFP4 (FreeToken)";
-              reasoning = true;
-              input = ["text"];
-              contextWindow = 131072;
-              maxTokens = 8192;
-            }
-
-            {
-              id = "nvidia/GLM-4.7-NVFP4";
-              name = "GLM 4.7 NVFP4 (FreeToken)";
-              reasoning = true;
-              input = ["text"];
-              contextWindow = 131072;
-              maxTokens = 8192;
-            }
-
-            {
-              id = "nvidia/MiniMax-M2.5-NVFP4";
-              name = "MiniMax M2.5 NVFP4 (FreeToken)";
-              reasoning = true;
-              input = ["text"];
-              contextWindow = 131072;
-              maxTokens = 8192;
-            }
-
-            {
-              id = "meta-models/Muse-Glimmer-30B";
-              name = "Muse Glimmer 30B (FreeToken)";
-              reasoning = true;
-              input = ["text"];
-              contextWindow = 131072;
-              maxTokens = 8192;
             }
           ];
         };
@@ -399,13 +289,6 @@
         # by design (the existing comment on `omp` documents why the
         # legion alias is a full literal).
         ompl = ''
-          CODEV_API_KEY="$(cat ${osConfig.age.secrets."codev-api-key".path})" \
-          ORCAROUTER_API_KEY="$(cat ${osConfig.age.secrets."orcarouter-api-key".path})" \
-          OPENCODE_API_KEY="$(cat ${osConfig.age.secrets."opencode-api-key".path})" \
-          OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."openrouter-api-key".path})" \
-          TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path})" \
-          REASONIX_SCAVENGE=1 \
-          REASONIX_RESULT_CAP_TOKENS=3000 \
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml" \
           ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp'';
       };
