@@ -1,0 +1,134 @@
+=== ashalliants-df2 ctx=0 c=1 ===
+START-FAIL ashalliants-df2: server ashalliants-df2 exited rc=1
+s if the graft's hidden turn preceded its own messages. Repeatable
+       --default-graft NAME applies a loaded graft to every request that states none; a request opts out with "graft": ""
+       --reasoning-effort is the effort of thinking-enabled requests that state none; request values override it; like request values, minimal runs as low and high/max as xhigh
+       sampler defaults come from the loaded model and resolved thinking mode; server flags and request fields override individual values.
+       --greedy forces temperature 0 (exact argmax).
+       --version prints the build version and exits.
+Qwen3.8-27B  |  C8  |  context 65536  |  KV pool 65536  |  rk4v4  |  DFlash2 K=7 + draft head  |  vision (overlay)
+Prefill: cuBLAS route, chunk 4096
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8092/v1
+
+2026-10-12 20:16:45.489  INFO  starting engine
+2026-10-12 20:16:46.077  INFO  loading weights | 17.0 GiB
+2026-10-12 20:16:52.570  INFO  weights ready | 17.0 GiB | 6.5s | 2.61 GiB/s
+2026-10-12 20:16:53.073  ERROR startup failed | finalizing target | 501 ms
+2026-10-12 20:16:53.369  FATAL server failed during startup | requested Engine runtime reservation requires 8275068416 bytes, but only 6781075456 bytes are available for runtime capacity
+
+=== ashalliants-df2 ctx=16384 c=1 ===
+START-FAIL ashalliants-df2: server ashalliants-df2 exited rc=1
+R_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8092/v1
+
+2026-10-12 20:16:45.489  INFO  starting engine
+2026-10-12 20:16:46.077  INFO  loading weights | 17.0 GiB
+2026-10-12 20:16:52.570  INFO  weights ready | 17.0 GiB | 6.5s | 2.61 GiB/s
+2026-10-12 20:16:53.073  ERROR startup failed | finalizing target | 501 ms
+2026-10-12 20:16:53.369  FATAL server failed during startup | requested Engine runtime reservation requires 8275068416 bytes, but only 6781075456 bytes are available for runtime capacity
+Qwen3.8-27B  |  C8  |  context 65536  |  KV pool 65536  |  rk4v4  |  DFlash2 K=7 + draft head  |  vision (overlay)
+Prefill: cuBLAS route, chunk 4096
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8092/v1
+
+2026-10-12 20:16:54.564  INFO  starting engine
+2026-10-12 20:16:55.123  INFO  loading weights | 17.0 GiB
+2026-10-12 20:17:01.607  INFO  weights ready | 17.0 GiB | 6.5s | 2.62 GiB/s
+2026-10-12 20:17:02.110  ERROR startup failed | finalizing target | 501 ms
+2026-10-12 20:17:02.426  FATAL server failed during startup | requested Engine runtime reservation requires 8275068416 bytes, but only 6781075456 bytes are available for runtime capacity
+
+skip done ashalliants-mtp ctx=0 c=1
+skip done ashalliants-mtp ctx=0 c=2
+=== ashalliants-mtp ctx=0 c=4 ===
+{"rep": 0, "ok": 4, "wall": 7.68, "peak_vram_mib": 19206, "mean_decode_tps": 109.26, "agg_decode_tps": 437.03, "agg_e2e_tps": 133.31, "mean_ttft_s": 2.809, "errors": []}
+=== ashalliants-mtp ctx=0 c=8 ===
+START-FAIL ashalliants-mtp: server ashalliants-mtp exited rc=-9
+hat | output limit | prompt 104 | output 256 | cache 0 (0.0%) | TTFT 201 ms | total 2.5s | prefill 519.6 tok/s | decode 121.1 tok/s | mtp accepted 168/260 (64.6%)
+2026-10-12 20:17:16.766  INFO  req#2 done | openai-chat | output limit | prompt 104 | output 256 | cache 0 (0.0%) | TTFT 1.9s | total 4.3s | queue 224 ms | prefill 518.8 tok/s | decode 118.3 tok/s | mtp accepted 168/258 (65.1%)
+2026-10-12 20:17:17.416  INFO  throughput | 5.0s | prefill 82.2 tok/s (411 tok) | decode 129.0 tok/s (645 tok) | running 2 (prefill 1, decode-ready 1) | batch 1.27 | host 0.4% (19.5 ms)
+2026-10-12 20:17:18.657  INFO  req#3 done | openai-chat | output limit | prompt 104 | output 256 | cache 0 (0.0%) | TTFT 3.7s | total 6.2s | queue 1.9s | prefill 522.3 tok/s | decode 111.6 tok/s | mtp accepted 163/276 (59.1%)
+2026-10-12 20:17:20.174  INFO  req#4 done | openai-chat | output limit | prompt 104 | output 256 | cache 0 (0.0%) | TTFT 5.4s | total 7.7s | queue 3.7s | prefill 523.2 tok/s | decode 113.9 tok/s | mtp accepted 163/274 (59.5%)
+2026-10-12 20:17:20.461  INFO  server stopped
+Qwen3.8-27B  |  C8  |  context 65536  |  KV pool 65536  |  rk4v4  |  MTP3 + draft head, two lanes  |  vision (overlay)
+Prefill: cuBLAS route, chunk 2048
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+API: http://127.0.0.1:8096/v1
+
+2026-10-12 20:17:23.612  INFO  starting engine
+
+skip done ashalliants-mtp ctx=16384 c=1
+skip done ashalliants-mtp ctx=16384 c=2
+=== ashalliants-mtp ctx=16384 c=4 ===
+START-FAIL ashalliants-mtp: server ashalliants-mtp exited rc=1
+ 104 | output 256 | cache 0 (0.0%) | TTFT 3.7s | total 6.2s | queue 1.9s | prefill 522.3 tok/s | decode 111.6 tok/s | mtp accepted 163/276 (59.1%)
+2026-10-12 20:17:20.174  INFO  req#4 done | openai-chat | output limit | prompt 104 | output 256 | cache 0 (0.0%) | TTFT 5.4s | total 7.7s | queue 3.7s | prefill 523.2 tok/s | decode 113.9 tok/s | mtp accepted 163/274 (59.5%)
+2026-10-12 20:17:20.461  INFO  server stopped
+Qwen3.8-27B  |  C8  |  context 65536  |  KV pool 65536  |  rk4v4  |  MTP3 + draft head, two lanes  |  vision (overlay)
+Prefill: cuBLAS route, chunk 2048
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+API: http://127.0.0.1:8096/v1
+
+2026-10-12 20:17:23.612  INFO  starting engine
+Qwen3.8-27B  |  C8  |  context 65536  |  KV pool 65536  |  rk4v4  |  MTP3 + draft head, two lanes  |  vision (overlay)
+Prefill: cuBLAS route, chunk 2048
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+API: http://127.0.0.1:8096/v1
+
+2026-10-12 20:17:27.699  INFO  starting engine
+2026-10-12 20:17:28.416  ERROR startup failed | starting engine | 717 ms
+2026-10-12 20:17:28.416  FATAL server failed during startup | cuMemCreate(&impl.handles[piece], impl.sizes[piece], &prop, 0) failed: CUDA_ERROR_OUT_OF_MEMORY
+
+=== coder390 ctx=0 c=1 ===
+START-FAIL coder390: server coder390 exited rc=1
+ains closed-turn assistant reasoning in later prompts
+       --graft NAME=PATH loads a phantom-kv prefill graft (a safetensors container with a .json sidecar beside it); a request selecting it with "graft": "NAME" runs as if the graft's hidden turn preceded its own messages. Repeatable
+       --default-graft NAME applies a loaded graft to every request that states none; a request opts out with "graft": ""
+       --reasoning-effort is the effort of thinking-enabled requests that state none; request values override it; like request values, minimal runs as low and high/max as xhigh
+       sampler defaults come from the loaded model and resolved thinking mode; server flags and request fields override individual values.
+       --greedy forces temperature 0 (exact argmax).
+       --version prints the build version and exits.
+Qwen3.8-27B  |  C8  |  context 65536  |  KV pool 65536  |  rk4v4  |  DFlash2 K=7 + draft head  |  vision (overlay)
+Prefill: cuBLAS route, chunk 4096
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8110/v1
+
+2026-10-12 20:17:31.789  INFO  starting engine
+2026-10-12 20:17:31.889  ERROR startup failed | planning runtime | 90 us
+2026-10-12 20:17:31.890  FATAL server failed during startup | Qwen3.5 config: missing component vision
+
+=== coder390 ctx=16384 c=1 ===
+START-FAIL coder390: server coder390 exited rc=-9
+; request values override it; like request values, minimal runs as low and high/max as xhigh
+       sampler defaults come from the loaded model and resolved thinking mode; server flags and request fields override individual values.
+       --greedy forces temperature 0 (exact argmax).
+       --version prints the build version and exits.
+Qwen3.8-27B  |  C8  |  context 65536  |  KV pool 65536  |  rk4v4  |  DFlash2 K=7 + draft head  |  vision (overlay)
+Prefill: cuBLAS route, chunk 4096
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8110/v1
+
+2026-10-12 20:17:31.789  INFO  starting engine
+2026-10-12 20:17:31.889  ERROR startup failed | planning runtime | 90 us
+2026-10-12 20:17:31.890  FATAL server failed during startup | Qwen3.5 config: missing component vision
+Qwen3.8-27B  |  C8  |  context 65536  |  KV pool 65536  |  rk4v4  |  DFlash2 K=7 + draft head  |  vision (overlay)
+Prefill: cuBLAS route, chunk 4096
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8110/v1
+
+2026-10-12 20:17:35.887  INFO  starting engine
+

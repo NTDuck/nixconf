@@ -1,0 +1,20 @@
+=== ashalliants-df2 ctx=0 c=1 ===
+{"rep": 0, "ok": 1, "wall": 1.86, "peak_vram_mib": 21296, "mean_decode_tps": 154.46, "agg_decode_tps": 154.46, "agg_e2e_tps": 137.67, "mean_ttft_s": 0.201, "errors": []}
+=== ashalliants-df2 ctx=0 c=2 ===
+{"rep": 0, "ok": 2, "wall": 3.62, "peak_vram_mib": 21296, "mean_decode_tps": 160.27, "agg_decode_tps": 320.55, "agg_e2e_tps": 141.41, "mean_ttft_s": 1.042, "errors": []}
+=== ashalliants-df2 ctx=0 c=4 ===
+{"rep": 0, "ok": 4, "wall": 7.13, "peak_vram_mib": 21296, "mean_decode_tps": 162.0, "agg_decode_tps": 647.99, "agg_e2e_tps": 143.59, "mean_ttft_s": 2.807, "errors": []}
+=== ashalliants-df2 ctx=0 c=8 ===
+{"rep": 0, "ok": 8, "wall": 14.42, "peak_vram_mib": 21296, "mean_decode_tps": 158.32, "agg_decode_tps": 1266.55, "agg_e2e_tps": 142.01, "mean_ttft_s": 6.521, "errors": []}
+skip done ashalliants-df2 ctx=16384 c=1
+skip done ashalliants-df2 ctx=16384 c=2
+skip done ashalliants-df2 ctx=16384 c=4
+skip done ashalliants-df2 ctx=16384 c=8
+skip done ashalliants-mtp ctx=0 c=1
+skip done ashalliants-mtp ctx=0 c=2
+skip done ashalliants-mtp ctx=0 c=4
+skip done ashalliants-mtp ctx=0 c=8
+skip done ashalliants-mtp ctx=16384 c=1
+skip done ashalliants-mtp ctx=16384 c=2
+skip done ashalliants-mtp ctx=16384 c=4
+skip done ashalliants-mtp ctx=16384 c=8

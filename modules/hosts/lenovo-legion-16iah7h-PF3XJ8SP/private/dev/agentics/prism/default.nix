@@ -1,19 +1,17 @@
 # Ternary Bonsai 2 27B on the PrismML llama.cpp fork — restored 2026-09-25
 # (user request) after the 9199e92 removal. History of this stack:
 #
-# WHY NOT OLLAMA (verified 2026-09-18): Bonsai 2 packs (PTQ1_0 / PQ2_0) use
-# tensor types + a prism.hadamard.* rotated-weight basis that stock ollama
-# cannot load — `ollama create` rejects the file outright ("unsupported
-# tensor output.weight size overflows"), and the family's F16 pack parses
-# but decodes incoherently without the Hadamard transform. The ternary
-# kernels live only in PrismML's llama.cpp fork
-# (https://github.com/PrismML-Eng/llama.cpp). Engine: prebuilt fork binaries
-# pinned to prism-b10685-7dffb15 (the newest tag prism-b10687 ships ONLY
-# Windows assets; b10685 is the last tag with linux-cuda-*). CUDA 12.8 build
-# on the host's 13.2 driver verified working (smoke test 2026-09-18: 45
-# tok/s via fit-params; correct output). The 9199e92 "could not load"
-# comment in this file's history refers to OLLAMA failing on the file, not
-# to this fork — the fork loaded it fine the whole time.
+# WHY THIS FORK (verified 2026-09-18): Bonsai 2 packs (PTQ1_0 / PQ2_0) use
+# tensor types + a prism.hadamard.* rotated-weight basis that stock
+# llama.cpp cannot load — the ternary kernels live only in PrismML's
+# llama.cpp fork (https://github.com/PrismML-Eng/llama.cpp). Engine:
+# prebuilt fork binaries pinned to prism-b10685-7dffb15 (the newest tag
+# prism-b10687 ships ONLY Windows assets; b10685 is the last tag with
+# linux-cuda-*). CUDA 12.8 build on the host's 13.2 driver verified
+# working (smoke test 2026-09-18: 45 tok/s via fit-params; correct
+# output). The 9199e92 "could not load" comment in this file's history
+# refers to the stock llama.cpp failing on the file, not to this fork —
+# the fork loaded it fine the whole time.
 #
 # Context/slot/VRAM budget and the idle-unload mechanism are documented at
 # the ExecStart flags (the single source of truth — the 2026-09-25 header
@@ -105,26 +103,27 @@
         systemd.services.bonsai2 = {
           description = "Bonsai 2 27B llama-server (PrismML fork)";
           # NO AUTOSTART (2026-09-21 user request, kept 2026-09-25): the 27B
-          # daemon is a scarce-resource unit — it contends with ollama for
-          # the 3090. Started on demand via `llamacpp-prism-up` (which first
-          # stops ollama); model+KV auto-freed after 5 idle minutes by
-          # --sleep-idle-seconds 300 below (the unit process itself stays
-          # up).
+          # daemon is a scarce-resource unit — it contends with ashalliants
+          # for the 3090. Started on demand via `llamacpp-prism-up` (which
+          # first stops ashalliants); model+KV auto-freed after 5 idle
+          # minutes by --sleep-idle-seconds 300 below (the unit process
+          # itself stays up).
           after = ["network-online.target"];
           wants = ["network-online.target"];
-          # Mutual exclusion with the 3090 daemons (see ../ollama.nix +
-          # ../swap.nix + ../ashalliants.nix): starting any of the units
-          # natively stops the others (ashalliants' unit declares the
-          # symmetric Conflicts set).
-          conflicts = ["ollama.service" "ashalliants-df2.service"];
+          # Mutual exclusion with the 3090 daemons (see ../swap.nix +
+          # ../ashalliants.nix): starting any of the units natively stops
+          # the others (ashalliants' unit declares the symmetric Conflicts
+          # set).
+          conflicts = ["ashalliants-df2.service"];
 
           serviceConfig = {
             # Static 3090 pin (2026-09-25, homelab-spec visibility request):
             # explicit UUID, not index — CUDA enumerates the 3060 first
             # (live check 2026-09-20: index 0 = 3060 a81782bc, index 1 = 3090
-            # a4e36250). Same UUID as the ollama pin in ../ollama.nix; the
-            # two daemons arbitrate via llamacpp-prism-up/-down, never
-            # co-resident (15.1 GiB + 18 GiB > 24.5 GiB).
+            # a4e36250). Same UUID as the ashalliants pin in
+            # ../ashalliants.nix; the two daemons arbitrate via
+            # llamacpp-prism-up/-down, never co-resident (15.1 GiB + 18 GiB
+            # > 24.5 GiB).
             # DOCK-ONLY TRADE-OFF: undocked the unit fails CUDA init — by
             # design, the 3090 is simply absent.
             Environment = "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c";
@@ -137,10 +136,10 @@
               # parallelism that keeps the per-request floor. VRAM: KV 64
               # KiB/token x 256K = 16 GiB + PTQ1_0 weights 5.54 GiB + mmproj/
               # ctx overhead ~0.4 GiB ~= 21.9 GiB of 24.5 — fits the
-              # otherwise-empty 3090 (ollama is stopped by llamacpp-prism-up;
-              # the desktop runs on the 3060). Safe fallback if the fit ever
-              # trims below the floor: drop to "-np 1" + "--ctx-size
-              # 131072" (1 x 128K, ~7.5 GiB less KV).
+              # otherwise-empty 3090 (ashalliants is stopped by
+              # llamacpp-prism-up; the desktop runs on the 3060). Safe
+              # fallback if the fit ever trims below the floor: drop to
+              # "-np 1" + "--ctx-size 131072" (1 x 128K, ~7.5 GiB less KV).
               flags = pkgs.lib.concatStringsSep " " [
                 "-m ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-PTQ1_0.gguf"
                 "--mmproj ${bonsaiModels}/share/bonsai2/Ternary-Bonsai-2-27B-mmproj-Q8_0.gguf"
@@ -151,10 +150,10 @@
                 # "bonsai-27b"; see ../harnesses/oh-my-pi.nix).
                 "--alias ternary-bonsai-27b"
                 "--host 127.0.0.1"
-                # PORT 8080, binds 127.0.0.1 only. Port 11434 is ollama; 8080
-                # is the Bonsai-demo default. NOTE: llama-server warns the
-                # default port moves to 9931 upstream; we pin 8080 explicitly
-                # so that drift is invisible here.
+                # PORT 8080, binds 127.0.0.1 only. 8080 is the Bonsai-demo
+                # default. NOTE: llama-server warns the default port moves
+                # to 9931 upstream; we pin 8080 explicitly so that drift is
+                # invisible here.
                 "--port 8080"
                 "-fa on"
                 "--temp 1.0"

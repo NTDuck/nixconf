@@ -7,7 +7,8 @@
       specialisation.homelab.configuration = {
         # llama-cpp is CLI-only now: llama-cli, llama-bench, and llama-server
         # (the CUDA build's --list-devices powers the egpu/default.nix health probe).
-        # All serving goes through services.ollama.
+        # All serving goes through ashalliants (../ashalliants.nix) and the
+        # PrismML fork (../prism/default.nix).
         environment.systemPackages = [
           (pkgs.unstable.llama-cpp.override {
             cudaSupport = true;

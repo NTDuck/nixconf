@@ -19,7 +19,7 @@
   setupVersion = 2;
 
   # Both hosts declare local servers under dot-free provider names
-  # (legion-homelab: "bonsai2" + "ollama", see the hosts' private
+  # (legion-homelab: "bonsai2" + "ashalliants", see the hosts' private
   # aspects). omp's IMPLICIT "llama.cpp" discoverable would list the
   # same :8080 models twice — suppress the implicit one (2026-09-26).
   disabledProviders = ["llama.cpp"];

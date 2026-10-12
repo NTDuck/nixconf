@@ -5,7 +5,7 @@
 # exited, status=1/FAILURE), which failed the unit and delayed
 # network-online.target (and podman-rp behind it) by a full timeout on
 # every boot. Nothing on the host requires network-online ordering over NM
-# readiness: long-poll daemons (tailscale, ollama consumers) retry on
+# readiness: long-poll daemons (tailscale, ashalliants consumers) retry on
 # their own, and the bridges are runtime-only.
 {
   den,

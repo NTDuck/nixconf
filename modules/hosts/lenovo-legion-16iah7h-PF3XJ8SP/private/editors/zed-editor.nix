@@ -1,16 +1,17 @@
-{den, ...}: {
+{...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     homeManager = {
       programs.zed-editor.userSettings = {
         agent = {
           default_model = {
-            # ollama's OpenAI-compat endpoint (bonsai :8080 removed
-            # 2026-09-21). ollama serves /v1/chat/completions; the ollama
-            # provider entry already pins real context windows in
-            # dev/agentics/harnesses/oh-my-pi.nix.
+            # ashalliants ninfer-0.15.0 DFlash2 (OpenAI-compat endpoint,
+            # ../dev/agentics/ashalliants.nix). ashalliants serves
+            # /v1/chat/completions; the ashalliants provider entry in
+            # dev/agentics/harnesses/oh-my-pi.nix pins the real context
+            # window (262144, NINFER_FALLBACK=off keeps it exact).
             provider = "openai";
-            model = "qwen3.8:27b-mtp-q4_K_M";
-            api_url = "http://127.0.0.1:11434/v1";
+            model = "qwen3.8-27b";
+            api_url = "http://127.0.0.1:8092/v1";
           };
           dock = "right";
           favourite_models = [];

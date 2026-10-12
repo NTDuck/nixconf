@@ -1,0 +1,96 @@
+=== ashalliants-df2 ctx=0 c=1 ===
+START-FAIL ashalliants-df2: server ashalliants-df2 exited rc=-9
+e: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8092/v1
+
+2026-10-12 20:17:23.932  INFO  starting engine
+2026-10-12 20:17:24.498  INFO  loading weights | 17.0 GiB
+Qwen3.8-27B  |  C4  |  context 65536  |  KV pool 65536  |  rk4v4  |  DFlash2 K=7 + draft head  |  vision (overlay)
+Prefill: cuBLAS route, chunk 4096
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8092/v1
+
+2026-10-12 20:17:26.996  INFO  starting engine
+2026-10-12 20:17:27.578  INFO  loading weights | 17.0 GiB
+Qwen3.8-27B  |  C4  |  context 32768  |  KV pool 32768  |  rk4v4  |  DFlash2 K=7 + draft head  |  vision (overlay)
+Prefill: cuBLAS route, chunk 4096
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8092/v1
+
+2026-10-12 20:18:02.275  INFO  starting engine
+2026-10-12 20:18:02.867  INFO  loading weights | 17.0 GiB
+
+=== ashalliants-df2 ctx=16384 c=1 ===
+{"rep": 0, "ok": 1, "wall": 7.4, "peak_vram_mib": 20446, "mean_decode_tps": 150.34, "agg_decode_tps": 150.34, "agg_e2e_tps": 34.6, "mean_ttft_s": 5.696, "errors": []}
+=== ashalliants-df2 ctx=16384 c=2 ===
+{"rep": 0, "ok": 2, "wall": 14.98, "peak_vram_mib": 20702, "mean_decode_tps": 141.33, "agg_decode_tps": 282.66, "agg_e2e_tps": 34.17, "mean_ttft_s": 9.389, "errors": []}
+=== ashalliants-df2 ctx=16384 c=4 ===
+{"rep": 0, "ok": 4, "wall": 29.92, "peak_vram_mib": 20446, "mean_decode_tps": 144.6, "agg_decode_tps": 578.4, "agg_e2e_tps": 34.22, "mean_ttft_s": 16.817, "errors": []}
+=== ashalliants-df2 ctx=16384 c=8 ===
+{"rep": 0, "ok": 8, "wall": 60.46, "peak_vram_mib": 20702, "mean_decode_tps": 143.81, "agg_decode_tps": 1150.52, "agg_e2e_tps": 33.88, "mean_ttft_s": 31.897, "errors": []}
+skip done ashalliants-mtp ctx=0 c=1
+skip done ashalliants-mtp ctx=0 c=2
+skip done ashalliants-mtp ctx=0 c=4
+=== ashalliants-mtp ctx=0 c=8 ===
+{"rep": 0, "ok": 8, "wall": 14.72, "peak_vram_mib": 17946, "mean_decode_tps": 105.09, "agg_decode_tps": 840.76, "agg_e2e_tps": 139.17, "mean_ttft_s": 6.374, "errors": []}
+skip done ashalliants-mtp ctx=16384 c=1
+skip done ashalliants-mtp ctx=16384 c=2
+skip done ashalliants-mtp ctx=16384 c=4
+=== ashalliants-mtp ctx=16384 c=8 ===
+{"rep": 0, "ok": 8, "wall": 66.34, "peak_vram_mib": 18212, "mean_decode_tps": 115.65, "agg_decode_tps": 925.17, "agg_e2e_tps": 30.84, "mean_ttft_s": 34.973, "errors": []}
+=== coder390 ctx=0 c=1 ===
+START-FAIL coder390: server coder390 exited rc=1
+01.789  ERROR startup failed | planning runtime | 1.10 ms
+2026-10-12 20:18:01.790  FATAL server failed during startup | Qwen3.5 config: missing component vision
+Qwen3.8-27B  |  C4  |  context 65536  |  KV pool 65536  |  rk4v4  |  DFlash2 K=7 + draft head  |  vision (overlay)
+Prefill: cuBLAS route, chunk 4096
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8110/v1
+
+2026-10-12 20:18:05.782  INFO  starting engine
+2026-10-12 20:18:05.880  ERROR startup failed | planning runtime | 107 us
+2026-10-12 20:18:05.881  FATAL server failed during startup | Qwen3.5 config: missing component vision
+Qwen3.8-27B  |  C4  |  context 32768  |  KV pool 32768  |  rk4v4  |  DFlash2 K=7 + draft head  |  vision (overlay)
+Prefill: cuBLAS route, chunk 4096
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8110/v1
+
+2026-10-12 20:22:46.641  INFO  starting engine
+2026-10-12 20:22:46.746  ERROR startup failed | planning runtime | 86 us
+2026-10-12 20:22:46.747  FATAL server failed during startup | Qwen3.5 config: missing component vision
+
+=== coder390 ctx=16384 c=1 ===
+START-FAIL coder390: server coder390 exited rc=1
+8:05.880  ERROR startup failed | planning runtime | 107 us
+2026-10-12 20:18:05.881  FATAL server failed during startup | Qwen3.5 config: missing component vision
+Qwen3.8-27B  |  C4  |  context 32768  |  KV pool 32768  |  rk4v4  |  DFlash2 K=7 + draft head  |  vision (overlay)
+Prefill: cuBLAS route, chunk 4096
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8110/v1
+
+2026-10-12 20:22:46.641  INFO  starting engine
+2026-10-12 20:22:46.746  ERROR startup failed | planning runtime | 86 us
+2026-10-12 20:22:46.747  FATAL server failed during startup | Qwen3.5 config: missing component vision
+Qwen3.8-27B  |  C4  |  context 32768  |  KV pool 32768  |  rk4v4  |  DFlash2 K=7 + draft head  |  vision (overlay)
+Prefill: cuBLAS route, chunk 4096
+Cache: 8 shared / 8 private / 8 host states  |  automatic prefix grid on
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+Need a second lane?  NINFER_SPEC=mtp run.sh qwen38-27b  (slower decode)
+API: http://127.0.0.1:8110/v1
+
+2026-10-12 20:22:49.699  INFO  starting engine
+2026-10-12 20:22:49.813  ERROR startup failed | planning runtime | 78 us
+2026-10-12 20:22:49.814  FATAL server failed during startup | Qwen3.5 config: missing component vision
+

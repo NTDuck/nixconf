@@ -1,0 +1,225 @@
+=== ashalliants-df2 ctx=0 c=1 ===
+START-FAIL ashalliants-df2: server ashalliants-df2 exited rc=1
+eighth of it for state slots); it replaces the four explicit Host capacity options
+       --host-cache-max-mib N caps what --auto-host-cache pins, for machines whose memory other tenants share (default: no cap)
+       --host-cache-percent N caps it at N% (1-100) of the machine's total memory (or its container's limit) whatever is free at startup; the smallest of this, the cap and the free memory less the reserve applies. With vision on, the reserve also covers --media-cache-mib and --media-live-mib
+       --default-thinking-budget caps model-origin thinking for enabled requests; control tokens count toward the request output limit
+       --preserve-thinking retains closed-turn assistant reasoning in later prompts
+       --graft NAME=PATH loads a phantom-kv prefill graft (a safetensors container with a .json sidecar beside it); a request selecting it with "graft": "NAME" runs as if the graft's hidden turn preceded its own messages. Repeatable
+       --default-graft NAME applies a loaded graft to every request that states none; a request opts out with "graft": ""
+       --reasoning-effort is the effort of thinking-enabled requests that state none; request values override it; like request values, minimal runs as low and high/max as xhigh
+       sampler defaults come from the loaded model and resolved thinking mode; server flags and request fields override individual values.
+       --greedy forces temperature 0 (exact argmax).
+       --version prints the build version and exits.
+
+=== ashalliants-df2 ctx=16384 c=1 ===
+START-FAIL ashalliants-df2: server ashalliants-df2 exited rc=1
+eighth of it for state slots); it replaces the four explicit Host capacity options
+       --host-cache-max-mib N caps what --auto-host-cache pins, for machines whose memory other tenants share (default: no cap)
+       --host-cache-percent N caps it at N% (1-100) of the machine's total memory (or its container's limit) whatever is free at startup; the smallest of this, the cap and the free memory less the reserve applies. With vision on, the reserve also covers --media-cache-mib and --media-live-mib
+       --default-thinking-budget caps model-origin thinking for enabled requests; control tokens count toward the request output limit
+       --preserve-thinking retains closed-turn assistant reasoning in later prompts
+       --graft NAME=PATH loads a phantom-kv prefill graft (a safetensors container with a .json sidecar beside it); a request selecting it with "graft": "NAME" runs as if the graft's hidden turn preceded its own messages. Repeatable
+       --default-graft NAME applies a loaded graft to every request that states none; a request opts out with "graft": ""
+       --reasoning-effort is the effort of thinking-enabled requests that state none; request values override it; like request values, minimal runs as low and high/max as xhigh
+       sampler defaults come from the loaded model and resolved thinking mode; server flags and request fields override individual values.
+       --greedy forces temperature 0 (exact argmax).
+       --version prints the build version and exits.
+
+skip done ashalliants-mtp ctx=0 c=1
+skip done ashalliants-mtp ctx=0 c=2
+=== ashalliants-mtp ctx=0 c=4 ===
+START-FAIL ashalliants-mtp: server ashalliants-mtp exited rc=1
+eighth of it for state slots); it replaces the four explicit Host capacity options
+       --host-cache-max-mib N caps what --auto-host-cache pins, for machines whose memory other tenants share (default: no cap)
+       --host-cache-percent N caps it at N% (1-100) of the machine's total memory (or its container's limit) whatever is free at startup; the smallest of this, the cap and the free memory less the reserve applies. With vision on, the reserve also covers --media-cache-mib and --media-live-mib
+       --default-thinking-budget caps model-origin thinking for enabled requests; control tokens count toward the request output limit
+       --preserve-thinking retains closed-turn assistant reasoning in later prompts
+       --graft NAME=PATH loads a phantom-kv prefill graft (a safetensors container with a .json sidecar beside it); a request selecting it with "graft": "NAME" runs as if the graft's hidden turn preceded its own messages. Repeatable
+       --default-graft NAME applies a loaded graft to every request that states none; a request opts out with "graft": ""
+       --reasoning-effort is the effort of thinking-enabled requests that state none; request values override it; like request values, minimal runs as low and high/max as xhigh
+       sampler defaults come from the loaded model and resolved thinking mode; server flags and request fields override individual values.
+       --greedy forces temperature 0 (exact argmax).
+       --version prints the build version and exits.
+
+skip done ashalliants-mtp ctx=16384 c=1
+=== ashalliants-mtp ctx=16384 c=2 ===
+START-FAIL ashalliants-mtp: server ashalliants-mtp exited rc=1
+eighth of it for state slots); it replaces the four explicit Host capacity options
+       --host-cache-max-mib N caps what --auto-host-cache pins, for machines whose memory other tenants share (default: no cap)
+       --host-cache-percent N caps it at N% (1-100) of the machine's total memory (or its container's limit) whatever is free at startup; the smallest of this, the cap and the free memory less the reserve applies. With vision on, the reserve also covers --media-cache-mib and --media-live-mib
+       --default-thinking-budget caps model-origin thinking for enabled requests; control tokens count toward the request output limit
+       --preserve-thinking retains closed-turn assistant reasoning in later prompts
+       --graft NAME=PATH loads a phantom-kv prefill graft (a safetensors container with a .json sidecar beside it); a request selecting it with "graft": "NAME" runs as if the graft's hidden turn preceded its own messages. Repeatable
+       --default-graft NAME applies a loaded graft to every request that states none; a request opts out with "graft": ""
+       --reasoning-effort is the effort of thinking-enabled requests that state none; request values override it; like request values, minimal runs as low and high/max as xhigh
+       sampler defaults come from the loaded model and resolved thinking mode; server flags and request fields override individual values.
+       --greedy forces temperature 0 (exact argmax).
+       --version prints the build version and exits.
+
+=== swift-uncensored ctx=0 c=1 ===
+START-FAIL swift-uncensored: server swift-uncensored exited rc=1
+12:53:53.072  WARN  req#3 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 12:53:53.072  WARN  req#5 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 12:53:53.072  WARN  req#2 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 12:53:53.072  WARN  req#7 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 12:53:53.073  WARN  req#6 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 12:53:54.076  INFO  throughput | 5.0s | prefill 451.8 tok/s (2,259 tok) | running 1 (prefill 1) | host 56.1% (2.8s)
+2026-10-10 12:53:57.714  INFO  req#8 done | openai-chat | output limit | prompt 258,264 | output 256 | cache 0 (0.0%) | TTFT 10m 2.9s | total 10m 6.5s | queue 5m 3.1s | prefill 862.4 tok/s | decode 71.1 tok/s | mtp accepted 170/254 (66.9%)
+2026-10-10 12:53:58.198  INFO  server stopped
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift_qwen3_8_27b_v3.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift_qwen3_8_27b_v3.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift_qwen3_8_27b_v3.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+
+=== swift-uncensored ctx=16384 c=1 ===
+START-FAIL swift-uncensored: server swift-uncensored exited rc=1
+P 503 | request queue timeout
+2026-10-10 12:53:53.072  WARN  req#2 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 12:53:53.072  WARN  req#7 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 12:53:53.073  WARN  req#6 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 12:53:54.076  INFO  throughput | 5.0s | prefill 451.8 tok/s (2,259 tok) | running 1 (prefill 1) | host 56.1% (2.8s)
+2026-10-10 12:53:57.714  INFO  req#8 done | openai-chat | output limit | prompt 258,264 | output 256 | cache 0 (0.0%) | TTFT 10m 2.9s | total 10m 6.5s | queue 5m 3.1s | prefill 862.4 tok/s | decode 71.1 tok/s | mtp accepted 170/254 (66.9%)
+2026-10-10 12:53:58.198  INFO  server stopped
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift_qwen3_8_27b_v3.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift_qwen3_8_27b_v3.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift_qwen3_8_27b_v3.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift_qwen3_8_27b_v3.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+
+=== coder390 ctx=0 c=1 ===
+START-FAIL coder390: server coder390 exited rc=1
+eighth of it for state slots); it replaces the four explicit Host capacity options
+       --host-cache-max-mib N caps what --auto-host-cache pins, for machines whose memory other tenants share (default: no cap)
+       --host-cache-percent N caps it at N% (1-100) of the machine's total memory (or its container's limit) whatever is free at startup; the smallest of this, the cap and the free memory less the reserve applies. With vision on, the reserve also covers --media-cache-mib and --media-live-mib
+       --default-thinking-budget caps model-origin thinking for enabled requests; control tokens count toward the request output limit
+       --preserve-thinking retains closed-turn assistant reasoning in later prompts
+       --graft NAME=PATH loads a phantom-kv prefill graft (a safetensors container with a .json sidecar beside it); a request selecting it with "graft": "NAME" runs as if the graft's hidden turn preceded its own messages. Repeatable
+       --default-graft NAME applies a loaded graft to every request that states none; a request opts out with "graft": ""
+       --reasoning-effort is the effort of thinking-enabled requests that state none; request values override it; like request values, minimal runs as low and high/max as xhigh
+       sampler defaults come from the loaded model and resolved thinking mode; server flags and request fields override individual values.
+       --greedy forces temperature 0 (exact argmax).
+       --version prints the build version and exits.
+
+=== coder390 ctx=16384 c=1 ===
+START-FAIL coder390: server coder390 exited rc=1
+eighth of it for state slots); it replaces the four explicit Host capacity options
+       --host-cache-max-mib N caps what --auto-host-cache pins, for machines whose memory other tenants share (default: no cap)
+       --host-cache-percent N caps it at N% (1-100) of the machine's total memory (or its container's limit) whatever is free at startup; the smallest of this, the cap and the free memory less the reserve applies. With vision on, the reserve also covers --media-cache-mib and --media-live-mib
+       --default-thinking-budget caps model-origin thinking for enabled requests; control tokens count toward the request output limit
+       --preserve-thinking retains closed-turn assistant reasoning in later prompts
+       --graft NAME=PATH loads a phantom-kv prefill graft (a safetensors container with a .json sidecar beside it); a request selecting it with "graft": "NAME" runs as if the graft's hidden turn preceded its own messages. Repeatable
+       --default-graft NAME applies a loaded graft to every request that states none; a request opts out with "graft": ""
+       --reasoning-effort is the effort of thinking-enabled requests that state none; request values override it; like request values, minimal runs as low and high/max as xhigh
+       sampler defaults come from the loaded model and resolved thinking mode; server flags and request fields override individual values.
+       --greedy forces temperature 0 (exact argmax).
+       --version prints the build version and exits.
+
+=== swift15 ctx=0 c=1 ===
+START-FAIL swift15: server swift15 exited rc=1
+0 23:01:01.751  WARN  req#5 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 23:01:01.751  WARN  req#7 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 23:01:01.751  WARN  req#2 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 23:01:01.751  WARN  req#8 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 23:01:01.751  WARN  req#4 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 23:01:02.283  INFO  throughput | 5.0s | prefill 819.2 tok/s (4,096 tok) | running 1 (prefill 1) | host 111.6% (5.6s)
+2026-10-10 23:01:06.484  INFO  req#3 done | openai-chat | output limit | prompt 258,264 | output 256 | cache 0 (0.0%) | TTFT 10m 3.4s | total 10m 7.0s | queue 5m 3.5s | prefill 862.3 tok/s | decode 69.4 tok/s | mtp accepted 168/260 (64.6%)
+2026-10-10 23:01:06.707  INFO  server stopped
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift15_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift15_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift15_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+
+=== swift15 ctx=16384 c=1 ===
+START-FAIL swift15: server swift15 exited rc=1
+HTTP 503 | request queue timeout
+2026-10-10 23:01:01.751  WARN  req#2 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 23:01:01.751  WARN  req#8 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 23:01:01.751  WARN  req#4 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 23:01:02.283  INFO  throughput | 5.0s | prefill 819.2 tok/s (4,096 tok) | running 1 (prefill 1) | host 111.6% (5.6s)
+2026-10-10 23:01:06.484  INFO  req#3 done | openai-chat | output limit | prompt 258,264 | output 256 | cache 0 (0.0%) | TTFT 10m 3.4s | total 10m 7.0s | queue 5m 3.5s | prefill 862.3 tok/s | decode 69.4 tok/s | mtp accepted 168/260 (64.6%)
+2026-10-10 23:01:06.707  INFO  server stopped
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift15_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift15_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift15_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/swift15_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+
+=== huihui-abl ctx=0 c=1 ===
+START-FAIL huihui-abl: server huihui-abl exited rc=1
+openai-chat | HTTP 503 | request queue timeout
+2026-10-10 19:43:32.612  WARN  req#8 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 19:43:32.612  WARN  req#6 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 19:43:32.612  WARN  req#3 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 19:43:32.612  WARN  req#4 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 19:43:34.752  INFO  throughput | 5.0s | prefill 452.8 tok/s (2,264 tok) | decode 16.0 tok/s (80 tok) | running 1 (decode-ready 1) | batch 1.00 | host 56.2% (2.8s)
+2026-10-10 19:43:37.415  INFO  req#5 done | openai-chat | output limit | prompt 258,264 | output 256 | cache 0 (0.0%) | TTFT 10m 3.2s | total 10m 6.9s | queue 5m 3.3s | prefill 862.5 tok/s | decode 67.9 tok/s | mtp accepted 166/265 (62.6%)
+2026-10-10 19:43:37.559  INFO  server stopped
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/huihui_abl_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/huihui_abl_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/huihui_abl_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+
+=== huihui-abl ctx=16384 c=1 ===
+START-FAIL huihui-abl: server huihui-abl exited rc=1
+WARN  req#6 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 19:43:32.612  WARN  req#3 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 19:43:32.612  WARN  req#4 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-10 19:43:34.752  INFO  throughput | 5.0s | prefill 452.8 tok/s (2,264 tok) | decode 16.0 tok/s (80 tok) | running 1 (decode-ready 1) | batch 1.00 | host 56.2% (2.8s)
+2026-10-10 19:43:37.415  INFO  req#5 done | openai-chat | output limit | prompt 258,264 | output 256 | cache 0 (0.0%) | TTFT 10m 3.2s | total 10m 6.9s | queue 5m 3.3s | prefill 862.5 tok/s | decode 67.9 tok/s | mtp accepted 166/265 (62.6%)
+2026-10-10 19:43:37.559  INFO  server stopped
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/huihui_abl_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/huihui_abl_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/huihui_abl_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/huihui_abl_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+
+=== obliterated ctx=0 c=1 ===
+START-FAIL obliterated: server obliterated exited rc=1
+enai-chat | HTTP 503 | request queue timeout
+2026-10-11 02:07:02.962  WARN  req#3 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-11 02:07:02.962  WARN  req#8 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-11 02:07:02.962  WARN  req#5 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-11 02:07:02.962  WARN  req#4 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-11 02:07:04.247  INFO  throughput | 5.0s | prefill 452.8 tok/s (2,264 tok) | decode 3.0 tok/s (15 tok) | running 1 (decode-ready 1) | batch 1.00 | host 56.5% (2.8s)
+2026-10-11 02:07:07.901  INFO  req#1 done | openai-chat | output limit | prompt 258,264 | output 256 | cache 0 (0.0%) | TTFT 10m 3.6s | total 10m 7.5s | queue 5m 3.2s | prefill 862.8 tok/s | decode 65.7 tok/s | mtp accepted 163/276 (59.1%)
+2026-10-11 02:07:07.991  INFO  server stopped
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/obliterated_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/obliterated_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/obliterated_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+
+=== obliterated ctx=16384 c=1 ===
+START-FAIL obliterated: server obliterated exited rc=1
+N  req#8 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-11 02:07:02.962  WARN  req#5 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-11 02:07:02.962  WARN  req#4 failed during generation | openai-chat | HTTP 503 | request queue timeout
+2026-10-11 02:07:04.247  INFO  throughput | 5.0s | prefill 452.8 tok/s (2,264 tok) | decode 3.0 tok/s (15 tok) | running 1 (decode-ready 1) | batch 1.00 | host 56.5% (2.8s)
+2026-10-11 02:07:07.901  INFO  req#1 done | openai-chat | output limit | prompt 258,264 | output 256 | cache 0 (0.0%) | TTFT 10m 3.6s | total 10m 7.5s | queue 5m 3.2s | prefill 862.8 tok/s | decode 65.7 tok/s | mtp accepted 163/276 (59.1%)
+2026-10-11 02:07:07.991  INFO  server stopped
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/obliterated_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/obliterated_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/obliterated_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+Missing model: /home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/models/obliterated_qwen3_8_27b.ninfer
+Download it first:  ./download-model.sh qwen38-27b
+

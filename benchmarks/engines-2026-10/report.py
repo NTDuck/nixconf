@@ -87,9 +87,9 @@ def main():
 
     # Winner computation (user criterion: max throughput at high
     # parallelism at high context). High-C×deep-ctx line: at the highest
-    # concurrency with ok data (C8), deepest context where >=2 engines
-    # have ok cells; if only one engine ever produced ok C8 data, say so
-    # at its deepest C8 cell. Peak line: max single-cell per-agent tok/s
+    # concurrency with ok data (C4+), deepest context where >=2 engines
+    # have ok cells; if only one engine ever produced ok C4+ data, say so
+    # at its deepest C4+ cell. Peak line: max single-cell per-agent tok/s
     # anywhere. Rendered in the closing "## Winner" section.
     #
     # Lane-aware (2026-10-10): swift-uncensored runs the mtp lane — its
@@ -110,24 +110,24 @@ def main():
                for (ctx, c), (t, v, ok) in grid.items() if ok > 0 and t > 0]
         if not okc:
             continue
-        c8 = [(tag, ctx, t) for tag, ctx, c, t in okc if c == 8]
+        # High-parallelism cells: C4+ (C8 may not fit at deep ctx on 24 GiB)
+        hi_cells = [(tag, ctx, c, t) for tag, ctx, c, t in okc if c >= 4]
         hi = ""
-        if c8:
+        if hi_cells:
             by_ctx = defaultdict(list)
-            for tag, ctx, t in c8:
-                by_ctx[ctx].append((tag, t))
+            for tag, ctx, c, t in hi_cells:
+                by_ctx[ctx].append((tag, c, t))
             shared = sorted(ctx for ctx, ts in by_ctx.items() if len(ts) > 1)
-            c8.sort(key=lambda x: x[1])  # by ctx
             if shared:
                 ctx = shared[-1]
-                ts = sorted(by_ctx[ctx], key=lambda x: -x[1])
+                ts = sorted(by_ctx[ctx], key=lambda x: -x[2])
                 lbl = next(l for c, l in CTX_BUCKETS if c == ctx)
-                hi = (f"C8 × {lbl}: `{ts[0][0]}` {fmt(ts[0][1])} tok/s vs "
-                      f"`{ts[1][0]}` {fmt(ts[1][1])}")
+                hi = (f"C{ts[0][1]} × {lbl}: `{ts[0][0]}` {fmt(ts[0][2])} tok/s vs "
+                      f"`{ts[1][0]}` {fmt(ts[1][2])}")
             else:
-                tag, ctx, t = c8[-1]
-                lbl = next(l for c, l in CTX_BUCKETS if c == ctx)
-                hi = f"C8 × {lbl}: only `{tag}` measured ({fmt(t)} tok/s)"
+                tag, ctx, c, t = max(hi_cells, key=lambda x: (x[1], x[2]))
+                lbl = next(l for cc, l in CTX_BUCKETS if cc == ctx)
+                hi = f"C{c} × {lbl}: only `{tag}` measured ({fmt(t)} tok/s)"
         pk_tag, _, _, pk_t = max(okc, key=lambda x: x[3])
         # Same-lane sibling for every excluded variant with data.
         LANE_CONTROL = {
@@ -146,26 +146,26 @@ def main():
                    if ok > 0 and t > 0]
             if not vok:
                 continue
-            vc8 = sorted(((ctx, c, t) for ctx, c, t in vok if c == 8),
+            vhi = sorted(((ctx, c, t) for ctx, c, t in vok if c >= 4),
                          key=lambda x: (-x[0], -x[2]))
             lane = ""
-            if vc8:
-                ctx, c, t = vc8[0]
-                lbl = next(l for cc, l in CTX_BUCKETS if cc == ctx)
+            if vhi:
+                ctx, c, t = vhi[0]
+                lbl = next(l for c, l in CTX_BUCKETS if c == ctx)
                 ctl = next((t2 for (cx, cc), (t2, _, ok) in rank.get(
                     LANE_CONTROL[var], {}).items()
                     if cx == ctx and cc == c and ok > 0), None)
                 if ctl:
                     delta = (t - ctl) / ctl * 100
-                    lane = (f"{var} (mtp lane) C8 × {lbl}: {fmt(t)} tok/s, "
+                    lane = (f"{var} (mtp lane) C{c} × {lbl}: {fmt(t)} tok/s, "
                             f"{delta:+.1f}% vs `{LANE_CONTROL[var]}` "
                             f"{fmt(ctl)}")
                 else:
-                    lane = f"{var} (mtp lane) C8 × {lbl}: {fmt(t)} tok/s"
+                    lane = f"{var} (mtp lane) C{c} × {lbl}: {fmt(t)} tok/s"
             else:
                 ctx, c, t = max(vok, key=lambda x: (x[0], x[2]))
                 lbl = next(l for cc, l in CTX_BUCKETS if cc == ctx)
-                lane = f"{var} (mtp lane) deepest C8 cell at {lbl}: {fmt(t)} tok/s"
+                lane = f"{var} (mtp lane) deepest C4+ cell at {lbl}: {fmt(t)} tok/s"
             hi = (hi + "; " + lane) if hi else lane
         winner[model] = (pk_tag, pk_t, hi)
 

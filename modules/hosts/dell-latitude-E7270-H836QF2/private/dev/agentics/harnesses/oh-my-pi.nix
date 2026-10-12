@@ -1,26 +1,30 @@
-# DELL omp client: models.yml points ollama at LEGION over the tailnet.
+# DELL omp client: models.yml points ashalliants at LEGION over the tailnet.
 #
 # Why: DELL has no GPU worth loading 27B on (Intel HD 520); legion serves
-# ollama on 0.0.0.0:11434 with the tailscale0-only firewall open
-# (modules/hosts/lenovo-legion-16iah7h-PF3XJ8SP/private/dev/agentics/ollama.nix,
-# 2026-09-16 moonlight-era plan). MagicDNS resolves the host
+# ashalliants on 0.0.0.0:8092 with the tailscale0-only firewall open
+# (modules/hosts/lenovo-legion-16iah7h-PF3XJ8SP/private/dev/agentics/ashalliants.nix,
+# 2026-10-10 main-engine switch). MagicDNS resolves the host
 # (lenovo-legion-16iah7h-pf3xj8sp.taild3be63.ts.net, verified 2026-09-20),
 # but the bare name is enough and keeps working if the tailnet is renamed.
 #
 # REMOTE SPEC ONLY (2026-09-21 user request, 3090 specialisation pattern): the
 # 3090-implied client rides the "remote" specialisation — booting DELL's
-# default generation drops the ollama entry (models.yml absent; omp falls
-# back to implicit catalog discovery). The daemon side is gated inside
-# legion's homelab specialisation; both specs must exist for the
+# default generation drops the ashalliants entry (models.yml absent; omp
+# falls back to implicit catalog discovery). The daemon side is gated
+# inside legion's homelab specialisation; both specs must exist for the
 # tailscale workflow to work.
 #
-# Only the ollama provider: cloud providers (orcarouter/tabitoken/codev)
+# Only the ashalliants provider: cloud providers (orcarouter/tabitoken/codev)
 # need API keys, and DELL has no agenix identity enrolled — keys are
 # legion-only. /model still lists the cloud providers' names via omp's
 # implicit discovery? No: models.yml REPLACES the catalog, so DELL users
-# get exactly ollama. sessionVariables/pi-reasonix extension come from the
-# shared dev.agentics.harnesses.oh-my-pi aspect; this file only pins hosts
-# and windows.
+# get exactly ashalliants. sessionVariables/pi-reasonix extension come
+# from the shared dev.agentics.harnesses.oh-my-pi aspect; this file only
+# pins hosts and windows.
+#
+# 2026-10-12: ollama removed entirely (user request — ashalliants is the
+# sole local engine). The previous ollama provider block (pointing at
+# legion's :11434) is gone; ashalliants is the only local provider.
 {
   den.aspects.dell-latitude-E7270-H836QF2 = {
     homeManager = {
@@ -38,31 +42,18 @@
 
       models = {
         providers = {
-          # Legion's daemon over the tailnet. Same contextWindow pin as
-          # legion's own client (q4_0 KV makes 131072 fit the 3090; see
-          # ollama.nix) — omp's bundled ollama catalog claims 262144 and
-          # would ride past the real window into ollama's trim, dropping
-          # the original user turn (ollama #17778 retry loop).
-          ollama = {
-            # /v1 REQUIRED (2026-09-21): omp's openai-responses adapter posts
-            # <baseUrl>/responses verbatim (no /v1 of its own); ollama serves
-            # OpenAI-compat under /v1. Mirrors legion's oh-my-pi.nix fix.
-            baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:11434/v1";
-            api = "openai-responses";
-            auth = "none";
-            discovery.type = "ollama";
-            modelOverrides."qwen3.8:27b-mtp-q4_K_M" = {
-              contextWindow = 131072;
-              maxTokens = 16384;
-            };
-          };
-
-          # ashalliants-df2 on legion (:8092 over tailscale0, 2026-10-10
-          # main-engine switch — legion's RESIDENT 3090 engine,
-          # ashalliants.nix). OpenAI Chat Completions, declared model (no
-          # discovery protocol); 262144 = the tuned-profile serving
-          # window (NINFER_FALLBACK=off keeps it exact). An overclaim
-          # triggers server-side trim loops (ollama #17778 lesson).
+          # ashalliants-df2 on legion (port 8092 over tailscale0,
+          # 2026-10-10 main-engine switch — legion's RESIDENT 3090 engine,
+          # ashalliants.nix). The port MUST match legion's
+          # options.services.ashalliants.port (defined in
+          # modules/hosts/lenovo-legion-16iah7h-PF3XJ8SP/private/dev/agentics/ashalliants.nix).
+          # Cross-aspect references aren't reliable in the den module
+          # system (legion's aspect isn't included on dell), so the port
+          # is duplicated here with this comment as the sync point.
+          # OpenAI Chat Completions, declared model (no discovery
+          # protocol); 262144 = the tuned-profile serving window
+          # (NINFER_FALLBACK=off keeps it exact). An overclaim triggers
+          # server-side trim loops.
           ashalliants = {
             baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1";
             api = "openai-completions";

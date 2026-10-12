@@ -1,10 +1,15 @@
 # ashalliants ninfer 0.15.0 (RTX 3090 release binary) — Qwen3.8-27B
 # DFlash2 server, added 2026-10-09 from the engines-2026-10 benchmark:
 # the Qwen-arm winner on BOTH criteria — peak 162.7 tok/s per-agent
-# (fresh C1) and high-parallelism x deep-ctx (C8x32k 1112.0, C8x65k
-# 1073.1, C8x131k 820.3 agg tok/s) — vs resident ninfer-061 (Don-Chad
-# v0.6.1, MTP3 int8: 68.8 peak, best agg 168.7 at C8x32k, 3-7x slower
-# overall).
+# (fresh C1) and high-parallelism x deep-ctx (C6x65k 769.4 agg tok/s,
+# 128.2 per-lane) — vs resident ninfer-061 (Don-Chad v0.6.1, MTP3 int8:
+# 68.8 peak, best agg 168.7 at C8x32k, 3-7x slower overall).
+#
+# 2026-10-12 UPDATE: switched from C8x16k (1073.1 agg tok/s, but capped
+# at 16k context) to C6x65k (769.4 agg tok/s, full 65k context). The
+# C8x65k config OOMs (7.98 GiB runtime > 6.78 GiB available on 24 GiB
+# card with 17 GiB weights). C6x65k fits and provides 3.6x more
+# throughput than the previous C4x65k winner (214.5 agg tok/s).
 #
 # WHY THE VENDOR TREE IS CONSUMED IN PLACE, NOT STORED: the release is a
 # 20 GiB unpacked tree (17.7 GiB .ninfer artifact + binaries), and /home
@@ -27,9 +32,17 @@
 # throttles at 10G instead of reaching oomd.
 #
 # VRAM ARBITRATION (24.5 GiB card, single resource): ashalliants is the
-# Qwen3.8 winner (23.3 GiB peak with weights+KV, measured), ninfer-061
-# 19.6 GiB, bonsai2 21.9 GiB. All four daemons declare symmetric
-# Conflicts — starting any stops the others natively.
+# Qwen3.8 winner (23.3 GiB peak with weights+KV, measured), bonsai2
+# 21.9 GiB. Both daemons declare symmetric Conflicts — starting any
+# stops the other natively.
+#
+# PORT (2026-10-12): the den module system does NOT support top-level
+# `options` (it wraps values in aspect objects, so `den.aspects.X.port`
+# returns an aspect object, not the raw value). The port is exposed as a
+# let-binding `ashPort` here and referenced via `toString ashPort` in
+# the unit's Environment + firewall rules. Remote hosts (dell) duplicate
+# the value with a sync comment — cross-host option references aren't
+# reliable in the den module system.
 {...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     # HOMELAB-ONLY (3090 specialisation pattern, see ninfer.nix header):
@@ -54,6 +67,11 @@
         "/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib"
       ];
 
+      # Port the ninfer-serve listens on. Single source of truth for
+      # this host; remote hosts (dell) duplicate the value with a sync
+      # comment in their models.yml.
+      ashPort = 8092;
+
       # On-demand starter (mirror of llamacpp-prism-up): stops the other
       # 3090 daemons natively (systemd Conflicts), then starts this unit.
       ashalliants-up = pkgs.writeShellScriptBin "ashalliants-up" ''
@@ -73,12 +91,12 @@
 
           # PRIMARY ENGINE (2026-10-10 user request: ninfer-061 removed
           # entirely, ../swap.nix + flake input; this unit autostarts on
-          # the homelab spec). ollama is on-demand (../ollama.nix) and
-          # declares the reverse Conflicts, so an ollama start still
+          # the homelab spec). bonsai2 is on-demand (../prism/default.nix)
+          # and declares the reverse Conflicts, so a bonsai2 start still
           # stops this unit natively.
           wantedBy = ["multi-user.target"];
 
-          conflicts = ["ollama.service" "bonsai2.service"];
+          conflicts = ["bonsai2.service"];
 
           # run.sh resolves bash via `#!/usr/bin/env bash`. The NixOS
           # unit-level `path` option did NOT survive the den-module
@@ -111,8 +129,9 @@
             # KV, vision overlay). NINFER_FALLBACK=off keeps the context
             # honest (omp overclaim = trim-loop; a stepped-down context
             # would silently diverge from the declared provider window).
-            # NINFER_HOST_STATE_SLOTS=8 + hostkv-shim (2 GiB) = the exact
-            # benchmarked shape; NINFER_SPEC=dflash2 pins the winner lane.
+            # NINFER_HOST_STATE_SLOTS=6 + hostkv-shim (2 GiB) = the exact
+            # benchmarked shape (2026-10-12: C6x65k = 769.4 agg tok/s,
+            # 128.2 per-lane); NINFER_SPEC=dflash2 pins the winner lane.
             Environment = let
               ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
             in [
@@ -121,9 +140,12 @@
               "LD_LIBRARY_PATH=${ld}"
               "NINFER_SPEC=dflash2"
               "NINFER_HOST=127.0.0.1"
-              "NINFER_PORT=8092"
+              "NINFER_PORT=${toString ashPort}"
               "NINFER_FALLBACK=off"
-              "NINFER_HOST_STATE_SLOTS=8"
+              "NINFER_CONCURRENCY=6"
+              "NINFER_CONTEXT=65536"
+              "NINFER_KV_CAPACITY=65536"
+              "NINFER_HOST_STATE_SLOTS=6"
               "NINFER_SERVER=${ashRoot}/ninfer-serve.hostkv-shim"
             ];
             ExecStart = "${ashRoot}/run.sh qwen38-27b tuned";
@@ -145,9 +167,11 @@
         };
 
         # DELL consumes ashalliants over the tailnet (2026-10-10: swapped
-        # for the removed ninfer :8081 rule; mirror of the ollama :11434
-        # pattern in ../ollama.nix): open 8092 ONLY on tailscale0.
-        networking.firewall.interfaces.tailscale0.allowedTCPPorts = [8092];
+        # for the removed ninfer :8081 rule): open the ashalliants port
+        # ONLY on tailscale0.
+        networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+          ashPort
+        ];
       }; # specialisation.homelab.configuration
     };
   };

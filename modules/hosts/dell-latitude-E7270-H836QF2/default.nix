@@ -42,7 +42,7 @@
       den.aspects.apps.editors.zed-editor
       # Office suite (2026-09-27 user request): same aspect legion uses.
       den.aspects.apps.office.libreoffice
-      # omp + ollama-over-tailscale (models.yml points at legion).
+      # omp + ashalliants-over-tailscale (models.yml points at legion).
       den.aspects.dev.agentics.harnesses.codev
       den.aspects.dev.agentics.harnesses.oh-my-pi
       # CodeGraph CLI (repo indexer used by the coding agents).

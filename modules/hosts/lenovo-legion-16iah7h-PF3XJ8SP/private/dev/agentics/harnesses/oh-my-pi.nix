@@ -2,14 +2,16 @@
 #
 # SHAPE HISTORY (2026-09-27): 4e3be54 (2026-09-26 18:37, user-directed
 # revert) restored this file verbatim to a pre-fb75273 LITERAL models.yml
-# — which dropped the homelab ollama/bonsai2 local provider blocks that
-# fb75273 (same day, 12:52) had added and live-verified ("omp -p
-# --model=ollama/qwen3.8:27b -> pong"). models.yml REPLACES omp's implicit
-# catalog, so without an ollama provider entry /model lists NO local
-# ollama models at all — qwen3.8:27b "not available on ohmypi" on the
-# homelab spec. Fix: local blocks restored as a spec-gated attrset (the
-# literal .text shape cannot express the specialisation gate); the
-# 4e3be54 alias (5-secret export) and cloud providers are kept verbatim.
+# — which dropped the homelab local provider blocks that fb75273 (same
+# day, 12:52) had added and live-verified. models.yml REPLACES omp's
+# implicit catalog, so without a local provider entry /model lists NO
+# local models at all on the homelab spec. Fix: local blocks restored as
+# a spec-gated attrset (the literal .text shape cannot express the
+# specialisation gate); the 4e3be54 alias (5-secret export) and cloud
+# providers are kept verbatim.
+#
+# 2026-10-12: ollama removed entirely (user request — ashalliants is the
+# sole local engine). The local attrset now only carries ashalliants.
 {inputs, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     homeManager = {
@@ -19,14 +21,25 @@
     }: let
       yaml = pkgs.formats.yaml {};
 
+      # Port the ashalliants ninfer-serve listens on. Single source of
+      # truth for this host; remote hosts (dell) duplicate the value
+      # with a sync comment in their models.yml. The den module system
+      # does NOT support top-level `options` (it wraps values in aspect
+      # objects, so `den.aspects.X.port` returns an aspect object, not
+      # the raw value), so the port is duplicated here as a let-binding
+      # and referenced via `toString ashPort` in the provider block.
+      # MUST match `ashPort` in ../ashalliants.nix.
+      ashPort = 8092;
+
       # 3090 gating (2026-09-21, 3090 specialisation pattern): the local
-      # ollama provider (:11434) exists ONLY inside the homelab
+      # ashalliants provider exists ONLY inside the homelab
       # specialisation — the daemon it points at is gated there too
-      # (ollama.nix). osConfig.isSpecialisation is mkOverride-0 true
-      # inside spec evals (nixos/modules/system/activation/no-clone.nix)
-      # and false in the default generation, so the two models.yml
-      # variants diverge on this flag and there is no module collision
-      # (the spec HM eval replaces the default HM config wholesale).
+      # (../ashalliants.nix). osConfig.isSpecialisation is mkOverride-0
+      # true inside spec evals (nixos/modules/system/activation/
+      # no-clone.nix) and false in the default generation, so the two
+      # models.yml variants diverge on this flag and there is no module
+      # collision (the spec HM eval replaces the default HM config
+      # wholesale).
       onHomelabSpec = osConfig.isSpecialisation or false;
 
       cloudProviders = {
@@ -126,63 +139,23 @@
 
       # 3090-coupled local providers — homelab spec only (see
       # onHomelabSpec). Restored verbatim from fb75273 (2026-09-26), the
-      # last live-verified state.
+      # last live-verified state. 2026-10-12: ollama removed; ashalliants
+      # is the sole local engine.
       local = {
-        ollama = {
-          # /v1 REQUIRED (2026-09-21): omp's openai-responses adapter posts
-          # <baseUrl>/responses verbatim — no /v1 of its own (journal showed
-          # 404 POST "/responses"; ollama serves OpenAI-compat under /v1).
-          # Same convention as the codev cloud provider above.
-          baseUrl = "http://127.0.0.1:11434/v1";
-          api = "openai-responses";
-          auth = "none";
-          discovery.type = "ollama";
-          # qwen3.8:27b (official max, 2026-09-27): /api/show reports the
-          # raw model card qwen35.context_length = 262144 — same
-          # overclaim as the Hemmingway entry below -> trim ->
-          # "no user query found in messages" 500-loop (ollama #17778)
-          # once the 131072 real window is exceeded. Pin to the daemon's
-          # real window (OLLAMA_CONTEXT_LENGTH). Tag case MUST match
-          # /api/tags verbatim: `qwen3.8:27b`.
-          modelOverrides."qwen3.8:27b" = {
-            contextWindow = 131072;
-            maxTokens = 16384;
-          };
-          modelOverrides."qwen3.8:27b-mtp-q4_K_M" = {
-            # 128k to match OLLAMA_CONTEXT_LENGTH (q4_0 KV makes 131072
-            # fit the 3090; see ollama.nix).
-            contextWindow = 131072;
-            maxTokens = 16384;
-          };
-          # Hemmingway-1 Q4_K_M (added 2026-09-21): ollama's bundled
-          # catalog claims contextWindow 262144 for this qwen35-arch
-          # quant too — same overclaim -> trim -> "no user query found
-          # in messages" 500-loop as qwen3.8:27b (ollama #17778). Pin
-          # to the daemon's real window (OLLAMA_CONTEXT_LENGTH).
-          # Tag case MUST match /api/tags verbatim (2026-09-26): the
-          # daemon lists `:q4_K_M` (lowercase q) — the old `:Q4_K_M`
-          # key matched nothing, so the override was silently inert
-          # (omp models showed the discovered 128K, not this pin).
-          modelOverrides."hf.co/bartowski/Altworld_Hemmingway-1-GGUF:q4_K_M" = {
-            contextWindow = 131072;
-            maxTokens = 16384;
-          };
-        };
-
-        # ashalliants ninfer-0.15.0 DFlash2 (:8092 — see
-        # ../ashalliants.nix; 2026-10-09 benchmark WINNER for Qwen3.8 on
-        # both criteria: peak 162.7 tok/s fresh C1 AND high-parallelism x
-        # deep-ctx). Same OpenAI Chat Completions shape (the
-        # vendor binary serves completions/responses/anthropic; no
-        # /v1/models discovery — declared model instead). id matches the
-        # server banner ("listening ... | model qwen3.8-27b"). 262144 =
-        # tuned-profile context (NINFER_FALLBACK=off keeps it exact;
+        # ashalliants ninfer-0.15.0 DFlash2 (port from `ashPort` above,
+        # defined in ../ashalliants.nix; 2026-10-09 benchmark WINNER for
+        # Qwen3.8 on both criteria: peak 162.7 tok/s fresh C1 AND
+        # high-parallelism x deep-ctx). Same OpenAI Chat Completions
+        # shape (the vendor binary serves completions/responses/anthropic;
+        # no /v1/models discovery — declared model instead). id matches
+        # the server banner ("listening ... | model qwen3.8-27b"). 262144
+        # = tuned-profile context (NINFER_FALLBACK=off keeps it exact;
         # overclaim triggers omp's trim 500-loop — never overclaim).
         # On-demand unit (23.3 GiB VRAM + 2 GiB pinned host KV): start
-        # via `ashalliants-up` (Conflicts stop ninfer-serve/bonsai2/
-        # ollama natively); provider 404s until the unit is up.
+        # via `ashalliants-up` (Conflicts stop bonsai2 natively);
+        # provider 404s until the unit is up.
         ashalliants = {
-          baseUrl = "http://127.0.0.1:8092/v1";
+          baseUrl = "http://127.0.0.1:${toString ashPort}/v1";
           api = "openai-completions";
           auth = "none";
 
@@ -210,7 +183,7 @@
       };
 
       # `ompl` = a Qwen3.8-27B-ONLY harness: every chat role pinned to
-      # the local ashalliants engine (:8092, ../ashalliants.nix), running
+      # the local ashalliants engine (../ashalliants.nix), running
       # under a dedicated `--profile ompl` agent dir
       # (~/.omp/profiles/ompl/agent). The profile isolates ALL agent
       # state — sessions, history.db, agent.db, models.db, stored auth,
@@ -221,13 +194,13 @@
       #
       # models.yml resolves from the ACTIVE agent dir, so the profile
       # needs its own qwen-only models.yml (omplModels below) — the
-      # shared ~/.omp/agent/models.yml (cloud + ollama) is NOT visible
-      # to it. Without a profile-local file the ashalliants selector is
-      # unresolvable and the harness SILENTLY degrades to a cloud model:
-      # reproduced 2026-10-11, a profile launch with no models.yml
-      # routed to openrouter and died 402 "requires more credits" while
-      # the status line still said Qwen. The qwen-only file is the
-      # first gate; the overlay keys below are the rest.
+      # shared ~/.omp/agent/models.yml (cloud + ashalliants) is NOT
+      # visible to it. Without a profile-local file the ashalliants
+      # selector is unresolvable and the harness SILENTLY degrades to a
+      # cloud model: reproduced 2026-10-11, a profile launch with no
+      # models.yml routed to openrouter and died 402 "requires more
+      # credits" while the status line still said Qwen. The qwen-only
+      # file is the first gate; the overlay keys below are the rest.
       #
       # qwen-only gates (defense in depth — the fresh auth store alone
       # cannot cover env-var keys such as OPENROUTER_API_KEY inherited
@@ -239,11 +212,10 @@
       #                       credentials exist. Covers the env-var-
       #                       backed cloud ids observed on this host
       #                       plus the implicit KEYLESS local probes
-      #                       (ollama/llama.cpp/lm-studio are keyless,
-      #                       hence available with zero credentials —
-      #                       this replaces config.default.yml's
-      #                       [llama.cpp] entry; arrays replace, not
-      #                       append).
+      #                       (llama.cpp/lm-studio are keyless, hence
+      #                       available with zero credentials — this
+      #                       replaces config.default.yml's [llama.cpp]
+      #                       entry; arrays replace, not append).
       #   retry.modelFallback — false: a pinned role whose engine is
       #                       down (`ashalliants-up`) must FAIL LOUDLY,
       #                       never leak a turn to a cloud model (no
@@ -280,7 +252,6 @@
 
         disabledProviders = [
           # implicit keyless local probes
-          "ollama"
           "llama.cpp"
           "lm-studio"
           "apple"
@@ -301,8 +272,9 @@
 
       # Profile-local qwen-only models.yml. Reuses local.ashalliants
       # (single source of the provider block). On the default
-      # generation :8092 is simply down and ompl fails loudly — as
-      # designed, same as `ashalliants-up` gating the shared provider.
+      # generation the ashalliants port is simply down and ompl fails
+      # loudly — as designed, same as `ashalliants-up` gating the
+      # shared provider.
       omplModels = {
         providers.ashalliants = local.ashalliants;
       };
