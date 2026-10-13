@@ -51,6 +51,7 @@
       den.aspects.dev.toolchains.java-kotlin
       den.aspects.dev.toolchains.javascript-typescript
       den.aspects.dev.toolchains.nix
+      den.aspects.dev.toolchains.rust
       den.aspects.dev.postman
       den.aspects.dev.gits.git
       den.aspects.dev.gits.gh
