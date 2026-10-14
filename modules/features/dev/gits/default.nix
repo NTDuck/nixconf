@@ -6,6 +6,7 @@
       den.aspects.dev.gits.git-ai
       den.aspects.dev.gits.git-xet
       den.aspects.dev.gits.glab
+      den.aspects.dev.gits.prek
     ];
   };
 }
