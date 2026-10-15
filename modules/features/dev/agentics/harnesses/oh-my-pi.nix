@@ -38,14 +38,11 @@ in {
   den.aspects.dev.agentics.harnesses.oh-my-pi = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp
+        inputs.omp.packages.${pkgs.stdenv.hostPlatform.system}.omp
       ];
     };
 
-    homeManager = {
-      pkgs,
-      ...
-    }: let
+    homeManager = {pkgs, ...}: let
       yaml = pkgs.formats.yaml {};
       ompPkg = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp;
     in {

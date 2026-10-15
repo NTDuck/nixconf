@@ -107,6 +107,11 @@
       };
     };
 
+    omp = {
+      url = "github:can1357/oh-my-pi";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Telegram fork
     # ayugram = {
     #   url = "github:ndfined-crp/ayugram-desktop/release";
