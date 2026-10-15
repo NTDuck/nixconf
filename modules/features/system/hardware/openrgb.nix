@@ -33,6 +33,9 @@
       services.hardware.openrgb = {
         enable = true;
         package = openrgb-wrapped;
+        # 2026-10-15: Automatically apply static rainbow profile at startup
+        # across Lenovo Legion keyboard, Keychron, and eGPU 3090.
+        startupProfile = "lenovo-legion-16iah7h-PF3XJ8SP-static-rainbow";
       };
     };
   };

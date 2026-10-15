@@ -131,13 +131,10 @@
           echo "egpu-rgb-rescan: 3090 enumerated after openrgb restart" >&2
         fi
 
-        # Freshly-tunneled card = firmware RGB default (on). Re-apply the
-        # user's saved "off" preference (root only reads the state file).
-        if [ -f "${stateFile}" ] \
-          && [ "$(${coreutils}/bin/cat "${stateFile}")" = "off" ]; then
-          ${og} -d "${devName}" -m off >/dev/null 2>&1 || true
-          echo "egpu-rgb-rescan: re-applied saved RGB 'off' after enumeration" >&2
-        fi
+        # Card enumerated: ensure startup profile is applied
+        # (2026-10-15: replaced saved 'off' re-apply with static-rainbow profile load).
+        ${og} --profile lenovo-legion-16iah7h-PF3XJ8SP-static-rainbow >/dev/null 2>&1 || true
+        echo "egpu-rgb-rescan: applied lenovo-legion-16iah7h-PF3XJ8SP-static-rainbow profile after enumeration" >&2
       '';
     in {
       specialisation.homelab.configuration = {
