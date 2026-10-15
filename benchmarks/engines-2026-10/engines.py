@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 Q27 = Path("/home/ayin/models/q27-bench")
 ASH = Q27 / "ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090"
+ASH16 = Q27 / "ashalliants/ninfer-rtx3090-linux-x64-0.16.0-rtx3090"
 NALL = Path("/home/ayin/models/ninfer-bench/ninfer-all")
 MODELS = Q27 / "models"
 ENV = dict(os.environ, LD_LIBRARY_PATH="/run/opengl-driver/lib",
@@ -252,6 +253,46 @@ ENGINES = {
                 "NINFER_KV_CAPACITY": "65536",
                 "NINFER_HOST_STATE_SLOTS": "6",
                 "NINFER_SERVER": f"{ASH}/ninfer-serve.hostkv-shim"},
+    },
+    # ---------------- 2026-10-15 v0.16.0 exploratory arms ----------------
+    "ashalliants-016-df2-65k-c4": {
+        "model": "auto", "port": 8130,
+        "launcher": ["env",
+                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     f"{ASH16}/run.sh", "qwen38-27b", "tuned"],
+        "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
+                "NINFER_PORT": "8130", "NINFER_FALLBACK": "off",
+                "NINFER_CONCURRENCY": "4",
+                "NINFER_CONTEXT": "65536",
+                "NINFER_KV_CAPACITY": "65536",
+                "NINFER_HOST_CONTEXT_MIB": "2048",
+                "NINFER_SERVER": f"{ASH16}/ninfer-serve.hostkv-shim"},
+    },
+    "ashalliants-016-df2-128k-c2": {
+        "model": "auto", "port": 8131,
+        "launcher": ["env",
+                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     f"{ASH16}/run.sh", "qwen38-27b", "tuned"],
+        "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
+                "NINFER_PORT": "8131", "NINFER_FALLBACK": "off",
+                "NINFER_CONCURRENCY": "2",
+                "NINFER_CONTEXT": "131072",
+                "NINFER_KV_CAPACITY": "131072",
+                "NINFER_HOST_CONTEXT_MIB": "2048",
+                "NINFER_SERVER": f"{ASH16}/ninfer-serve.hostkv-shim"},
+    },
+    "ashalliants-016-df2-32k-c6": {
+        "model": "auto", "port": 8132,
+        "launcher": ["env",
+                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     f"{ASH16}/run.sh", "qwen38-27b", "tuned"],
+        "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
+                "NINFER_PORT": "8132", "NINFER_FALLBACK": "off",
+                "NINFER_CONCURRENCY": "6",
+                "NINFER_CONTEXT": "32768",
+                "NINFER_KV_CAPACITY": "32768",
+                "NINFER_HOST_CONTEXT_MIB": "2048",
+                "NINFER_SERVER": f"{ASH16}/ninfer-serve.hostkv-shim"},
     },
     # ---------------- 2026-10-10 variant arm ----------------
     "swift-uncensored": {

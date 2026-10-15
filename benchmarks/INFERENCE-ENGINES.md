@@ -84,6 +84,19 @@ Z = per-agent decode tok/s (up = faster), X = context, Y = parallelism k. One su
 | fresh | 154.5 | 160.3 | 162.0 | 158.3 | 21296 |
 | 16k | 150.3 | 141.3 | 144.6 | 143.8 | 20702 |
 
+### `ashalliants-016-df2` (2026-10-15 Evaluation)
+
+- **Artifact:** `qwen3_8_27b.ninfer` (ashalliants 0.16.0 release binary, identical model artifact)
+- **Flags:** spec=dflash2, rk4v4 KV, host context clamped 2048 MiB via shim, FALLBACK=off
+- **Notes:** New context cache engine (#214) increases base per-lane runtime reservation on 24 GB card. C8x16k, C8x32k, C6x65k, and C4x128k OOM at startup (requires > 6.78 GiB available VRAM). Caps at C4x65k and C2x128k.
+
+| context | C1 | C2 | C4 | C8 | peak VRAM (MiB) |
+|---|---|---|---|---|---|
+| fresh | 148.5 | — | 67.7 | OOM | 23023 |
+| 16k | 165.4 | — | 67.3 | OOM | 22960 |
+| 65k | — | — | 125.0 | OOM | 23198 |
+| 128k | — | 119.4 | OOM | OOM | 23392 |
+
 ### `ashalliants-df2-128k`
 
 - **Artifact:** —

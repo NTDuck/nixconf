@@ -11,6 +11,15 @@
 # card with 17 GiB weights). C6x65k fits and provides 3.6x more
 # throughput than the previous C4x65k winner (214.5 agg tok/s).
 #
+#
+# 2026-10-15 EVALUATION: v0.16.0 was benchmarked against v0.15.0 on the 3090.
+# The v0.16.0 context cache engine rewrite (#214) increases per-lane runtime
+# reservation: C6x65k OOMs (8.57 GiB > 6.78 GiB available), C8x16k OOMs (8.22 GiB),
+# and C4x128k OOMs (7.59 GiB). v0.16.0 caps out at C4x65k (500.0 agg tok/s).
+# v0.15.0 C6x65k (769.4 agg tok/s) strictly dominates v0.16.0 on Pareto-optimal
+# parallelism x context (+50% concurrency, +54% throughput). Production stays
+# on v0.15.0 C6x65k; v0.16.0 is staged at ~/models/q27-bench/ashalliants/
+# ninfer-rtx3090-linux-x64-0.16.0-rtx3090 with shim for future engine updates.
 # WHY THE VENDOR TREE IS CONSUMED IN PLACE, NOT STORED: the release is a
 # 20 GiB unpacked tree (17.7 GiB .ninfer artifact + binaries), and /home
 # sits at 94%. A store copy would double that transiently (measured
