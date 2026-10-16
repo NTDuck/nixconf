@@ -114,7 +114,7 @@
           # ../ashalliants.nix): starting any of the units natively stops
           # the others (ashalliants' unit declares the symmetric Conflicts
           # set).
-          conflicts = ["ashalliants-df2.service"];
+          conflicts = ["ashalliants-df2.service" "ashalliants-35b.service"];
 
           serviceConfig = {
             # Static 3090 pin (2026-09-25, homelab-spec visibility request):

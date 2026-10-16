@@ -12,7 +12,7 @@
 #
 # 2026-10-12: ollama removed entirely (user request — ashalliants is the
 # sole local engine). The local attrset now only carries ashalliants.
-{inputs, ...}: {
+{den, inputs, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     homeManager = {
       osConfig,
@@ -142,18 +142,12 @@
       # last live-verified state. 2026-10-12: ollama removed; ashalliants
       # is the sole local engine.
       local = {
-        # ashalliants ninfer-0.15.0 DFlash2 (port from `ashPort` above,
-        # defined in ../ashalliants.nix; 2026-10-09 benchmark WINNER for
-        # Qwen3.8 on both criteria: peak 162.7 tok/s fresh C1 AND
-        # high-parallelism x deep-ctx). Same OpenAI Chat Completions
-        # shape (the vendor binary serves completions/responses/anthropic;
-        # no /v1/models discovery — declared model instead). id matches
-        # the server banner ("listening ... | model qwen3.8-27b"). 262144
-        # = tuned-profile context (NINFER_FALLBACK=off keeps it exact;
+        # ashalliants ninfer-0.15.0 DFlash2 (port from `ashPort` above: 8092,
+        # defined in ../ashalliants.nix; resident 3090 engine). id matches
+        # the server banner ("listening ... | model qwen3.8-27b").
+        # 65536 = tuned-profile C6x65k context (NINFER_FALLBACK=off keeps it exact;
         # overclaim triggers omp's trim 500-loop — never overclaim).
-        # On-demand unit (23.3 GiB VRAM + 2 GiB pinned host KV): start
-        # via `ashalliants-up` (Conflicts stop bonsai2 natively);
-        # provider 404s until the unit is up.
+        # On-demand unit: start via `ashalliants-up` (Conflicts stop 35B and bonsai2).
         ashalliants = {
           baseUrl = "http://127.0.0.1:${toString ashPort}/v1";
           api = "openai-completions";
@@ -164,8 +158,29 @@
               id = "qwen3.8-27b";
               name = "Qwen 3.8 27B";
               reasoning = true;
-              input = ["text"];
-              contextWindow = 262144;
+              input = ["text" "image"];
+              contextWindow = 65536;
+              maxTokens = 16384;
+            }
+          ];
+        };
+
+        # ashalliants ninfer-0.15.0 Qwen3.6-35B-A3B MTP3 (port 8140,
+        # 2026-10-16 benchmark winner: peak 378.5 tok/s, 314+ tok/s at C3x65k).
+        # On-demand unit: start via `ashalliants-35b-up` (Conflicts stop
+        # 27B and bonsai2 natively).
+        ashalliants-35b = {
+          baseUrl = "http://127.0.0.1:8140/v1";
+          api = "openai-completions";
+          auth = "none";
+
+          models = [
+            {
+              id = "qwen3.6-35b-a3b";
+              name = "Qwen 3.6 35B A3B (Vision)";
+              reasoning = true;
+              input = ["text" "image"];
+              contextWindow = 65536;
               maxTokens = 16384;
             }
           ];
@@ -248,8 +263,10 @@
           judge = "ashalliants/qwen3.8-27b:high";
         };
 
-        enabledModels = [ "ashalliants/qwen3.8-27b" ];
-
+        enabledModels = [
+          "ashalliants/qwen3.8-27b"
+          "ashalliants-35b/qwen3.6-35b-a3b"
+        ];
         disabledProviders = [
           # implicit keyless local probes
           "llama.cpp"
@@ -276,7 +293,10 @@
       # loudly — as designed, same as `ashalliants-up` gating the
       # shared provider.
       omplModels = {
-        providers.ashalliants = local.ashalliants;
+        providers = {
+          ashalliants = local.ashalliants;
+          ashalliants-35b = local.ashalliants-35b;
+        };
       };
 
       # A named profile's agent dir resolves ITS OWN extensions/ and

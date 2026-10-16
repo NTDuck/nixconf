@@ -80,6 +80,7 @@
       # this host; remote hosts (dell) duplicate the value with a sync
       # comment in their models.yml.
       ashPort = 8092;
+      ashPort35b = 8140;
 
       # On-demand starter (mirror of llamacpp-prism-up): stops the other
       # 3090 daemons natively (systemd Conflicts), then starts this unit.
@@ -89,9 +90,15 @@
       ashalliants-down = pkgs.writeShellScriptBin "ashalliants-down" ''
         exec ${pkgs.systemd}/bin/systemctl stop ashalliants-df2.service
       '';
+      ashalliants-35b-up = pkgs.writeShellScriptBin "ashalliants-35b-up" ''
+        exec ${pkgs.systemd}/bin/systemctl start ashalliants-35b.service
+      '';
+      ashalliants-35b-down = pkgs.writeShellScriptBin "ashalliants-35b-down" ''
+        exec ${pkgs.systemd}/bin/systemctl stop ashalliants-35b.service
+      '';
     in {
       specialisation.homelab.configuration = {
-        environment.systemPackages = [ashalliants-up ashalliants-down];
+        environment.systemPackages = [ashalliants-up ashalliants-down ashalliants-35b-up ashalliants-35b-down];
 
         systemd.services.ashalliants-df2 = {
           description = "ashalliants ninfer-0.15.0 Qwen3.8-27B DFlash2";
@@ -105,7 +112,7 @@
           # stops this unit natively.
           wantedBy = ["multi-user.target"];
 
-          conflicts = ["bonsai2.service"];
+          conflicts = ["bonsai2.service" "ashalliants-35b.service"];
 
           # run.sh resolves bash via `#!/usr/bin/env bash`. The NixOS
           # unit-level `path` option did NOT survive the den-module
@@ -177,11 +184,61 @@
           };
         };
 
+        # On-demand Qwen3.6-35B-A3B daemon (port 8140, 2026-10-16 benchmark winner:
+        # 378.5 peak tok/s, 314+ tok/s at C3x65k). Mutually exclusive with
+        # ashalliants-df2 and bonsai2 via systemd Conflicts.
+        systemd.services.ashalliants-35b = {
+          description = "ashalliants ninfer-0.15.0 Qwen3.6-35B-A3B MTP3";
+          after = ["network-online.target"];
+          wants = ["network-online.target"];
+          conflicts = ["bonsai2.service" "ashalliants-df2.service"];
+
+          serviceConfig = {
+            Type = "simple";
+            User = "ayin";
+            WorkingDirectory = ashRoot;
+            ExecCondition = pkgs.writeShellScript "ashalliants-35b-boot-gate" ''
+              i=0
+              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
+                i=$((i+1)); [ $i -gt 60 ] && exit 1
+                sleep 1
+              done
+              echo "3e33297645dc33557751be1a3c407a74ed7c00f34909b5d4e8cfdce91b3dbe84  ${ashRoot}/models/qwen3_6_35b_a3b.ninfer" \
+                | ${pkgs.coreutils}/bin/sha256sum -c -
+            '';
+            Environment = let
+              ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
+            in [
+              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
+              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
+              "LD_LIBRARY_PATH=${ld}"
+              "NINFER_SPEC=mtp"
+              "NINFER_HOST=0.0.0.0"
+              "NINFER_PORT=${toString ashPort35b}"
+              "NINFER_FALLBACK=off"
+              "NINFER_CONCURRENCY=3"
+              "NINFER_CONTEXT=65536"
+              "NINFER_KV_CAPACITY=65536"
+              "NINFER_HOST_STATE_SLOTS=3"
+              "NINFER_SERVER=${ashRoot}/ninfer-serve.hostkv-shim"
+            ];
+            ExecStart = "${ashRoot}/run.sh qwen36-35b-a3b tuned";
+            MemoryHigh = "10G";
+            MemoryMax = "12G";
+            Restart = "on-failure";
+            RestartSec = "10s";
+            ProtectSystem = "strict";
+            NoNewPrivileges = true;
+            PrivateTmp = true;
+          };
+        };
+
         # DELL consumes ashalliants over the tailnet (2026-10-10: swapped
         # for the removed ninfer :8081 rule): open the ashalliants port
         # ONLY on tailscale0.
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
           ashPort
+          ashPort35b
         ];
       }; # specialisation.homelab.configuration
     };

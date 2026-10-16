@@ -67,7 +67,7 @@
           # system (legion's aspect isn't included on dell), so the port
           # is duplicated here with this comment as the sync point.
           # OpenAI Chat Completions, declared model (no discovery
-          # protocol); 262144 = the tuned-profile serving window
+          # protocol); 65536 = the tuned-profile C6x65k serving window
           # (NINFER_FALLBACK=off keeps it exact). An overclaim triggers
           # server-side trim loops.
           ashalliants = {
@@ -80,8 +80,27 @@
                 id = "qwen3.8-27b";
                 name = "Qwen 3.8 27B";
                 reasoning = true;
-                input = ["text"];
-                contextWindow = 262144;
+                input = ["text" "image"];
+                contextWindow = 65536;
+                maxTokens = 16384;
+              }
+            ];
+          };
+
+          # ashalliants-35b on legion (port 8140 over tailscale0,
+          # Qwen3.6-35B-A3B MTP3 on-demand unit).
+          ashalliants-35b = {
+            baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8140/v1";
+            api = "openai-completions";
+            auth = "none";
+
+            models = [
+              {
+                id = "qwen3.6-35b-a3b";
+                name = "Qwen 3.6 35B A3B (Vision)";
+                reasoning = true;
+                input = ["text" "image"];
+                contextWindow = 65536;
                 maxTokens = 16384;
               }
             ];
