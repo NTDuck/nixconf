@@ -252,20 +252,20 @@
       # + engine logs 2026-10-11).
       omplOverlay = {
         modelRoles = {
-          default = "ashalliants/qwen3.8-27b:high";
-          smol = "ashalliants/qwen3.8-27b:high";
-          slow = "ashalliants/qwen3.8-27b:high";
-          vision = "ashalliants/qwen3.8-27b:high";
-          plan = "ashalliants/qwen3.8-27b:high";
-          commit = "ashalliants/qwen3.8-27b:high";
-          task = "ashalliants/qwen3.8-27b:high";
-          advisor = "ashalliants/qwen3.8-27b:high";
-          judge = "ashalliants/qwen3.8-27b:high";
+          default = "ashalliants-35b/qwen3.6-35b-a3b:high";
+          smol = "ashalliants-35b/qwen3.6-35b-a3b:high";
+          slow = "ashalliants-35b/qwen3.6-35b-a3b:high";
+          vision = "ashalliants-35b/qwen3.6-35b-a3b:high";
+          plan = "ashalliants-35b/qwen3.6-35b-a3b:high";
+          commit = "ashalliants-35b/qwen3.6-35b-a3b:high";
+          task = "ashalliants-35b/qwen3.6-35b-a3b:high";
+          advisor = "ashalliants-35b/qwen3.6-35b-a3b:high";
+          judge = "ashalliants-35b/qwen3.6-35b-a3b:high";
         };
 
         enabledModels = [
-          "ashalliants/qwen3.8-27b"
           "ashalliants-35b/qwen3.6-35b-a3b"
+          "ashalliants/qwen3.8-27b"
         ];
         disabledProviders = [
           # implicit keyless local probes

@@ -105,12 +105,9 @@
           after = ["network-online.target"];
           wants = ["network-online.target"];
 
-          # PRIMARY ENGINE (2026-10-10 user request: ninfer-061 removed
-          # entirely, ../swap.nix + flake input; this unit autostarts on
-          # the homelab spec). bonsai2 is on-demand (../prism/default.nix)
-          # and declares the reverse Conflicts, so a bonsai2 start still
-          # stops this unit natively.
-          wantedBy = ["multi-user.target"];
+          # ON-DEMAND ENGINE (2026-10-16: ashalliants-35b is the primary autostart
+          # engine; ashalliants-df2 is on-demand via ashalliants-up).
+          # bonsai2 and ashalliants-35b declare reverse Conflicts.
 
           conflicts = ["bonsai2.service" "ashalliants-35b.service"];
 
@@ -184,15 +181,15 @@
           };
         };
 
-        # On-demand Qwen3.6-35B-A3B daemon (port 8140, 2026-10-16 benchmark winner:
+        # PRIMARY Qwen3.6-35B-A3B daemon (port 8140, 2026-10-16 benchmark winner:
         # 378.5 peak tok/s, 314+ tok/s at C3x65k). Mutually exclusive with
         # ashalliants-df2 and bonsai2 via systemd Conflicts.
         systemd.services.ashalliants-35b = {
           description = "ashalliants ninfer-0.15.0 Qwen3.6-35B-A3B MTP3";
           after = ["network-online.target"];
           wants = ["network-online.target"];
+          wantedBy = ["multi-user.target"];
           conflicts = ["bonsai2.service" "ashalliants-df2.service"];
-
           serviceConfig = {
             Type = "simple";
             User = "ayin";
