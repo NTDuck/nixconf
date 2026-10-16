@@ -69,8 +69,12 @@
       # .omp/agent/config.default.yml — the shared aspect's
       # home.file definition is the only one, so no mkForce needed.
     in {
-      home.file.".omp/agent/models.yml".source =
-        yaml.generate ".omp.agent.models.yml" models;
+      # force = true (2026-10-16): self-heal over any pre-existing unmanaged
+      # models.yml on disk (e.g. manual symlinks) so HM activation does not fail.
+      home.file.".omp/agent/models.yml" = {
+        source = yaml.generate ".omp.agent.models.yml" models;
+        force = true;
+      };
     };
   };
 }
