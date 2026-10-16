@@ -342,11 +342,11 @@
 
       home.shellAliases = {
         omp = ''
-          CODEV_API_KEY="$(cat ${osConfig.age.secrets."codev-api-key".path})" \
-          ORCAROUTER_API_KEY="$(cat ${osConfig.age.secrets."orcarouter-api-key".path})" \
-          OPENCODE_API_KEY="$(cat ${osConfig.age.secrets."opencode-api-key".path})" \
-          OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."openrouter-api-key".path})" \
-          TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path})" \
+          CODEV_API_KEY="$(cat ${osConfig.age.secrets."codev-api-key".path} 2>/dev/null || cat ~/.codev/auth.json 2>/dev/null | ${pkgs.jq}/bin/jq -r '.api_key // empty')" \
+          ORCAROUTER_API_KEY="$(cat ${osConfig.age.secrets."orcarouter-api-key".path} 2>/dev/null)" \
+          OPENCODE_API_KEY="$(cat ${osConfig.age.secrets."opencode-api-key".path} 2>/dev/null)" \
+          OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."openrouter-api-key".path} 2>/dev/null)" \
+          TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path} 2>/dev/null)" \
           REASONIX_SCAVENGE=1 \
           REASONIX_RESULT_CAP_TOKENS=3000 \
           ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp'';

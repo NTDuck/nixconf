@@ -10,16 +10,13 @@
       pkgs,
       ...
     }: let
+      # Secrets ownership (2026-10-16): all managed secrets are ayin's user API keys.
+      # Setting owner = ayin and group = users (0400) avoids Permission denied when
+      # sessions lack the new 'secrets' group token before relogging.
       mkSecret = secret: {
         file = "${inputs.self}/secrets/${secret}.age";
-        owner =
-          if config.networking.hostName == "dell-latitude-E7270-H836QF2"
-          then "ayin"
-          else "root";
-        group =
-          if config.networking.hostName == "dell-latitude-E7270-H836QF2"
-          then "users"
-          else "secrets";
+        owner = "ayin";
+        group = "users";
         mode = "0400";
       };
     in {
