@@ -61,6 +61,8 @@ def model_label(m):
         # variants (qwen38-27b-gguf / qwen38-27b-buun from --alias) merge
         # so per-model plots compare every engine on one canvas.
         return "qwen3.8-27b"
+    if "qwen36-35b" in ml or "qwen3.6-35b" in ml or "35b-a3b" in ml or "35b_a3b" in ml:
+        return "qwen3.6-35b-a3b"
     return m
 
 
@@ -116,12 +118,13 @@ def main():
         fig = plt.figure(figsize=(11, 7.5))
         ax = fig.add_subplot(111, projection="3d")
         drew = False
-        xtick_pos, xtick_lbl = [], []
+        m_ctxs = sorted({r["ctx"] for r in mrows if r.get("agents") and r["agents"][-1].get("ok", 0) > 0 and r["agents"][-1].get("mean_decode_tps", 0) > 0})
+        m_concs = sorted({r["conc"] for r in mrows if r.get("agents") and r["agents"][-1].get("ok", 0) > 0 and r["agents"][-1].get("mean_decode_tps", 0) > 0})
+        if not m_ctxs or not m_concs:
+            plt.close(fig)
+            continue
+        Xg, Yg = np.meshgrid(range(len(m_ctxs)), range(len(m_concs)))
         for tag in engine_order_m:
-            # Bucket cells by (ctx, conc); mean over reps/lines for the
-            # same key (last-wins dedup above already collapses exact
-            # (tag,ctx,conc) rows, but screening+long ladders may both
-            # contribute same-key rows with different reps).
             grid = defaultdict(dict)
             for r in mrows:
                 if r["tag"] != tag or not r["agents"]:
@@ -132,56 +135,34 @@ def main():
                 grid[(r["ctx"], r["conc"])] = a["mean_decode_tps"]
             if not grid:
                 continue
-            ctxs = sorted({c for c, _ in grid})
-            concs = sorted({c for _, c in grid})
-            xi = list(range(len(ctxs)))
-            yi = list(range(len(concs)))
-            # Dense fill: missing (ctx,conc) combos stay gaps — only
-            # measured corners carry Z; plot_surface needs a full grid,
-            # so surface spans the measured hull with None-masked holes.
-            Z = [[grid.get((ctxs[j], concs[i])) for j in range(len(ctxs))]
-                 for i in range(len(concs))]
-            import numpy as np
+            Z = [[grid.get((m_ctxs[j], m_concs[i])) for j in range(len(m_ctxs))]
+                 for i in range(len(m_concs))]
             Zm = np.ma.masked_invalid(np.array(
                 [[np.nan if v is None else v for v in row] for row in Z]))
             if Zm.count() == 0:
                 continue
             drew = True
-            cmap = plt.get_cmap("viridis")
-            norm = matplotlib.colors.Normalize(
-                vmin=float(Zm.min()), vmax=float(Zm.max()))
             surf = ax.plot_surface(
-                np.array(xi * len(concs)).reshape(len(concs), len(ctxs)),
-                np.array([[yi[i]] * len(ctxs) for i in range(len(concs))],
-                         dtype=float),
-                Zm, color=color[tag], alpha=0.75, linewidth=1,
+                Xg, Yg, Zm, color=color[tag], alpha=0.75, linewidth=1,
                 edgecolor="k", cmap=None, shade=True)
-            # Wireframe overlay on top of shaded surface for readability.
             try:
                 ax.plot_wireframe(
-                    np.array(xi * len(concs)).reshape(len(concs), len(ctxs)),
-                    np.array([[yi[i]] * len(ctxs) for i in range(len(concs))],
-                             dtype=float),
-                    Zm, color=color[tag], alpha=0.55, linewidth=0.7,
+                    Xg, Yg, Zm, color=color[tag], alpha=0.55, linewidth=0.7,
                     rstride=1, cstride=1)
             except ValueError:
-                pass  # masked grid too sparse for wireframe; surface suffices
-            # Scatter the actual measured points so gaps read as gaps.
+                pass
             for (ctxv, concv), tps in grid.items():
-                ax.scatter(ctxs.index(ctxv), concs.index(concv), tps,
-                           color=color[tag], s=14, depthshade=False)
+                if ctxv in m_ctxs and concv in m_concs:
+                    ax.scatter(m_ctxs.index(ctxv), m_concs.index(concv), tps,
+                               color=color[tag], s=14, depthshade=False)
             ax.plot([], [], [], color=color[tag], label=tag)
         if not drew:
             plt.close(fig)
             continue
-        for i, ctx in enumerate(sorted({r["ctx"] for r in mrows})):
-            lbl = next((l for b, l in CTX_BUCKETS if b == ctx), str(ctx))
-            xtick_pos.append(i)
-            xtick_lbl.append(lbl)
-        ax.set_xticks(xtick_pos)
-        ax.set_xticklabels(xtick_lbl, fontsize=8)
-        ax.set_yticks(list(range(len(CONCS))))
-        ax.set_yticklabels([f"k{c}" for c in CONCS], fontsize=8)
+        ax.set_xticks(range(len(m_ctxs)))
+        ax.set_xticklabels([next((l for b, l in CTX_BUCKETS if b == c), str(c)) for c in m_ctxs], fontsize=8)
+        ax.set_yticks(range(len(m_concs)))
+        ax.set_yticklabels([f"k{c}" for c in m_concs], fontsize=8)
         ax.set_xlabel("context", fontsize=9, labelpad=8)
         ax.set_ylabel("parallelism (k)", fontsize=9, labelpad=8)
         ax.set_zlabel("per-agent decode tok/s", fontsize=9, labelpad=6)

@@ -197,17 +197,33 @@
   {
    "ctx": 32768,
    "conc": 1,
-   "tps": 68.76,
+   "tps": 135.73,
    "winners": [
-    "ninfer-061"
+    "ashalliants-df2-32k"
+   ]
+  },
+  {
+   "ctx": 32768,
+   "conc": 2,
+   "tps": 132.52,
+   "winners": [
+    "ashalliants-df2-32k"
    ]
   },
   {
    "ctx": 32768,
    "conc": 4,
-   "tps": 68.14,
+   "tps": 139.84,
    "winners": [
-    "ninfer-061"
+    "ashalliants-df2-32k"
+   ]
+  },
+  {
+   "ctx": 32768,
+   "conc": 6,
+   "tps": 138.84,
+   "winners": [
+    "ashalliants-df2-32k"
    ]
   },
   {
@@ -221,17 +237,25 @@
   {
    "ctx": 65536,
    "conc": 1,
-   "tps": 66.18,
+   "tps": 140.16,
    "winners": [
-    "ninfer-061"
+    "ashalliants-df2-65k"
+   ]
+  },
+  {
+   "ctx": 65536,
+   "conc": 2,
+   "tps": 121.19,
+   "winners": [
+    "ashalliants-df2-65k"
    ]
   },
   {
    "ctx": 65536,
    "conc": 4,
-   "tps": 98.75,
+   "tps": 133.61,
    "winners": [
-    "ashalliants-mtp-65k-c8"
+    "ashalliants-df2-65k"
    ]
   },
   {
@@ -253,21 +277,17 @@
   {
    "ctx": 131072,
    "conc": 1,
-   "tps": 0.0,
+   "tps": 111.27,
    "winners": [
-    "ninfer-061",
-    "thinkingcap",
-    "davidau-fable",
-    "humanlike",
-    "fable5"
+    "ashalliants-df2-128k"
    ]
   },
   {
    "ctx": 131072,
    "conc": 2,
-   "tps": 117.94,
+   "tps": 119.36,
    "winners": [
-    "ashalliants-df2-128k"
+    "ashalliants-016-df2-128k-c2"
    ]
   },
   {
@@ -281,13 +301,155 @@
   {
    "ctx": 262144,
    "conc": 1,
-   "tps": 0.0,
+   "tps": 99.5,
    "winners": [
-    "ninfer-061",
-    "thinkingcap",
-    "davidau-fable",
-    "humanlike",
-    "fable5"
+    "ashalliants-df2-256k"
+   ]
+  }
+ ],
+ "qwen3.6-35b-a3b": [
+  {
+   "ctx": 0,
+   "conc": 1,
+   "tps": 341.46,
+   "winners": [
+    "ashalliants-35b-mtp"
+   ]
+  },
+  {
+   "ctx": 0,
+   "conc": 2,
+   "tps": 338.42,
+   "winners": [
+    "ashalliants-35b-mtp"
+   ]
+  },
+  {
+   "ctx": 0,
+   "conc": 3,
+   "tps": 335.66,
+   "winners": [
+    "ashalliants-35b-mtp"
+   ]
+  },
+  {
+   "ctx": 0,
+   "conc": 4,
+   "tps": 326.39,
+   "winners": [
+    "ashalliants-35b-mtp-c4"
+   ]
+  },
+  {
+   "ctx": 16384,
+   "conc": 1,
+   "tps": 378.51,
+   "winners": [
+    "ashalliants-35b-mtp"
+   ]
+  },
+  {
+   "ctx": 16384,
+   "conc": 2,
+   "tps": 294.81,
+   "winners": [
+    "ashalliants-35b-mtp"
+   ]
+  },
+  {
+   "ctx": 16384,
+   "conc": 3,
+   "tps": 267.04,
+   "winners": [
+    "ashalliants-35b-mtp"
+   ]
+  },
+  {
+   "ctx": 16384,
+   "conc": 4,
+   "tps": 361.81,
+   "winners": [
+    "ashalliants-35b-mtp-c4"
+   ]
+  },
+  {
+   "ctx": 32768,
+   "conc": 1,
+   "tps": 333.72,
+   "winners": [
+    "ashalliants-35b-mtp"
+   ]
+  },
+  {
+   "ctx": 32768,
+   "conc": 2,
+   "tps": 277.0,
+   "winners": [
+    "ashalliants-35b-mtp"
+   ]
+  },
+  {
+   "ctx": 32768,
+   "conc": 3,
+   "tps": 248.85,
+   "winners": [
+    "ashalliants-35b-mtp"
+   ]
+  },
+  {
+   "ctx": 32768,
+   "conc": 4,
+   "tps": 339.38,
+   "winners": [
+    "ashalliants-35b-mtp-c4"
+   ]
+  },
+  {
+   "ctx": 65536,
+   "conc": 1,
+   "tps": 324.74,
+   "winners": [
+    "ashalliants-35b-mtp"
+   ]
+  },
+  {
+   "ctx": 65536,
+   "conc": 2,
+   "tps": 333.94,
+   "winners": [
+    "ashalliants-35b-mtp"
+   ]
+  },
+  {
+   "ctx": 65536,
+   "conc": 3,
+   "tps": 314.11,
+   "winners": [
+    "ashalliants-35b-mtp"
+   ]
+  },
+  {
+   "ctx": 131072,
+   "conc": 1,
+   "tps": 269.32,
+   "winners": [
+    "ashalliants-35b-mtp-128k"
+   ]
+  },
+  {
+   "ctx": 131072,
+   "conc": 2,
+   "tps": 266.75,
+   "winners": [
+    "ashalliants-35b-mtp-128k"
+   ]
+  },
+  {
+   "ctx": 262144,
+   "conc": 1,
+   "tps": 214.73,
+   "winners": [
+    "ashalliants-35b-mtp-256k"
    ]
   }
  ]

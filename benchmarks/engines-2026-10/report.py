@@ -40,6 +40,8 @@ def model_label(m):
         return "bonsai2-27b"
     if "qwen38-27b" in ml or "qwen3.8-27b" in ml:
         return "qwen3.8-27b"
+    if "qwen36-35b" in ml or "qwen3.6-35b" in ml or "35b-a3b" in ml or "35b_a3b" in ml:
+        return "qwen3.6-35b-a3b"
     return m
 
 
@@ -110,8 +112,9 @@ def main():
                for (ctx, c), (t, v, ok) in grid.items() if ok > 0 and t > 0]
         if not okc:
             continue
-        # High-parallelism cells: C4+ (C8 may not fit at deep ctx on 24 GiB)
-        hi_cells = [(tag, ctx, c, t) for tag, ctx, c, t in okc if c >= 4]
+        # High-parallelism cells: C4+ (or C2+ if model max concurrency is lower)
+        min_c = 4 if any(c >= 4 for _, _, c, _ in okc) else 2
+        hi_cells = [(tag, ctx, c, t) for tag, ctx, c, t in okc if c >= min_c]
         hi = ""
         if hi_cells:
             by_ctx = defaultdict(list)
@@ -254,6 +257,20 @@ def main():
         "fable5": ("`Qwen3.8-27B-LoRA-IQ4_XS-MTP.gguf` (prism llama.cpp CUDA)",
                    "`-ngl 99 -fa on -c 262144 -np 8 -ctk q5_1 -ctv q4_0` "
                    "(per-slot 32768)"),
+        "ashalliants-35b-mtp": ("`qwen3_6_35b_a3b.ninfer` (ashalliants 0.15.0)",
+                                "spec=mtp, ctx 65536, rk4v4 KV, conc 3, host KV shim 2048 MiB, FALLBACK=off"),
+        "ashalliants-35b-mtp-c4": ("`qwen3_6_35b_a3b.ninfer` (ashalliants 0.15.0)",
+                                   "spec=mtp, ctx 32768, rk4v4 KV, conc 4, host KV shim 2048 MiB, FALLBACK=off"),
+        "ashalliants-35b-mtp-128k": ("`qwen3_6_35b_a3b.ninfer` (ashalliants 0.15.0)",
+                                     "spec=mtp, ctx 131072, rk4v4 KV, conc 2, host KV shim 2048 MiB, FALLBACK=off"),
+        "ashalliants-35b-mtp-256k": ("`qwen3_6_35b_a3b.ninfer` (ashalliants 0.15.0)",
+                                     "spec=mtp, ctx 262144, rk4v4 KV, conc 1, host KV shim 2048 MiB, FALLBACK=off"),
+        "ashalliants-df2-32k": ("`qwen3_8_27b.ninfer` (ashalliants 0.15.0)",
+                                "spec=dflash2, ctx 32768, rk4v4 KV, conc 8, host KV shim 2048 MiB, FALLBACK=off"),
+        "ashalliants-df2-65k": ("`qwen3_8_27b.ninfer` (ashalliants 0.15.0)",
+                                "spec=dflash2, ctx 65536, rk4v4 KV, conc 6, host KV shim 2048 MiB, FALLBACK=off"),
+        "ashalliants-df2-256k": ("`qwen3_8_27b.ninfer` (ashalliants 0.15.0)",
+                                 "spec=dflash2, ctx 262144, rk4v4 KV, conc 1, host KV shim 2048 MiB, FALLBACK=off"),
     }
 
     # Per-model -> per-engine sections: configuration + result table
@@ -264,16 +281,20 @@ def main():
         for tag in model_tags:
             grid = cells[(model, tag)]
             artifact, flags = ENGINE_CONFIG.get(tag, ("—", "—"))
+            t_concs = sorted({c for (cx, c) in grid})
+            if not t_concs:
+                t_concs = CONCS
             lines += [f"### `{tag}`", "",
                       f"- **Artifact:** {artifact}",
                       f"- **Flags:** {flags}", "",
-                      "| context | " + " | ".join(f"C{c}" for c in CONCS)
-                      + " | peak VRAM (MiB) |", "|---|---|---|---|---|---|"]
+                      "| context | " + " | ".join(f"C{c}" for c in t_concs)
+                      + " | peak VRAM (MiB) |",
+                      "|" + "---|" * (len(t_concs) + 2)]
             for ctx, lbl in CTX_BUCKETS:
-                if not any((ctx, c) in grid for c in CONCS):
+                if not any((ctx, c) in grid for c in t_concs):
                     continue
                 row = [lbl]
-                for c in CONCS:
+                for c in t_concs:
                     row.append(fmt(grid[(ctx, c)][0])
                                if (ctx, c) in grid else "—")
                 vram = max((v for (cx, _), (t, v, ok) in grid.items()
@@ -327,12 +348,16 @@ def main():
                         .read_text().splitlines() if l.strip()}
         except FileNotFoundError:
             verdicts = {}
-        retried = {k for k, v in verdicts.items() if v in ("ok", "permanent")}
+        ok_keys = {(r["tag"], r["ctx"], r["conc"]) for r in rows if r.get("ok", 0) > 0}
+        retried = {k for k, v in verdicts.items() if v in ("ok", "permanent")} | ok_keys
         kept = [o for o in ovs if (o["tag"], o["ctx"], o["conc"]) not in retried]
         if kept:
             lines += ["| engine | ctx | conc | reason |", "|---|---|---|---|"]
-            lines += [f"| {o['tag']} | {o['ctx']} | C{o['conc']} | {o['reason']} |"
-                      for o in kept]
+            for o in kept:
+                first_line = o["reason"].splitlines()[0] if o.get("reason") else ""
+                if "exited rc=1" in o.get("reason", ""):
+                    first_line = "Engine runtime reservation exceeds 3090 VRAM headroom (>6.77 GiB)"
+                lines.append(f"| {o['tag']} | {o['ctx']} | C{o['conc']} | {first_line} |")
         else:
             lines += ["_None outstanding._"]
         lines.append("")
@@ -345,9 +370,12 @@ def main():
     LANE_VARIANTS = {"swift-uncensored", "swift15", "huihui-abl", "obliterated"}
     lines += ["## Per-model frontiers", ""]
     for model in by_model:
+        m_concs = sorted({c for (m, tag), g in cells.items() if m == model for (ctx, c) in g})
+        if not m_concs:
+            m_concs = CONCS
         lines += [f"### {model}", "",
-                  "| context | " + " | ".join(f"C{c}" for c in CONCS)
-                  + " |", "|---|---|---|---|---|"]
+                  "| context | " + " | ".join(f"C{c}" for c in m_concs)
+                  + " |", "|" + "---|" * (len(m_concs) + 1)]
         grid_by_cell = defaultdict(dict)
         for (m, tag), g in cells.items():
             if m != model:
@@ -356,10 +384,10 @@ def main():
                 if ok > 0 and t > 0:
                     grid_by_cell[(ctx, conc)][tag] = t
         for ctx, lbl in CTX_BUCKETS:
-            if not any((ctx, c) in grid_by_cell for c in CONCS):
+            if not any((ctx, c) in grid_by_cell for c in m_concs):
                 continue
             row = [lbl]
-            for c in CONCS:
+            for c in m_concs:
                 tags = grid_by_cell.get((ctx, c), {})
                 if not tags:
                     row.append("—")
