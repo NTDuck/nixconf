@@ -5,6 +5,7 @@
 }: {
   den.aspects.system.secrets.agenix = {
     nixos = {
+      config,
       lib,
       pkgs,
       ...
@@ -31,16 +32,22 @@
 
       age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
-      age.secrets =
-        lib.genAttrs [
-          "codev-api-key"
-          "github-personalaccesstoken"
-          "opencode-api-key"
-          "openrouter-api-key"
-          "orcarouter-api-key"
-          "tabiai-api-key"
-        ]
-        mkSecret;
+      age.secrets = let
+        # Host secrets filter (2026-10-16): Dell only needs codev-api-key;
+        # other keys are legion-only, so Dell avoids decrypt failures on activation.
+        secretNames =
+          if config.networking.hostName == "dell-latitude-E7270-H836QF2"
+          then ["codev-api-key"]
+          else [
+            "codev-api-key"
+            "github-personalaccesstoken"
+            "opencode-api-key"
+            "openrouter-api-key"
+            "orcarouter-api-key"
+            "tabiai-api-key"
+          ];
+      in
+        lib.genAttrs secretNames mkSecret;
     };
 
     provides.to-users.nixos = {user, ...}: {

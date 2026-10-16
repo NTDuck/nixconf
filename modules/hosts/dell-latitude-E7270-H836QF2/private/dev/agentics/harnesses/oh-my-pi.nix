@@ -12,20 +12,23 @@
 # specialisation), enabling Dell clients to access Qwen 3.8 27B on legion
 # over tailnet across all sessions, including ssh.
 #
-# Only the ashalliants provider: cloud providers (orcarouter/tabitoken/codev)
-# need API keys, and DELL has no agenix identity enrolled — keys are
-# legion-only. /model still lists the cloud providers' names via omp's
-# implicit discovery? No: models.yml REPLACES the catalog, so DELL users
-# get exactly ashalliants. sessionVariables/pi-reasonix extension come
-# from the shared dev.agentics.harnesses.oh-my-pi aspect; this file only
-# pins hosts and windows.
+# PROVIDERS (2026-10-16): models.yml carries both the NetMind codev models
+# (MiniMax M3, GLM 5.3 Flash) and the legion ashalliants provider (Qwen 3.8 27B).
+# sessionVariables/pi-reasonix extension come from the shared
+# dev.agentics.harnesses.oh-my-pi aspect; this file pins models and windows.
 #
 # 2026-10-12: ollama removed entirely (user request — ashalliants is the
 # sole local engine). The previous ollama provider block (pointing at
 # legion's :11434) is gone; ashalliants is the only local provider.
-{den, ...}: {
+{
+  den,
+  inputs,
+  lib,
+  ...
+}: {
   den.aspects.dell-latitude-E7270-H836QF2 = {
     homeManager = {
+      osConfig,
       pkgs,
       ...
     }: let
@@ -33,6 +36,28 @@
 
       models = {
         providers = {
+          # NetMind CodeV gateway (restored 2026-10-16 per user request).
+          codev = {
+            baseUrl = "https://netmind.viettel.vn/gateway/v1";
+            api = "openai-completions";
+            apiKey = "CODEV_API_KEY";
+            authHeader = true;
+
+            models = [
+              {
+                id = "MiniMax/MiniMax-M3";
+                name = "MiniMax M3 (NetMind)";
+                contextWindow = 196608;
+                maxTokens = 65536;
+              }
+              {
+                id = "zai-org/GLM-5.3-Flash";
+                name = "GLM 5.3 Flash (NetMind)";
+                contextWindow = 1048576;
+                maxTokens = 131072;
+              }
+            ];
+          };
           # ashalliants-df2 on legion (port 8092 over tailscale0,
           # 2026-10-10 main-engine switch — legion's RESIDENT 3090 engine,
           # ashalliants.nix). The port MUST match legion's
@@ -74,6 +99,15 @@
       home.file.".omp/agent/models.yml" = {
         source = yaml.generate ".omp.agent.models.yml" models;
         force = true;
+      };
+
+      # omp wrapper alias (2026-10-16): inject CODEV_API_KEY from agenix decrypted secret
+      home.shellAliases = {
+        omp = lib.mkForce (lib.removeSuffix "\n" ''
+          CODEV_API_KEY="$(cat ${osConfig.age.secrets."codev-api-key".path})" \
+          PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml" \
+          ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp
+        '');
       };
     };
   };

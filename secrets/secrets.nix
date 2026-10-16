@@ -5,7 +5,8 @@ let
 
   # System public keys (for host decryption during activation)
   "lenovo-legion-16iah7h-PF3XJ8SP" = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMN7o3pdJqi7fPs85aiOytP/VSnts8d8LHmIvxb9tj8j root@lenovo-legion-16iah7h-PF3XJ8SP";
-  # "dell-latitude-E7270-H836QF2" = "...";
+  # Dell Latitude host key (2026-10-16: enrolled for codev-api-key only)
+  dell-latitude-E7270-H836QF2 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC7Ztoj3Z4YbCakuMrEJ4V0YfbTReplyqHasN2MvgIJj root@dell-latitude-E7270-H836QF2";
   systems = [lenovo-legion-16iah7h-PF3XJ8SP];
 
   mkSecret = secret: {
@@ -14,7 +15,10 @@ let
   };
 in
   builtins.listToAttrs [
-    (mkSecret "codev-api-key")
+    {
+      name = "codev-api-key.age";
+      value.publicKeys = users ++ systems ++ [dell-latitude-E7270-H836QF2];
+    }
     (mkSecret "github-personalaccesstoken")
     (mkSecret "opencode-api-key")
     (mkSecret "openrouter-api-key")
