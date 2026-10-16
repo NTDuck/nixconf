@@ -163,8 +163,8 @@
                 "-np 2"
                 "--ctx-size 262144"
                 # Native idle unload (see module comment): sleep = free
-                # model+KV after 5 min with no requests; reload on demand.
-                "--sleep-idle-seconds 300"
+                # model+KV after 10 min with no requests; reload on demand.
+                "--sleep-idle-seconds 600"
               ];
             in "+${bonsaiLlamaServer}/bin/bonsai-llama-server ${flags}";
             Restart = "on-failure";
