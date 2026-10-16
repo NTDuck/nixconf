@@ -148,7 +148,9 @@
               "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
               "LD_LIBRARY_PATH=${ld}"
               "NINFER_SPEC=dflash2"
-              "NINFER_HOST=127.0.0.1"
+              # Listen on 0.0.0.0 so tailscale0 peers (Dell) can connect;
+              # tailscale0-only firewall rule below keeps non-tailnet traffic blocked.
+              "NINFER_HOST=0.0.0.0"
               "NINFER_PORT=${toString ashPort}"
               "NINFER_FALLBACK=off"
               "NINFER_CONCURRENCY=6"

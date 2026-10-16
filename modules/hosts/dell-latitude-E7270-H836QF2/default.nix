@@ -242,6 +242,16 @@
               exec ${pkgs.xorg.xinit}/bin/startx "$HOME"/.xsession -- -ardelay 150 -arinterval 20
             '';
           in [x11Session];
+
+          networking.hosts = {
+            # Tailscale peer mapping (2026-10-16): Dell runs tailscale with
+            # --accept-dns=false, so MagicDNS bare hostnames do not resolve.
+            # Map Legion's tailnet IP so ashalliants and other services route over tailscale.
+            "100.105.224.23" = [
+              "lenovo-legion-16iah7h-pf3xj8sp"
+              "lenovo-legion-16iah7h-pf3xj8sp.taild3be63.ts.net"
+            ];
+          };
         };
       }
       (den.aspects.desktop.greeters.tuigreet {

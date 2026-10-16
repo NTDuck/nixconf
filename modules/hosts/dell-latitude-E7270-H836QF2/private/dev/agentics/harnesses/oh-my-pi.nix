@@ -104,7 +104,7 @@
       # omp wrapper alias (2026-10-16): inject CODEV_API_KEY from agenix decrypted secret
       home.shellAliases = {
         omp = lib.mkForce (lib.removeSuffix "\n" ''
-          CODEV_API_KEY="$(cat ${osConfig.age.secrets."codev-api-key".path})" \
+          CODEV_API_KEY="$(cat ${osConfig.age.secrets."codev-api-key".path} 2>/dev/null || cat ~/.codev/auth.json 2>/dev/null | ${pkgs.jq}/bin/jq -r '.api_key // empty')" \
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml" \
           ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp
         '');

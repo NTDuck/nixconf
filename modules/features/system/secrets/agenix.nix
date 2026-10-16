@@ -12,9 +12,15 @@
     }: let
       mkSecret = secret: {
         file = "${inputs.self}/secrets/${secret}.age";
-        owner = "root";
-        group = "secrets";
-        mode = "0440"; # Readable only by owner and group members
+        owner =
+          if config.networking.hostName == "dell-latitude-E7270-H836QF2"
+          then "ayin"
+          else "root";
+        group =
+          if config.networking.hostName == "dell-latitude-E7270-H836QF2"
+          then "users"
+          else "secrets";
+        mode = "0400";
       };
     in {
       imports = [
