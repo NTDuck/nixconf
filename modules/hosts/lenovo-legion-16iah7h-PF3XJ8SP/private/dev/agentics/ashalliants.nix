@@ -82,17 +82,15 @@
       ashPort = 8092;
       ashPort35b = 8140;
 
-      # 2026-10-18: Reconciled ashalliants-{up,down,35b-up,35b-down} into unified
-      # ashalliant CLI using Typer framework. Provides switch (-s), -h/--help, up,
-      # down, status, list, and legacy symlinks for backward compatibility.
+      # 2026-10-18: Single unified `ashalliant` CLI using Typer framework.
+      # Legacy separate ashalliants-{up,down,35b-up,35b-down} scripts removed.
+      # Provides switch (-s), -h/--help, up, down, status, list, and shell autosuggestion.
       ashalliant =
         (pkgs.writers.writePython3Bin "ashalliant" {
           libraries = [pkgs.python3Packages.typer];
           flakeIgnore = ["E501"];
         } ''
-          import os
           import subprocess
-          import sys
           from typing import Optional
           import typer
 
@@ -252,13 +250,22 @@
                   )
 
 
-          @app.command(name="list", help="List available models and aliases.")
+          @app.command(name="list", help="List available models, ports, and aliases.")
           def list_cmd():
               typer.echo("Available Ashalliants models:")
               for key, info in MODELS.items():
+                  res = subprocess.run(
+                      [SYSTEMCTL, "is-active", "--quiet", info["service"]]
+                  )
+                  active = (res.returncode == 0)
+                  state_str = (
+                      typer.style("ACTIVE", fg=typer.colors.GREEN, bold=True)
+                      if active
+                      else typer.style("INACTIVE", fg=typer.colors.WHITE, dim=True)
+                  )
                   aliases = ", ".join(info["aliases"])
                   typer.echo(
-                      f"  • {key} ({info['label']}) - port {info['port']}, service: {info['service']}"
+                      f"  • [{state_str}] {key} ({info['label']}) — port {info['port']}, service: {info['service']}"
                   )
                   typer.echo(f"    aliases: {aliases}")
 
@@ -283,42 +290,19 @@
 
 
           if __name__ == "__main__":
-              prog = os.path.basename(sys.argv[0])
-              if prog == "ashalliants-up":
-                  up_cmd("27b")
-                  sys.exit(0)
-              elif prog == "ashalliants-down":
-                  down_cmd("27b")
-                  sys.exit(0)
-              elif prog == "ashalliants-35b-up":
-                  up_cmd("35b")
-                  sys.exit(0)
-              elif prog == "ashalliants-35b-down":
-                  down_cmd("35b")
-                  sys.exit(0)
               app(prog_name="ashalliant")
         '')
         .overrideAttrs (old: {
           buildCommand =
             old.buildCommand
             + ''
-              ln -s ashalliant $out/bin/ashalliants-up
-              ln -s ashalliant $out/bin/ashalliants-down
-              ln -s ashalliant $out/bin/ashalliants-35b-up
-              ln -s ashalliant $out/bin/ashalliants-35b-down
-
               mkdir -p $out/share/zsh/site-functions
               mkdir -p $out/share/bash-completion/completions
               mkdir -p $out/share/fish/vendor_completions.d
-              echo "#compdef ashalliant ashalliants-up ashalliants-down ashalliants-35b-up ashalliants-35b-down" > $out/share/zsh/site-functions/_ashalliant
+              echo "#compdef ashalliant" > $out/share/zsh/site-functions/_ashalliant
               _ASHALLIANT_COMPLETE=source_zsh $out/bin/ashalliant | ${pkgs.gnused}/bin/sed -n '/^_ashalliant_completion/,$p' >> $out/share/zsh/site-functions/_ashalliant
               _ASHALLIANT_COMPLETE=source_bash $out/bin/ashalliant > $out/share/bash-completion/completions/ashalliant
               _ASHALLIANT_COMPLETE=source_fish $out/bin/ashalliant > $out/share/fish/vendor_completions.d/ashalliant.fish
-              ln -s ashalliant $out/share/bash-completion/completions/ashalliants-up
-              ln -s ashalliant $out/share/bash-completion/completions/ashalliants-down
-              ln -s ashalliant $out/share/bash-completion/completions/ashalliants-35b-up
-              ln -s ashalliant $out/share/bash-completion/completions/ashalliants-35b-down
-
             '';
         });
     in {
