@@ -128,6 +128,18 @@
           )
 
 
+          def complete_models(ctx: typer.Context, args: list[str], incomplete: str):
+              norm = incomplete.strip().lower()
+              for key, info in MODELS.items():
+                  if key.startswith(norm):
+                      yield (key, f"{info['label']} (port {info['port']})")
+              if norm and not any(k.startswith(norm) for k in MODELS):
+                  for key, info in MODELS.items():
+                      for alias in info["aliases"]:
+                          if alias.startswith(norm) and alias != key:
+                              yield (alias, f"Alias for {key} ({info['label']})")
+
+
           def resolve_model(name: str):
               norm = name.strip().lower()
               for key, info in MODELS.items():
@@ -168,6 +180,7 @@
               model: str = typer.Argument(
                   ...,
                   help="Model name or alias (27b, 35b, qwen3.8-27b, qwen3.6-35b-a3b, etc.)",
+                  autocompletion=complete_models,
               ),
           ):
               do_switch(model)
@@ -175,7 +188,11 @@
 
           @app.command(name="up", help="Start an ashalliants daemon (defaults to 27b).")
           def up_cmd(
-              model: str = typer.Argument("27b", help="Model name or alias: 27b or 35b"),
+              model: str = typer.Argument(
+                  "27b",
+                  help="Model name or alias: 27b or 35b",
+                  autocompletion=complete_models,
+              ),
           ):
               target = resolve_model(model)
               res = subprocess.run([SYSTEMCTL, "start", target["service"]])
@@ -196,7 +213,9 @@
           @app.command(name="down", help="Stop ashalliants daemon(s).")
           def down_cmd(
               model: Optional[str] = typer.Argument(
-                  None, help="Model name or alias (stops all if omitted)"
+                  None,
+                  help="Model name or alias (stops all if omitted)",
+                  autocompletion=complete_models,
               ),
           ):
               if model:
@@ -249,6 +268,7 @@
                   "-s",
                   "--switch",
                   help="Switch active daemon to target model (shorthand for switch command).",
+                  autocompletion=complete_models,
               ),
           ):
               if switch_model:
@@ -273,7 +293,7 @@
               elif prog == "ashalliants-35b-down":
                   down_cmd("35b")
                   sys.exit(0)
-              app()
+              app(prog_name="ashalliant")
         '')
         .overrideAttrs (old: {
           buildCommand =
@@ -283,6 +303,20 @@
               ln -s ashalliant $out/bin/ashalliants-down
               ln -s ashalliant $out/bin/ashalliants-35b-up
               ln -s ashalliant $out/bin/ashalliants-35b-down
+
+              mkdir -p $out/share/zsh/site-functions
+              mkdir -p $out/share/bash-completion/completions
+              mkdir -p $out/share/fish/vendor_completions.d
+              _ASHALLIANT_COMPLETE=source_zsh $out/bin/ashalliant > $out/share/zsh/site-functions/_ashalliant
+              _ASHALLIANT_COMPLETE=source_bash $out/bin/ashalliant > $out/share/bash-completion/completions/ashalliant
+              _ASHALLIANT_COMPLETE=source_fish $out/bin/ashalliant > $out/share/fish/vendor_completions.d/ashalliant.fish
+
+              ln -s ashalliant $out/share/bash-completion/completions/ashalliants-up
+              ln -s ashalliant $out/share/bash-completion/completions/ashalliants-down
+              ln -s ashalliant $out/share/bash-completion/completions/ashalliants-35b-up
+              ln -s ashalliant $out/share/bash-completion/completions/ashalliants-35b-down
+
+              echo "compdef _ashalliant_completion ashalliants-up ashalliants-down ashalliants-35b-up ashalliants-35b-down" >> $out/share/zsh/site-functions/_ashalliant
             '';
         });
     in {
