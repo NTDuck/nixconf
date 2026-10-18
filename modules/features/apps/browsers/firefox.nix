@@ -47,6 +47,10 @@
           }) {
             # https://github.com/EdgeTypE/better-deepseek
             "betterdeepseek@goygoyengine.com" = "better-deepseek";
+
+            # https://addons.mozilla.org/en-GB/firefox/addon/hide-youtube-shorts/
+            # Gecko ID "{88ebde3a-4581-4c6b-8019-2a05a9e3e938}" from manifest.json
+            "{88ebde3a-4581-4c6b-8019-2a05a9e3e938}" = "hide-youtube-shorts";
           };
       };
 
