@@ -300,15 +300,15 @@
       # + engine logs 2026-10-11).
       omplOverlay = {
         modelRoles = {
-          default = "ashalliants/qwen3.8-27b:high";
-          smol = "ashalliants/qwen3.8-27b:high";
-          slow = "ashalliants/qwen3.8-27b:high";
-          vision = "ashalliants/qwen3.8-27b:high";
-          plan = "ashalliants/qwen3.8-27b:high";
-          commit = "ashalliants/qwen3.8-27b:high";
-          task = "ashalliants/qwen3.8-27b:high";
-          advisor = "ashalliants/qwen3.8-27b:high";
-          judge = "ashalliants/qwen3.8-27b:high";
+          default = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
+          smol = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
+          slow = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
+          vision = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
+          plan = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
+          commit = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
+          task = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
+          advisor = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
+          judge = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
         };
 
         enabledModels = [

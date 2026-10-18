@@ -84,157 +84,190 @@
       ashPort35b = 8140;
       ashPort35bAbl = 8142;
 
-      # 2026-10-18: ashalliant CLI using Typer. Minimal UI, canonical IDs only (no aliases).
-      # Provides switch (-s), -h/--help, up, down, status, list, and shell autosuggestion.
-      ashalliant =
-        (pkgs.writers.writePython3Bin "ashalliant" {
-          libraries = [pkgs.python3Packages.typer];
-          flakeIgnore = ["E501"];
-        } ''
-          import subprocess
-          from typing import Optional
-          import typer
+      # 2026-10-18: Native shell ashalliant CLI. Fast (<5ms), minimal UI,
+      # canonical IDs only (no aliases), <nil> unloader, and full shell completions.
+      ashalliant = pkgs.stdenv.mkDerivation {
+        pname = "ashalliant";
+        version = "1.0.0";
 
-          SYSTEMCTL = "${pkgs.systemd}/bin/systemctl"
+        dontUnpack = true;
 
-          MODELS = {
-              "qwen3.8-27b": {
-                  "service": "ashalliants-df2.service",
-                  "port": ${toString ashPort},
-              },
-              "qwen3.8-27b-abliterated": {
-                  "service": "ashalliants-df2-abliterated.service",
-                  "port": ${toString ashPortAbl},
-              },
-              "qwen3.6-35b-a3b": {
-                  "service": "ashalliants-35b.service",
-                  "port": ${toString ashPort35b},
-              },
-              "qwen3.6-35b-a3b-abliterated": {
-                  "service": "ashalliants-35b-abliterated.service",
-                  "port": ${toString ashPort35bAbl},
-              },
-          }
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/bin $out/share/zsh/site-functions $out/share/bash-completion/completions $out/share/fish/vendor_completions.d
 
-          app = typer.Typer(
-              name="ashalliant",
-              help="Manage Ashalliants Ninfer LLM daemons.",
-              context_settings={"help_option_names": ["-h", "--help"]},
-          )
+          cat << 'SCRIPT' > $out/bin/ashalliant
+#!/usr/bin/env bash
+set -euo pipefail
 
+SYSTEMCTL="${pkgs.systemd}/bin/systemctl"
 
-          def complete_models(ctx: typer.Context, args: list[str], incomplete: str):
-              norm = incomplete.strip()
-              for key in MODELS.keys():
-                  if key.startswith(norm):
-                      yield key
+MODELS=(
+  "qwen3.8-27b|ashalliants-df2.service|${toString ashPort}|6x65k"
+  "qwen3.8-27b-abliterated|ashalliants-df2-abliterated.service|${toString ashPortAbl}|6x65k"
+  "qwen3.6-35b-a3b|ashalliants-35b.service|${toString ashPort35b}|3x65k"
+  "qwen3.6-35b-a3b-abliterated|ashalliants-35b-abliterated.service|${toString ashPort35bAbl}|3x65k"
+)
 
+show_list() {
+  local any_active=0
+  for entry in "''${MODELS[@]}"; do
+    IFS='|' read -r mid svc port shape <<< "$entry"
+    local state="inactive"
+    if "$SYSTEMCTL" is-active --quiet "$svc" 2>/dev/null; then
+      state="active"
+      any_active=1
+    fi
+    printf "%-30s %-8s %-10s :%s\n" "$mid" "$shape" "$state" "$port"
+  done
+  local nil_state="inactive"
+  if [ "$any_active" -eq 0 ]; then
+    nil_state="active"
+  fi
+  printf "%-30s %-8s %-10s -\n" "<nil>" "-" "$nil_state"
+}
 
-          def resolve_model(name: str):
-              norm = name.strip()
-              if norm in MODELS:
-                  return MODELS[norm]
-              choices = ", ".join(MODELS.keys())
-              typer.secho(f"unknown model '{name}', available: {choices}", fg=typer.colors.RED, err=True)
-              raise typer.Exit(code=1)
+do_switch() {
+  local target="$1"
+  if [ "$target" = "<nil>" ] || [ "$target" = "nil" ]; then
+    for entry in "''${MODELS[@]}"; do
+      IFS='|' read -r mid svc port shape <<< "$entry"
+      "$SYSTEMCTL" stop "$svc" 2>/dev/null || true
+    done
+    echo "switched to <nil>"
+    return 0
+  fi
 
+  local found_svc=""
+  local canonical=""
+  for entry in "''${MODELS[@]}"; do
+    IFS='|' read -r mid svc port shape <<< "$entry"
+    if [ "$mid" = "$target" ]; then
+      found_svc="$svc"
+      canonical="$mid"
+      break
+    fi
+  done
 
-          def do_switch(model_name: str):
-              target = resolve_model(model_name)
-              for info in MODELS.values():
-                  if info["service"] != target["service"]:
-                      subprocess.run([SYSTEMCTL, "stop", info["service"]], check=False)
-              res = subprocess.run([SYSTEMCTL, "start", target["service"]])
-              if res.returncode == 0:
-                  typer.echo(f"switched to {model_name}")
-              else:
-                  typer.secho(f"failed to start {target['service']}", fg=typer.colors.RED, err=True)
-                  raise typer.Exit(code=res.returncode)
+  if [ -z "$found_svc" ]; then
+    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, <nil>" >&2
+    exit 1
+  fi
 
+  for entry in "''${MODELS[@]}"; do
+    IFS='|' read -r mid svc port shape <<< "$entry"
+    if [ "$svc" != "$found_svc" ]; then
+      "$SYSTEMCTL" stop "$svc" 2>/dev/null || true
+    fi
+  done
 
-          @app.command(name="switch", help="Switch active model.")
-          def switch_cmd(
-              model: str = typer.Argument(..., help="Canonical model id", autocompletion=complete_models),
-          ):
-              do_switch(model)
+  if "$SYSTEMCTL" start "$found_svc"; then
+    echo "switched to $canonical"
+  else
+    echo "failed to start $found_svc" >&2
+    exit 1
+  fi
+}
 
+cmd="''${1:-}"
+case "$cmd" in
+  ""|list|status)
+    show_list
+    ;;
+  switch|-s|--switch)
+    if [ $# -lt 2 ]; then
+      echo "error: model required" >&2
+      exit 2
+    fi
+    do_switch "$2"
+    ;;
+  -h|--help|help)
+    echo "usage: ashalliant [switch <model> | -s <model>]"
+    ;;
+  *)
+    for entry in "''${MODELS[@]}"; do
+      IFS='|' read -r mid svc port shape <<< "$entry"
+      if [ "$mid" = "$cmd" ]; then
+        do_switch "$cmd"
+        exit 0
+      fi
+    done
+    if [ "$cmd" = "<nil>" ] || [ "$cmd" = "nil" ]; then
+      do_switch "<nil>"
+      exit 0
+    fi
+    echo "unknown command '$cmd', run 'ashalliant -h' for usage" >&2
+    exit 1
+    ;;
+esac
+SCRIPT
+          chmod +x $out/bin/ashalliant
 
-          @app.command(name="up", help="Start daemon for model.")
-          def up_cmd(
-              model: str = typer.Argument("qwen3.8-27b", help="Canonical model id", autocompletion=complete_models),
-          ):
-              target = resolve_model(model)
-              res = subprocess.run([SYSTEMCTL, "start", target["service"]])
-              if res.returncode == 0:
-                  typer.echo(f"started {model}")
-              else:
-                  typer.secho(f"failed to start {target['service']}", fg=typer.colors.RED, err=True)
-                  raise typer.Exit(code=res.returncode)
+          cat << 'ZSH' > $out/share/zsh/site-functions/_ashalliant
+#compdef ashalliant
 
+_ashalliant() {
+  local -a models
+  models=(
+    'qwen3.8-27b:Qwen3.8-27B DFlash2 (6x65k :8092)'
+    'qwen3.8-27b-abliterated:Qwen3.8-27B Abliterated (6x65k :8094)'
+    'qwen3.6-35b-a3b:Qwen3.6-35B-A3B MTP3 (3x65k :8140)'
+    'qwen3.6-35b-a3b-abliterated:Qwen3.6-35B-A3B Abliterated (3x65k :8142)'
+    '\<nil\>:Unload all ashalliants models'
+  )
 
-          @app.command(name="down", help="Stop daemon(s).")
-          def down_cmd(
-              model: Optional[str] = typer.Argument(None, help="Canonical model id", autocompletion=complete_models),
-          ):
-              if model:
-                  target = resolve_model(model)
-                  subprocess.run([SYSTEMCTL, "stop", target["service"]])
-                  typer.echo(f"stopped {model}")
-              else:
-                  for info in MODELS.values():
-                      subprocess.run([SYSTEMCTL, "stop", info["service"]], check=False)
-                  typer.echo("stopped all")
+  _arguments -C \
+    '1:command:((switch\:"switch active model" list\:"list models" status\:"show status"))' \
+    '2:model:->models' \
+    '-s[switch active model]:model:->models' \
+    '--switch[switch active model]:model:->models' \
+    '-h[show help]' \
+    '--help[show help]'
 
+  case "$state" in
+    models)
+      _describe -t models 'model' models
+      ;;
+  esac
+}
 
-          @app.command(name="list", help="List models.")
-          def list_cmd():
-              for key, info in MODELS.items():
-                  res = subprocess.run([SYSTEMCTL, "is-active", "--quiet", info["service"]])
-                  state = "active" if res.returncode == 0 else "inactive"
-                  color = typer.colors.GREEN if res.returncode == 0 else typer.colors.WHITE
-                  typer.echo(f"{key:<30} {typer.style(state, fg=color):<18} :{info['port']}")
+_ashalliant "$@"
+ZSH
 
+          cat << 'BASH' > $out/share/bash-completion/completions/ashalliant
+_ashalliant_completion() {
+  local cur prev
+  cur="''${COMP_WORDS[COMP_CWORD]}"
+  prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-          @app.command(name="status", help="Show daemon status.")
-          def status_cmd():
-              list_cmd()
+  local models="qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated <nil>"
+  local commands="switch list status"
 
+  case "$prev" in
+    switch|-s|--switch)
+      COMPREPLY=( $(compgen -W "$models" -- "$cur") )
+      return 0
+      ;;
+  esac
 
-          @app.callback(invoke_without_command=True)
-          def main(
-              ctx: typer.Context,
-              switch_model: Optional[str] = typer.Option(
-                  None,
-                  "-s",
-                  "--switch",
-                  help="Switch active model (shorthand).",
-                  autocompletion=complete_models,
-              ),
-          ):
-              if switch_model:
-                  do_switch(switch_model)
-                  raise typer.Exit()
-              if ctx.invoked_subcommand is None:
-                  list_cmd()
-                  raise typer.Exit()
+  if [ "$COMP_CWORD" -eq 1 ]; then
+    COMPREPLY=( $(compgen -W "$commands -s --switch -h --help $models" -- "$cur") )
+  fi
+}
 
+complete -F _ashalliant_completion ashalliant
+BASH
 
-          if __name__ == "__main__":
-              app(prog_name="ashalliant")
-        '')
-        .overrideAttrs (old: {
-          buildCommand =
-            old.buildCommand
-            + ''
-              mkdir -p $out/share/zsh/site-functions
-              mkdir -p $out/share/bash-completion/completions
-              mkdir -p $out/share/fish/vendor_completions.d
-              echo "#compdef ashalliant" > $out/share/zsh/site-functions/_ashalliant
-              _ASHALLIANT_COMPLETE=source_zsh $out/bin/ashalliant | ${pkgs.gnused}/bin/sed -n '/^_ashalliant_completion/,$p' >> $out/share/zsh/site-functions/_ashalliant
-              _ASHALLIANT_COMPLETE=source_bash $out/bin/ashalliant > $out/share/bash-completion/completions/ashalliant
-              _ASHALLIANT_COMPLETE=source_fish $out/bin/ashalliant > $out/share/fish/vendor_completions.d/ashalliant.fish
-            '';
-        });
+          cat << 'FISH' > $out/share/fish/vendor_completions.d/ashalliant.fish
+complete -c ashalliant -n "__fish_use_subcommand" -a switch -d "switch active model"
+complete -c ashalliant -n "__fish_use_subcommand" -a list -d "list models"
+complete -c ashalliant -n "__fish_use_subcommand" -a status -d "show status"
+complete -c ashalliant -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated <nil>"
+FISH
+
+          runHook postInstall
+        '';
+      };
     in {
       specialisation.homelab.configuration = {
         environment.systemPackages = [ashalliant];
@@ -244,9 +277,7 @@
           after = ["network-online.target"];
           wants = ["network-online.target"];
 
-          # PRIMARY ENGINE (Qwen3.8-27B default on startup, autostarts on
-          # the homelab spec). bonsai2 and ashalliants-35b declare reverse Conflicts.
-          wantedBy = ["multi-user.target"];
+          # On-demand Qwen3.8-27B daemon (port 8092). Started via `ashalliant switch qwen3.8-27b`.
           conflicts = [
             "bonsai2.service"
             "ashalliants-df2-abliterated.service"
@@ -325,10 +356,13 @@
         };
 
         # On-demand Qwen3.8-27B Abliterated daemon (port 8094).
+        # PRIMARY ENGINE (Qwen3.8-27B Abliterated default on startup, autostarts on
+        # the homelab spec).
         systemd.services.ashalliants-df2-abliterated = {
           description = "ashalliants ninfer-0.15.0 Qwen3.8-27B DFlash2 (Abliterated)";
           after = ["network-online.target"];
           wants = ["network-online.target"];
+          wantedBy = ["multi-user.target"];
           conflicts = [
             "bonsai2.service"
             "ashalliants-df2.service"
