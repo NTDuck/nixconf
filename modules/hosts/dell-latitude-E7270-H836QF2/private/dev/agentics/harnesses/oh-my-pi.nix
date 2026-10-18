@@ -94,6 +94,22 @@
               }
             ];
           };
+          ashalliants-abliterated = {
+            baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8094/v1";
+            api = "openai-completions";
+            auth = "none";
+
+            models = [
+              {
+                id = "qwen3.8-27b-abliterated";
+                name = "Qwen 3.8 27B (Abliterated)";
+                reasoning = true;
+                input = ["text" "image"];
+                contextWindow = 65536;
+                maxTokens = 16384;
+              }
+            ];
+          };
 
           # ashalliants-35b on legion (port 8140 over tailscale0,
           # Qwen3.6-35B-A3B MTP3 on-demand unit).
@@ -121,6 +137,23 @@
               }
             ];
           };
+          ashalliants-35b-abliterated = {
+            baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8142/v1";
+            api = "openai-completions";
+            auth = "none";
+
+            models = [
+              {
+                id = "qwen3.6-35b-a3b-abliterated";
+                name = "Qwen 3.6 35B A3B (Abliterated)";
+                reasoning = true;
+                input = ["text" "image"];
+                contextWindow = 65536;
+                maxTokens = 16384;
+              }
+            ];
+          };
+
         };
       };
       # config.default.yml comes from the SHARED aspect unchanged

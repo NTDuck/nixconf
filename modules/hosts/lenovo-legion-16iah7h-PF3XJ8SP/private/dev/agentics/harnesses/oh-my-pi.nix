@@ -30,7 +30,9 @@
       # and referenced via `toString ashPort` in the provider block.
       # MUST match `ashPort` in ../ashalliants.nix.
       ashPort = 8092;
-
+      ashPortAbl = 8094;
+      ashPort35b = 8140;
+      ashPort35bAbl = 8142;
       # 3090 gating (2026-09-21, 3090 specialisation pattern): the local
       # ashalliants provider exists ONLY inside the homelab
       # specialisation — the daemon it points at is gated there too
@@ -172,11 +174,24 @@
             }
           ];
         };
+        ashalliants-abliterated = {
+          baseUrl = "http://127.0.0.1:${toString ashPortAbl}/v1";
+          api = "openai-completions";
+          auth = "none";
 
-        # ashalliants ninfer-0.15.0 Qwen3.6-35B-A3B MTP3 (port 8140,
-        # 2026-10-16 benchmark winner: peak 378.5 tok/s, 314+ tok/s at C3x65k).
-        # On-demand unit: start via `ashalliants-35b-up` (Conflicts stop
-        # 27B and bonsai2 natively).
+          models = [
+            {
+              id = "qwen3.8-27b-abliterated";
+              name = "Qwen 3.8 27B (Abliterated)";
+              reasoning = true;
+              input = ["text" "image"];
+              contextWindow = 65536;
+              maxTokens = 16384;
+            }
+          ];
+        };
+
+        # ashalliants ninfer-0.15.0 Qwen3.6-35B-A3B MTP3 (port 8140).
         ashalliants-35b = {
           baseUrl = "http://127.0.0.1:8140/v1";
           api = "openai-completions";
@@ -191,6 +206,23 @@
               contextWindow = 65536;
               maxTokens = 16384;
             }
+            {
+              id = "qwen3.6-35b-a3b-abliterated";
+              name = "Qwen 3.6 35B A3B (Abliterated)";
+              reasoning = true;
+              input = ["text" "image"];
+              contextWindow = 65536;
+              maxTokens = 16384;
+            }
+          ];
+        };
+
+        ashalliants-35b-abliterated = {
+          baseUrl = "http://127.0.0.1:${toString ashPort35bAbl}/v1";
+          api = "openai-completions";
+          auth = "none";
+
+          models = [
             {
               id = "qwen3.6-35b-a3b-abliterated";
               name = "Qwen 3.6 35B A3B (Abliterated)";
@@ -282,8 +314,10 @@
         enabledModels = [
           "ashalliants/qwen3.8-27b"
           "ashalliants/qwen3.8-27b-abliterated"
+          "ashalliants-abliterated/qwen3.8-27b-abliterated"
           "ashalliants-35b/qwen3.6-35b-a3b"
           "ashalliants-35b/qwen3.6-35b-a3b-abliterated"
+          "ashalliants-35b-abliterated/qwen3.6-35b-a3b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -313,7 +347,9 @@
       omplModels = {
         providers = {
           ashalliants = local.ashalliants;
+          ashalliants-abliterated = local.ashalliants-abliterated;
           ashalliants-35b = local.ashalliants-35b;
+          ashalliants-35b-abliterated = local.ashalliants-35b-abliterated;
         };
       };
 

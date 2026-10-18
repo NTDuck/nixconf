@@ -80,10 +80,11 @@
       # this host; remote hosts (dell) duplicate the value with a sync
       # comment in their models.yml.
       ashPort = 8092;
+      ashPortAbl = 8094;
       ashPort35b = 8140;
+      ashPort35bAbl = 8142;
 
-      # 2026-10-18: Single unified `ashalliant` CLI using Typer framework.
-      # Legacy separate ashalliants-{up,down,35b-up,35b-down} scripts removed.
+      # 2026-10-18: ashalliant CLI using Typer. Minimal UI, canonical IDs only (no aliases).
       # Provides switch (-s), -h/--help, up, down, status, list, and shell autosuggestion.
       ashalliant =
         (pkgs.writers.writePython3Bin "ashalliant" {
@@ -97,177 +98,106 @@
           SYSTEMCTL = "${pkgs.systemd}/bin/systemctl"
 
           MODELS = {
-              "27b": {
-                  "key": "27b",
+              "qwen3.8-27b": {
                   "service": "ashalliants-df2.service",
                   "port": ${toString ashPort},
-                  "label": "Qwen3.8-27B DFlash2",
-                  "aliases": [
-                      "27", "27b", "df2", "qwen27b", "qwen38",
-                      "qwen38-27b", "qwen3.8", "qwen3.8-27b",
-                      "27b-abliterated", "qwen38-abliterated",
-                      "qwen3.8-27b-abliterated", "godmode",
-                  ],
               },
-              "35b": {
+              "qwen3.8-27b-abliterated": {
+                  "service": "ashalliants-df2-abliterated.service",
+                  "port": ${toString ashPortAbl},
+              },
+              "qwen3.6-35b-a3b": {
                   "service": "ashalliants-35b.service",
                   "port": ${toString ashPort35b},
-                  "label": "Qwen3.6-35B-A3B MTP3",
-                  "aliases": [
-                      "35", "35b", "mtp", "qwen35b", "qwen36",
-                      "qwen36-35b", "qwen3.6", "qwen3.6-35b", "qwen3.6-35b-a3b",
-                      "35b-abliterated", "qwen36-abliterated",
-                      "qwen3.6-35b-a3b-abliterated",
-                  ],
+              },
+              "qwen3.6-35b-a3b-abliterated": {
+                  "service": "ashalliants-35b-abliterated.service",
+                  "port": ${toString ashPort35bAbl},
               },
           }
 
           app = typer.Typer(
               name="ashalliant",
-              help="Manage and switch Ashalliants Ninfer LLM daemons.",
+              help="Manage Ashalliants Ninfer LLM daemons.",
               context_settings={"help_option_names": ["-h", "--help"]},
           )
 
 
           def complete_models(ctx: typer.Context, args: list[str], incomplete: str):
-              norm = incomplete.strip().lower()
-              for key, info in MODELS.items():
+              norm = incomplete.strip()
+              for key in MODELS.keys():
                   if key.startswith(norm):
-                      yield (key, f"{info['label']} (port {info['port']})")
-              if norm and not any(k.startswith(norm) for k in MODELS):
-                  for key, info in MODELS.items():
-                      for alias in info["aliases"]:
-                          if alias.startswith(norm) and alias != key:
-                              yield (alias, f"Alias for {key} ({info['label']})")
+                      yield key
 
 
           def resolve_model(name: str):
-              norm = name.strip().lower()
-              for key, info in MODELS.items():
-                  if norm == key or norm in info["aliases"]:
-                      return info
+              norm = name.strip()
+              if norm in MODELS:
+                  return MODELS[norm]
               choices = ", ".join(MODELS.keys())
-              typer.secho(
-                  f"Error: Unknown model '{name}'. Available models: {choices}",
-                  fg=typer.colors.RED,
-                  err=True,
-              )
+              typer.secho(f"unknown model '{name}', available: {choices}", fg=typer.colors.RED, err=True)
               raise typer.Exit(code=1)
 
 
           def do_switch(model_name: str):
               target = resolve_model(model_name)
-              for key, info in MODELS.items():
-                  if key != target["key"]:
+              for info in MODELS.values():
+                  if info["service"] != target["service"]:
                       subprocess.run([SYSTEMCTL, "stop", info["service"]], check=False)
               res = subprocess.run([SYSTEMCTL, "start", target["service"]])
               if res.returncode == 0:
-                  typer.secho(
-                      f"✓ Switched to {target['label']} ({target['service']} on port {target['port']})",
-                      fg=typer.colors.GREEN,
-                      bold=True,
-                  )
+                  typer.echo(f"switched to {model_name}")
               else:
-                  typer.secho(
-                      f"✗ Failed to start {target['service']} (exit code {res.returncode})",
-                      fg=typer.colors.RED,
-                      err=True,
-                  )
+                  typer.secho(f"failed to start {target['service']}", fg=typer.colors.RED, err=True)
                   raise typer.Exit(code=res.returncode)
 
 
-          @app.command(name="switch", help="Switch active daemon to target model.")
+          @app.command(name="switch", help="Switch active model.")
           def switch_cmd(
-              model: str = typer.Argument(
-                  ...,
-                  help="Model name or alias (27b, 35b, qwen3.8-27b, qwen3.6-35b-a3b, etc.)",
-                  autocompletion=complete_models,
-              ),
+              model: str = typer.Argument(..., help="Canonical model id", autocompletion=complete_models),
           ):
               do_switch(model)
 
 
-          @app.command(name="up", help="Start an ashalliants daemon (defaults to 27b).")
+          @app.command(name="up", help="Start daemon for model.")
           def up_cmd(
-              model: str = typer.Argument(
-                  "27b",
-                  help="Model name or alias: 27b or 35b",
-                  autocompletion=complete_models,
-              ),
+              model: str = typer.Argument("qwen3.8-27b", help="Canonical model id", autocompletion=complete_models),
           ):
               target = resolve_model(model)
               res = subprocess.run([SYSTEMCTL, "start", target["service"]])
               if res.returncode == 0:
-                  typer.secho(
-                      f"✓ Started {target['label']} ({target['service']})",
-                      fg=typer.colors.GREEN,
-                  )
+                  typer.echo(f"started {model}")
               else:
-                  typer.secho(
-                      f"✗ Failed to start {target['service']} (exit code {res.returncode})",
-                      fg=typer.colors.RED,
-                      err=True,
-                  )
+                  typer.secho(f"failed to start {target['service']}", fg=typer.colors.RED, err=True)
                   raise typer.Exit(code=res.returncode)
 
 
-          @app.command(name="down", help="Stop ashalliants daemon(s).")
+          @app.command(name="down", help="Stop daemon(s).")
           def down_cmd(
-              model: Optional[str] = typer.Argument(
-                  None,
-                  help="Model name or alias (stops all if omitted)",
-                  autocompletion=complete_models,
-              ),
+              model: Optional[str] = typer.Argument(None, help="Canonical model id", autocompletion=complete_models),
           ):
               if model:
                   target = resolve_model(model)
                   subprocess.run([SYSTEMCTL, "stop", target["service"]])
-                  typer.secho(
-                      f"✓ Stopped {target['label']} ({target['service']})",
-                      fg=typer.colors.YELLOW,
-                  )
+                  typer.echo(f"stopped {model}")
               else:
                   for info in MODELS.values():
                       subprocess.run([SYSTEMCTL, "stop", info["service"]], check=False)
-                  typer.secho("✓ Stopped all ashalliants daemons", fg=typer.colors.YELLOW)
+                  typer.echo("stopped all")
 
 
-          @app.command(name="status", help="Show active ashalliants daemon status.")
-          def status_cmd():
-              typer.echo("Ashalliants daemon status:")
-              for key, info in MODELS.items():
-                  res = subprocess.run(
-                      [SYSTEMCTL, "is-active", "--quiet", info["service"]]
-                  )
-                  active = (res.returncode == 0)
-                  state_str = (
-                      typer.style("ACTIVE", fg=typer.colors.GREEN, bold=True)
-                      if active
-                      else typer.style("INACTIVE", fg=typer.colors.WHITE, dim=True)
-                  )
-                  typer.echo(
-                      f"  [{state_str}] {key:<4} : {info['label']:<24} (port {info['port']}, {info['service']})"
-                  )
-
-
-          @app.command(name="list", help="List available models, ports, and aliases.")
+          @app.command(name="list", help="List models.")
           def list_cmd():
-              typer.echo("Available Ashalliants models:")
               for key, info in MODELS.items():
-                  res = subprocess.run(
-                      [SYSTEMCTL, "is-active", "--quiet", info["service"]]
-                  )
-                  active = (res.returncode == 0)
-                  state_str = (
-                      typer.style("ACTIVE", fg=typer.colors.GREEN, bold=True)
-                      if active
-                      else typer.style("INACTIVE", fg=typer.colors.WHITE, dim=True)
-                  )
-                  aliases = ", ".join(info["aliases"])
-                  typer.echo(
-                      f"  • [{state_str}] {key} ({info['label']}) — port {info['port']}, service: {info['service']}"
-                  )
-                  typer.echo(f"    aliases: {aliases}")
+                  res = subprocess.run([SYSTEMCTL, "is-active", "--quiet", info["service"]])
+                  state = "active" if res.returncode == 0 else "inactive"
+                  color = typer.colors.GREEN if res.returncode == 0 else typer.colors.WHITE
+                  typer.echo(f"{key:<30} {typer.style(state, fg=color):<18} :{info['port']}")
+
+
+          @app.command(name="status", help="Show daemon status.")
+          def status_cmd():
+              list_cmd()
 
 
           @app.callback(invoke_without_command=True)
@@ -277,7 +207,7 @@
                   None,
                   "-s",
                   "--switch",
-                  help="Switch active daemon to target model (shorthand for switch command).",
+                  help="Switch active model (shorthand).",
                   autocompletion=complete_models,
               ),
           ):
@@ -285,7 +215,7 @@
                   do_switch(switch_model)
                   raise typer.Exit()
               if ctx.invoked_subcommand is None:
-                  typer.echo(ctx.get_help())
+                  list_cmd()
                   raise typer.Exit()
 
 
@@ -317,7 +247,12 @@
           # PRIMARY ENGINE (Qwen3.8-27B default on startup, autostarts on
           # the homelab spec). bonsai2 and ashalliants-35b declare reverse Conflicts.
           wantedBy = ["multi-user.target"];
-          conflicts = ["bonsai2.service" "ashalliants-35b.service"];
+          conflicts = [
+            "bonsai2.service"
+            "ashalliants-df2-abliterated.service"
+            "ashalliants-35b.service"
+            "ashalliants-35b-abliterated.service"
+          ];
 
           # run.sh resolves bash via `#!/usr/bin/env bash`. The NixOS
           # unit-level `path` option did NOT survive the den-module
@@ -389,13 +324,73 @@
           };
         };
 
-        # On-demand Qwen3.6-35B-A3B daemon (port 8140, started via ashalliants-35b-up).
-        # Mutually exclusive with ashalliants-df2 and bonsai2 via systemd Conflicts.
+        # On-demand Qwen3.8-27B Abliterated daemon (port 8094).
+        systemd.services.ashalliants-df2-abliterated = {
+          description = "ashalliants ninfer-0.15.0 Qwen3.8-27B DFlash2 (Abliterated)";
+          after = ["network-online.target"];
+          wants = ["network-online.target"];
+          conflicts = [
+            "bonsai2.service"
+            "ashalliants-df2.service"
+            "ashalliants-35b.service"
+            "ashalliants-35b-abliterated.service"
+          ];
+          serviceConfig = {
+            Type = "simple";
+            User = "ayin";
+            WorkingDirectory = ashRoot;
+            ExecCondition = pkgs.writeShellScript "ashalliants-df2-abl-boot-gate" ''
+              i=0
+              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
+                i=$((i+1)); [ $i -gt 60 ] && exit 1
+                sleep 1
+              done
+            '';
+            Environment = let
+              ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
+            in [
+              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
+              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
+              "LD_LIBRARY_PATH=${ld}"
+              "NINFER_SPEC=dflash2"
+              "NINFER_HOST=0.0.0.0"
+              "NINFER_PORT=${toString ashPortAbl}"
+              "NINFER_FALLBACK=off"
+              "NINFER_CONCURRENCY=6"
+              "NINFER_CONTEXT=65536"
+              "NINFER_KV_CAPACITY=65536"
+              "NINFER_HOST_STATE_SLOTS=6"
+              "NINFER_SERVER=${ashRoot}/ninfer-serve.hostkv-shim"
+            ];
+            ExecStart = pkgs.writeShellScript "ashalliants-df2-abl-start" ''
+              if [ -f "${ashRoot}/models/swift_1_5_qwen3_8_27b.ninfer" ]; then
+                export NINFER_MODEL="${ashRoot}/models/swift_1_5_qwen3_8_27b.ninfer"
+              elif [ -f "${ashRoot}/models/obliterated_qwen3_8_27b.ninfer" ]; then
+                export NINFER_MODEL="${ashRoot}/models/obliterated_qwen3_8_27b.ninfer"
+              fi
+              exec ${ashRoot}/run.sh qwen38-27b tuned
+            '';
+            MemoryHigh = "10G";
+            MemoryMax = "12G";
+            Restart = "on-failure";
+            RestartSec = "10s";
+            ProtectSystem = "strict";
+            NoNewPrivileges = true;
+            PrivateTmp = true;
+          };
+        };
+
+        # On-demand Qwen3.6-35B-A3B daemon (port 8140).
         systemd.services.ashalliants-35b = {
           description = "ashalliants ninfer-0.15.0 Qwen3.6-35B-A3B MTP3";
           after = ["network-online.target"];
           wants = ["network-online.target"];
-          conflicts = ["bonsai2.service" "ashalliants-df2.service"];
+          conflicts = [
+            "bonsai2.service"
+            "ashalliants-df2.service"
+            "ashalliants-df2-abliterated.service"
+            "ashalliants-35b-abliterated.service"
+          ];
           serviceConfig = {
             Type = "simple";
             User = "ayin";
@@ -436,12 +431,66 @@
           };
         };
 
-        # DELL consumes ashalliants over the tailnet (2026-10-10: swapped
-        # for the removed ninfer :8081 rule): open the ashalliants port
-        # ONLY on tailscale0.
+        # On-demand Qwen3.6-35B-A3B Abliterated daemon (port 8142).
+        systemd.services.ashalliants-35b-abliterated = {
+          description = "ashalliants ninfer-0.15.0 Qwen3.6-35B-A3B MTP3 (Abliterated)";
+          after = ["network-online.target"];
+          wants = ["network-online.target"];
+          conflicts = [
+            "bonsai2.service"
+            "ashalliants-df2.service"
+            "ashalliants-df2-abliterated.service"
+            "ashalliants-35b.service"
+          ];
+          serviceConfig = {
+            Type = "simple";
+            User = "ayin";
+            WorkingDirectory = ashRoot;
+            ExecCondition = pkgs.writeShellScript "ashalliants-35b-abl-boot-gate" ''
+              i=0
+              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
+                i=$((i+1)); [ $i -gt 60 ] && exit 1
+                sleep 1
+              done
+            '';
+            Environment = let
+              ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
+            in [
+              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
+              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
+              "LD_LIBRARY_PATH=${ld}"
+              "NINFER_SPEC=mtp"
+              "NINFER_HOST=0.0.0.0"
+              "NINFER_PORT=${toString ashPort35bAbl}"
+              "NINFER_FALLBACK=off"
+              "NINFER_CONCURRENCY=3"
+              "NINFER_CONTEXT=65536"
+              "NINFER_KV_CAPACITY=65536"
+              "NINFER_HOST_STATE_SLOTS=3"
+              "NINFER_SERVER=${ashRoot}/ninfer-serve.hostkv-shim"
+            ];
+            ExecStart = pkgs.writeShellScript "ashalliants-35b-abl-start" ''
+              if [ -f "${ashRoot}/models/qwen3_6_35b_a3b_huihui_abliterated.ninfer" ]; then
+                export NINFER_MODEL="${ashRoot}/models/qwen3_6_35b_a3b_huihui_abliterated.ninfer"
+              fi
+              exec ${ashRoot}/run.sh qwen36-35b-a3b tuned
+            '';
+            MemoryHigh = "10G";
+            MemoryMax = "12G";
+            Restart = "on-failure";
+            RestartSec = "10s";
+            ProtectSystem = "strict";
+            NoNewPrivileges = true;
+            PrivateTmp = true;
+          };
+        };
+
+        # Tailscale firewall: open all 4 ashalliants ports.
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
           ashPort
+          ashPortAbl
           ashPort35b
+          ashPort35bAbl
         ];
       }; # specialisation.homelab.configuration
     };
