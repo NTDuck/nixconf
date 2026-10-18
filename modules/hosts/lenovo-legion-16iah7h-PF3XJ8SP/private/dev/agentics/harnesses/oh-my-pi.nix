@@ -15,6 +15,7 @@
 {den, inputs, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     homeManager = {
+      lib,
       osConfig,
       pkgs,
       ...
@@ -234,15 +235,19 @@
           ];
         };
       };
+      # Caps Gemini models from default 1M to 256k contextWindow across all active
+      # Gemini-bearing providers (2026-10-18 user request).
+      geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-gemini-overrides.nix";
 
       models = {
-        providers =
+        providers = lib.recursiveUpdate (
           cloudProviders
           // (
             if onHomelabSpec
             then local
             else {}
-          );
+          )
+        ) geminiOverrides;
       };
 
       # `ompl` = a Qwen3.8-27B-ONLY harness: every chat role pinned to

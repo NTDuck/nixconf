@@ -34,8 +34,12 @@
     }: let
       yaml = pkgs.formats.yaml {};
 
+      # Caps Gemini models from default 1M to 256k contextWindow across all active
+      # Gemini-bearing providers (2026-10-18 user request).
+      geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-gemini-overrides.nix";
+
       models = {
-        providers = {
+        providers = lib.recursiveUpdate {
           # NetMind CodeV gateway (restored 2026-10-16 per user request).
           codev = {
             baseUrl = "https://netmind.viettel.vn/gateway/v1";
@@ -153,8 +157,7 @@
               }
             ];
           };
-
-        };
+        } geminiOverrides;
       };
       # config.default.yml comes from the SHARED aspect unchanged
       # (symbolPreset = "nerd", 2026-09-25 user request "revert back to
