@@ -80,10 +80,6 @@
       # this host; remote hosts (dell) duplicate the value with a sync
       # comment in their models.yml.
       ashPort = 8092;
-      ashPortAbl = 8094;
-      ashPort35b = 8140;
-      ashPort35bAbl = 8142;
-
       # 2026-10-18: Native shell ashalliant CLI. Fast (<5ms), minimal UI,
       # canonical IDs only (no aliases), <nil> unloader, and full shell completions.
       ashalliant = pkgs.stdenv.mkDerivation {
@@ -104,9 +100,9 @@ SYSTEMCTL="${pkgs.systemd}/bin/systemctl"
 
 MODELS=(
   "qwen3.8-27b|ashalliants-df2.service|${toString ashPort}|6x65k"
-  "qwen3.8-27b-abliterated|ashalliants-df2-abliterated.service|${toString ashPortAbl}|6x65k"
-  "qwen3.6-35b-a3b|ashalliants-35b.service|${toString ashPort35b}|3x65k"
-  "qwen3.6-35b-a3b-abliterated|ashalliants-35b-abliterated.service|${toString ashPort35bAbl}|3x65k"
+  "qwen3.8-27b-abliterated|ashalliants-df2-abliterated.service|${toString ashPort}|6x65k"
+  "qwen3.6-35b-a3b|ashalliants-35b.service|${toString ashPort}|3x65k"
+  "qwen3.6-35b-a3b-abliterated|ashalliants-35b-abliterated.service|${toString ashPort}|3x65k"
 )
 
 show_list() {
@@ -388,7 +384,7 @@ FISH
               "LD_LIBRARY_PATH=${ld}"
               "NINFER_SPEC=dflash2"
               "NINFER_HOST=0.0.0.0"
-              "NINFER_PORT=${toString ashPortAbl}"
+              "NINFER_PORT=${toString ashPort}"
               "NINFER_FALLBACK=off"
               "NINFER_CONCURRENCY=6"
               "NINFER_CONTEXT=65536"
@@ -446,7 +442,7 @@ FISH
               "LD_LIBRARY_PATH=${ld}"
               "NINFER_SPEC=mtp"
               "NINFER_HOST=0.0.0.0"
-              "NINFER_PORT=${toString ashPort35b}"
+              "NINFER_PORT=${toString ashPort}"
               "NINFER_FALLBACK=off"
               "NINFER_CONCURRENCY=3"
               "NINFER_CONTEXT=65536"
@@ -495,7 +491,7 @@ FISH
               "LD_LIBRARY_PATH=${ld}"
               "NINFER_SPEC=mtp"
               "NINFER_HOST=0.0.0.0"
-              "NINFER_PORT=${toString ashPort35bAbl}"
+              "NINFER_PORT=${toString ashPort}"
               "NINFER_FALLBACK=off"
               "NINFER_CONCURRENCY=3"
               "NINFER_CONTEXT=65536"
@@ -519,12 +515,9 @@ FISH
           };
         };
 
-        # Tailscale firewall: open all 4 ashalliants ports.
+        # Tailscale firewall: open single ashalliants port (:8092).
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
           ashPort
-          ashPortAbl
-          ashPort35b
-          ashPort35bAbl
         ];
       }; # specialisation.homelab.configuration
     };

@@ -31,9 +31,6 @@
       # and referenced via `toString ashPort` in the provider block.
       # MUST match `ashPort` in ../ashalliants.nix.
       ashPort = 8092;
-      ashPortAbl = 8094;
-      ashPort35b = 8140;
-      ashPort35bAbl = 8142;
       # 3090 gating (2026-09-21, 3090 specialisation pattern): the local
       # ashalliants provider exists ONLY inside the homelab
       # specialisation — the daemon it points at is gated there too
@@ -145,13 +142,11 @@
       # last live-verified state. 2026-10-12: ollama removed; ashalliants
       # is the sole local engine.
       local = {
-        # ashalliants ninfer-0.15.0 DFlash2 (port from `ashPort` above: 8092,
-        # defined in ../ashalliants.nix; resident 3090 engine). id matches
-        # the server banner ("listening ... | model qwen3.8-27b").
-        # 65536 = tuned-profile C6x65k context (NINFER_FALLBACK=off keeps it exact;
-        # overclaim triggers omp's trim 500-loop — never overclaim).
-        # On-demand unit: start via `ashalliants-up` (Conflicts stop 35B and bonsai2).
-        ashalliants = {
+        # Consolidated ashalliant ninfer-0.15.0 engine (port 8092, resident 3090 engine).
+        # Single provider hosting all 4 canonical model variants (27B DFlash2, 27B Abliterated,
+        # 35B MTP3, 35B Abliterated). Mutual conflicts ensure one daemon runs at a time on :8092,
+        # switched on-demand via `ashalliant switch <model>`.
+        ashalliant = {
           baseUrl = "http://127.0.0.1:${toString ashPort}/v1";
           api = "openai-completions";
           auth = "none";
@@ -173,32 +168,6 @@
               contextWindow = 65536;
               maxTokens = 16384;
             }
-          ];
-        };
-        ashalliants-abliterated = {
-          baseUrl = "http://127.0.0.1:${toString ashPortAbl}/v1";
-          api = "openai-completions";
-          auth = "none";
-
-          models = [
-            {
-              id = "qwen3.8-27b-abliterated";
-              name = "Qwen 3.8 27B (Abliterated)";
-              reasoning = true;
-              input = ["text" "image"];
-              contextWindow = 65536;
-              maxTokens = 16384;
-            }
-          ];
-        };
-
-        # ashalliants ninfer-0.15.0 Qwen3.6-35B-A3B MTP3 (port 8140).
-        ashalliants-35b = {
-          baseUrl = "http://127.0.0.1:8140/v1";
-          api = "openai-completions";
-          auth = "none";
-
-          models = [
             {
               id = "qwen3.6-35b-a3b";
               name = "Qwen 3.6 35B A3B (Vision)";
@@ -207,23 +176,6 @@
               contextWindow = 65536;
               maxTokens = 16384;
             }
-            {
-              id = "qwen3.6-35b-a3b-abliterated";
-              name = "Qwen 3.6 35B A3B (Abliterated)";
-              reasoning = true;
-              input = ["text" "image"];
-              contextWindow = 65536;
-              maxTokens = 16384;
-            }
-          ];
-        };
-
-        ashalliants-35b-abliterated = {
-          baseUrl = "http://127.0.0.1:${toString ashPort35bAbl}/v1";
-          api = "openai-completions";
-          auth = "none";
-
-          models = [
             {
               id = "qwen3.6-35b-a3b-abliterated";
               name = "Qwen 3.6 35B A3B (Abliterated)";
@@ -305,24 +257,22 @@
       # + engine logs 2026-10-11).
       omplOverlay = {
         modelRoles = {
-          default = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
-          smol = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
-          slow = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
-          vision = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
-          plan = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
-          commit = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
-          task = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
-          advisor = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
-          judge = "ashalliants-abliterated/qwen3.8-27b-abliterated:high";
+          default = "ashalliant/qwen3.8-27b-abliterated:high";
+          smol = "ashalliant/qwen3.8-27b-abliterated:high";
+          slow = "ashalliant/qwen3.8-27b-abliterated:high";
+          vision = "ashalliant/qwen3.8-27b-abliterated:high";
+          plan = "ashalliant/qwen3.8-27b-abliterated:high";
+          commit = "ashalliant/qwen3.8-27b-abliterated:high";
+          task = "ashalliant/qwen3.8-27b-abliterated:high";
+          advisor = "ashalliant/qwen3.8-27b-abliterated:high";
+          judge = "ashalliant/qwen3.8-27b-abliterated:high";
         };
 
         enabledModels = [
-          "ashalliants/qwen3.8-27b"
-          "ashalliants/qwen3.8-27b-abliterated"
-          "ashalliants-abliterated/qwen3.8-27b-abliterated"
-          "ashalliants-35b/qwen3.6-35b-a3b"
-          "ashalliants-35b/qwen3.6-35b-a3b-abliterated"
-          "ashalliants-35b-abliterated/qwen3.6-35b-a3b-abliterated"
+          "ashalliant/qwen3.8-27b"
+          "ashalliant/qwen3.8-27b-abliterated"
+          "ashalliant/qwen3.6-35b-a3b"
+          "ashalliant/qwen3.6-35b-a3b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -351,10 +301,7 @@
       # shared provider.
       omplModels = {
         providers = {
-          ashalliants = local.ashalliants;
-          ashalliants-abliterated = local.ashalliants-abliterated;
-          ashalliants-35b = local.ashalliants-35b;
-          ashalliants-35b-abliterated = local.ashalliants-35b-abliterated;
+          ashalliant = local.ashalliant;
         };
       };
 

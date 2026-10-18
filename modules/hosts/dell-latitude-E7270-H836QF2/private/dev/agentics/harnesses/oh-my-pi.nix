@@ -62,19 +62,10 @@
               }
             ];
           };
-          # ashalliants-df2 on legion (port 8092 over tailscale0,
-          # 2026-10-10 main-engine switch — legion's RESIDENT 3090 engine,
-          # ashalliants.nix). The port MUST match legion's
-          # options.services.ashalliants.port (defined in
-          # modules/hosts/lenovo-legion-16iah7h-PF3XJ8SP/private/dev/agentics/ashalliants.nix).
-          # Cross-aspect references aren't reliable in the den module
-          # system (legion's aspect isn't included on dell), so the port
-          # is duplicated here with this comment as the sync point.
-          # OpenAI Chat Completions, declared model (no discovery
-          # protocol); 65536 = the tuned-profile C6x65k serving window
-          # (NINFER_FALLBACK=off keeps it exact). An overclaim triggers
-          # server-side trim loops.
-          ashalliants = {
+          # Consolidated ashalliant ninfer-0.15.0 engine on legion (port 8092 over tailscale0).
+          # Single provider hosting all 4 canonical model variants (27B DFlash2, 27B Abliterated,
+          # 35B MTP3, 35B Abliterated). Legion's daemon on :8092 serves whichever model is active.
+          ashalliant = {
             baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1";
             api = "openai-completions";
             auth = "none";
@@ -96,33 +87,6 @@
                 contextWindow = 65536;
                 maxTokens = 16384;
               }
-            ];
-          };
-          ashalliants-abliterated = {
-            baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8094/v1";
-            api = "openai-completions";
-            auth = "none";
-
-            models = [
-              {
-                id = "qwen3.8-27b-abliterated";
-                name = "Qwen 3.8 27B (Abliterated)";
-                reasoning = true;
-                input = ["text" "image"];
-                contextWindow = 65536;
-                maxTokens = 16384;
-              }
-            ];
-          };
-
-          # ashalliants-35b on legion (port 8140 over tailscale0,
-          # Qwen3.6-35B-A3B MTP3 on-demand unit).
-          ashalliants-35b = {
-            baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8140/v1";
-            api = "openai-completions";
-            auth = "none";
-
-            models = [
               {
                 id = "qwen3.6-35b-a3b";
                 name = "Qwen 3.6 35B A3B (Vision)";
@@ -131,22 +95,6 @@
                 contextWindow = 65536;
                 maxTokens = 16384;
               }
-              {
-                id = "qwen3.6-35b-a3b-abliterated";
-                name = "Qwen 3.6 35B A3B (Abliterated)";
-                reasoning = true;
-                input = ["text" "image"];
-                contextWindow = 65536;
-                maxTokens = 16384;
-              }
-            ];
-          };
-          ashalliants-35b-abliterated = {
-            baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8142/v1";
-            api = "openai-completions";
-            auth = "none";
-
-            models = [
               {
                 id = "qwen3.6-35b-a3b-abliterated";
                 name = "Qwen 3.6 35B A3B (Abliterated)";
