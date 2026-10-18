@@ -162,6 +162,14 @@
               contextWindow = 65536;
               maxTokens = 16384;
             }
+            {
+              id = "qwen3.8-27b-abliterated";
+              name = "Qwen 3.8 27B (Abliterated)";
+              reasoning = true;
+              input = ["text" "image"];
+              contextWindow = 65536;
+              maxTokens = 16384;
+            }
           ];
         };
 
@@ -178,6 +186,14 @@
             {
               id = "qwen3.6-35b-a3b";
               name = "Qwen 3.6 35B A3B (Vision)";
+              reasoning = true;
+              input = ["text" "image"];
+              contextWindow = 65536;
+              maxTokens = 16384;
+            }
+            {
+              id = "qwen3.6-35b-a3b-abliterated";
+              name = "Qwen 3.6 35B A3B (Abliterated)";
               reasoning = true;
               input = ["text" "image"];
               contextWindow = 65536;
@@ -265,7 +281,9 @@
 
         enabledModels = [
           "ashalliants/qwen3.8-27b"
+          "ashalliants/qwen3.8-27b-abliterated"
           "ashalliants-35b/qwen3.6-35b-a3b"
+          "ashalliants-35b/qwen3.6-35b-a3b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes

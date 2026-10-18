@@ -107,16 +107,19 @@
                   "aliases": [
                       "27", "27b", "df2", "qwen27b", "qwen38",
                       "qwen38-27b", "qwen3.8", "qwen3.8-27b",
+                      "27b-abliterated", "qwen38-abliterated",
+                      "qwen3.8-27b-abliterated", "godmode",
                   ],
               },
               "35b": {
-                  "key": "35b",
                   "service": "ashalliants-35b.service",
                   "port": ${toString ashPort35b},
                   "label": "Qwen3.6-35B-A3B MTP3",
                   "aliases": [
                       "35", "35b", "mtp", "qwen35b", "qwen36",
                       "qwen36-35b", "qwen3.6", "qwen3.6-35b", "qwen3.6-35b-a3b",
+                      "35b-abliterated", "qwen36-abliterated",
+                      "qwen3.6-35b-a3b-abliterated",
                   ],
               },
           }
@@ -307,16 +310,15 @@
               mkdir -p $out/share/zsh/site-functions
               mkdir -p $out/share/bash-completion/completions
               mkdir -p $out/share/fish/vendor_completions.d
-              _ASHALLIANT_COMPLETE=source_zsh $out/bin/ashalliant > $out/share/zsh/site-functions/_ashalliant
+              echo "#compdef ashalliant ashalliants-up ashalliants-down ashalliants-35b-up ashalliants-35b-down" > $out/share/zsh/site-functions/_ashalliant
+              _ASHALLIANT_COMPLETE=source_zsh $out/bin/ashalliant | ${pkgs.gnused}/bin/sed -n '/^_ashalliant_completion/,$p' >> $out/share/zsh/site-functions/_ashalliant
               _ASHALLIANT_COMPLETE=source_bash $out/bin/ashalliant > $out/share/bash-completion/completions/ashalliant
               _ASHALLIANT_COMPLETE=source_fish $out/bin/ashalliant > $out/share/fish/vendor_completions.d/ashalliant.fish
-
               ln -s ashalliant $out/share/bash-completion/completions/ashalliants-up
               ln -s ashalliant $out/share/bash-completion/completions/ashalliants-down
               ln -s ashalliant $out/share/bash-completion/completions/ashalliants-35b-up
               ln -s ashalliant $out/share/bash-completion/completions/ashalliants-35b-down
 
-              echo "compdef _ashalliant_completion ashalliants-up ashalliants-down ashalliants-35b-up ashalliants-35b-down" >> $out/share/zsh/site-functions/_ashalliant
             '';
         });
     in {
