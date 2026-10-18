@@ -399,18 +399,25 @@
         };
       };
     in {
-      home.file.".omp/agent/models.yml".source =
-        yaml.generate ".omp.agent.models.yml" models;
+      # force = true (2026-10-18): self-heal over pre-existing unmanaged or
+      # test-linked models.yml/ompl.yml so HM activation checkLinkTargets does not fail.
+      home.file.".omp/agent/models.yml" = {
+        source = yaml.generate ".omp.agent.models.yml" models;
+        force = true;
+      };
 
       # PI_CONFIG_FILES overlay (merged OVER config.yml/config.default.yml;
       # later overlays win), see the omplOverlay comment above.
-      home.file.".omp/agent/ompl.yml".source =
-        yaml.generate ".omp.agent.ompl.yml" omplOverlay;
+      home.file.".omp/agent/ompl.yml" = {
+        source = yaml.generate ".omp.agent.ompl.yml" omplOverlay;
+        force = true;
+      };
 
       # --- ompl profile support files (~/.omp/profiles/ompl/agent/) ---
-      home.file.".omp/profiles/ompl/agent/models.yml".source =
-        yaml.generate ".omp.agent.ompl-models.yml" omplModels;
-
+      home.file.".omp/profiles/ompl/agent/models.yml" = {
+        source = yaml.generate ".omp.agent.ompl-models.yml" omplModels;
+        force = true;
+      };
       home.file.".omp/profiles/ompl/agent/keybindings.yml".text = ''
         keybindings:
           app.clipboard.pasteImage: "alt+v"
