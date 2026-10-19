@@ -6,8 +6,10 @@
       nmcli = "${pkgs.networkmanager}/bin/nmcli";
       iproute2 = "${pkgs.iproute2}/bin/ip";
 
-      # eth-vtit: unified VTIT ethernet CLI (status / up / down / toggle).
-      # Replaces former eth-vtit-up / eth-vtit-down shell aliases (2026-10-19).
+      # eth-vtit: unified VTIT ethernet CLI (status / toggle).
+      # Replaced former eth-vtit-up / eth-vtit-down shell aliases (2026-10-19);
+      # explicit up/down subcommands dropped the same day — toggle covers the
+      # control path, bare invocation shows status.
       # Mirrors the ashalliant bin pattern: bare invocation shows status.
       #
       # DELL→legion hotspot connect: nmcli device wifi connect 'Hotto Doggo'
@@ -113,14 +115,8 @@ case "$cmd" in
   toggle)
     do_toggle
     ;;
-  up)
-    do_up
-    ;;
-  down)
-    do_down
-    ;;
   -h|--help|help)
-    echo "usage: eth-vtit [status | toggle | up | down]"
+    echo "usage: eth-vtit [status | toggle]"
     ;;
   *)
     echo "unknown command '$cmd', run 'eth-vtit -h' for usage" >&2
@@ -135,7 +131,7 @@ SCRIPT
 
 _eth-vtit() {
   _arguments -C \
-    '1:command:((status\:"show status" toggle\:"toggle connection" up\:"bring connection up" down\:"tear connection down" list\:"show status"))' \
+    '1:command:((status\:"show status" toggle\:"toggle connection" list\:"show status"))' \
     '-h[show help]' \
     '--help[show help]'
 }
@@ -148,7 +144,7 @@ _eth_vtit_completion() {
   local cur
   cur="''${COMP_WORDS[COMP_CWORD]}"
   if [ "''${COMP_CWORD}" -eq 1 ]; then
-    COMPREPLY=( $(compgen -W "status toggle up down list -h --help" -- "$cur") )
+    COMPREPLY=( $(compgen -W "status toggle list -h --help" -- "$cur") )
   fi
 }
 
@@ -158,8 +154,6 @@ BASH
           cat << 'FISH' > $out/share/fish/vendor_completions.d/eth-vtit.fish
 complete -c eth-vtit -n "__fish_use_subcommand" -a status -d "show status"
 complete -c eth-vtit -n "__fish_use_subcommand" -a toggle -d "toggle connection"
-complete -c eth-vtit -n "__fish_use_subcommand" -a up -d "bring connection up"
-complete -c eth-vtit -n "__fish_use_subcommand" -a down -d "tear connection down"
 complete -c eth-vtit -n "__fish_use_subcommand" -a list -d "show status"
 FISH
 
