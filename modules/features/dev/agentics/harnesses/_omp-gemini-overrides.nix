@@ -45,6 +45,17 @@ in {
     "gemini-4-argon-disabled"
   ];
 
+  # pi-antigravity extension provider (legion host-private, enabled
+  # 2026-10-20): provider id "antigravity" (PROVIDER_ID in the plugin's
+  # src/models/models.ts); its catalog lists gemini-3.x models.
+  antigravity.modelOverrides = mkOverrides [
+    "gemini-2.5-flash"
+    "gemini-2.5-flash-lite"
+    "gemini-3.5-flash"
+    "gemini-3.5-flash-lite"
+    "gemini-3.8-flash"
+  ];
+
   opencode-zen.modelOverrides = mkOverrides [
     "gemini-3-flash"
     "gemini-3-pro"

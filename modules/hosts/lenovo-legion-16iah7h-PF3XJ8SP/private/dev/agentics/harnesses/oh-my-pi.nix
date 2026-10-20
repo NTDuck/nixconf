@@ -345,6 +345,63 @@
           license = pkgs.lib.licenses.mit;
         };
       };
+
+      # pi-antigravity (2026-10-20): Antigravity / Cloud Code Assist
+      # provider extension — wire-format parity for gemini-3.8-flash
+      # "Request was aborted" watchdog loops (user guideline request).
+      # Ships TS SOURCE ONLY (package.json main = ./src/index.ts, no
+      # dist, no build script): omp 18.12.3 loads .ts extension entries
+      # directly (Bun transpiles; probe-verified against this exact
+      # layout, including the .js-named symlink), so no tsc build —
+      # just materialize the package + its ONE runtime dep. Runtime
+      # deps: undici 8.11.2 (zero transitive deps), copied flat into a
+      # package-root node_modules. The @earendil-works/* peers are
+      # omp-provided: the loader rewrites those specifiers onto its
+      # bundled pi-ai/pi-coding-agent APIs (probe-verified: the full
+      # antigravity.{doctor,models,accounts,refresh,search,usage,image}
+      # command set registers with exactly this layout). Plugin's own
+      # stream watchdogs (ANTIGRAVITY_STREAM_{HEADER,STALL}_TIMEOUT_MS)
+      # default to 180s/120s — no env needed; the abort was omp's
+      # generic first-event watchdog, fixed via PI_STREAM_* in the
+      # shared aspect.
+      antigravityPkg = pkgs.stdenv.mkDerivation rec {
+        pname = "pi-antigravity";
+        version = "0.11.0";
+
+        src = pkgs.fetchurl {
+          url = "https://registry.npmjs.org/pi-antigravity/-/pi-antigravity-${version}.tgz";
+          hash = "sha512-oCiwNp6yQ8B1hPbQTqdTUsKJOiG7o5RSJmqLsS3wgYXg9y+2goL/TjaF0xZHLgN/S7zSBv7hX3ksnug1fNhabw==";
+        };
+
+        undiciSrc = pkgs.fetchurl {
+          url = "https://registry.npmjs.org/undici/-/undici-8.11.2.tgz";
+          hash = "sha512-u4UB2/IrKdU6lFxumHmmo1a3fCQO5tzQllRorfoRS63txhrB7xTpSn1PftwC4qEHkOaqP95fCWW4lJzwErwzhQ==";
+        };
+
+        dontBuild = true;
+
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/lib/node_modules/pi-antigravity/node_modules
+          cp -r . $out/lib/node_modules/pi-antigravity/
+          # npm tarballs unpack under a package/ prefix (no strip):
+          # rename to the module id undici resolves from.
+          tar xzf ${undiciSrc} -C $out/lib/node_modules/pi-antigravity/node_modules
+          mv $out/lib/node_modules/pi-antigravity/node_modules/package \
+            $out/lib/node_modules/pi-antigravity/node_modules/undici
+          mkdir -p $out/share/omp/extensions
+          # Entry is TS; omp discovers and transpiles it regardless of
+          # the .js name (probe-verified both spellings).
+          ln -s $out/lib/node_modules/pi-antigravity/src/index.ts $out/share/omp/extensions/pi-antigravity.js
+          runHook postInstall
+        '';
+
+        meta = {
+          description = "Personal Antigravity / Cloud Code Assist provider for Pi Coding Agent";
+          homepage = "https://github.com/Rahularya01/pi-antigravity";
+          license = pkgs.lib.licenses.mit;
+        };
+      };
     in {
       # force = true (2026-10-18): self-heal over pre-existing unmanaged or
       # test-linked models.yml/ompl.yml so HM activation checkLinkTargets does not fail.
@@ -373,6 +430,14 @@
       home.file.".omp/profiles/ompl/agent/extensions/pi-reasonix.js".source =
         "${reasonixPkg}/share/omp/extensions/pi-reasonix.js";
 
+      # Extension entry for the DEFAULT agent dir (~/.omp/agent/
+      # extensions/) — ompl stays qwen-only by design; this is the
+      # gemini-3.8-flash wire-format fix, so it must NOT land in the
+      # ompl profile (its disabledProviders also already excludes the
+      # google-antigravity cloud provider).
+      home.file.".omp/agent/extensions/pi-antigravity.js".source =
+        "${antigravityPkg}/share/omp/extensions/pi-antigravity.js";
+
       home.shellAliases = {
         omp = ''
           CODEV_API_KEY="$(cat ${osConfig.age.secrets."codev-api-key".path} 2>/dev/null || cat ~/.codev/auth.json 2>/dev/null | ${pkgs.jq}/bin/jq -r '.api_key // empty')" \
@@ -380,8 +445,6 @@
           OPENCODE_API_KEY="$(cat ${osConfig.age.secrets."opencode-api-key".path} 2>/dev/null)" \
           OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."openrouter-api-key".path} 2>/dev/null)" \
           TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path} 2>/dev/null)" \
-          REASONIX_SCAVENGE=1 \
-          REASONIX_RESULT_CAP_TOKENS=3000 \
           ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp'';
 
         # Same omp binary plus `--profile ompl`: isolated agent dir
