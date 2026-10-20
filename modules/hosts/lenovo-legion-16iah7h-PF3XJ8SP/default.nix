@@ -50,6 +50,7 @@
       den.aspects.apps.tomato
       den.aspects.apps.world-monitor
       den.aspects.apps.gods-eye-view
+      den.aspects.apps.gemini-web2api-go
       den.aspects.apps.fastfetch
       den.aspects.apps.speedtest-cli
       den.aspects.apps.messaging.zalo

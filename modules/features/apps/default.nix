@@ -21,6 +21,7 @@
       den.aspects.apps.tomato
       den.aspects.apps.mermaid
       den.aspects.apps.world-monitor
+      den.aspects.apps.gemini-web2api-go
     ];
   };
 }
