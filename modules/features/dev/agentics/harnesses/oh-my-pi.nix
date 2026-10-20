@@ -76,7 +76,14 @@ in {
   den.aspects.dev.agentics.harnesses.oh-my-pi = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
-        inputs.omp.packages.${pkgs.stdenv.hostPlatform.system}.omp
+        # Same package the aliases use (llm-agents.nix), NOT the upstream
+        # flake (inputs.omp): upstream's flake builds omp from source
+        # (bun compile + cargo LTO, ~10min local) on every flake bump,
+        # while llm-agents.nix publishes the identical derivation to
+        # cache.numtide.com (see harnesses/default.nix substituter), so
+        # bumps are download-only. Upstream source build remains the
+        # automatic fallback if the cache ever lags a bump.
+        inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp
         (pi-reasonix {
           inherit pkgs;
           inherit (pkgs) lib;
