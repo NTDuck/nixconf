@@ -254,6 +254,10 @@
               "lenovo-legion-16iah7h-pf3xj8sp.taild3be63.ts.net"
             ];
           };
+
+          # ZRAM sizing (2026-10-21 user request): cap zram swap to 50% of RAM
+          # on Dell instead of the shared 100% default, keeping memory footprint lower.
+          zramSwap.memoryPercent = 50;
         };
       }
       (den.aspects.desktop.greeters.tuigreet {
