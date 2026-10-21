@@ -7,12 +7,12 @@
         # 2026-10-21: Opportunistic DoT upgrades public DNS queries (1.1.1.1, 8.8.8.8)
         # to TLS (port 853), preventing unencrypted UDP port 53 DNS poisoning while
         # preserving compatibility with local / Tailscale resolvers that lack TLS certificates.
-        # Setting `Domains = ["~."]` routes un-scoped public queries to global DoT resolvers
-        # rather than DHCP-assigned link DNS (e.g. 192.168.1.1) which poison Steam domains,
-        # while preserving specific route-only domains like Tailscale's `~ts.net`.
+        # Note: Do NOT set `Domains = ["~."]` globally in resolved.conf; doing so breaks
+        # Cloudflare WARP's internal connectivity checks (`connectivity-check.warp-svc.`),
+        # preventing warp-svc from completing its handshake. WARP dynamically configures
+        # routing domain `~.` on its own `CloudflareWARP` interface once connected.
         settings.Resolve = {
           DNSOverTLS = "opportunistic";
-          Domains = ["~."];
         };
       };
     };
