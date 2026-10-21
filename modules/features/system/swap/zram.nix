@@ -1,9 +1,11 @@
 {den, ...}: {
   den.aspects.system.swap.zram = {
-    nixos = {
+    nixos = {lib, ...}: {
       zramSwap = {
         enable = true;
-        memoryPercent = 100;
+        # mkDefault allows host-level overrides (e.g. Dell caps at 50%) without
+        # module-system duplicate-definition collisions.
+        memoryPercent = lib.mkDefault 100;
       };
 
       # Userspace OOM killer: zram has no disk swap to fall back on, so
