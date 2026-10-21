@@ -8,6 +8,7 @@
       den.aspects.dev.agentics.ctx7
       den.aspects.dev.agentics.heretic
       den.aspects.dev.agentics.huggingface
+      den.aspects.dev.agentics.open-code-review
       den.aspects.dev.agentics.openspec
       den.aspects.dev.agentics.spec-kit
     ];
