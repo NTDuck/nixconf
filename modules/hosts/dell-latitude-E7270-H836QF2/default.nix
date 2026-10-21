@@ -49,6 +49,7 @@
       # CodeGraph CLI (repo indexer used by the coding agents).
       den.aspects.dev.agentics.codegraph
       den.aspects.dev.agentics.ctx7
+      den.aspects.dev.agentics.open-code-review
       den.aspects.dev.agentics.openspec
       den.aspects.dev.envs.mise
       den.aspects.dev.toolchains.sql.tabularis
