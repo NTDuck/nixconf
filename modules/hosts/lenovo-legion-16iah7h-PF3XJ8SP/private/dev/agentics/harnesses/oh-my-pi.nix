@@ -191,6 +191,14 @@
       # Gemini-bearing providers (2026-10-18 user request).
       geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-gemini-overrides.nix";
 
+      # omp + the local vibe.defaultOnStartup patch (patches/
+      # omp-vibe-default-on-startup.patch — see the omplOverlay comment).
+      # overrideAttrs only re-runs the source patch + downstream rebuild;
+      # cargo/bun vendor hashes are untouched.
+      ompVibePkg = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp.overrideAttrs (old: {
+        patches = (old.patches or []) ++ [(inputs.self + "/patches/omp-vibe-default-on-startup.patch")];
+      });
+
       models = {
         providers = lib.recursiveUpdate (
           cloudProviders
@@ -292,6 +300,19 @@
 
         memory.backend = "off";
         autolearn.enabled = false;
+
+        # vibe-by-default (2026-10-22, user request "make ompl vibe on by
+        # default"): omp 18.12.3 has NO config surface for vibe mode —
+        # /vibe is a TUI-only toggle (verified against the embedded
+        # vibe-mode.md doc and the settings registry in the binary). The
+        # `vibe.defaultOnStartup` key is a local upstream patch
+        # (patches/omp-vibe-default-on-startup.patch, mirroring
+        # plan.defaultOnStartup: brand-new sessions only, after
+        # #applyPlanModeDefault so plan mode still wins a conflict). The
+        # patched binary ships ONLY on the ompl alias below; the vanilla
+        # `omp` alias silently ignores this key (unknown settings keys in
+        # config-file layers pass through without breaking startup).
+        vibe.defaultOnStartup = true;
       };
 
       # Profile-local qwen-only models.yml. Reuses local.ashalliants
@@ -455,9 +476,18 @@
         # Kept as a separate alias (the shared aspect owns `omp` via
         # mkDefault; the 5-secret export block above is duplicated by
         # design for `omp` — see its comment).
+        #
+        # ompVibePkg (2026-10-22): vanilla llm-agents omp + the local
+        # vibe.defaultOnStartup patch (see the omplOverlay comment).
+        # ONLY this alias uses it — the vanilla `omp` alias and
+        # systemPackages stay on the unpatched, cache-friendly build.
+        # Cargo/bun hashes are untouched (source-only TS patch), so the
+        # derivation differs only in the patched source tree and any
+        # llm-agents bump rebuilds it locally (~10min, upstream source
+        # build cost) instead of downloading.
         ompl = ''
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml" \
-          ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp --profile ompl'';
+          ${ompVibePkg}/bin/omp --profile ompl'';
       };
     };
   };

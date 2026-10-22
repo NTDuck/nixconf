@@ -1,0 +1,97 @@
+--- a/packages/coding-agent/src/plan-mode/settings.ts
++++ b/packages/coding-agent/src/plan-mode/settings.ts
+@@ -34,6 +34,18 @@
+ 	},
+ });
+ 
++export const cfgVibeDefaultOnStartup = register({
++	id: "vibe.defaultOnStartup",
++	type: "boolean",
++	default: false,
++	ui: {
++		tab: "tasks",
++		group: "Modes",
++		label: "Start in Vibe Mode",
++		description: "Automatically enter vibe mode at the start of every new session",
++	},
++});
++
+ export const cfgPlanAutosave = register({
+ 	id: "plan.autosave",
+ 	type: "boolean",
+--- a/packages/coding-agent/src/modes/interactive-mode.ts
++++ b/packages/coding-agent/src/modes/interactive-mode.ts
+@@ -401,7 +401,7 @@
+ import { cfgCycleOrder, cfgModelRoles } from "../config/model-settings";
+ import { cfgGoalContinuationModes, cfgGoalEnabled } from "../goals/settings";
+ import { goalContinuationActivity, goalFromModeData } from "../goals/state";
+-import { cfgPlanDefaultOnStartup, cfgPlanEnabled } from "../plan-mode/settings";
++import { cfgPlanDefaultOnStartup, cfgPlanEnabled, cfgVibeDefaultOnStartup } from "../plan-mode/settings";
+ import { cfgStreamRedactPatterns } from "../stream/settings";
+ import { cfgSttEnabled } from "../stt/settings";
+ import { combine, type SettingValueOf } from "../config/registry";
+@@ -631,6 +631,22 @@
+ 	);
+ }
+ 
++/**
++ * Same freshness contract as {@link shouldEnterPlanModeOnStartup}: brand-new
++ * sessions only (no conversation context, no explicit mode_change). Plan mode
++ * wins a conflict — both defaults can be set, and #enterVibeMode refuses to
++ * run while plan mode is active, so the caller checks planModeEnabled after
++ * #applyPlanModeDefault has had its chance.
++ */
++export function shouldEnterVibeModeOnStartup(
++	sessionManager: Pick<SessionManager, "buildSessionContext" | "getEntries">,
++	sessionSettings: Settings,
++): boolean {
++	const hasConversationContext = sessionManager.buildSessionContext().messages.length > 0;
++	const hasExplicitMode = sessionManager.getEntries().some(entry => entry.type === "mode_change");
++	return !hasConversationContext && !hasExplicitMode && cfgVibeDefaultOnStartup.get(sessionSettings);
++}
++
+ /** Options for creating an InteractiveMode instance (for future API use) */
+ export interface InteractiveModeOptions {
+ 	/** Providers that were migrated during startup */
+@@ -2465,6 +2481,7 @@
+ 		// never be dragged back into plan mode; user-initiated /new re-applies the
+ 		// default through handleNewCommand instead.
+ 		await this.#applyPlanModeDefault();
++		await this.#applyVibeModeDefault();
+ 
+ 		// Restore unsent editor draft from previous session shutdown (Ctrl+D).
+ 		// One-shot: consumeDraft removes the sidecar after read so the next
+@@ -5020,6 +5037,25 @@
+ 		}
+ 	}
+ 
++	/**
++	 * Enters vibe mode when `vibe.defaultOnStartup` applies to the current
++	 * session (see {@link shouldEnterVibeModeOnStartup}). Called at launch and
++	 * after `/new`, immediately after {@link #applyPlanModeDefault} so an
++	 * also-configured plan default wins the mode conflict (#enterVibeMode
++	 * refuses to run under plan mode).
++	 */
++	async #applyVibeModeDefault(): Promise<void> {
++		if (
++			shouldEnterVibeModeOnStartup(this.sessionManager, this.session.settings) &&
++			!this.planModeEnabled &&
++			!this.planModePaused &&
++			!this.goalModeEnabled &&
++			!this.goalModePaused
++		) {
++			await this.#enterVibeMode();
++		}
++	}
++
+ 	async #enterPlanMode(options?: {
+ 		planFilePath?: string;
+ 		workflow?: "parallel" | "iterative";
+@@ -8050,6 +8086,7 @@
+ 		await this.handleClearCommand();
+ 		if (this.sessionManager.getSessionId() === previousSessionId) return;
+ 		await this.#applyPlanModeDefault();
++		await this.#applyVibeModeDefault();
+ 	}
+ 
+ 	handleFreshCommand(): Promise<void> {
