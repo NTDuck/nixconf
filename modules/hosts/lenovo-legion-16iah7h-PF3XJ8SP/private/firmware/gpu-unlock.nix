@@ -127,6 +127,23 @@
       ];
 
       boot.kernelParams = ["gpu_unlock.targets=all"];
+
+      # Systemd initrd (init-interface-version "systemd 2"): the mkBefore
+      # list-order guarantee does NOT apply — boot.initrd.kernelModules is
+      # written to /etc/modules-load.d/nixos.conf and loaded by
+      # systemd-modules-load.service, which has NO ordering against
+      # systemd-udev-trigger.service. udev coldplug would race modprobe
+      # gpu_unlock and could bind nvidia.ko first via 80-drivers.rules
+      # ("kmod load" on the 3090's PCI modalias) → "card already initialised
+      # since power on" on cold boots where the trigger wins. Drop-in forces
+      # the coldplug after the explicit module load.
+      boot.initrd.systemd.units."systemd-udev-trigger.service" = {
+        overrideStrategy = "asDropin";
+        text = ''
+          [Unit]
+          After=systemd-modules-load.service
+        '';
+      };
     };
   };
 }
