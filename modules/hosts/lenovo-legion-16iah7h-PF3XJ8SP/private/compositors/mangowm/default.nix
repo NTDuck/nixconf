@@ -6,6 +6,19 @@
       };
 
       wayland.windowManager.mango.settings = {
+        # Force the Steam Proton game window fullscreen (steam_app_1172380 =
+        # STAR WARS Jedi: Fallen Order). title: required — Proton opens a
+        # titleless helper window first (mango FAQ); matching appid alone
+        # would fullscreen that helper too, and the "new tiled window
+        # kicks fullscreen out" churn breaks Wine's cursor capture. Rules
+        # AND appid+title when both given, so only the real game window
+        # matches. Keys are the pinned mangowm rev's (74dcc15):
+        # windowrule/appid/isfullscreen (HEAD renamed to
+        # window_rule/app_id/is_fullscreen).
+        windowrule = [
+          "isfullscreen:1,appid:steam_app_1172380,title:STAR WARS Jedi: Fallen Order"
+        ];
+
         monitorrule = lib.mkForce [
           "name:^eDP-1$,width:2560,height:1600,refresh:165.019,x:0,y:0,scale:1.5,vrr:1"
           # HDMI externals: x:0,y:0 = SAME position as eDP-1 — mango's
