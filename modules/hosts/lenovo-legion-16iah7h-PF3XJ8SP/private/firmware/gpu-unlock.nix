@@ -106,13 +106,77 @@
     in {
       boot.extraModulePackages = [gpu-unlock];
 
-      # Stage-1 order is the whole game: the scripted initrd loads
-      # boot.initrd.kernelModules in list order BEFORE systemd-udevd /
-      # udevadm trigger run (stage-1-init.sh), so gpu_unlock races
-      # nothing — nvidia would fail its WPR2 check if it bound first.
-      # mkBefore prepends in front of firmware/nvidia.nix's
-      # ["nvidia" ...] without duplicating that list.
+      # Stage-1 order is the whole game: gpu_unlock must FLR/unlock the
+      # 3090 before nvidia.ko ever binds. The 2026-10-23 cold-boot hangs
+      # proved that binding nvidia in stage 1 is unsafe regardless of
+      # ordering: the FLR's tunnel bounce (Dock Link Down → thunderbolt
+      # reconnect, ~5s) wedges the 3090 during stage-1 RM init
+      # (nvidia.nix has the timeline). nvidia therefore loads only in
+      # stage 2. gpu_unlock stays in stage 1 so the payload+FLR run
+      # before anything touches the card, and udev-trigger coldplug waits
+      # for the dock to re-link before it can probe nvidia onto the
+      # re-enumerated 3090.
       boot.initrd.kernelModules = lib.mkBefore ["gpu_unlock"];
+
+      # The FLR severs the TB4 tunnel ~5s AFTER it returns (boot -1:
+      # FLR 09:13:13, Slot(3) Link Down 09:13:18), and the card is
+      # enumerable again immediately — so a plain presence poll exits
+      # mid-window and coldplugs into the bounce. Require the GA102 to
+      # be continuously present for 10s; on warm boots gpu_unlock hits
+      # the WPR2 guard, never FLRs, and the unit exits instantly.
+      boot.initrd.systemd.units."systemd-udev-trigger.service" = {
+        overrideStrategy = "asDropin";
+        text = ''
+          [Unit]
+          After=systemd-modules-load.service
+          Wants=egpu-settle.service
+        '';
+      };
+
+      boot.initrd.systemd.units."egpu-settle.service" = {
+        text = let
+          settle = pkgs.writeShellScript "egpu-settle" ''
+            # Warm boot: gpu_unlock logged the WPR2 abort instead of
+            # "unlocked" — no FLR happened, nothing to wait for.
+            grep -aq "gpu_unlock: unlocked" /dev/kmsg || exit 0
+            # Cold boot: wait until the 3090 (GA102 10de:2204; BDF can
+            # shift across re-enumerations) has been present on the bus
+            # for 10 consecutive seconds — a tunnel bounce zeroes the
+            # counter, so coldplug can't run mid-bounce.
+            stable=0
+            deadline=$(( $(cut -d. -f1 /proc/uptime) + 45 ))
+            while [ "$(cut -d. -f1 /proc/uptime)" -lt "$deadline" ]; do
+              found=0
+              for d in /sys/bus/pci/devices/*/; do
+                if [ "$(cat "$d/vendor" 2>/dev/null)" = "0x10de" ] \
+                   && [ "$(cat "$d/device" 2>/dev/null)" = "0x2204" ]; then
+                  found=1
+                  break
+                fi
+              done
+              if [ "$found" = 1 ]; then stable=$((stable + 1)); else stable=0; fi
+              [ "$stable" -ge 10 ] && exit 0
+              sleep 1
+            done
+            echo "egpu-settle: 3090 unstable 45s post-FLR; continuing"
+            exit 0
+          '';
+        in ''
+          [Unit]
+          Description=Wait for ADT-UT4G tunnel re-link after gpu_unlock FLR
+          DefaultDependencies=no
+          ConditionKernelCommandLine=gpu_unlock.targets
+          BindsTo=systemd-modules-load.service
+          After=systemd-modules-load.service
+          Before=systemd-udev-trigger.service
+
+          [Service]
+          Type=oneshot
+          RemainAfterExit=yes
+          TimeoutStartSec=90s
+          ExecStart=${settle}
+        '';
+      };
 
       # request_firmware() paths are hardcoded in unlock_610.c under
       # gpu-unlock/610.43.03/; extraFirmwarePaths copies them into the
@@ -127,23 +191,6 @@
       ];
 
       boot.kernelParams = ["gpu_unlock.targets=all"];
-
-      # Systemd initrd (init-interface-version "systemd 2"): the mkBefore
-      # list-order guarantee does NOT apply — boot.initrd.kernelModules is
-      # written to /etc/modules-load.d/nixos.conf and loaded by
-      # systemd-modules-load.service, which has NO ordering against
-      # systemd-udev-trigger.service. udev coldplug would race modprobe
-      # gpu_unlock and could bind nvidia.ko first via 80-drivers.rules
-      # ("kmod load" on the 3090's PCI modalias) → "card already initialised
-      # since power on" on cold boots where the trigger wins. Drop-in forces
-      # the coldplug after the explicit module load.
-      boot.initrd.systemd.units."systemd-udev-trigger.service" = {
-        overrideStrategy = "asDropin";
-        text = ''
-          [Unit]
-          After=systemd-modules-load.service
-        '';
-      };
     };
   };
 }

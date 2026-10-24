@@ -17,8 +17,19 @@
         videoDrivers = ["nvidia"];
       };
 
-      # initrd modules so the display hands over without a mode reset.
-      boot.initrd.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm"];
+      # NOT in the initrd. With gpu-unlock active, a cold boot FLRs the
+      # 3090 through the ADT-UT4G TB4 dock; the FLR drops the dock's PCIe
+      # link and the tunnel bounces for several seconds (journalctl:
+      # "Slot(3): Link Down" 5s after "FLR returned", then thunderbolt
+      # disconnect/reconnect loop). nvidia's RM init in stage 1 at that
+      # moment wedges the 3090 (NV_ERR_GPU_IS_LOST, nvidia-modeset
+      # progress timeouts) and boot hangs on 90s unit timeouts
+      # (systemd-backlight@nvidia_0). Loading nvidia only in stage 2
+      # reproduces the pre-unlock sequence that cold-boots fine: by the
+      # time udev coldplugs stage 2, the tunnel has re-linked.
+      # Cost: console handover mode-resets (cosmetic flash) since fbcon
+      # starts on simpledrm instead of nvidia-drm.
+      # boot.initrd.kernelModules intentionally absent for nvidia*.
       # NMI watchdog: kernel hard-locks (driver spinlock deadlock)
       # self-reboot via the intel_oc_wdt hardware watchdog.
       boot.kernelParams = ["nmi_watchdog=1"];
