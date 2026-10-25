@@ -61,6 +61,7 @@
       den.aspects.apps.torrents.rtorrent
       den.aspects.apps.torrents.torrent-tui
       den.aspects.apps.torrents.webtorrent
+      den.aspects.dev.agentics.harnesses.learnharness
       den.aspects.dev
       den.aspects.system.bluetooth
       den.aspects.system.boot.systemd

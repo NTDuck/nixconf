@@ -45,6 +45,7 @@
       den.aspects.apps.office.libreoffice
       # omp + ashalliants-over-tailscale (models.yml points at legion).
       den.aspects.dev.agentics.harnesses.codev
+      den.aspects.dev.agentics.harnesses.learnharness
       den.aspects.dev.agentics.harnesses.oh-my-pi
       # CodeGraph CLI (repo indexer used by the coding agents).
       den.aspects.dev.agentics.codegraph
