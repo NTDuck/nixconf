@@ -237,6 +237,11 @@
                   url = "https://github.com/NTDuck";
                   position = 101;
                 };
+                "Gablit" = {
+                  id = "3bc2853e-fe5b-4944-9e44-15ece5e07371";
+                  url = "https://gitlab.com/ntduckk";
+                  position = 102;
+                };
                 "Agentics" = {
                   id = "6f2844e6-35d9-499b-b670-19affdd00588";
                   isFolderCollapsed = false;
