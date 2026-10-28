@@ -8,6 +8,7 @@
       den.aspects.apps.multimedia.obs-studio
       den.aspects.apps.multimedia.yt-dlp
       den.aspects.apps.multimedia.youtube-music
+      den.aspects.apps.multimedia.vlc
     ];
   };
 }

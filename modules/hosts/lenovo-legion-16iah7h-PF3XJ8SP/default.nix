@@ -39,6 +39,7 @@
       den.aspects.apps.multimedia.obs-studio
       den.aspects.apps.multimedia.yt-dlp
       den.aspects.apps.multimedia.youtube-music
+      den.aspects.apps.multimedia.vlc
       den.aspects.apps.office.libreoffice
       den.aspects.apps.office.pandoc
       den.aspects.apps.office.texlive
@@ -53,7 +54,7 @@
       den.aspects.apps.gemini-web2api-go
       den.aspects.apps.fastfetch
       den.aspects.apps.speedtest-cli
-      den.aspects.apps.messaging.zalo
+      # den.aspects.apps.messaging.zalo
       den.aspects.apps.terminals.ghostty
       # terminals: foot/kitty deliberately EXCLUDED — ghostty is the
       # terminal (user rule of thumb: keep every feature except where a
