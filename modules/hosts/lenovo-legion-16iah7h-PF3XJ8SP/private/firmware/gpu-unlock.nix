@@ -68,7 +68,10 @@
 
       kernel = config.boot.kernelPackages.kernel;
 
-      gpu-unlock = pkgs.stdenv.mkDerivation {
+      # Out-of-tree modules must be built with kernel.stdenv (GCC 16 on CachyOS
+      # 7.3.0) rather than pkgs.stdenv (GCC 15), otherwise compiler-dependent
+      # header constructs (such as __counted_by_ptr in topology.h) cause build failure.
+      gpu-unlock = kernel.stdenv.mkDerivation {
         pname = "gpu-unlock";
         inherit version;
 
