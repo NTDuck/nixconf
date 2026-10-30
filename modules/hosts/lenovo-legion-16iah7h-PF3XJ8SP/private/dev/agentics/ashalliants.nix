@@ -104,7 +104,7 @@ MODELS=(
   "qwen3.8-27b-abliterated|ashalliants-df2-abliterated.service|${toString ashPort}|6x65k"
   "qwen3.6-35b-a3b|ashalliants-35b.service|${toString ashPort}|3x65k"
   "qwen3.6-35b-a3b-abliterated|ashalliants-35b-abliterated.service|${toString ashPort}|3x65k"
-  "hemmingway-1-heretic|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x65k"
+  "hemmingway-1-abliterated|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x262k"
 )
 
 show_list() {
@@ -127,6 +127,9 @@ show_list() {
 
 do_switch() {
   local target="$1"
+  if [ "$target" = "hemmingway-1-heretic" ]; then
+    target="hemmingway-1-abliterated"
+  fi
   if [ "$target" = "<nil>" ] || [ "$target" = "nil" ]; then
     for entry in "''${MODELS[@]}"; do
       IFS='|' read -r mid svc port shape <<< "$entry"
@@ -148,7 +151,7 @@ do_switch() {
   done
 
   if [ -z "$found_svc" ]; then
-    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, hemmingway-1-heretic, <nil>" >&2
+    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, hemmingway-1-abliterated, <nil>" >&2
     exit 1
   fi
 
@@ -211,7 +214,7 @@ _ashalliant() {
     'qwen3.8-27b-abliterated:Qwen3.8-27B Abliterated (6x65k :8094)'
     'qwen3.6-35b-a3b:Qwen3.6-35B-A3B MTP3 (3x65k :8140)'
     'qwen3.6-35b-a3b-abliterated:Qwen3.6-35B-A3B Abliterated (3x65k :8142)'
-    'hemmingway-1-heretic:Hemmingway-1 Heretic Abliterated (1x65k :8092)'
+    'hemmingway-1-abliterated:Hemmingway-1 Abliterated (1x262k :8092)'
     '\<nil\>:Unload all ashalliants models'
   )
 
@@ -239,7 +242,7 @@ _ashalliant_completion() {
   cur="''${COMP_WORDS[COMP_CWORD]}"
   prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-  local models="qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-heretic <nil>"
+  local models="qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-heretic <nil>"
   local commands="switch list status"
 
   case "$prev" in
@@ -261,7 +264,7 @@ BASH
 complete -c ashalliant -n "__fish_use_subcommand" -a switch -d "switch active model"
 complete -c ashalliant -n "__fish_use_subcommand" -a list -d "list models"
 complete -c ashalliant -n "__fish_use_subcommand" -a status -d "show status"
-complete -c ashalliant -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-heretic <nil>"
+complete -c ashalliant -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-heretic <nil>"
 FISH
 
           runHook postInstall
@@ -522,9 +525,9 @@ FISH
           };
         };
 
-        # On-demand Hemmingway-1 Heretic daemon (single-lane throughput optimized).
+        # On-demand Hemmingway-1 (Abliterated) daemon (single-lane throughput optimized).
         systemd.services.ashalliants-hemmingway-1-heretic = {
-          description = "ashalliants ninfer-0.15.0 Hemmingway-1 Heretic (Abliterated)";
+          description = "ashalliants ninfer-0.15.0 Hemmingway-1 (Abliterated)";
           after = ["network-online.target"];
           wants = ["network-online.target"];
           conflicts = [
@@ -556,8 +559,8 @@ FISH
               "NINFER_PORT=${toString ashPort}"
               "NINFER_FALLBACK=off"
               "NINFER_CONCURRENCY=1"
-              "NINFER_CONTEXT=65536"
-              "NINFER_KV_CAPACITY=65536"
+              "NINFER_CONTEXT=262144"
+              "NINFER_KV_CAPACITY=262144"
               "NINFER_HOST_STATE_SLOTS=1"
               "NINFER_PREFILL_CHUNK=4096"
               "NINFER_SERVER=${ashRoot}/ninfer-serve.hostkv-shim"

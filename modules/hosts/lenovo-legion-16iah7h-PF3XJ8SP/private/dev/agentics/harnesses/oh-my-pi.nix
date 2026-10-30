@@ -185,11 +185,19 @@
               maxTokens = 16384;
             }
             {
-              id = "hemmingway-1-heretic";
-              name = "Hemmingway-1 Heretic (Abliterated)";
+              id = "hemmingway-1-abliterated";
+              name = "Hemmingway-1 (Abliterated)";
               reasoning = true;
               input = ["text" "image"];
-              contextWindow = 65536;
+              contextWindow = 262144;
+              maxTokens = 16384;
+            }
+            {
+              id = "hemmingway-1-heretic";
+              name = "Hemmingway-1 (Abliterated)";
+              reasoning = true;
+              input = ["text" "image"];
+              contextWindow = 262144;
               maxTokens = 16384;
             }
           ];
@@ -289,6 +297,7 @@
           "ashalliant/qwen3.8-27b-abliterated"
           "ashalliant/qwen3.6-35b-a3b"
           "ashalliant/qwen3.6-35b-a3b-abliterated"
+          "ashalliant/hemmingway-1-abliterated"
           "ashalliant/hemmingway-1-heretic"
         ];
         disabledProviders = [
