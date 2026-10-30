@@ -212,7 +212,13 @@
       # overrideAttrs only re-runs the source patch + downstream rebuild;
       # cargo/bun vendor hashes are untouched.
       ompVibePkg = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp.overrideAttrs (old: {
-        patches = (old.patches or []) ++ [(inputs.self + "/patches/omp-vibe-default-on-startup.patch")];
+        patches = (old.patches or []) ++ [
+          (builtins.path {
+            path = inputs.self + "/patches/omp-vibe-default-on-startup.patch";
+            name = "omp-vibe-default-on-startup.patch";
+            filter = path: _: baseNameOf path == "omp-vibe-default-on-startup.patch";
+          })
+        ];
       });
 
       models = {
@@ -508,6 +514,12 @@ EOF
         "${antigravityPkg}/share/omp/extensions/pi-antigravity.js";
 
       home.packages = [omplWrapper];
+      # Ensure cargo bin path does not shadow the dynamic wrapper with a stale script
+      home.file.".cargo/bin/ompl" = {
+        source = "${omplWrapper}/bin/ompl";
+        force = true;
+      };
+
 
       home.shellAliases = {
         omp = ''

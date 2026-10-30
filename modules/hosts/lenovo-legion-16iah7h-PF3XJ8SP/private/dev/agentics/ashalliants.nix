@@ -105,14 +105,27 @@ MODELS=(
   "qwen3.8-27b-abliterated|ashalliants-df2-abliterated.service|${toString ashPort}|6x65k"
   "qwen3.6-35b-a3b|ashalliants-35b.service|${toString ashPort}|3x65k"
   "qwen3.6-35b-a3b-abliterated|ashalliants-35b-abliterated.service|${toString ashPort}|3x65k"
-  "hemmingway-1-heretic|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x262k"
   "hemmingway-1-abliterated|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x262k"
+  "hemmingway-1-heretic|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x262k"
 )
 
 show_list() {
   local any_active=0
+  local seen_svcs=()
   for entry in "''${MODELS[@]}"; do
     IFS='|' read -r mid svc port shape <<< "$entry"
+    local already_seen=0
+    for seen in "''${seen_svcs[@]}"; do
+      if [ "$seen" = "$svc" ]; then
+        already_seen=1
+        break
+      fi
+    done
+    if [ "$already_seen" -eq 1 ]; then
+      continue
+    fi
+    seen_svcs+=("$svc")
+
     local state="inactive"
     if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
       state="active"
@@ -141,7 +154,6 @@ get_active() {
   mpath="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ashPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.model_path // empty' 2>/dev/null || true )"
   if [ -n "$mpath" ]; then
     case "$mpath" in
-      *hemmingway*heretic*|*hemmingway_1_heretic*) echo "hemmingway-1-heretic"; return 0 ;;
       *hemmingway*) echo "hemmingway-1-abliterated"; return 0 ;;
       *qwen3_6_35b_a3b_huihui_abliterated*) echo "qwen3.6-35b-a3b-abliterated"; return 0 ;;
       *qwen3_6_35b_a3b*) echo "qwen3.6-35b-a3b"; return 0 ;;
