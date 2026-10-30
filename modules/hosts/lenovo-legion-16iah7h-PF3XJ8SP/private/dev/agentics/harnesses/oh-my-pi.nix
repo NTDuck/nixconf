@@ -184,6 +184,14 @@
               contextWindow = 65536;
               maxTokens = 16384;
             }
+            {
+              id = "hemmingway-1-heretic";
+              name = "Hemmingway-1 Heretic (Abliterated)";
+              reasoning = true;
+              input = ["text" "image"];
+              contextWindow = 65536;
+              maxTokens = 16384;
+            }
           ];
         };
       };
@@ -281,6 +289,7 @@
           "ashalliant/qwen3.8-27b-abliterated"
           "ashalliant/qwen3.6-35b-a3b"
           "ashalliant/qwen3.6-35b-a3b-abliterated"
+          "ashalliant/hemmingway-1-heretic"
         ];
         disabledProviders = [
           # implicit keyless local probes

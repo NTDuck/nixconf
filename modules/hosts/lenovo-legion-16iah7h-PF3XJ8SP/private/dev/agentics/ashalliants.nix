@@ -70,6 +70,7 @@
       # covers libcurl.so.4. Pin the exact store paths the benchmark
       # verified (engines.py LD_LIBRARY_PATH, 2026-10-08/09 sweeps).
       ashLibs = [
+        "/run/opengl-driver/lib"
         "/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib"
         "/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib"
         "/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib"
@@ -103,6 +104,7 @@ MODELS=(
   "qwen3.8-27b-abliterated|ashalliants-df2-abliterated.service|${toString ashPort}|6x65k"
   "qwen3.6-35b-a3b|ashalliants-35b.service|${toString ashPort}|3x65k"
   "qwen3.6-35b-a3b-abliterated|ashalliants-35b-abliterated.service|${toString ashPort}|3x65k"
+  "hemmingway-1-heretic|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x65k"
 )
 
 show_list() {
@@ -146,7 +148,7 @@ do_switch() {
   done
 
   if [ -z "$found_svc" ]; then
-    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, <nil>" >&2
+    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, hemmingway-1-heretic, <nil>" >&2
     exit 1
   fi
 
@@ -209,6 +211,7 @@ _ashalliant() {
     'qwen3.8-27b-abliterated:Qwen3.8-27B Abliterated (6x65k :8094)'
     'qwen3.6-35b-a3b:Qwen3.6-35B-A3B MTP3 (3x65k :8140)'
     'qwen3.6-35b-a3b-abliterated:Qwen3.6-35B-A3B Abliterated (3x65k :8142)'
+    'hemmingway-1-heretic:Hemmingway-1 Heretic Abliterated (1x65k :8092)'
     '\<nil\>:Unload all ashalliants models'
   )
 
@@ -236,7 +239,7 @@ _ashalliant_completion() {
   cur="''${COMP_WORDS[COMP_CWORD]}"
   prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-  local models="qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated <nil>"
+  local models="qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-heretic <nil>"
   local commands="switch list status"
 
   case "$prev" in
@@ -258,7 +261,7 @@ BASH
 complete -c ashalliant -n "__fish_use_subcommand" -a switch -d "switch active model"
 complete -c ashalliant -n "__fish_use_subcommand" -a list -d "list models"
 complete -c ashalliant -n "__fish_use_subcommand" -a status -d "show status"
-complete -c ashalliant -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated <nil>"
+complete -c ashalliant -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-heretic <nil>"
 FISH
 
           runHook postInstall
@@ -279,6 +282,7 @@ FISH
             "ashalliants-df2-abliterated.service"
             "ashalliants-35b.service"
             "ashalliants-35b-abliterated.service"
+            "ashalliants-hemmingway-1-heretic.service"
           ];
 
           # run.sh resolves bash via `#!/usr/bin/env bash`. The NixOS
@@ -364,6 +368,7 @@ FISH
             "ashalliants-df2.service"
             "ashalliants-35b.service"
             "ashalliants-35b-abliterated.service"
+            "ashalliants-hemmingway-1-heretic.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -420,6 +425,7 @@ FISH
             "ashalliants-df2.service"
             "ashalliants-df2-abliterated.service"
             "ashalliants-35b-abliterated.service"
+            "ashalliants-hemmingway-1-heretic.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -471,6 +477,7 @@ FISH
             "ashalliants-df2.service"
             "ashalliants-df2-abliterated.service"
             "ashalliants-35b.service"
+            "ashalliants-hemmingway-1-heretic.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -504,6 +511,60 @@ FISH
                 export NINFER_MODEL="${ashRoot}/models/qwen3_6_35b_a3b_huihui_abliterated.ninfer"
               fi
               exec ${ashRoot}/run.sh qwen36-35b-a3b tuned
+            '';
+            MemoryHigh = "10G";
+            MemoryMax = "12G";
+            Restart = "on-failure";
+            RestartSec = "10s";
+            ProtectSystem = "strict";
+            NoNewPrivileges = true;
+            PrivateTmp = true;
+          };
+        };
+
+        # On-demand Hemmingway-1 Heretic daemon (single-lane throughput optimized).
+        systemd.services.ashalliants-hemmingway-1-heretic = {
+          description = "ashalliants ninfer-0.15.0 Hemmingway-1 Heretic (Abliterated)";
+          after = ["network-online.target"];
+          wants = ["network-online.target"];
+          conflicts = [
+            "bonsai2.service"
+            "ashalliants-df2.service"
+            "ashalliants-df2-abliterated.service"
+            "ashalliants-35b.service"
+            "ashalliants-35b-abliterated.service"
+          ];
+          serviceConfig = {
+            Type = "simple";
+            User = "ayin";
+            WorkingDirectory = ashRoot;
+            ExecCondition = pkgs.writeShellScript "ashalliants-hemmingway-boot-gate" ''
+              i=0
+              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
+                i=$((i+1)); [ $i -gt 60 ] && exit 1
+                sleep 1
+              done
+            '';
+            Environment = let
+              ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
+            in [
+              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
+              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
+              "LD_LIBRARY_PATH=${ld}"
+              "NINFER_SPEC=mtp"
+              "NINFER_HOST=0.0.0.0"
+              "NINFER_PORT=${toString ashPort}"
+              "NINFER_FALLBACK=off"
+              "NINFER_CONCURRENCY=1"
+              "NINFER_CONTEXT=65536"
+              "NINFER_KV_CAPACITY=65536"
+              "NINFER_HOST_STATE_SLOTS=1"
+              "NINFER_PREFILL_CHUNK=4096"
+              "NINFER_SERVER=${ashRoot}/ninfer-serve.hostkv-shim"
+            ];
+            ExecStart = pkgs.writeShellScript "ashalliants-hemmingway-start" ''
+              export NINFER_MODEL="${ashRoot}/models/hemmingway_1_heretic.ninfer"
+              exec ${ashRoot}/run.sh hemmingway-1-heretic tuned
             '';
             MemoryHigh = "10G";
             MemoryMax = "12G";
