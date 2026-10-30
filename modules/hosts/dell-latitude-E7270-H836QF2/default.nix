@@ -63,6 +63,7 @@
       den.aspects.dev.gits.gh
       den.aspects.dev.gits.glab
       den.aspects.dev.gits.prek
+      den.aspects.dev.gitlab-runner
       den.aspects.system.bluetooth
       den.aspects.system.boot.systemd
       den.aspects.system.network.cloudflare-warp

@@ -10,6 +10,7 @@
       den.aspects.dev.cloud.oracle-cloud-infrastructure
       den.aspects.dev.postman
       den.aspects.dev.terraform
+      den.aspects.dev.gitlab-runner
     ];
   };
 }

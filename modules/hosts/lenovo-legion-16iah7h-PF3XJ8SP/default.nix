@@ -64,6 +64,7 @@
       den.aspects.apps.torrents.webtorrent
       den.aspects.dev.agentics.harnesses.learnharness
       den.aspects.dev
+      den.aspects.dev.gitlab-runner
       den.aspects.system.bluetooth
       den.aspects.system.boot.systemd
       den.aspects.system.hardware.openrgb
