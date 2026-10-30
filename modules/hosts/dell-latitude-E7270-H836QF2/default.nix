@@ -32,6 +32,7 @@
       den.aspects.system.network.tailscale
       den.aspects.apps.fastfetch
       den.aspects.apps.gemini-web2api-go
+      den.aspects.apps.gnirehtet
       # DELL terminal stack (2026-09-25): st (suckless, X11 — sed/python
       # patched with the stylix palette; reinstated after one day on
       # urxvt).
