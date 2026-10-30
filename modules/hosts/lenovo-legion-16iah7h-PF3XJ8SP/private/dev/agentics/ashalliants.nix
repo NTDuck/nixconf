@@ -105,6 +105,7 @@ MODELS=(
   "qwen3.8-27b-abliterated|ashalliants-df2-abliterated.service|${toString ashPort}|6x65k"
   "qwen3.6-35b-a3b|ashalliants-35b.service|${toString ashPort}|3x65k"
   "qwen3.6-35b-a3b-abliterated|ashalliants-35b-abliterated.service|${toString ashPort}|3x65k"
+  "hemmingway-1-heretic|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x262k"
   "hemmingway-1-abliterated|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x262k"
 )
 
@@ -126,11 +127,35 @@ show_list() {
   printf "%-30s %-8s %-10s -\n" "<nil>" "-" "$nil_state"
 }
 
+get_active() {
+  for entry in "''${MODELS[@]}"; do
+    IFS='|' read -r mid svc port shape <<< "$entry"
+    if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+      echo "$mid"
+      return 0
+    fi
+  done
+
+  # Fallback: probe ninfer directly on its port if started outside systemctl
+  local mpath
+  mpath="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ashPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.model_path // empty' 2>/dev/null || true )"
+  if [ -n "$mpath" ]; then
+    case "$mpath" in
+      *hemmingway*heretic*|*hemmingway_1_heretic*) echo "hemmingway-1-heretic"; return 0 ;;
+      *hemmingway*) echo "hemmingway-1-abliterated"; return 0 ;;
+      *qwen3_6_35b_a3b_huihui_abliterated*) echo "qwen3.6-35b-a3b-abliterated"; return 0 ;;
+      *qwen3_6_35b_a3b*) echo "qwen3.6-35b-a3b"; return 0 ;;
+      *obliterated_qwen3_8_27b*) echo "qwen3.8-27b-abliterated"; return 0 ;;
+      *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
+    esac
+  fi
+
+  return 1
+}
+
+
 do_switch() {
   local target="$1"
-  if [ "$target" = "hemmingway-1-heretic" ]; then
-    target="hemmingway-1-abliterated"
-  fi
   if [ "$target" = "<nil>" ] || [ "$target" = "nil" ]; then
     for entry in "''${MODELS[@]}"; do
       IFS='|' read -r mid svc port shape <<< "$entry"
@@ -154,7 +179,7 @@ do_switch() {
   done
 
   if [ -z "$found_svc" ]; then
-    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, hemmingway-1-abliterated, <nil>" >&2
+    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, hemmingway-1-heretic, hemmingway-1-abliterated, <nil>" >&2
     exit 1
   fi
 
@@ -180,6 +205,9 @@ do_switch() {
 
 cmd="''${1:-}"
 case "$cmd" in
+  active|current)
+    get_active
+    ;;
   ""|list|status)
     show_list
     ;;
@@ -222,6 +250,7 @@ _ashalliant() {
     'qwen3.8-27b-abliterated:Qwen3.8-27B Abliterated (6x65k :8094)'
     'qwen3.6-35b-a3b:Qwen3.6-35B-A3B MTP3 (3x65k :8140)'
     'qwen3.6-35b-a3b-abliterated:Qwen3.6-35B-A3B Abliterated (3x65k :8142)'
+    'hemmingway-1-heretic:Hemmingway-1 Heretic (1x262k :8092)'
     'hemmingway-1-abliterated:Hemmingway-1 Abliterated (1x262k :8092)'
     '\<nil\>:Unload all ashalliants models'
   )

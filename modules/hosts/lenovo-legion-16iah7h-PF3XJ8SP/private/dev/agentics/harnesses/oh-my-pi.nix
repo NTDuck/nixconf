@@ -441,6 +441,36 @@
           license = pkgs.lib.licenses.mit;
         };
       };
+      # ompl wrapper (2026-10-30): dynamically queries active ashalliant model via ashalliant active,
+      # generates a runtime overlay in $XDG_RUNTIME_DIR/omp/ompl-active.yml,
+      # and sets modelRoles to the active model instead of hardcoding qwen3.8-27b-abliterated.
+      omplWrapper = pkgs.writeShellScriptBin "ompl" ''
+        set -euo pipefail
+
+        active_model="$( ashalliant active 2>/dev/null || true )"
+        active_model="''${active_model:-qwen3.8-27b-abliterated}"
+
+        runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
+        mkdir -p "$runtime_dir"
+        active_overlay="$runtime_dir/ompl-active.yml"
+
+        cat << EOF > "$active_overlay"
+modelRoles:
+  default: ashalliant/$active_model:high
+  smol: ashalliant/$active_model:high
+  slow: ashalliant/$active_model:high
+  vision: ashalliant/$active_model:high
+  plan: ashalliant/$active_model:high
+  commit: ashalliant/$active_model:high
+  task: ashalliant/$active_model:high
+  advisor: ashalliant/$active_model:high
+  judge: ashalliant/$active_model:high
+EOF
+
+        export PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml:$active_overlay"
+        exec "${ompVibePkg}/bin/omp" --profile ompl "$@"
+      '';
+
     in {
       # force = true (2026-10-18): self-heal over pre-existing unmanaged or
       # test-linked models.yml/ompl.yml so HM activation checkLinkTargets does not fail.
@@ -477,6 +507,8 @@
       home.file.".omp/agent/extensions/pi-antigravity.js".source =
         "${antigravityPkg}/share/omp/extensions/pi-antigravity.js";
 
+      home.packages = [omplWrapper];
+
       home.shellAliases = {
         omp = ''
           CODEV_API_KEY="$(cat ${osConfig.age.secrets."codev-api-key".path} 2>/dev/null || cat ~/.codev/auth.json 2>/dev/null | ${pkgs.jq}/bin/jq -r '.api_key // empty')" \
@@ -503,9 +535,7 @@
         # derivation differs only in the patched source tree and any
         # llm-agents bump rebuilds it locally (~10min, upstream source
         # build cost) instead of downloading.
-        ompl = ''
-          PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml" \
-          ${ompVibePkg}/bin/omp --profile ompl'';
+        ompl = "${omplWrapper}/bin/ompl";
       };
     };
   };
