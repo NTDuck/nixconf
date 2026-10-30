@@ -69,6 +69,8 @@ def prefill_ram_guard(engine_tag, ctx, conc):
     "overflow" and NOT retried (user rule 2026-10-08).
     Returns skip-reason or None.
     """
+    if conc > 1 and engine_tag == "hemmingway-1-heretic":
+        return f"overflow: {engine_tag} is single-lane optimized (max concurrency 1)"
     if ctx == 0 or engine_tag not in ("q27-t3-mtp", "q27-t3-solo"):
         return None
     # Engine-measured staging bound (2026-10-08): q27 held 326K KV rows
