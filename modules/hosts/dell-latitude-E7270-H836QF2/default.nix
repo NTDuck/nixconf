@@ -26,6 +26,8 @@
       den.aspects.apps.ripgrep
       den.aspects.apps.tmux
       den.aspects.apps.zoxide
+      den.aspects.apps.pciutils
+      den.aspects.apps.jq
       den.aspects.apps.file-managers.pcmanfm
       den.aspects.apps.file-managers.tfm
       den.aspects.remote-desktop.moonlight

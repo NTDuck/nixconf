@@ -23,6 +23,8 @@
       den.aspects.apps.world-monitor
       den.aspects.apps.gemini-web2api-go
       den.aspects.apps.gnirehtet
+      den.aspects.apps.pciutils
+      den.aspects.apps.jq
     ];
   };
 }

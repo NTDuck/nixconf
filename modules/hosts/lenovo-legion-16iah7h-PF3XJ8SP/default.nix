@@ -13,6 +13,8 @@
       den.aspects.apps.tmux
       den.aspects.apps.zoxide
       den.aspects.apps.rufus
+      den.aspects.apps.pciutils
+      den.aspects.apps.jq
       den.aspects.apps.editors.helix
       den.aspects.apps.editors.zed-editor
       den.aspects.apps.file-managers.nemo
