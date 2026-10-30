@@ -531,6 +531,21 @@ ENGINES = {
                 "NINFER_HOST_STATE_SLOTS": "8",
                 "NINFER_SERVER": f"{ASH}/ninfer-serve.hostkv-shim"},
     },
+    "hemmingway-1-heretic": {
+        "model": "auto", "port": 8120,
+        "launcher": ["env",
+                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     f"{ASH}/run.sh", "hemmingway-1-heretic", "tuned"],
+        "env": {"NINFER_MODEL": f"{ASH}/models/hemmingway_1_heretic.ninfer",
+                "NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
+                "NINFER_PORT": "8120", "NINFER_FALLBACK": "off",
+                "NINFER_CONCURRENCY": "1",
+                "NINFER_CONTEXT": "65536",
+                "NINFER_KV_CAPACITY": "65536",
+                "NINFER_HOST_STATE_SLOTS": "1",
+                "NINFER_PREFILL_CHUNK": "4096",
+                "NINFER_SERVER": f"{ASH}/ninfer-serve.hostkv-shim"},
+    },
     # GGUF-only variants: prism llama.cpp, same shape as gguf-q4xs.
     # ThinkingCap ships no draft artifacts; OBLITERATUS notes its V3
     # restores MTP in safetensors only. All four: per-slot 32768.

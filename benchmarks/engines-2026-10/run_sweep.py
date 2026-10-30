@@ -30,7 +30,8 @@ QWEN = ["ninfer-061", "ashalliants-df2", "ashalliants-mtp", "gguf-q4xs",
         # 2026-10-10 variant campaign (user roster): every arm runs the
         # full screening + long ladder on its engine entry.
         "coder390", "swift15", "huihui-abl", "obliterated",
-        "thinkingcap", "davidau-fable", "humanlike", "fable5"]
+        "thinkingcap", "davidau-fable", "humanlike", "fable5",
+        "hemmingway-1-heretic"]
 # 2026-10-09 scouting drops (scout-reports.log cand-scout#1-3): EXL3
 # (serve_openai has no SSE streaming, 1.22 GiB verify-history per C8 slot,
 # FIFO batch=1 serializes >=32k cells), HyperQwen vLLM 0.30 (per-agent C8

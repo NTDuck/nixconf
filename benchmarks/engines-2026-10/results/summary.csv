@@ -183,3 +183,4 @@ ashalliants-df2-32k,qwen3.8-27b,32768,1,1,"[{'rep': 0, 'ok': 1, 'wall': 14.79, '
 ashalliants-df2-32k,qwen3.8-27b,32768,2,1,"[{'rep': 0, 'ok': 2, 'wall': 30.04, 'peak_vram_mib': 20870, 'mean_decode_tps': 132.52, 'agg_decode_tps': 265.04, 'agg_e2e_tps': 17.05, 'mean_ttft_s': 20.599, 'errors': []}]",2
 ashalliants-df2-32k,qwen3.8-27b,32768,4,1,"[{'rep': 0, 'ok': 4, 'wall': 59.3, 'peak_vram_mib': 20870, 'mean_decode_tps': 139.84, 'agg_decode_tps': 559.38, 'agg_e2e_tps': 17.27, 'mean_ttft_s': 35.284, 'errors': []}]",4
 ashalliants-df2-32k,qwen3.8-27b,32768,6,1,"[{'rep': 0, 'ok': 6, 'wall': 88.84, 'peak_vram_mib': 20870, 'mean_decode_tps': 138.84, 'agg_decode_tps': 833.03, 'agg_e2e_tps': 17.29, 'mean_ttft_s': 49.916, 'errors': []}]",6
+hemmingway-1-heretic,qwen3.8-27b,65536,1,1,"[{'rep': 0, 'ok': 1, 'wall': 36.87, 'peak_vram_mib': 19458, 'mean_decode_tps': 103.87, 'agg_decode_tps': 103.87, 'agg_e2e_tps': 16.27, 'mean_ttft_s': 32.61, 'errors': []}]",1
