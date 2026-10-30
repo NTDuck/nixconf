@@ -52,7 +52,7 @@
 # the unit's Environment + firewall rules. Remote hosts (dell) duplicate
 # the value with a sync comment — cross-host option references aren't
 # reliable in the den module system.
-{...}: {
+{den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     # HOMELAB-ONLY (3090 specialisation pattern, see ninfer.nix header):
     # the unit + wrapper exist only inside specialisation.homelab.
@@ -97,7 +97,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SYSTEMCTL="${pkgs.systemd}/bin/systemctl"
+# Pass --no-ask-password to prevent hanging on polkit TTY prompts when non-interactive.
+SYSTEMCTL=( "${pkgs.systemd}/bin/systemctl" --no-ask-password )
 
 MODELS=(
   "qwen3.8-27b|ashalliants-df2.service|${toString ashPort}|6x65k"
@@ -112,7 +113,7 @@ show_list() {
   for entry in "''${MODELS[@]}"; do
     IFS='|' read -r mid svc port shape <<< "$entry"
     local state="inactive"
-    if "$SYSTEMCTL" is-active --quiet "$svc" 2>/dev/null; then
+    if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
       state="active"
       any_active=1
     fi
@@ -133,7 +134,9 @@ do_switch() {
   if [ "$target" = "<nil>" ] || [ "$target" = "nil" ]; then
     for entry in "''${MODELS[@]}"; do
       IFS='|' read -r mid svc port shape <<< "$entry"
-      "$SYSTEMCTL" stop "$svc" 2>/dev/null || true
+      if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+        "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
+      fi
     done
     echo "switched to <nil>"
     return 0
@@ -155,14 +158,19 @@ do_switch() {
     exit 1
   fi
 
+  if "''${SYSTEMCTL[@]}" is-active --quiet "$found_svc" 2>/dev/null; then
+    echo "already on $canonical"
+    return 0
+  fi
+
   for entry in "''${MODELS[@]}"; do
     IFS='|' read -r mid svc port shape <<< "$entry"
-    if [ "$svc" != "$found_svc" ]; then
-      "$SYSTEMCTL" stop "$svc" 2>/dev/null || true
+    if [ "$svc" != "$found_svc" ] && "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+      "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
     fi
   done
 
-  if "$SYSTEMCTL" start "$found_svc"; then
+  if "''${SYSTEMCTL[@]}" start "$found_svc"; then
     echo "switched to $canonical"
   else
     echo "failed to start $found_svc" >&2
@@ -273,6 +281,21 @@ FISH
     in {
       specialisation.homelab.configuration = {
         environment.systemPackages = [ashalliant];
+        # Passwordless unit state management for ashalliant switch CLI.
+        # Without this, systemctl stop/start blocks on interactive polkit auth (25s hang).
+        # Grants active local sessions or wheel users permission to manage ashalliants-* and bonsai2 units.
+        security.polkit.extraConfig = ''
+          polkit.addRule(function(action, subject) {
+            if (action.id === "org.freedesktop.systemd1.manage-units" &&
+                (subject.isInGroup("wheel") || (subject.local && subject.active))) {
+              var unit = action.lookup("unit");
+              if (unit && (unit.indexOf("ashalliants-") === 0 || unit === "bonsai2.service")) {
+                return polkit.Result.YES;
+              }
+            }
+          });
+        '';
+
 
         systemd.services.ashalliants-df2 = {
           description = "ashalliants ninfer-0.15.0 Qwen3.8-27B DFlash2";
