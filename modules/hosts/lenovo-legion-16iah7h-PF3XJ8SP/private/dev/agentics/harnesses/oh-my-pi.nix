@@ -142,11 +142,11 @@
       # last live-verified state. 2026-10-12: ollama removed; ashalliants
       # is the sole local engine.
       local = {
-        # Consolidated ashalliant ninfer-0.15.0 engine (port 8092, resident 3090 engine).
+        # Consolidated ninfer engine (port 8092, resident 3090 engine).
         # Single provider hosting all 4 canonical model variants (27B DFlash2, 27B Abliterated,
         # 35B MTP3, 35B Abliterated). Mutual conflicts ensure one daemon runs at a time on :8092,
-        # switched on-demand via `ashalliant switch <model>`.
-        ashalliant = {
+        # switched on-demand via `ninfer switch <model>`.
+        ninfer = {
           baseUrl = "http://127.0.0.1:${toString ashPort}/v1";
           api = "openai-completions";
           auth = "none";
@@ -203,6 +203,8 @@
             }
           ];
         };
+        # Backward-compat alias (2026-10-31): retain ashalliant provider mapping to ninfer
+        ashalliant = local.ninfer;
       };
       # Caps Gemini models from default 1M to 256k contextWindow across all active
       # Gemini-bearing providers (2026-10-18 user request).
@@ -288,24 +290,24 @@
       # + engine logs 2026-10-11).
       omplOverlay = {
         modelRoles = {
-          default = "ashalliant/qwen3.8-27b-abliterated:high";
-          smol = "ashalliant/qwen3.8-27b-abliterated:high";
-          slow = "ashalliant/qwen3.8-27b-abliterated:high";
-          vision = "ashalliant/qwen3.8-27b-abliterated:high";
-          plan = "ashalliant/qwen3.8-27b-abliterated:high";
-          commit = "ashalliant/qwen3.8-27b-abliterated:high";
-          task = "ashalliant/qwen3.8-27b-abliterated:high";
-          advisor = "ashalliant/qwen3.8-27b-abliterated:high";
-          judge = "ashalliant/qwen3.8-27b-abliterated:high";
+          default = "ninfer/qwen3.8-27b-abliterated:high";
+          smol = "ninfer/qwen3.8-27b-abliterated:high";
+          slow = "ninfer/qwen3.8-27b-abliterated:high";
+          vision = "ninfer/qwen3.8-27b-abliterated:high";
+          plan = "ninfer/qwen3.8-27b-abliterated:high";
+          commit = "ninfer/qwen3.8-27b-abliterated:high";
+          task = "ninfer/qwen3.8-27b-abliterated:high";
+          advisor = "ninfer/qwen3.8-27b-abliterated:high";
+          judge = "ninfer/qwen3.8-27b-abliterated:high";
         };
 
         enabledModels = [
-          "ashalliant/qwen3.8-27b"
-          "ashalliant/qwen3.8-27b-abliterated"
-          "ashalliant/qwen3.6-35b-a3b"
-          "ashalliant/qwen3.6-35b-a3b-abliterated"
-          "ashalliant/hemmingway-1-abliterated"
-          "ashalliant/hemmingway-1-abliterated-nth"
+          "ninfer/qwen3.8-27b"
+          "ninfer/qwen3.8-27b-abliterated"
+          "ninfer/qwen3.6-35b-a3b"
+          "ninfer/qwen3.6-35b-a3b-abliterated"
+          "ninfer/hemmingway-1-abliterated"
+          "ninfer/hemmingway-1-abliterated-nth"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -347,7 +349,9 @@
       # shared provider.
       omplModels = {
         providers = {
-          ashalliant = local.ashalliant;
+          ninfer = local.ninfer;
+          # Backward-compat alias (2026-10-31): retain ashalliant provider mapping to ninfer
+          ashalliant = local.ninfer;
         };
       };
 
@@ -448,13 +452,13 @@
           license = pkgs.lib.licenses.mit;
         };
       };
-      # ompl wrapper (2026-10-30): dynamically queries active ashalliant model via ashalliant active,
+      # ompl wrapper (2026-10-30): dynamically queries active model via ninfer active (or fallback ashalliant active),
       # generates a runtime overlay in $XDG_RUNTIME_DIR/omp/ompl-active.yml,
       # and sets modelRoles to the active model instead of hardcoding qwen3.8-27b-abliterated.
       omplWrapper = pkgs.writeShellScriptBin "ompl" ''
         set -euo pipefail
 
-        active_model="$( ashalliant active 2>/dev/null || true )"
+        active_model="$( ninfer active 2>/dev/null || ashalliant active 2>/dev/null || true )"
         active_model="''${active_model:-qwen3.8-27b-abliterated}"
 
         runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
@@ -463,15 +467,15 @@
 
         cat << EOF > "$active_overlay"
 modelRoles:
-  default: ashalliant/$active_model:high
-  smol: ashalliant/$active_model:high
-  slow: ashalliant/$active_model:high
-  vision: ashalliant/$active_model:high
-  plan: ashalliant/$active_model:high
-  commit: ashalliant/$active_model:high
-  task: ashalliant/$active_model:high
-  advisor: ashalliant/$active_model:high
-  judge: ashalliant/$active_model:high
+  default: ninfer/$active_model:high
+  smol: ninfer/$active_model:high
+  slow: ninfer/$active_model:high
+  vision: ninfer/$active_model:high
+  plan: ninfer/$active_model:high
+  commit: ninfer/$active_model:high
+  task: ninfer/$active_model:high
+  advisor: ninfer/$active_model:high
+  judge: ninfer/$active_model:high
 EOF
 
         export PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml:$active_overlay"

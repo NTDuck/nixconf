@@ -10,7 +10,7 @@
       # Replaced former eth-vtit-up / eth-vtit-down shell aliases (2026-10-19);
       # explicit up/down subcommands dropped the same day — toggle covers the
       # control path, bare invocation shows status.
-      # Mirrors the ashalliant bin pattern: bare invocation shows status.
+      # Mirrors the ninfer bin pattern: bare invocation shows status.
       #
       # DELL→legion hotspot connect: nmcli device wifi connect 'Hotto Doggo'
       #   password '20041889' (2.4GHz ch6 WPA2). DNS served by hotspot

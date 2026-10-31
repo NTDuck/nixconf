@@ -10,7 +10,7 @@
       # Replaced former eth-vtit-up / eth-vtit-down shell aliases (2026-10-19);
       # explicit up/down subcommands dropped the same day — toggle covers the
       # control path, bare invocation shows status.
-      # Mirrors the ashalliant bin pattern: bare invocation shows status.
+      # Mirrors the ninfer bin pattern: bare invocation shows status.
       #
       # Declarative NM profile attempt was abandoned ("doesn't work as
       # intended", never root-caused — see dell's vtit.nix for the same

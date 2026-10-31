@@ -81,10 +81,11 @@
       # this host; remote hosts (dell) duplicate the value with a sync
       # comment in their models.yml.
       ashPort = 8092;
-      # 2026-10-18: Native shell ashalliant CLI. Fast (<5ms), minimal UI,
+      # 2026-10-18: Native shell CLI. Fast (<5ms), minimal UI,
       # canonical IDs only (no aliases), <nil> unloader, and full shell completions.
-      ashalliant = pkgs.stdenv.mkDerivation {
-        pname = "ashalliant";
+      # 2026-10-31: Renamed ashalliant CLI to ninfer; maintained ashalliant symlink for backwards compatibility.
+      ninfer = pkgs.stdenv.mkDerivation {
+        pname = "ninfer";
         version = "1.0.0";
 
         dontUnpack = true;
@@ -93,7 +94,7 @@
           runHook preInstall
           mkdir -p $out/bin $out/share/zsh/site-functions $out/share/bash-completion/completions $out/share/fish/vendor_completions.d
 
-          cat << 'SCRIPT' > $out/bin/ashalliant
+          cat << 'SCRIPT' > $out/bin/ninfer
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -136,7 +137,11 @@ get_active() {
   # 2026-10-31: Consult persistent user runtime state file first so multi-variant targets
   # sharing the same underlying service daemon (e.g. hemmingway-1-abliterated vs hemmingway-1-abliterated-nth)
   # accurately report the user-selected variant rather than always defaulting to the first match.
-  local state_file="''${XDG_RUNTIME_DIR:-/tmp}/ashalliant/active-model"
+  # Checks ninfer state first, with fallback to legacy ashalliant state.
+  local state_file="''${XDG_RUNTIME_DIR:-/tmp}/ninfer/active-model"
+  if [ ! -r "$state_file" ]; then
+    state_file="''${XDG_RUNTIME_DIR:-/tmp}/ashalliant/active-model"
+  fi
   if [ -r "$state_file" ]; then
     local saved_mid
     saved_mid="$(cat "$state_file" 2>/dev/null || true)"
@@ -180,8 +185,9 @@ get_active() {
 
 do_switch() {
   local target="$1"
-  local state_dir="''${XDG_RUNTIME_DIR:-/tmp}/ashalliant"
+  local state_dir="''${XDG_RUNTIME_DIR:-/tmp}/ninfer"
   local state_file="$state_dir/active-model"
+  local legacy_state_file="''${XDG_RUNTIME_DIR:-/tmp}/ashalliant/active-model"
 
   # Backward-compat alias (2026-10-31): map deprecated hemmingway-1-heretic to canonical hemmingway-1-abliterated
   if [ "$target" = "hemmingway-1-heretic" ]; then
@@ -194,7 +200,7 @@ do_switch() {
         "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
       fi
     done
-    rm -f "$state_file" 2>/dev/null || true
+    rm -f "$state_file" "$legacy_state_file" 2>/dev/null || true
     echo "switched to <nil>"
     return 0
   fi
@@ -219,6 +225,7 @@ do_switch() {
   prev_active="$(get_active 2>/dev/null || true)"
   mkdir -p "$state_dir" 2>/dev/null || true
   echo "$canonical" > "$state_file" 2>/dev/null || true
+  rm -f "$legacy_state_file" 2>/dev/null || true
 
   if "''${SYSTEMCTL[@]}" is-active --quiet "$found_svc" 2>/dev/null; then
     if [ "$prev_active" = "$canonical" ]; then
@@ -239,7 +246,7 @@ do_switch() {
   if "''${SYSTEMCTL[@]}" start "$found_svc"; then
     echo "switched to $canonical"
   else
-    rm -f "$state_file" 2>/dev/null || true
+    rm -f "$state_file" "$legacy_state_file" 2>/dev/null || true
     echo "failed to start $found_svc" >&2
     exit 1
   fi
@@ -263,7 +270,7 @@ case "$cmd" in
     do_switch "$2"
     ;;
   -h|--help|help)
-    echo "usage: ashalliant [switch <model> | -s <model>]"
+    echo "usage: ninfer [switch <model> | -s <model>]"
     ;;
   *)
     for entry in "''${MODELS[@]}"; do
@@ -277,17 +284,18 @@ case "$cmd" in
       do_switch "<nil>"
       exit 0
     fi
-    echo "unknown command '$cmd', run 'ashalliant -h' for usage" >&2
+    echo "unknown command '$cmd', run 'ninfer -h' for usage" >&2
     exit 1
     ;;
 esac
 SCRIPT
-          chmod +x $out/bin/ashalliant
+          chmod +x $out/bin/ninfer
+          ln -s ninfer $out/bin/ashalliant
 
-          cat << 'ZSH' > $out/share/zsh/site-functions/_ashalliant
-#compdef ashalliant
+          cat << 'ZSH' > $out/share/zsh/site-functions/_ninfer
+#compdef ninfer ashalliant
 
-_ashalliant() {
+_ninfer() {
   local -a models
   models=(
     'qwen3.8-27b:Qwen3.8-27B DFlash2 (6x65k :8092)'
@@ -314,11 +322,12 @@ _ashalliant() {
   esac
 }
 
-_ashalliant "$@"
+_ninfer "$@"
 ZSH
+          ln -s _ninfer $out/share/zsh/site-functions/_ashalliant
 
-          cat << 'BASH' > $out/share/bash-completion/completions/ashalliant
-_ashalliant_completion() {
+          cat << 'BASH' > $out/share/bash-completion/completions/ninfer
+_ninfer_completion() {
   local cur prev
   cur="''${COMP_WORDS[COMP_CWORD]}"
   prev="''${COMP_WORDS[COMP_CWORD-1]}"
@@ -338,31 +347,37 @@ _ashalliant_completion() {
   fi
 }
 
-complete -F _ashalliant_completion ashalliant
+complete -F _ninfer_completion ninfer ashalliant
 BASH
+          ln -s ninfer $out/share/bash-completion/completions/ashalliant
 
-          cat << 'FISH' > $out/share/fish/vendor_completions.d/ashalliant.fish
+          cat << 'FISH' > $out/share/fish/vendor_completions.d/ninfer.fish
+complete -c ninfer -n "__fish_use_subcommand" -a switch -d "switch active model"
+complete -c ninfer -n "__fish_use_subcommand" -a list -d "list models"
+complete -c ninfer -n "__fish_use_subcommand" -a status -d "show status"
+complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil>"
+
 complete -c ashalliant -n "__fish_use_subcommand" -a switch -d "switch active model"
 complete -c ashalliant -n "__fish_use_subcommand" -a list -d "list models"
 complete -c ashalliant -n "__fish_use_subcommand" -a status -d "show status"
 complete -c ashalliant -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil>"
 FISH
-
+          ln -s ninfer.fish $out/share/fish/vendor_completions.d/ashalliant.fish
           runHook postInstall
         '';
       };
     in {
       specialisation.homelab.configuration = {
-        environment.systemPackages = [ashalliant];
-        # Passwordless unit state management for ashalliant switch CLI.
+        environment.systemPackages = [ninfer];
+        # Passwordless unit state management for ninfer (and legacy ashalliant) switch CLI.
         # Without this, systemctl stop/start blocks on interactive polkit auth (25s hang).
-        # Grants active local sessions or wheel users permission to manage ashalliants-* and bonsai2 units.
+        # Grants active local sessions or wheel users permission to manage ashalliants-*, ninfer-*, and bonsai2 units.
         security.polkit.extraConfig = ''
           polkit.addRule(function(action, subject) {
             if (action.id === "org.freedesktop.systemd1.manage-units" &&
                 (subject.isInGroup("wheel") || (subject.local && subject.active))) {
               var unit = action.lookup("unit");
-              if (unit && (unit.indexOf("ashalliants-") === 0 || unit === "bonsai2.service")) {
+              if (unit && (unit.indexOf("ashalliants-") === 0 || unit.indexOf("ninfer-") === 0 || unit === "bonsai2.service")) {
                 return polkit.Result.YES;
               }
             }

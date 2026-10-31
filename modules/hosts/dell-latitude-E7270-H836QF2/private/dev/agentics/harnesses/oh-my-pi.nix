@@ -37,10 +37,10 @@
       # Gemini-bearing providers (2026-10-18 user request).
       geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-gemini-overrides.nix";
 
-      # Consolidated ashalliant ninfer-0.15.0 engine on legion (port 8092 over tailscale0).
+      # Consolidated ninfer engine on legion (port 8092 over tailscale0).
       # Single provider hosting all 4 canonical model variants (27B DFlash2, 27B Abliterated,
       # 35B MTP3, 35B Abliterated). Legion's daemon on :8092 serves whichever model is active.
-      ashalliantProvider = {
+      ninferProvider = {
         baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1";
         api = "openai-completions";
         auth = "none";
@@ -123,7 +123,9 @@
             ];
           };
 
-          ashalliant = ashalliantProvider;
+          ninfer = ninferProvider;
+          # Backward-compat alias (2026-10-31): retain ashalliant provider mapping to ninfer
+          ashalliant = ninferProvider;
         } geminiOverrides;
       };
 
@@ -132,24 +134,24 @@
       # ashalliant engine on Legion (:8092), running under an isolated profile dir.
       omplOverlay = {
         modelRoles = {
-          default = "ashalliant/qwen3.8-27b-abliterated:high";
-          smol = "ashalliant/qwen3.8-27b-abliterated:high";
-          slow = "ashalliant/qwen3.8-27b-abliterated:high";
-          vision = "ashalliant/qwen3.8-27b-abliterated:high";
-          plan = "ashalliant/qwen3.8-27b-abliterated:high";
-          commit = "ashalliant/qwen3.8-27b-abliterated:high";
-          task = "ashalliant/qwen3.8-27b-abliterated:high";
-          advisor = "ashalliant/qwen3.8-27b-abliterated:high";
-          judge = "ashalliant/qwen3.8-27b-abliterated:high";
+          default = "ninfer/qwen3.8-27b-abliterated:high";
+          smol = "ninfer/qwen3.8-27b-abliterated:high";
+          slow = "ninfer/qwen3.8-27b-abliterated:high";
+          vision = "ninfer/qwen3.8-27b-abliterated:high";
+          plan = "ninfer/qwen3.8-27b-abliterated:high";
+          commit = "ninfer/qwen3.8-27b-abliterated:high";
+          task = "ninfer/qwen3.8-27b-abliterated:high";
+          advisor = "ninfer/qwen3.8-27b-abliterated:high";
+          judge = "ninfer/qwen3.8-27b-abliterated:high";
         };
 
         enabledModels = [
-          "ashalliant/qwen3.8-27b"
-          "ashalliant/qwen3.8-27b-abliterated"
-          "ashalliant/qwen3.6-35b-a3b"
-          "ashalliant/qwen3.6-35b-a3b-abliterated"
-          "ashalliant/hemmingway-1-abliterated"
-          "ashalliant/hemmingway-1-abliterated-nth"
+          "ninfer/qwen3.8-27b"
+          "ninfer/qwen3.8-27b-abliterated"
+          "ninfer/qwen3.6-35b-a3b"
+          "ninfer/qwen3.6-35b-a3b-abliterated"
+          "ninfer/hemmingway-1-abliterated"
+          "ninfer/hemmingway-1-abliterated-nth"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -176,7 +178,9 @@
       # remote ashalliant endpoint over Tailscale.
       omplModels = {
         providers = {
-          ashalliant = ashalliantProvider;
+          ninfer = ninferProvider;
+          # Backward-compat alias (2026-10-31): retain ashalliant provider mapping to ninfer
+          ashalliant = ninferProvider;
         };
       };
 
