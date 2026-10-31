@@ -106,7 +106,6 @@ MODELS=(
   "qwen3.6-35b-a3b|ashalliants-35b.service|${toString ashPort}|3x65k"
   "qwen3.6-35b-a3b-abliterated|ashalliants-35b-abliterated.service|${toString ashPort}|3x65k"
   "hemmingway-1-abliterated|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x262k"
-  "hemmingway-1-heretic|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x262k"
 )
 
 show_list() {
@@ -168,6 +167,10 @@ get_active() {
 
 do_switch() {
   local target="$1"
+  # Backward-compat alias (2026-10-31): map deprecated hemmingway-1-heretic to canonical hemmingway-1-abliterated
+  if [ "$target" = "hemmingway-1-heretic" ]; then
+    target="hemmingway-1-abliterated"
+  fi
   if [ "$target" = "<nil>" ] || [ "$target" = "nil" ]; then
     for entry in "''${MODELS[@]}"; do
       IFS='|' read -r mid svc port shape <<< "$entry"
@@ -191,7 +194,7 @@ do_switch() {
   done
 
   if [ -z "$found_svc" ]; then
-    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, hemmingway-1-heretic, hemmingway-1-abliterated, <nil>" >&2
+    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, hemmingway-1-abliterated, <nil>" >&2
     exit 1
   fi
 
@@ -262,7 +265,6 @@ _ashalliant() {
     'qwen3.8-27b-abliterated:Qwen3.8-27B Abliterated (6x65k :8094)'
     'qwen3.6-35b-a3b:Qwen3.6-35B-A3B MTP3 (3x65k :8140)'
     'qwen3.6-35b-a3b-abliterated:Qwen3.6-35B-A3B Abliterated (3x65k :8142)'
-    'hemmingway-1-heretic:Hemmingway-1 Heretic (1x262k :8092)'
     'hemmingway-1-abliterated:Hemmingway-1 Abliterated (1x262k :8092)'
     '\<nil\>:Unload all ashalliants models'
   )
@@ -291,7 +293,7 @@ _ashalliant_completion() {
   cur="''${COMP_WORDS[COMP_CWORD]}"
   prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-  local models="qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-heretic <nil>"
+  local models="qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated <nil>"
   local commands="switch list status"
 
   case "$prev" in
@@ -313,7 +315,7 @@ BASH
 complete -c ashalliant -n "__fish_use_subcommand" -a switch -d "switch active model"
 complete -c ashalliant -n "__fish_use_subcommand" -a list -d "list models"
 complete -c ashalliant -n "__fish_use_subcommand" -a status -d "show status"
-complete -c ashalliant -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-heretic <nil>"
+complete -c ashalliant -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated <nil>"
 FISH
 
           runHook postInstall
