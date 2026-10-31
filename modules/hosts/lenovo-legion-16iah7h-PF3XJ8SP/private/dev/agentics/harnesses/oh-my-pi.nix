@@ -192,6 +192,15 @@
               contextWindow = 262144;
               maxTokens = 16384;
             }
+            # 2026-10-31: Non-thinking variant of Hemmingway-1 Abliterated for low-latency turns
+            {
+              id = "hemmingway-1-abliterated-nth";
+              name = "Hemmingway-1 (Abliterated, non-thinking)";
+              reasoning = false;
+              input = ["text" "image"];
+              contextWindow = 262144;
+              maxTokens = 16384;
+            }
           ];
         };
       };
@@ -296,6 +305,7 @@
           "ashalliant/qwen3.6-35b-a3b"
           "ashalliant/qwen3.6-35b-a3b-abliterated"
           "ashalliant/hemmingway-1-abliterated"
+          "ashalliant/hemmingway-1-abliterated-nth"
         ];
         disabledProviders = [
           # implicit keyless local probes

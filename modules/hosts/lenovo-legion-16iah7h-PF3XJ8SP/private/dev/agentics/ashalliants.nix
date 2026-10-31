@@ -106,27 +106,20 @@ MODELS=(
   "qwen3.6-35b-a3b|ashalliants-35b.service|${toString ashPort}|3x65k"
   "qwen3.6-35b-a3b-abliterated|ashalliants-35b-abliterated.service|${toString ashPort}|3x65k"
   "hemmingway-1-abliterated|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x262k"
+  "hemmingway-1-abliterated-nth|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x262k"
 )
 
 show_list() {
+  local active_mid
+  active_mid="$(get_active 2>/dev/null || true)"
   local any_active=0
-  local seen_svcs=()
   for entry in "''${MODELS[@]}"; do
     IFS='|' read -r mid svc port shape <<< "$entry"
-    local already_seen=0
-    for seen in "''${seen_svcs[@]}"; do
-      if [ "$seen" = "$svc" ]; then
-        already_seen=1
-        break
-      fi
-    done
-    if [ "$already_seen" -eq 1 ]; then
-      continue
-    fi
-    seen_svcs+=("$svc")
-
     local state="inactive"
-    if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+    if [ "$mid" = "$active_mid" ]; then
+      state="active"
+      any_active=1
+    elif [ -z "$active_mid" ] && "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
       state="active"
       any_active=1
     fi
@@ -140,6 +133,27 @@ show_list() {
 }
 
 get_active() {
+  # 2026-10-31: Consult persistent user runtime state file first so multi-variant targets
+  # sharing the same underlying service daemon (e.g. hemmingway-1-abliterated vs hemmingway-1-abliterated-nth)
+  # accurately report the user-selected variant rather than always defaulting to the first match.
+  local state_file="''${XDG_RUNTIME_DIR:-/tmp}/ashalliant/active-model"
+  if [ -r "$state_file" ]; then
+    local saved_mid
+    saved_mid="$(cat "$state_file" 2>/dev/null || true)"
+    if [ -n "$saved_mid" ]; then
+      for entry in "''${MODELS[@]}"; do
+        IFS='|' read -r mid svc port shape <<< "$entry"
+        if [ "$mid" = "$saved_mid" ]; then
+          if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+            echo "$saved_mid"
+            return 0
+          fi
+          break
+        fi
+      done
+    fi
+  fi
+
   for entry in "''${MODELS[@]}"; do
     IFS='|' read -r mid svc port shape <<< "$entry"
     if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
@@ -164,9 +178,11 @@ get_active() {
   return 1
 }
 
-
 do_switch() {
   local target="$1"
+  local state_dir="''${XDG_RUNTIME_DIR:-/tmp}/ashalliant"
+  local state_file="$state_dir/active-model"
+
   # Backward-compat alias (2026-10-31): map deprecated hemmingway-1-heretic to canonical hemmingway-1-abliterated
   if [ "$target" = "hemmingway-1-heretic" ]; then
     target="hemmingway-1-abliterated"
@@ -178,6 +194,7 @@ do_switch() {
         "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
       fi
     done
+    rm -f "$state_file" 2>/dev/null || true
     echo "switched to <nil>"
     return 0
   fi
@@ -194,12 +211,21 @@ do_switch() {
   done
 
   if [ -z "$found_svc" ]; then
-    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, hemmingway-1-abliterated, <nil>" >&2
+    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, hemmingway-1-abliterated, hemmingway-1-abliterated-nth, <nil>" >&2
     exit 1
   fi
 
+  local prev_active
+  prev_active="$(get_active 2>/dev/null || true)"
+  mkdir -p "$state_dir" 2>/dev/null || true
+  echo "$canonical" > "$state_file" 2>/dev/null || true
+
   if "''${SYSTEMCTL[@]}" is-active --quiet "$found_svc" 2>/dev/null; then
-    echo "already on $canonical"
+    if [ "$prev_active" = "$canonical" ]; then
+      echo "already on $canonical"
+    else
+      echo "switched to $canonical"
+    fi
     return 0
   fi
 
@@ -213,10 +239,13 @@ do_switch() {
   if "''${SYSTEMCTL[@]}" start "$found_svc"; then
     echo "switched to $canonical"
   else
+    rm -f "$state_file" 2>/dev/null || true
     echo "failed to start $found_svc" >&2
     exit 1
   fi
 }
+
+
 
 cmd="''${1:-}"
 case "$cmd" in
@@ -266,6 +295,7 @@ _ashalliant() {
     'qwen3.6-35b-a3b:Qwen3.6-35B-A3B MTP3 (3x65k :8140)'
     'qwen3.6-35b-a3b-abliterated:Qwen3.6-35B-A3B Abliterated (3x65k :8142)'
     'hemmingway-1-abliterated:Hemmingway-1 Abliterated (1x262k :8092)'
+    'hemmingway-1-abliterated-nth:Hemmingway-1 (Abliterated, non-thinking) (1x262k :8092)'
     '\<nil\>:Unload all ashalliants models'
   )
 
@@ -293,7 +323,7 @@ _ashalliant_completion() {
   cur="''${COMP_WORDS[COMP_CWORD]}"
   prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-  local models="qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated <nil>"
+  local models="qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil>"
   local commands="switch list status"
 
   case "$prev" in
@@ -315,7 +345,7 @@ BASH
 complete -c ashalliant -n "__fish_use_subcommand" -a switch -d "switch active model"
 complete -c ashalliant -n "__fish_use_subcommand" -a list -d "list models"
 complete -c ashalliant -n "__fish_use_subcommand" -a status -d "show status"
-complete -c ashalliant -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated <nil>"
+complete -c ashalliant -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil>"
 FISH
 
           runHook postInstall
