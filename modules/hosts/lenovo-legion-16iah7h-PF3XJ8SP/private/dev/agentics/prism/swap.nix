@@ -1,5 +1,5 @@
 # llamacpp-prism-up / llamacpp-prism-down — manual arbitration for the
-# two 3090 daemons (see ../ashalliants.nix, ../default.nix).
+# two 3090 daemons (see ../ninfer.nix, ../default.nix).
 #
 # WHY THIS EXISTS (2026-09-20, restored 2026-09-25): the 27B daemons
 # want the 3090 and cannot be resident together (ashalliants 23.3 GiB

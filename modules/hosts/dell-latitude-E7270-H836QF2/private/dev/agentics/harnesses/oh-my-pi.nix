@@ -1,8 +1,8 @@
-# DELL omp client: models.yml points ashalliant at LEGION over the tailnet.
+# DELL omp client: models.yml points ninfer at LEGION over the tailnet.
 #
 # Why: DELL has no GPU worth loading 27B on (Intel HD 520); legion serves
 # ashalliants on 0.0.0.0:8092 with the tailscale0-only firewall open
-# (modules/hosts/lenovo-legion-16iah7h-PF3XJ8SP/private/dev/agentics/ashalliants.nix,
+# (modules/hosts/lenovo-legion-16iah7h-PF3XJ8SP/private/dev/agentics/ninfer.nix,
 # 2026-10-10 main-engine switch). MagicDNS resolves the host
 # (lenovo-legion-16iah7h-pf3xj8sp.taild3be63.ts.net, verified 2026-09-20),
 # but the bare name is enough and keeps working if the tailnet is renamed.
@@ -13,12 +13,12 @@
 # over tailnet across all sessions, including ssh.
 #
 # PROVIDERS (2026-10-16): models.yml carries both the NetMind codev models
-# (MiniMax M3, GLM 5.3 Flash) and the legion ashalliant provider (Qwen 3.8 / 35B).
+# (MiniMax M3, GLM 5.3 Flash) and the legion ninfer provider (Qwen 3.8 / 35B).
 # sessionVariables/pi-reasonix extension come from the shared
 # dev.agentics.harnesses.oh-my-pi aspect; this file pins models and windows.
 #
 # 2026-10-19: `ompl` added on Dell host with parity to Legion's ompl,
-# pointing to the remote ashalliant models on Legion over Tailscale / ssh.
+# pointing to the remote ninfer models on Legion over Tailscale / ssh.
 {
   den,
   inputs,
@@ -124,14 +124,12 @@
           };
 
           ninfer = ninferProvider;
-          # Backward-compat alias (2026-10-31): retain ashalliant provider mapping to ninfer
-          ashalliant = ninferProvider;
         } geminiOverrides;
       };
 
       # `ompl` = a Qwen3.8-27B-ONLY harness mirroring Legion's ompl profile
       # (~/.omp/profiles/ompl/agent): every chat role pinned to the remote
-      # ashalliant engine on Legion (:8092), running under an isolated profile dir.
+      # ninfer engine on Legion (:8092), running under an isolated profile dir.
       omplOverlay = {
         modelRoles = {
           default = "ninfer/qwen3.8-27b-abliterated:high";
@@ -175,12 +173,10 @@
       };
 
       # Profile-local qwen-only models.yml for Dell: points to Legion's
-      # remote ashalliant endpoint over Tailscale.
+      # remote ninfer endpoint over Tailscale.
       omplModels = {
         providers = {
           ninfer = ninferProvider;
-          # Backward-compat alias (2026-10-31): retain ashalliant provider mapping to ninfer
-          ashalliant = ninferProvider;
         };
       };
 

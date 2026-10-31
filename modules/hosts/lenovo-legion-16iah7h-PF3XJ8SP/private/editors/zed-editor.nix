@@ -5,7 +5,7 @@
         agent = {
           default_model = {
             # ashalliants ninfer-0.15.0 DFlash2 (OpenAI-compat endpoint,
-            # ../dev/agentics/ashalliants.nix). ashalliants serves
+            # ../dev/agentics/ninfer.nix). ashalliants serves
             # /v1/chat/completions; the ashalliants provider entry in
             # dev/agentics/harnesses/oh-my-pi.nix pins the real context
             # window (262144, NINFER_FALLBACK=off keeps it exact).

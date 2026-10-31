@@ -111,8 +111,8 @@
           after = ["network-online.target"];
           wants = ["network-online.target"];
           # Mutual exclusion with the 3090 daemons (see ../swap.nix +
-          # ../ashalliants.nix): starting any of the units natively stops
-          # the others (ashalliants' unit declares the symmetric Conflicts
+          # ../ninfer.nix): starting any of the units natively stops
+          # the others (ninfer's units declare the symmetric Conflicts
           # set).
           conflicts = ["ashalliants-df2.service" "ashalliants-35b.service"];
 
@@ -120,8 +120,8 @@
             # Static 3090 pin (2026-09-25, homelab-spec visibility request):
             # explicit UUID, not index — CUDA enumerates the 3060 first
             # (live check 2026-09-20: index 0 = 3060 a81782bc, index 1 = 3090
-            # a4e36250). Same UUID as the ashalliants pin in
-            # ../ashalliants.nix; the two daemons arbitrate via
+            # a4e36250). Same UUID as the ninfer pin in
+            # ../ninfer.nix; the two daemons arbitrate via
             # llamacpp-prism-up/-down, never co-resident (15.1 GiB + 18 GiB
             # > 24.5 GiB).
             # DOCK-ONLY TRADE-OFF: undocked the unit fails CUDA init — by

@@ -48,7 +48,7 @@
 # PORT (2026-10-12): the den module system does NOT support top-level
 # `options` (it wraps values in aspect objects, so `den.aspects.X.port`
 # returns an aspect object, not the raw value). The port is exposed as a
-# let-binding `ashPort` here and referenced via `toString ashPort` in
+# let-binding `ninferPort` here and referenced via `toString ninferPort` in
 # the unit's Environment + firewall rules. Remote hosts (dell) duplicate
 # the value with a sync comment — cross-host option references aren't
 # reliable in the den module system.
@@ -61,7 +61,7 @@
       lib,
       ...
     }: let
-      ashRoot = "/home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090";
+      ninferRoot = "/home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090";
 
       # The four non-bundled ldd deps of the 0.15.0 binary (skill:
       # ninfer-ash-hostkv-clamp). prism-llamacpp-libs covers
@@ -69,7 +69,7 @@
       # /run/opengl-driver below), ffmpeg-full covers av*/swscale, curl
       # covers libcurl.so.4. Pin the exact store paths the benchmark
       # verified (engines.py LD_LIBRARY_PATH, 2026-10-08/09 sweeps).
-      ashLibs = [
+      ninferLibs = [
         "/run/opengl-driver/lib"
         "/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib"
         "/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib"
@@ -80,10 +80,10 @@
       # Port the ninfer-serve listens on. Single source of truth for
       # this host; remote hosts (dell) duplicate the value with a sync
       # comment in their models.yml.
-      ashPort = 8092;
+      ninferPort = 8092;
       # 2026-10-18: Native shell CLI. Fast (<5ms), minimal UI,
       # canonical IDs only (no aliases), <nil> unloader, and full shell completions.
-      # 2026-10-31: Renamed ashalliant CLI to ninfer; maintained ashalliant symlink for backwards compatibility.
+      # 2026-10-31: Renamed ashalliant CLI to ninfer (clean cutover).
       ninfer = pkgs.stdenv.mkDerivation {
         pname = "ninfer";
         version = "1.0.0";
@@ -102,12 +102,12 @@ set -euo pipefail
 SYSTEMCTL=( "${pkgs.systemd}/bin/systemctl" --no-ask-password )
 
 MODELS=(
-  "qwen3.8-27b|ashalliants-df2.service|${toString ashPort}|6x65k"
-  "qwen3.8-27b-abliterated|ashalliants-df2-abliterated.service|${toString ashPort}|6x65k"
-  "qwen3.6-35b-a3b|ashalliants-35b.service|${toString ashPort}|3x65k"
-  "qwen3.6-35b-a3b-abliterated|ashalliants-35b-abliterated.service|${toString ashPort}|3x65k"
-  "hemmingway-1-abliterated|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x262k"
-  "hemmingway-1-abliterated-nth|ashalliants-hemmingway-1-heretic.service|${toString ashPort}|1x262k"
+  "qwen3.8-27b|ashalliants-df2.service|${toString ninferPort}|6x65k"
+  "qwen3.8-27b-abliterated|ashalliants-df2-abliterated.service|${toString ninferPort}|6x65k"
+  "qwen3.6-35b-a3b|ashalliants-35b.service|${toString ninferPort}|3x65k"
+  "qwen3.6-35b-a3b-abliterated|ashalliants-35b-abliterated.service|${toString ninferPort}|3x65k"
+  "hemmingway-1-abliterated|ashalliants-hemmingway-1-heretic.service|${toString ninferPort}|1x262k"
+  "hemmingway-1-abliterated-nth|ashalliants-hemmingway-1-heretic.service|${toString ninferPort}|1x262k"
 )
 
 show_list() {
@@ -137,11 +137,7 @@ get_active() {
   # 2026-10-31: Consult persistent user runtime state file first so multi-variant targets
   # sharing the same underlying service daemon (e.g. hemmingway-1-abliterated vs hemmingway-1-abliterated-nth)
   # accurately report the user-selected variant rather than always defaulting to the first match.
-  # Checks ninfer state first, with fallback to legacy ashalliant state.
   local state_file="''${XDG_RUNTIME_DIR:-/tmp}/ninfer/active-model"
-  if [ ! -r "$state_file" ]; then
-    state_file="''${XDG_RUNTIME_DIR:-/tmp}/ashalliant/active-model"
-  fi
   if [ -r "$state_file" ]; then
     local saved_mid
     saved_mid="$(cat "$state_file" 2>/dev/null || true)"
@@ -169,7 +165,7 @@ get_active() {
 
   # Fallback: probe ninfer directly on its port if started outside systemctl
   local mpath
-  mpath="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ashPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.model_path // empty' 2>/dev/null || true )"
+  mpath="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.model_path // empty' 2>/dev/null || true )"
   if [ -n "$mpath" ]; then
     case "$mpath" in
       *hemmingway*) echo "hemmingway-1-abliterated"; return 0 ;;
@@ -187,7 +183,6 @@ do_switch() {
   local target="$1"
   local state_dir="''${XDG_RUNTIME_DIR:-/tmp}/ninfer"
   local state_file="$state_dir/active-model"
-  local legacy_state_file="''${XDG_RUNTIME_DIR:-/tmp}/ashalliant/active-model"
 
   # Backward-compat alias (2026-10-31): map deprecated hemmingway-1-heretic to canonical hemmingway-1-abliterated
   if [ "$target" = "hemmingway-1-heretic" ]; then
@@ -200,7 +195,7 @@ do_switch() {
         "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
       fi
     done
-    rm -f "$state_file" "$legacy_state_file" 2>/dev/null || true
+    rm -f "$state_file" 2>/dev/null || true
     echo "switched to <nil>"
     return 0
   fi
@@ -225,7 +220,6 @@ do_switch() {
   prev_active="$(get_active 2>/dev/null || true)"
   mkdir -p "$state_dir" 2>/dev/null || true
   echo "$canonical" > "$state_file" 2>/dev/null || true
-  rm -f "$legacy_state_file" 2>/dev/null || true
 
   if "''${SYSTEMCTL[@]}" is-active --quiet "$found_svc" 2>/dev/null; then
     if [ "$prev_active" = "$canonical" ]; then
@@ -246,7 +240,7 @@ do_switch() {
   if "''${SYSTEMCTL[@]}" start "$found_svc"; then
     echo "switched to $canonical"
   else
-    rm -f "$state_file" "$legacy_state_file" 2>/dev/null || true
+    rm -f "$state_file" 2>/dev/null || true
     echo "failed to start $found_svc" >&2
     exit 1
   fi
@@ -290,10 +284,9 @@ case "$cmd" in
 esac
 SCRIPT
           chmod +x $out/bin/ninfer
-          ln -s ninfer $out/bin/ashalliant
 
           cat << 'ZSH' > $out/share/zsh/site-functions/_ninfer
-#compdef ninfer ashalliant
+#compdef ninfer
 
 _ninfer() {
   local -a models
@@ -324,7 +317,6 @@ _ninfer() {
 
 _ninfer "$@"
 ZSH
-          ln -s _ninfer $out/share/zsh/site-functions/_ashalliant
 
           cat << 'BASH' > $out/share/bash-completion/completions/ninfer
 _ninfer_completion() {
@@ -347,50 +339,42 @@ _ninfer_completion() {
   fi
 }
 
-complete -F _ninfer_completion ninfer ashalliant
+complete -F _ninfer_completion ninfer
 BASH
-          ln -s ninfer $out/share/bash-completion/completions/ashalliant
 
           cat << 'FISH' > $out/share/fish/vendor_completions.d/ninfer.fish
 complete -c ninfer -n "__fish_use_subcommand" -a switch -d "switch active model"
 complete -c ninfer -n "__fish_use_subcommand" -a list -d "list models"
 complete -c ninfer -n "__fish_use_subcommand" -a status -d "show status"
 complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil>"
-
-complete -c ashalliant -n "__fish_use_subcommand" -a switch -d "switch active model"
-complete -c ashalliant -n "__fish_use_subcommand" -a list -d "list models"
-complete -c ashalliant -n "__fish_use_subcommand" -a status -d "show status"
-complete -c ashalliant -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil>"
 FISH
-          ln -s ninfer.fish $out/share/fish/vendor_completions.d/ashalliant.fish
           runHook postInstall
         '';
       };
     in {
       specialisation.homelab.configuration = {
         environment.systemPackages = [ninfer];
-        # Passwordless unit state management for ninfer (and legacy ashalliant) switch CLI.
+        # Passwordless unit state management for ninfer switch CLI.
         # Without this, systemctl stop/start blocks on interactive polkit auth (25s hang).
-        # Grants active local sessions or wheel users permission to manage ashalliants-*, ninfer-*, and bonsai2 units.
+        # Grants active local sessions or wheel users permission to manage ashalliants-* and bonsai2 units.
         security.polkit.extraConfig = ''
           polkit.addRule(function(action, subject) {
             if (action.id === "org.freedesktop.systemd1.manage-units" &&
                 (subject.isInGroup("wheel") || (subject.local && subject.active))) {
               var unit = action.lookup("unit");
-              if (unit && (unit.indexOf("ashalliants-") === 0 || unit.indexOf("ninfer-") === 0 || unit === "bonsai2.service")) {
+              if (unit && (unit.indexOf("ashalliants-") === 0 || unit === "bonsai2.service")) {
                 return polkit.Result.YES;
               }
             }
           });
         '';
 
-
         systemd.services.ashalliants-df2 = {
           description = "ashalliants ninfer-0.15.0 Qwen3.8-27B DFlash2";
           after = ["network-online.target"];
           wants = ["network-online.target"];
 
-          # On-demand Qwen3.8-27B daemon (port 8092). Started via `ashalliant switch qwen3.8-27b`.
+          # On-demand Qwen3.8-27B daemon (port 8092). Started via `ninfer switch qwen3.8-27b`.
           conflicts = [
             "bonsai2.service"
             "ashalliants-df2-abliterated.service"
@@ -410,7 +394,7 @@ FISH
           serviceConfig = {
             Type = "simple";
             User = "ayin"; # artifact tree is ayin-owned; run.sh probes $HOME trees
-            WorkingDirectory = ashRoot;
+            WorkingDirectory = ninferRoot;
             # Boot gate: 60 s GPU wait (thunderbolt eGPU enumerates after
             # multi-user.target), then artifact hash verify. Exit 1 = clean
             # skip (undocked / unplugged GPU), no restart storm.
@@ -422,7 +406,7 @@ FISH
               done
               # Artifact gate (vendor download-model.sh pins, verified
               # 2026-10-09: sha256 7f2a0086..., 18982458624 bytes).
-              echo "7f2a0086a071ee932c66106e1552d118a85cfec8ddef13c67a54cd64abb39706  ${ashRoot}/models/qwen3_8_27b.ninfer" \
+              echo "7f2a0086a071ee932c66106e1552d118a85cfec8ddef13c67a54cd64abb39706  ${ninferRoot}/models/qwen3_8_27b.ninfer" \
                 | ${pkgs.coreutils}/bin/sha256sum -c -
             '';
 
@@ -434,7 +418,7 @@ FISH
             # benchmarked shape (2026-10-12: C6x65k = 769.4 agg tok/s,
             # 128.2 per-lane); NINFER_SPEC=dflash2 pins the winner lane.
             Environment = let
-              ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
+              ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);
             in [
               "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
               "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
@@ -443,15 +427,15 @@ FISH
               # Listen on 0.0.0.0 so tailscale0 peers (Dell) can connect;
               # tailscale0-only firewall rule below keeps non-tailnet traffic blocked.
               "NINFER_HOST=0.0.0.0"
-              "NINFER_PORT=${toString ashPort}"
+              "NINFER_PORT=${toString ninferPort}"
               "NINFER_FALLBACK=off"
               "NINFER_CONCURRENCY=6"
               "NINFER_CONTEXT=65536"
               "NINFER_KV_CAPACITY=65536"
               "NINFER_HOST_STATE_SLOTS=6"
-              "NINFER_SERVER=${ashRoot}/ninfer-serve.hostkv-shim"
+              "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
-            ExecStart = "${ashRoot}/run.sh qwen38-27b tuned";
+            ExecStart = "${ninferRoot}/run.sh qwen38-27b tuned";
 
             # Second belt after the 2 GiB hostkv clamp: throttle at 10G,
             # hard wall 12G (ninfer.nix oomd history: Psi spikes killed
@@ -487,7 +471,7 @@ FISH
           serviceConfig = {
             Type = "simple";
             User = "ayin";
-            WorkingDirectory = ashRoot;
+            WorkingDirectory = ninferRoot;
             ExecCondition = pkgs.writeShellScript "ashalliants-df2-abl-boot-gate" ''
               i=0
               until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
@@ -496,28 +480,28 @@ FISH
               done
             '';
             Environment = let
-              ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
+              ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);
             in [
               "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
               "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
               "LD_LIBRARY_PATH=${ld}"
               "NINFER_SPEC=dflash2"
               "NINFER_HOST=0.0.0.0"
-              "NINFER_PORT=${toString ashPort}"
+              "NINFER_PORT=${toString ninferPort}"
               "NINFER_FALLBACK=off"
               "NINFER_CONCURRENCY=6"
               "NINFER_CONTEXT=65536"
               "NINFER_KV_CAPACITY=65536"
               "NINFER_HOST_STATE_SLOTS=6"
-              "NINFER_SERVER=${ashRoot}/ninfer-serve.hostkv-shim"
+              "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
             ExecStart = pkgs.writeShellScript "ashalliants-df2-abl-start" ''
-              if [ -f "${ashRoot}/models/swift_1_5_qwen3_8_27b.ninfer" ]; then
-                export NINFER_MODEL="${ashRoot}/models/swift_1_5_qwen3_8_27b.ninfer"
-              elif [ -f "${ashRoot}/models/obliterated_qwen3_8_27b.ninfer" ]; then
-                export NINFER_MODEL="${ashRoot}/models/obliterated_qwen3_8_27b.ninfer"
+              if [ -f "${ninferRoot}/models/swift_1_5_qwen3_8_27b.ninfer" ]; then
+                export NINFER_MODEL="${ninferRoot}/models/swift_1_5_qwen3_8_27b.ninfer"
+              elif [ -f "${ninferRoot}/models/obliterated_qwen3_8_27b.ninfer" ]; then
+                export NINFER_MODEL="${ninferRoot}/models/obliterated_qwen3_8_27b.ninfer"
               fi
-              exec ${ashRoot}/run.sh qwen38-27b tuned
+              exec ${ninferRoot}/run.sh qwen38-27b tuned
             '';
             MemoryHigh = "10G";
             MemoryMax = "12G";
@@ -544,33 +528,33 @@ FISH
           serviceConfig = {
             Type = "simple";
             User = "ayin";
-            WorkingDirectory = ashRoot;
+            WorkingDirectory = ninferRoot;
             ExecCondition = pkgs.writeShellScript "ashalliants-35b-boot-gate" ''
               i=0
               until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
                 i=$((i+1)); [ $i -gt 60 ] && exit 1
                 sleep 1
               done
-              echo "3e33297645dc33557751be1a3c407a74ed7c00f34909b5d4e8cfdce91b3dbe84  ${ashRoot}/models/qwen3_6_35b_a3b.ninfer" \
+              echo "3e33297645dc33557751be1a3c407a74ed7c00f34909b5d4e8cfdce91b3dbe84  ${ninferRoot}/models/qwen3_6_35b_a3b.ninfer" \
                 | ${pkgs.coreutils}/bin/sha256sum -c -
             '';
             Environment = let
-              ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
+              ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);
             in [
               "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
               "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
               "LD_LIBRARY_PATH=${ld}"
               "NINFER_SPEC=mtp"
               "NINFER_HOST=0.0.0.0"
-              "NINFER_PORT=${toString ashPort}"
+              "NINFER_PORT=${toString ninferPort}"
               "NINFER_FALLBACK=off"
               "NINFER_CONCURRENCY=3"
               "NINFER_CONTEXT=65536"
               "NINFER_KV_CAPACITY=65536"
               "NINFER_HOST_STATE_SLOTS=3"
-              "NINFER_SERVER=${ashRoot}/ninfer-serve.hostkv-shim"
+              "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
-            ExecStart = "${ashRoot}/run.sh qwen36-35b-a3b tuned";
+            ExecStart = "${ninferRoot}/run.sh qwen36-35b-a3b tuned";
             MemoryHigh = "10G";
             MemoryMax = "12G";
             Restart = "on-failure";
@@ -596,7 +580,7 @@ FISH
           serviceConfig = {
             Type = "simple";
             User = "ayin";
-            WorkingDirectory = ashRoot;
+            WorkingDirectory = ninferRoot;
             ExecCondition = pkgs.writeShellScript "ashalliants-35b-abl-boot-gate" ''
               i=0
               until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
@@ -605,26 +589,26 @@ FISH
               done
             '';
             Environment = let
-              ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
+              ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);
             in [
               "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
               "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
               "LD_LIBRARY_PATH=${ld}"
               "NINFER_SPEC=mtp"
               "NINFER_HOST=0.0.0.0"
-              "NINFER_PORT=${toString ashPort}"
+              "NINFER_PORT=${toString ninferPort}"
               "NINFER_FALLBACK=off"
               "NINFER_CONCURRENCY=3"
               "NINFER_CONTEXT=65536"
               "NINFER_KV_CAPACITY=65536"
               "NINFER_HOST_STATE_SLOTS=3"
-              "NINFER_SERVER=${ashRoot}/ninfer-serve.hostkv-shim"
+              "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
             ExecStart = pkgs.writeShellScript "ashalliants-35b-abl-start" ''
-              if [ -f "${ashRoot}/models/qwen3_6_35b_a3b_huihui_abliterated.ninfer" ]; then
-                export NINFER_MODEL="${ashRoot}/models/qwen3_6_35b_a3b_huihui_abliterated.ninfer"
+              if [ -f "${ninferRoot}/models/qwen3_6_35b_a3b_huihui_abliterated.ninfer" ]; then
+                export NINFER_MODEL="${ninferRoot}/models/qwen3_6_35b_a3b_huihui_abliterated.ninfer"
               fi
-              exec ${ashRoot}/run.sh qwen36-35b-a3b tuned
+              exec ${ninferRoot}/run.sh qwen36-35b-a3b tuned
             '';
             MemoryHigh = "10G";
             MemoryMax = "12G";
@@ -651,7 +635,7 @@ FISH
           serviceConfig = {
             Type = "simple";
             User = "ayin";
-            WorkingDirectory = ashRoot;
+            WorkingDirectory = ninferRoot;
             ExecCondition = pkgs.writeShellScript "ashalliants-hemmingway-boot-gate" ''
               i=0
               until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
@@ -660,25 +644,25 @@ FISH
               done
             '';
             Environment = let
-              ld = lib.concatStringsSep ":" (ashLibs ++ ["/run/opengl-driver/lib"]);
+              ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);
             in [
               "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
               "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
               "LD_LIBRARY_PATH=${ld}"
               "NINFER_SPEC=mtp"
               "NINFER_HOST=0.0.0.0"
-              "NINFER_PORT=${toString ashPort}"
+              "NINFER_PORT=${toString ninferPort}"
               "NINFER_FALLBACK=off"
               "NINFER_CONCURRENCY=1"
               "NINFER_CONTEXT=262144"
               "NINFER_KV_CAPACITY=262144"
               "NINFER_HOST_STATE_SLOTS=1"
               "NINFER_PREFILL_CHUNK=4096"
-              "NINFER_SERVER=${ashRoot}/ninfer-serve.hostkv-shim"
+              "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
             ExecStart = pkgs.writeShellScript "ashalliants-hemmingway-start" ''
-              export NINFER_MODEL="${ashRoot}/models/hemmingway_1_heretic.ninfer"
-              exec ${ashRoot}/run.sh hemmingway-1-heretic tuned
+              export NINFER_MODEL="${ninferRoot}/models/hemmingway_1_heretic.ninfer"
+              exec ${ninferRoot}/run.sh hemmingway-1-heretic tuned
             '';
             MemoryHigh = "10G";
             MemoryMax = "12G";
@@ -692,7 +676,7 @@ FISH
 
         # Tailscale firewall: open single ashalliants port (:8092).
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
-          ashPort
+          ninferPort
         ];
       }; # specialisation.homelab.configuration
     };

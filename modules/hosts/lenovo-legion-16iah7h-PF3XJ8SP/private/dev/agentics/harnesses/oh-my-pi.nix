@@ -28,13 +28,13 @@
       # does NOT support top-level `options` (it wraps values in aspect
       # objects, so `den.aspects.X.port` returns an aspect object, not
       # the raw value), so the port is duplicated here as a let-binding
-      # and referenced via `toString ashPort` in the provider block.
-      # MUST match `ashPort` in ../ashalliants.nix.
-      ashPort = 8092;
+      # and referenced via `toString ninferPort` in the provider block.
+      # MUST match `ninferPort` in ../ninfer.nix.
+      ninferPort = 8092;
       # 3090 gating (2026-09-21, 3090 specialisation pattern): the local
-      # ashalliants provider exists ONLY inside the homelab
+      # ninfer provider exists ONLY inside the homelab
       # specialisation — the daemon it points at is gated there too
-      # (../ashalliants.nix). osConfig.isSpecialisation is mkOverride-0
+      # (../ninfer.nix). osConfig.isSpecialisation is mkOverride-0
       # true inside spec evals (nixos/modules/system/activation/
       # no-clone.nix) and false in the default generation, so the two
       # models.yml variants diverge on this flag and there is no module
@@ -147,7 +147,7 @@
         # 35B MTP3, 35B Abliterated). Mutual conflicts ensure one daemon runs at a time on :8092,
         # switched on-demand via `ninfer switch <model>`.
         ninfer = {
-          baseUrl = "http://127.0.0.1:${toString ashPort}/v1";
+          baseUrl = "http://127.0.0.1:${toString ninferPort}/v1";
           api = "openai-completions";
           auth = "none";
 
@@ -203,8 +203,6 @@
             }
           ];
         };
-        # Backward-compat alias (2026-10-31): retain ashalliant provider mapping to ninfer
-        ashalliant = local.ninfer;
       };
       # Caps Gemini models from default 1M to 256k contextWindow across all active
       # Gemini-bearing providers (2026-10-18 user request).
@@ -236,7 +234,7 @@
       };
 
       # `ompl` = a Qwen3.8-27B-ONLY harness: every chat role pinned to
-      # the local ashalliants engine (../ashalliants.nix), running
+      # the local ninfer engine (../ninfer.nix), running
       # under a dedicated `--profile ompl` agent dir
       # (~/.omp/profiles/ompl/agent). The profile isolates ALL agent
       # state — sessions, history.db, agent.db, models.db, stored auth,
@@ -350,8 +348,6 @@
       omplModels = {
         providers = {
           ninfer = local.ninfer;
-          # Backward-compat alias (2026-10-31): retain ashalliant provider mapping to ninfer
-          ashalliant = local.ninfer;
         };
       };
 
@@ -452,13 +448,13 @@
           license = pkgs.lib.licenses.mit;
         };
       };
-      # ompl wrapper (2026-10-30): dynamically queries active model via ninfer active (or fallback ashalliant active),
+      # ompl wrapper (2026-10-30): dynamically queries active model via ninfer active,
       # generates a runtime overlay in $XDG_RUNTIME_DIR/omp/ompl-active.yml,
       # and sets modelRoles to the active model instead of hardcoding qwen3.8-27b-abliterated.
       omplWrapper = pkgs.writeShellScriptBin "ompl" ''
         set -euo pipefail
 
-        active_model="$( ninfer active 2>/dev/null || ashalliant active 2>/dev/null || true )"
+        active_model="$( ninfer active 2>/dev/null || true )"
         active_model="''${active_model:-qwen3.8-27b-abliterated}"
 
         runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
