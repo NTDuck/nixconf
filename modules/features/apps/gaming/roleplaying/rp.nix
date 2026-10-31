@@ -28,7 +28,10 @@
         wants = ["network-online.target"];
         after = ["network-online.target"];
 
-        path = [config.virtualisation.podman.package];
+        path = [
+          config.virtualisation.podman.package
+          pkgs.coreutils
+        ];
 
         preStart = ''
           podman rm -f rp || true
@@ -45,11 +48,14 @@
           # RuntimeDirectory="podman-rp" guarantees /run/podman-rp exists.
           sed '/^VOLUME/d' ${src}/Dockerfile > /run/podman-rp/Dockerfile
           podman build -f /run/podman-rp/Dockerfile -t rp-suite:local ${src}
-          # Container runs as UID 1000 (node), but StateDirectory="rp" gives
-          # /var/lib/rp to root:root — the server's mkdir data/avatars then
-          # dies with EACCES and the unit restart-loops, blocking
-          # multi-user.target. chown the volume so the bind mount is writable.
-          /run/current-system/sw/bin/chown -R 1000:1000 /var/lib/rp
+          # Container runs as UID 1000 (node).
+          # Do NOT set StateDirectory="rp" in serviceConfig: because this unit
+          # runs as root, systemd's StateDirectory logic detects that /var/lib/rp
+          # does not belong to root and recursively re-chowns the entire directory
+          # tree to root:root right before ExecStart, causing SQLite ERR_SQLITE_ERROR
+          # "attempt to write a readonly database" and EACCES on avatar writes.
+          mkdir -p /var/lib/rp
+          chown -R 1000:1000 /var/lib/rp
         '';
 
         script = ''
@@ -64,7 +70,7 @@
             --sdnotify=conmon \
             -d --replace \
             -p 127.0.0.1:43110:3001 \
-            -v /var/lib/rp:/app/data \
+            -v /var/lib/rp:/app/data:U \
             -e TZ=UTC \
             rp-suite:local
         '';
@@ -77,7 +83,6 @@
           NotifyAccess = "all";
           Delegate = true;
           RuntimeDirectory = "podman-rp";
-          StateDirectory = "rp";
           Environment = "PODMAN_SYSTEMD_UNIT=%n";
           # First build pulls node:24-slim and runs npm ci — unbounded.
           TimeoutStartSec = 0;
@@ -85,6 +90,17 @@
           Restart = "on-failure";
         };
       };
+      # Passwordless unit state management for podman-rp service.
+      # Grants active local sessions or wheel users permission to manage podman-rp unit.
+      security.polkit.extraConfig = ''
+        polkit.addRule(function(action, subject) {
+          if (action.id === "org.freedesktop.systemd1.manage-units" &&
+              action.lookup("unit") === "podman-rp.service" &&
+              (subject.isInGroup("wheel") || (subject.local && subject.active))) {
+            return polkit.Result.YES;
+          }
+        });
+      '';
 
       # Terminal invocation (user 2026-09-16): CLI command instead of a
       # desktop entry. Waits briefly for the loopback port (the unit may
