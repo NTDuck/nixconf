@@ -1,4 +1,5 @@
-# HP ProBook 450 G3 headless worker host (2026-10-30):
+# HP ProBook 450 G3 headless worker host (2026-11-01):
+# Renamed from placeholder xxxx to hardware serial 5CD8132YC3 (scanned via dmidecode).
 # No GUI/WM, lid stays closed with battery connected, connects to legion over
 # SSH & Tailscale mesh, terminal utilities only.
 {
@@ -6,11 +7,19 @@
   lib,
   ...
 }: {
-  den.hosts.x86_64-linux.hp-probook-450-g3-xxxx = {
+  den.hosts.x86_64-linux.hp-probook-450-g3-5CD8132YC3 = {
     users.ayin = {};
   };
+  # Compatibility alias for the initial placeholder host name:
+  den.hosts.x86_64-linux.hp-probook-450-g3-xxxx = den.hosts.x86_64-linux.hp-probook-450-g3-5CD8132YC3;
 
   den.aspects.hp-probook-450-g3-xxxx = {
+    includes = [
+      den.aspects.hp-probook-450-g3-5CD8132YC3
+    ];
+  };
+
+  den.aspects.hp-probook-450-g3-5CD8132YC3 = {
     includes = [
       # Always-on lid-closed worker policy: ignore lid and power triggers,
       # and disable sleep/suspend/hibernate targets completely.

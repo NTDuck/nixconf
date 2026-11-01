@@ -29,7 +29,7 @@ Sometimes you have to do this instead:
 $ sudo NIX_CONFIG="experimental-features = nix-command flakes" nixos-rebuild switch --flake ".#${HOSTNAME}"
 ```
 
-Current supported hosts are `dell-latitude-E7270-H836QF2` and `lenovo-legion-16iah7h-PF3XJ8SP`.
+Current supported hosts are `dell-latitude-E7270-H836QF2`, `hp-probook-450-g3-5CD8132YC3` (headless worker), and `lenovo-legion-16iah7h-PF3XJ8SP`.
 
 ### 2. Rebuild
 
