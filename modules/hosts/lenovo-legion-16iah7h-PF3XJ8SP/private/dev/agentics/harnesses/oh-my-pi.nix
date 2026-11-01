@@ -351,6 +351,66 @@
         };
       };
 
+      # `omprp` = roleplaying harness (2026-11-01): runs under `--profile omprp`
+      # (~/.omp/profiles/omprp/agent) wired to the active ninfer model.
+      # Unlike ompl (stateless coding scratchpad with vibe-on-startup),
+      # omprp is tuned for roleplay and creative prose:
+      #   hideThinkingBlock: true      - suppress reasoning/thinking logs in output
+      #   memory.backend: mnemopi      - persistent SQLite memory across sessions
+      #   autolearn.enabled: true      - persist learnings and memories
+      #   vibe.defaultOnStartup: false - vibe mode disabled
+      #   advisor.enabled: false       - advisor runtime disabled (no passive turns/notes)
+      #   personality: "none"          - omit engineering personality constraints
+      #   git.enabled: false           - suppress git branch/status checks and UI indicators
+      omprpOverlay = {
+        modelRoles = {
+          default = "ninfer/qwen3.8-27b-abliterated:high";
+          smol = "ninfer/qwen3.8-27b-abliterated:high";
+          slow = "ninfer/qwen3.8-27b-abliterated:high";
+          vision = "ninfer/qwen3.8-27b-abliterated:high";
+          plan = "ninfer/qwen3.8-27b-abliterated:high";
+          commit = "ninfer/qwen3.8-27b-abliterated:high";
+          task = "ninfer/qwen3.8-27b-abliterated:high";
+          advisor = "ninfer/qwen3.8-27b-abliterated:high";
+          judge = "ninfer/qwen3.8-27b-abliterated:high";
+        };
+
+        enabledModels = [
+          "ninfer/qwen3.8-27b"
+          "ninfer/qwen3.8-27b-abliterated"
+          "ninfer/qwen3.6-35b-a3b"
+          "ninfer/qwen3.6-35b-a3b-abliterated"
+          "ninfer/hemmingway-1-abliterated"
+          "ninfer/hemmingway-1-abliterated-nth"
+        ];
+        disabledProviders = [
+          # implicit keyless local probes
+          "llama.cpp"
+          "lm-studio"
+          "apple"
+          # env-var/stored-credential cloud ids observed on this host
+          "litellm"
+          "openrouter"
+          "opencode-go"
+          "opencode-zen"
+          "google-antigravity"
+          "openai-codex"
+        ];
+
+        retry.modelFallback = false;
+
+        hideThinkingBlock = true;
+        memory.backend = "mnemopi";
+        autolearn.enabled = true;
+
+        vibe.defaultOnStartup = false;
+        advisor.enabled = false;
+        personality = "none";
+        git.enabled = false;
+      };
+
+      omprpModels = omplModels;
+
       # A named profile's agent dir resolves ITS OWN extensions/ and
       # keybindings.yml — the shared aspect's copies in ~/.omp/agent/
       # are invisible to it (verified 2026-10-11: no "[pi-reasonix]
@@ -478,6 +538,36 @@ EOF
         exec "${ompVibePkg}/bin/omp" --profile ompl "$@"
       '';
 
+      # omprp wrapper (2026-11-01): dynamically queries active model via ninfer active,
+      # generates a runtime overlay in $XDG_RUNTIME_DIR/omp/omprp-active.yml,
+      # and sets modelRoles to the active model, optimized for roleplay.
+      omprpWrapper = pkgs.writeShellScriptBin "omprp" ''
+        set -euo pipefail
+
+        active_model="$( ninfer active 2>/dev/null || true )"
+        active_model="''${active_model:-qwen3.8-27b-abliterated}"
+
+        runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
+        mkdir -p "$runtime_dir"
+        active_overlay="$runtime_dir/omprp-active.yml"
+
+        cat << EOF > "$active_overlay"
+modelRoles:
+  default: ninfer/$active_model:high
+  smol: ninfer/$active_model:high
+  slow: ninfer/$active_model:high
+  vision: ninfer/$active_model:high
+  plan: ninfer/$active_model:high
+  commit: ninfer/$active_model:high
+  task: ninfer/$active_model:high
+  advisor: ninfer/$active_model:high
+  judge: ninfer/$active_model:high
+EOF
+
+        export PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/omprp.yml:$active_overlay"
+        exec "${ompVibePkg}/bin/omp" --profile omprp "$@"
+      '';
+
     in {
       # force = true (2026-10-18): self-heal over pre-existing unmanaged or
       # test-linked models.yml/ompl.yml so HM activation checkLinkTargets does not fail.
@@ -492,6 +582,23 @@ EOF
         source = yaml.generate ".omp.agent.ompl.yml" omplOverlay;
         force = true;
       };
+      home.file.".omp/agent/omprp.yml" = {
+        source = yaml.generate ".omp.agent.omprp.yml" omprpOverlay;
+        force = true;
+      };
+
+      # --- omprp profile support files (~/.omp/profiles/omprp/agent/) ---
+      home.file.".omp/profiles/omprp/agent/models.yml" = {
+        source = yaml.generate ".omp.agent.omprp-models.yml" omprpModels;
+        force = true;
+      };
+      home.file.".omp/profiles/omprp/agent/keybindings.yml".text = ''
+        keybindings:
+          app.clipboard.pasteImage: "alt+v"
+      '';
+
+      home.file.".omp/profiles/omprp/agent/extensions/pi-reasonix.js".source =
+        "${reasonixPkg}/share/omp/extensions/pi-reasonix.js";
 
       # --- ompl profile support files (~/.omp/profiles/ompl/agent/) ---
       home.file.".omp/profiles/ompl/agent/models.yml" = {
@@ -514,10 +621,17 @@ EOF
       home.file.".omp/agent/extensions/pi-antigravity.js".source =
         "${antigravityPkg}/share/omp/extensions/pi-antigravity.js";
 
-      home.packages = [omplWrapper];
+      home.packages = [
+        omplWrapper
+        omprpWrapper
+      ];
       # Ensure cargo bin path does not shadow the dynamic wrapper with a stale script
       home.file.".cargo/bin/ompl" = {
         source = "${omplWrapper}/bin/ompl";
+        force = true;
+      };
+      home.file.".cargo/bin/omprp" = {
+        source = "${omprpWrapper}/bin/omprp";
         force = true;
       };
 
@@ -549,6 +663,7 @@ EOF
         # llm-agents bump rebuilds it locally (~10min, upstream source
         # build cost) instead of downloading.
         ompl = "${omplWrapper}/bin/ompl";
+        omprp = "${omprpWrapper}/bin/omprp";
       };
     };
   };
