@@ -285,11 +285,24 @@ esac
 SCRIPT
           chmod +x $out/bin/ninfer
 
+          # Shell completions supporting both subcommands (switch, list, status, active)
+          # and direct model invocation (e.g. `ninfer qwen3.8-27b`), fixing tab completion in zsh/bash/fish.
           cat << 'ZSH' > $out/share/zsh/site-functions/_ninfer
 #compdef ninfer
 
 _ninfer() {
-  local -a models
+  local curcontext="$curcontext" state line
+  typeset -A opt_args
+
+  local -a commands models
+  commands=(
+    'switch:switch active model'
+    'active:show active model'
+    'current:show active model'
+    'list:list models'
+    'status:show status'
+  )
+
   models=(
     'qwen3.8-27b:Qwen3.8-27B DFlash2 (6x65k :8092)'
     'qwen3.8-27b-abliterated:Qwen3.8-27B Abliterated (6x65k :8094)'
@@ -298,17 +311,30 @@ _ninfer() {
     'hemmingway-1-abliterated:Hemmingway-1 Abliterated (1x262k :8092)'
     'hemmingway-1-abliterated-nth:Hemmingway-1 (Abliterated, non-thinking) (1x262k :8092)'
     '\<nil\>:Unload all ashalliants models'
+    'nil:Unload all ashalliants models'
   )
 
   _arguments -C \
-    '1:command:((switch\:"switch active model" list\:"list models" status\:"show status"))' \
-    '2:model:->models' \
     '-s[switch active model]:model:->models' \
     '--switch[switch active model]:model:->models' \
     '-h[show help]' \
-    '--help[show help]'
+    '--help[show help]' \
+    '1:command or model:->cmd_or_model' \
+    '*:args:->args' \
+    && return 0
 
   case "$state" in
+    cmd_or_model)
+      _describe -t commands 'command' commands
+      _describe -t models 'model' models
+      ;;
+    args)
+      case "''${words[2]}" in
+        switch|-s|--switch)
+          _describe -t models 'model' models
+          ;;
+      esac
+      ;;
     models)
       _describe -t models 'model' models
       ;;
@@ -324,8 +350,8 @@ _ninfer_completion() {
   cur="''${COMP_WORDS[COMP_CWORD]}"
   prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-  local models="qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil>"
-  local commands="switch list status"
+  local models="qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil> nil"
+  local commands="switch list status active current"
 
   case "$prev" in
     switch|-s|--switch)
@@ -346,7 +372,10 @@ BASH
 complete -c ninfer -n "__fish_use_subcommand" -a switch -d "switch active model"
 complete -c ninfer -n "__fish_use_subcommand" -a list -d "list models"
 complete -c ninfer -n "__fish_use_subcommand" -a status -d "show status"
-complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil>"
+complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
+complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
+complete -c ninfer -n "__fish_use_subcommand" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil> nil"
+complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil> nil"
 FISH
           runHook postInstall
         '';
