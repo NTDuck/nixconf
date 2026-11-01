@@ -1,8 +1,8 @@
-# HP ProBook 450 G3 hardware placeholder (2026-10-30):
-# Hardware is not yet specified/scanned. Placeholders use lib.mkDefault
-# so flake evaluation succeeds and nixos-generate-config can override them.
+# HP ProBook 450 G3 hardware specification (2026-11-01):
+# Scanned on physical host (Serial 5CD8132YC3, Intel Core i7-6500U Skylake GT2).
+# Default mounts use labels so nixos-generate-config can override with UUIDs.
 {den, ...}: {
-  den.aspects.hp-probook-450-g3-xxxx = {
+  den.aspects.hp-probook-450-g3-5CD8132YC3 = {
     nixos = {
       config,
       lib,
@@ -36,6 +36,7 @@
 
       nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
       hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+      hardware.enableRedistributableFirmware = lib.mkDefault true;
     };
   };
 }
