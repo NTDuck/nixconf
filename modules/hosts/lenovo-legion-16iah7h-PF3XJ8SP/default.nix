@@ -17,6 +17,7 @@
       den.aspects.apps.jq
       den.aspects.apps.editors.helix
       den.aspects.apps.editors.zed-editor
+      den.aspects.apps.editors.openidea
       den.aspects.apps.file-managers.nemo
       den.aspects.apps.file-managers.tfm
       den.aspects.apps.gaming.itch
