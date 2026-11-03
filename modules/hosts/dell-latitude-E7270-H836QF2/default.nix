@@ -43,6 +43,7 @@
       den.aspects.apps.editors.emeraldian
       # JetBrains IDE (proprietary `idea`, not the dead idea-oss).
       den.aspects.apps.editors.intellij
+      den.aspects.apps.editors.openidea
       den.aspects.apps.editors.zed-editor
       den.aspects.apps.editors.helix
       # Office suite (2026-09-27 user request): same aspect legion uses.
