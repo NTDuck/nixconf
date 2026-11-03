@@ -10,15 +10,6 @@
   den.hosts.x86_64-linux.hp-probook-450-g3-5CD8132YC3 = {
     users.ayin = {};
   };
-  # Compatibility alias for the initial placeholder host name:
-  den.hosts.x86_64-linux.hp-probook-450-g3-xxxx = den.hosts.x86_64-linux.hp-probook-450-g3-5CD8132YC3;
-
-  den.aspects.hp-probook-450-g3-xxxx = {
-    includes = [
-      den.aspects.hp-probook-450-g3-5CD8132YC3
-    ];
-  };
-
   den.aspects.hp-probook-450-g3-5CD8132YC3 = {
     includes = [
       # Always-on lid-closed worker policy: ignore lid and power triggers,
