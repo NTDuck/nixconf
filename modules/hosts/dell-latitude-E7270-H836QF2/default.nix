@@ -47,6 +47,8 @@
       den.aspects.apps.editors.helix
       # Office suite (2026-09-27 user request): same aspect legion uses.
       den.aspects.apps.office.libreoffice
+      # Discord client via Vesktop (2026-11-03 user request): parity with legion.
+      den.aspects.apps.messaging.discord
       # omp + ashalliants-over-tailscale (models.yml points at legion).
       den.aspects.dev.agentics.harnesses.codev
       den.aspects.dev.agentics.harnesses.learnharness
