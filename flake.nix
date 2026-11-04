@@ -37,6 +37,11 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
     den.url = "github:denful/den";
+    # Pinned nix-effects overrides the internal fallback fetchTarball in den (nix/lib/fx.nix)
+    # which fails under Lix due to curl redirects (codeload.github.com) triggering
+    # "changed final destination during transfer" (Lix issue #1004).
+    nix-effects.url = "github:denful/nix-effects/c3c68a45deb892d028711eeff8b80937e30a90dd";
+    nix-effects.inputs.nixpkgs.follows = "nixpkgs";
     # flake-file.url = "github:vic/flake-file";
 
     # Secrets
@@ -71,10 +76,10 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
-    # Agentics
+    # Agentics (pinned to numtide CI's nixpkgs rev so packages like omp
+    # resolve directly to cache.numtide.com without failing bun2nix builds)
     llm-agents.url = "github:numtide/llm-agents.nix";
-    llm-agents.inputs.nixpkgs.follows = "nixpkgs-unstable";
-
+    llm-agents.inputs.nixpkgs.url = "github:NixOS/nixpkgs/885ba4d038f10c3d17d7a92e8c3cc185b99c9158";
     # llano V12 Ultra cooling pad control (Holtek USB-HID 374a:b101,
     # Myth.Cool protocol) — source-only input, pinned to the v0.1.4 tag
     # commit (protocol live-verified upstream; master is untested). Packaged
