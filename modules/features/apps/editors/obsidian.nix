@@ -3,7 +3,11 @@
     homeManager = {pkgs, ...}: {
       programs.obsidian = {
         enable = true;
-        package = pkgs.unstable.obsidian;
+        # --in-process-gpu avoids GPU process crash (FATAL:content/browser/gpu/gpu_data_manager_impl_private.cc)
+        # on Linux X11 sessions with Intel integrated graphics, which caused a black screen on launch.
+        package = pkgs.unstable.obsidian.override {
+          commandLineArgs = "--in-process-gpu";
+        };
 
         defaultSettings = {
           appearance = {
