@@ -70,10 +70,6 @@
             -d --replace \
             -p 127.0.0.1:${toString port}:${toString port} \
             -v gw2a-data:/data \
-            --health-cmd='/app/gemini-web2api --version' \
-            --health-interval=30s \
-            --health-timeout=5s \
-            --health-retries=3 \
             ${imageRef}
         '';
 
