@@ -50,7 +50,7 @@
       den.aspects.apps.office.libreoffice
       # Discord client via Vesktop (2026-11-03 user request): parity with legion.
       den.aspects.apps.messaging.discord
-      # omp + ashalliants-over-tailscale (models.yml points at legion).
+      # omp + ninfer-over-tailscale (models.yml points at legion).
       den.aspects.dev.agentics.harnesses.codev
       den.aspects.dev.agentics.harnesses.learnharness
       den.aspects.dev.agentics.harnesses.memdoor
@@ -259,7 +259,7 @@
           networking.hosts = {
             # Tailscale peer mapping (2026-10-16): Dell runs tailscale with
             # --accept-dns=false, so MagicDNS bare hostnames do not resolve.
-            # Map Legion's tailnet IP so ashalliants and other services route over tailscale.
+            # Map Legion's tailnet IP so ninfer and other services route over tailscale.
             "100.105.224.23" = [
               "lenovo-legion-16iah7h-pf3xj8sp"
               "lenovo-legion-16iah7h-pf3xj8sp.taild3be63.ts.net"

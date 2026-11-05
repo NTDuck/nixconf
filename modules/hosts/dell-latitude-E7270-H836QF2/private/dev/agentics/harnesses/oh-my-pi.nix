@@ -1,13 +1,13 @@
 # DELL omp client: models.yml points ninfer at LEGION over the tailnet.
 #
 # Why: DELL has no GPU worth loading 27B on (Intel HD 520); legion serves
-# ashalliants on 0.0.0.0:8092 with the tailscale0-only firewall open
+# ninfer on 0.0.0.0:8092 with the tailscale0-only firewall open
 # (modules/hosts/lenovo-legion-16iah7h-PF3XJ8SP/private/dev/agentics/ninfer.nix,
 # 2026-10-10 main-engine switch). MagicDNS resolves the host
 # (lenovo-legion-16iah7h-pf3xj8sp.taild3be63.ts.net, verified 2026-09-20),
 # but the bare name is enough and keeps working if the tailnet is renamed.
 #
-# MODELS.YML ON ALL SPECS (2026-10-16 user request): ashalliants entry is
+# MODELS.YML ON ALL SPECS (2026-10-16 user request): ninfer entry is
 # active on the default generation too (previously gated to "remote"
 # specialisation), enabling Dell clients to access Qwen 3.8 27B on legion
 # over tailnet across all sessions, including ssh.
