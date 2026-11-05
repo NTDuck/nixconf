@@ -1,4 +1,4 @@
-# ashalliants ninfer 0.15.0 (RTX 3090 release binary) — Qwen3.8-27B
+# ninfer 0.15.0 (RTX 3090 release binary) — Qwen3.8-27B
 # DFlash2 server, added 2026-10-09 from the engines-2026-10 benchmark:
 # the Qwen-arm winner on BOTH criteria — peak 162.7 tok/s per-agent
 # (fresh C1) and high-parallelism x deep-ctx (C6x65k 769.4 agg tok/s,
@@ -40,7 +40,7 @@
 # MemoryHigh/Max below are the second belt: KV spill beyond the clamp
 # throttles at 10G instead of reaching oomd.
 #
-# VRAM ARBITRATION (24.5 GiB card, single resource): ashalliants is the
+# VRAM ARBITRATION (24.5 GiB card, single resource): ninfer is the
 # Qwen3.8 winner (23.3 GiB peak with weights+KV, measured), bonsai2
 # 21.9 GiB. Both daemons declare symmetric Conflicts — starting any
 # stops the other natively.
@@ -102,12 +102,12 @@ set -euo pipefail
 SYSTEMCTL=( "${pkgs.systemd}/bin/systemctl" --no-ask-password )
 
 MODELS=(
-  "qwen3.8-27b|ashalliants-df2.service|${toString ninferPort}|6x65k"
-  "qwen3.8-27b-abliterated|ashalliants-df2-abliterated.service|${toString ninferPort}|6x65k"
-  "qwen3.6-35b-a3b|ashalliants-35b.service|${toString ninferPort}|3x65k"
-  "qwen3.6-35b-a3b-abliterated|ashalliants-35b-abliterated.service|${toString ninferPort}|3x65k"
-  "hemmingway-1-abliterated|ashalliants-hemmingway-1-heretic.service|${toString ninferPort}|1x262k"
-  "hemmingway-1-abliterated-nth|ashalliants-hemmingway-1-heretic.service|${toString ninferPort}|1x262k"
+  "qwen3.8-27b|ninfer-df2.service|${toString ninferPort}|6x65k"
+  "qwen3.8-27b-abliterated|ninfer-df2-abliterated.service|${toString ninferPort}|6x65k"
+  "qwen3.6-35b-a3b|ninfer-35b.service|${toString ninferPort}|3x65k"
+  "qwen3.6-35b-a3b-abliterated|ninfer-35b-abliterated.service|${toString ninferPort}|3x65k"
+  "hemmingway-1-abliterated|ninfer-hemmingway-1-heretic.service|${toString ninferPort}|1x262k"
+  "hemmingway-1-abliterated-nth|ninfer-hemmingway-1-heretic.service|${toString ninferPort}|1x262k"
 )
 
 show_list() {
@@ -310,8 +310,8 @@ _ninfer() {
     'qwen3.6-35b-a3b-abliterated:Qwen3.6-35B-A3B Abliterated (3x65k :8142)'
     'hemmingway-1-abliterated:Hemmingway-1 Abliterated (1x262k :8092)'
     'hemmingway-1-abliterated-nth:Hemmingway-1 (Abliterated, non-thinking) (1x262k :8092)'
-    '\<nil\>:Unload all ashalliants models'
-    'nil:Unload all ashalliants models'
+    '\<nil\>:Unload all ninfer models'
+    'nil:Unload all ninfer models'
   )
 
   _arguments -C \
@@ -385,31 +385,32 @@ FISH
         environment.systemPackages = [ninfer];
         # Passwordless unit state management for ninfer switch CLI.
         # Without this, systemctl stop/start blocks on interactive polkit auth (25s hang).
-        # Grants active local sessions or wheel users permission to manage ashalliants-* and bonsai2 units.
+        # Grants active local sessions or wheel users permission to manage ninfer-* and bonsai2 units.
         security.polkit.extraConfig = ''
           polkit.addRule(function(action, subject) {
             if (action.id === "org.freedesktop.systemd1.manage-units" &&
                 (subject.isInGroup("wheel") || (subject.local && subject.active))) {
               var unit = action.lookup("unit");
-              if (unit && (unit.indexOf("ashalliants-") === 0 || unit === "bonsai2.service")) {
+              if (unit && (unit.indexOf("ninfer-") === 0 || unit === "bonsai2.service")) {
                 return polkit.Result.YES;
               }
             }
           });
         '';
 
-        systemd.services.ashalliants-df2 = {
-          description = "ashalliants ninfer-0.15.0 Qwen3.8-27B DFlash2";
+        systemd.services.ninfer-df2 = {
+          description = "ninfer 0.15.0 Qwen3.8-27B DFlash2";
           after = ["network-online.target"];
           wants = ["network-online.target"];
+          wantedBy = ["multi-user.target"];
 
-          # On-demand Qwen3.8-27B daemon (port 8092). Started via `ninfer switch qwen3.8-27b`.
+          # Qwen3.8-27B daemon (port 8092), starts by default at boot on the homelab spec.
           conflicts = [
             "bonsai2.service"
-            "ashalliants-df2-abliterated.service"
-            "ashalliants-35b.service"
-            "ashalliants-35b-abliterated.service"
-            "ashalliants-hemmingway-1-heretic.service"
+            "ninfer-df2-abliterated.service"
+            "ninfer-35b.service"
+            "ninfer-35b-abliterated.service"
+            "ninfer-hemmingway-1-heretic.service"
           ];
 
           # run.sh resolves bash via `#!/usr/bin/env bash`. The NixOS
@@ -427,7 +428,7 @@ FISH
             # Boot gate: 60 s GPU wait (thunderbolt eGPU enumerates after
             # multi-user.target), then artifact hash verify. Exit 1 = clean
             # skip (undocked / unplugged GPU), no restart storm.
-            ExecCondition = pkgs.writeShellScript "ashalliants-boot-gate" ''
+            ExecCondition = pkgs.writeShellScript "ninfer-boot-gate" ''
               i=0
               until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
                 i=$((i+1)); [ $i -gt 60 ] && exit 1
@@ -483,25 +484,22 @@ FISH
         };
 
         # On-demand Qwen3.8-27B Abliterated daemon (port 8094).
-        # PRIMARY ENGINE (Qwen3.8-27B Abliterated default on startup, autostarts on
-        # the homelab spec).
-        systemd.services.ashalliants-df2-abliterated = {
-          description = "ashalliants ninfer-0.15.0 Qwen3.8-27B DFlash2 (Abliterated)";
+        systemd.services.ninfer-df2-abliterated = {
+          description = "ninfer 0.15.0 Qwen3.8-27B DFlash2 (Abliterated)";
           after = ["network-online.target"];
           wants = ["network-online.target"];
-          wantedBy = ["multi-user.target"];
           conflicts = [
             "bonsai2.service"
-            "ashalliants-df2.service"
-            "ashalliants-35b.service"
-            "ashalliants-35b-abliterated.service"
-            "ashalliants-hemmingway-1-heretic.service"
+            "ninfer-df2.service"
+            "ninfer-35b.service"
+            "ninfer-35b-abliterated.service"
+            "ninfer-hemmingway-1-heretic.service"
           ];
           serviceConfig = {
             Type = "simple";
             User = "ayin";
             WorkingDirectory = ninferRoot;
-            ExecCondition = pkgs.writeShellScript "ashalliants-df2-abl-boot-gate" ''
+            ExecCondition = pkgs.writeShellScript "ninfer-df2-abl-boot-gate" ''
               i=0
               until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
                 i=$((i+1)); [ $i -gt 60 ] && exit 1
@@ -524,7 +522,7 @@ FISH
               "NINFER_HOST_STATE_SLOTS=6"
               "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
-            ExecStart = pkgs.writeShellScript "ashalliants-df2-abl-start" ''
+            ExecStart = pkgs.writeShellScript "ninfer-df2-abl-start" ''
               if [ -f "${ninferRoot}/models/swift_1_5_qwen3_8_27b.ninfer" ]; then
                 export NINFER_MODEL="${ninferRoot}/models/swift_1_5_qwen3_8_27b.ninfer"
               elif [ -f "${ninferRoot}/models/obliterated_qwen3_8_27b.ninfer" ]; then
@@ -543,22 +541,22 @@ FISH
         };
 
         # On-demand Qwen3.6-35B-A3B daemon (port 8140).
-        systemd.services.ashalliants-35b = {
-          description = "ashalliants ninfer-0.15.0 Qwen3.6-35B-A3B MTP3";
+        systemd.services.ninfer-35b = {
+          description = "ninfer 0.15.0 Qwen3.6-35B-A3B MTP3";
           after = ["network-online.target"];
           wants = ["network-online.target"];
           conflicts = [
             "bonsai2.service"
-            "ashalliants-df2.service"
-            "ashalliants-df2-abliterated.service"
-            "ashalliants-35b-abliterated.service"
-            "ashalliants-hemmingway-1-heretic.service"
+            "ninfer-df2.service"
+            "ninfer-df2-abliterated.service"
+            "ninfer-35b-abliterated.service"
+            "ninfer-hemmingway-1-heretic.service"
           ];
           serviceConfig = {
             Type = "simple";
             User = "ayin";
             WorkingDirectory = ninferRoot;
-            ExecCondition = pkgs.writeShellScript "ashalliants-35b-boot-gate" ''
+            ExecCondition = pkgs.writeShellScript "ninfer-35b-boot-gate" ''
               i=0
               until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
                 i=$((i+1)); [ $i -gt 60 ] && exit 1
@@ -595,22 +593,22 @@ FISH
         };
 
         # On-demand Qwen3.6-35B-A3B Abliterated daemon (port 8142).
-        systemd.services.ashalliants-35b-abliterated = {
-          description = "ashalliants ninfer-0.15.0 Qwen3.6-35B-A3B MTP3 (Abliterated)";
+        systemd.services.ninfer-35b-abliterated = {
+          description = "ninfer 0.15.0 Qwen3.6-35B-A3B MTP3 (Abliterated)";
           after = ["network-online.target"];
           wants = ["network-online.target"];
           conflicts = [
             "bonsai2.service"
-            "ashalliants-df2.service"
-            "ashalliants-df2-abliterated.service"
-            "ashalliants-35b.service"
-            "ashalliants-hemmingway-1-heretic.service"
+            "ninfer-df2.service"
+            "ninfer-df2-abliterated.service"
+            "ninfer-35b.service"
+            "ninfer-hemmingway-1-heretic.service"
           ];
           serviceConfig = {
             Type = "simple";
             User = "ayin";
             WorkingDirectory = ninferRoot;
-            ExecCondition = pkgs.writeShellScript "ashalliants-35b-abl-boot-gate" ''
+            ExecCondition = pkgs.writeShellScript "ninfer-35b-abl-boot-gate" ''
               i=0
               until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
                 i=$((i+1)); [ $i -gt 60 ] && exit 1
@@ -633,7 +631,7 @@ FISH
               "NINFER_HOST_STATE_SLOTS=3"
               "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
-            ExecStart = pkgs.writeShellScript "ashalliants-35b-abl-start" ''
+            ExecStart = pkgs.writeShellScript "ninfer-35b-abl-start" ''
               if [ -f "${ninferRoot}/models/qwen3_6_35b_a3b_huihui_abliterated.ninfer" ]; then
                 export NINFER_MODEL="${ninferRoot}/models/qwen3_6_35b_a3b_huihui_abliterated.ninfer"
               fi
@@ -650,22 +648,22 @@ FISH
         };
 
         # On-demand Hemmingway-1 (Abliterated) daemon (single-lane throughput optimized).
-        systemd.services.ashalliants-hemmingway-1-heretic = {
-          description = "ashalliants ninfer-0.15.0 Hemmingway-1 (Abliterated)";
+        systemd.services.ninfer-hemmingway-1-heretic = {
+          description = "ninfer 0.15.0 Hemmingway-1 (Abliterated)";
           after = ["network-online.target"];
           wants = ["network-online.target"];
           conflicts = [
             "bonsai2.service"
-            "ashalliants-df2.service"
-            "ashalliants-df2-abliterated.service"
-            "ashalliants-35b.service"
-            "ashalliants-35b-abliterated.service"
+            "ninfer-df2.service"
+            "ninfer-df2-abliterated.service"
+            "ninfer-35b.service"
+            "ninfer-35b-abliterated.service"
           ];
           serviceConfig = {
             Type = "simple";
             User = "ayin";
             WorkingDirectory = ninferRoot;
-            ExecCondition = pkgs.writeShellScript "ashalliants-hemmingway-boot-gate" ''
+            ExecCondition = pkgs.writeShellScript "ninfer-hemmingway-boot-gate" ''
               i=0
               until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
                 i=$((i+1)); [ $i -gt 60 ] && exit 1
@@ -689,7 +687,7 @@ FISH
               "NINFER_PREFILL_CHUNK=4096"
               "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
-            ExecStart = pkgs.writeShellScript "ashalliants-hemmingway-start" ''
+            ExecStart = pkgs.writeShellScript "ninfer-hemmingway-start" ''
               export NINFER_MODEL="${ninferRoot}/models/hemmingway_1_heretic.ninfer"
               exec ${ninferRoot}/run.sh hemmingway-1-heretic tuned
             '';
@@ -703,7 +701,7 @@ FISH
           };
         };
 
-        # Tailscale firewall: open single ashalliants port (:8092).
+        # Tailscale firewall: open single ninfer port (:8092).
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
           ninferPort
         ];

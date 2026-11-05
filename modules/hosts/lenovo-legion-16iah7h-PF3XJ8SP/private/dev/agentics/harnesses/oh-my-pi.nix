@@ -10,8 +10,8 @@
 # specialisation gate); the 4e3be54 alias (5-secret export) and cloud
 # providers are kept verbatim.
 #
-# 2026-10-12: ollama removed entirely (user request — ashalliants is the
-# sole local engine). The local attrset now only carries ashalliants.
+# 2026-10-12: ollama removed entirely (user request — ninfer is the
+# sole local engine). The local attrset now only carries ninfer.
 {den, inputs, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     homeManager = {
@@ -22,7 +22,7 @@
     }: let
       yaml = pkgs.formats.yaml {};
 
-      # Port the ashalliants ninfer-serve listens on. Single source of
+      # Port the ninfer-serve listens on. Single source of
       # truth for this host; remote hosts (dell) duplicate the value
       # with a sync comment in their models.yml. The den module system
       # does NOT support top-level `options` (it wraps values in aspect
@@ -139,7 +139,7 @@
 
       # 3090-coupled local providers — homelab spec only (see
       # onHomelabSpec). Restored verbatim from fb75273 (2026-09-26), the
-      # last live-verified state. 2026-10-12: ollama removed; ashalliants
+      # last live-verified state. 2026-10-12: ollama removed; ninfer
       # is the sole local engine.
       local = {
         # Consolidated ninfer engine (port 8092, resident 3090 engine).
@@ -245,8 +245,8 @@
       #
       # models.yml resolves from the ACTIVE agent dir, so the profile
       # needs its own qwen-only models.yml (omplModels below) — the
-      # shared ~/.omp/agent/models.yml (cloud + ashalliants) is NOT
-      # visible to it. Without a profile-local file the ashalliants
+      # shared ~/.omp/agent/models.yml (cloud + ninfer) is NOT
+      # visible to it. Without a profile-local file the ninfer
       # selector is unresolvable and the harness SILENTLY degrades to a
       # cloud model: reproduced 2026-10-11, a profile launch with no
       # models.yml routed to openrouter and died 402 "requires more
@@ -268,7 +268,7 @@
       #                       replaces config.default.yml's [llama.cpp]
       #                       entry; arrays replace, not append).
       #   retry.modelFallback — false: a pinned role whose engine is
-      #                       down (`ashalliants-up`) must FAIL LOUDLY,
+      #                       down must FAIL LOUDLY,
       #                       never leak a turn to a cloud model (no
       #                       fallbackChains by design — same intent).
       #
@@ -340,10 +340,10 @@
         vibe.defaultOnStartup = true;
       };
 
-      # Profile-local qwen-only models.yml. Reuses local.ashalliants
+      # Profile-local qwen-only models.yml. Reuses local.ninfer
       # (single source of the provider block). On the default
-      # generation the ashalliants port is simply down and ompl fails
-      # loudly — as designed, same as `ashalliants-up` gating the
+      # generation the ninfer port is simply down and ompl fails
+      # loudly — as designed, same as service gating the
       # shared provider.
       omplModels = {
         providers = {

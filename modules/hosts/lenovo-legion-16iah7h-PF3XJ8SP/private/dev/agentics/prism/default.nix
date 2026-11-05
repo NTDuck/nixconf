@@ -103,9 +103,9 @@
         systemd.services.bonsai2 = {
           description = "Bonsai 2 27B llama-server (PrismML fork)";
           # NO AUTOSTART (2026-09-21 user request, kept 2026-09-25): the 27B
-          # daemon is a scarce-resource unit — it contends with ashalliants
+          # daemon is a scarce-resource unit — it contends with ninfer
           # for the 3090. Started on demand via `llamacpp-prism-up` (which
-          # first stops ashalliants); model+KV auto-freed after 5 idle
+          # first stops ninfer); model+KV auto-freed after 5 idle
           # minutes by --sleep-idle-seconds 300 below (the unit process
           # itself stays up).
           after = ["network-online.target"];
@@ -114,7 +114,7 @@
           # ../ninfer.nix): starting any of the units natively stops
           # the others (ninfer's units declare the symmetric Conflicts
           # set).
-          conflicts = ["ashalliants-df2.service" "ashalliants-35b.service"];
+          conflicts = ["ninfer-df2.service" "ninfer-35b.service"];
 
           serviceConfig = {
             # Static 3090 pin (2026-09-25, homelab-spec visibility request):
@@ -136,7 +136,7 @@
               # parallelism that keeps the per-request floor. VRAM: KV 64
               # KiB/token x 256K = 16 GiB + PTQ1_0 weights 5.54 GiB + mmproj/
               # ctx overhead ~0.4 GiB ~= 21.9 GiB of 24.5 — fits the
-              # otherwise-empty 3090 (ashalliants is stopped by
+              # otherwise-empty 3090 (ninfer is stopped by
               # llamacpp-prism-up; the desktop runs on the 3060). Safe
               # fallback if the fit ever trims below the floor: drop to
               # "-np 1" + "--ctx-size 131072" (1 x 128K, ~7.5 GiB less KV).

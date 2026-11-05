@@ -46,7 +46,7 @@
         # eGPU verification: enumerate ICDs per-arch, render on the 3090.
         pkgs.vulkan-tools
         # Interactive GPU/process monitor (NVML): watch the 3090 eGPU
-        # tiering and ashalliants VRAM residency live.
+        # tiering and ninfer VRAM residency live.
         pkgs.nvitop
       ];
 
