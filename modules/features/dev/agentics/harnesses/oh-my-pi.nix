@@ -1,6 +1,6 @@
 # oh-my-pi (omp) — common harness aspect. Installed on both hosts:
 #   - legion: full client, cloud providers via agenix secrets (+ local
-#     ashalliants in the homelab spec, see the host-private aspect).
+#     ninfer in the homelab spec, see the host-private aspect).
 #   - dell: thin client; models.yml only in the remote specialisation
 #     (host-private aspect), no agenix identity.
 #
@@ -141,6 +141,7 @@ in {
       # inherit them. REASONIX_* restored alongside the pi-reasonix
       # extension.
       home.sessionVariables = {
+        ANTIGRAVITY_NO_KEEPALIVE = "1";
         PI_STREAM_FIRST_EVENT_TIMEOUT_MS = "300000";
         REASONIX_SCAVENGE = "1";
         REASONIX_RESULT_CAP_TOKENS = "3000";
