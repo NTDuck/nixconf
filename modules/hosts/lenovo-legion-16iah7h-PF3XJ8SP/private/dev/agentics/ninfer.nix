@@ -84,6 +84,7 @@
       # 2026-10-18: Native shell CLI. Fast (<5ms), minimal UI,
       # canonical IDs only (no aliases), <nil> unloader, and full shell completions.
       # 2026-10-31: Renamed ashalliant CLI to ninfer (clean cutover).
+      # 2026-11-06: Replaced qwen3.8-27b-abliterated with qwen3.8-27b-turbo and removed hemmingway-1.
       ninfer = pkgs.stdenv.mkDerivation {
         pname = "ninfer";
         version = "1.0.0";
@@ -103,11 +104,9 @@ SYSTEMCTL=( "${pkgs.systemd}/bin/systemctl" --no-ask-password )
 
 MODELS=(
   "qwen3.8-27b|ninfer-df2.service|${toString ninferPort}|6x65k"
-  "qwen3.8-27b-abliterated|ninfer-df2-abliterated.service|${toString ninferPort}|6x65k"
+  "qwen3.8-27b-turbo|ninfer-df2-turbo.service|${toString ninferPort}|6x65k"
   "qwen3.6-35b-a3b|ninfer-35b.service|${toString ninferPort}|3x65k"
   "qwen3.6-35b-a3b-abliterated|ninfer-35b-abliterated.service|${toString ninferPort}|3x65k"
-  "hemmingway-1-abliterated|ninfer-hemmingway-1-heretic.service|${toString ninferPort}|1x262k"
-  "hemmingway-1-abliterated-nth|ninfer-hemmingway-1-heretic.service|${toString ninferPort}|1x262k"
 )
 
 show_list() {
@@ -134,8 +133,7 @@ show_list() {
 }
 
 get_active() {
-  # 2026-10-31: Consult persistent user runtime state file first so multi-variant targets
-  # sharing the same underlying service daemon (e.g. hemmingway-1-abliterated vs hemmingway-1-abliterated-nth)
+  # Consult persistent user runtime state file first so multi-variant targets
   # accurately report the user-selected variant rather than always defaulting to the first match.
   local state_file="''${XDG_RUNTIME_DIR:-/tmp}/ninfer/active-model"
   if [ -r "$state_file" ]; then
@@ -168,10 +166,9 @@ get_active() {
   mpath="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.model_path // empty' 2>/dev/null || true )"
   if [ -n "$mpath" ]; then
     case "$mpath" in
-      *hemmingway*) echo "hemmingway-1-abliterated"; return 0 ;;
       *qwen3_6_35b_a3b_huihui_abliterated*) echo "qwen3.6-35b-a3b-abliterated"; return 0 ;;
       *qwen3_6_35b_a3b*) echo "qwen3.6-35b-a3b"; return 0 ;;
-      *obliterated_qwen3_8_27b*) echo "qwen3.8-27b-abliterated"; return 0 ;;
+      *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
       *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
     esac
   fi
@@ -184,10 +181,7 @@ do_switch() {
   local state_dir="''${XDG_RUNTIME_DIR:-/tmp}/ninfer"
   local state_file="$state_dir/active-model"
 
-  # Backward-compat alias (2026-10-31): map deprecated hemmingway-1-heretic to canonical hemmingway-1-abliterated
-  if [ "$target" = "hemmingway-1-heretic" ]; then
-    target="hemmingway-1-abliterated"
-  fi
+  # Clean cutover: no backward-compat aliases.
   if [ "$target" = "<nil>" ] || [ "$target" = "nil" ]; then
     for entry in "''${MODELS[@]}"; do
       IFS='|' read -r mid svc port shape <<< "$entry"
@@ -212,7 +206,7 @@ do_switch() {
   done
 
   if [ -z "$found_svc" ]; then
-    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, hemmingway-1-abliterated, hemmingway-1-abliterated-nth, <nil>" >&2
+    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-turbo, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, <nil>" >&2
     exit 1
   fi
 
@@ -305,11 +299,9 @@ _ninfer() {
 
   models=(
     'qwen3.8-27b:Qwen3.8-27B DFlash2 (6x65k :8092)'
-    'qwen3.8-27b-abliterated:Qwen3.8-27B Abliterated (6x65k :8094)'
+    'qwen3.8-27b-turbo:Qwen3.8-27B Turbo Heretic (6x65k :8092)'
     'qwen3.6-35b-a3b:Qwen3.6-35B-A3B MTP3 (3x65k :8140)'
     'qwen3.6-35b-a3b-abliterated:Qwen3.6-35B-A3B Abliterated (3x65k :8142)'
-    'hemmingway-1-abliterated:Hemmingway-1 Abliterated (1x262k :8092)'
-    'hemmingway-1-abliterated-nth:Hemmingway-1 (Abliterated, non-thinking) (1x262k :8092)'
     '\<nil\>:Unload all ninfer models'
     'nil:Unload all ninfer models'
   )
@@ -350,7 +342,7 @@ _ninfer_completion() {
   cur="''${COMP_WORDS[COMP_CWORD]}"
   prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-  local models="qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil> nil"
+  local models="qwen3.8-27b qwen3.8-27b-turbo qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated <nil> nil"
   local commands="switch list status active current"
 
   case "$prev" in
@@ -374,15 +366,70 @@ complete -c ninfer -n "__fish_use_subcommand" -a list -d "list models"
 complete -c ninfer -n "__fish_use_subcommand" -a status -d "show status"
 complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
 complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
-complete -c ninfer -n "__fish_use_subcommand" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil> nil"
-complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-abliterated qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated hemmingway-1-abliterated hemmingway-1-abliterated-nth <nil> nil"
+complete -c ninfer -n "__fish_use_subcommand" -a "qwen3.8-27b qwen3.8-27b-turbo qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated <nil> nil"
+complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-turbo qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated <nil> nil"
 FISH
           runHook postInstall
         '';
       };
+      # Model artifact fetcher for out-of-band GGUF/NInfer binaries.
+      # 2026-11-06: Added Qwen3.8-27B Turbo Heretic (DavidAU / amynporb).
+      ninferFetchModels = pkgs.writeShellScriptBin "ninfer-fetch-models" ''
+        set -euo pipefail
+        MODELS_DIR="${ninferRoot}/models"
+        mkdir -p "$MODELS_DIR"
+
+        TURBO_URL="https://huggingface.co/amynporb/Qwen3.8-27B-TURBO-NInfer/resolve/main/qwen38_turbo_sm86.ninfer"
+        TURBO_FILE="qwen38_turbo_sm86.ninfer"
+        TURBO_HASH="ff82cb06fdb6a61d95778f8299c74f3b9e474e0487511a153b42f07a95e59ae1"
+
+        download_model() {
+          local name="$1"
+          local url="$2"
+          local file="$3"
+          local expected_hash="$4"
+          local dest="$MODELS_DIR/$file"
+
+          echo "=== Processing $name ==="
+          if [ -f "$dest" ]; then
+            echo "Checking existing $dest..."
+            local current_hash
+            current_hash="$(${pkgs.coreutils}/bin/sha256sum "$dest" | ${pkgs.gawk}/bin/awk '{print $1}')"
+            if [ "$current_hash" = "$expected_hash" ]; then
+              echo "Hash verified: $dest matches expected $expected_hash."
+              return 0
+            else
+              echo "Hash mismatch for $dest ($current_hash vs $expected_hash). Re-downloading..."
+              ${pkgs.curl}/bin/curl -L -C - --http1.1 --retry 5 -o "$dest" "$url"
+            fi
+          else
+            echo "Downloading $name to $dest..."
+            ${pkgs.curl}/bin/curl -L -C - --http1.1 --retry 5 -o "$dest" "$url"
+            echo "Verifying checksum..."
+            local current_hash
+            current_hash="$(${pkgs.coreutils}/bin/sha256sum "$dest" | ${pkgs.gawk}/bin/awk '{print $1}')"
+            if [ "$current_hash" != "$expected_hash" ]; then
+              echo "ERROR: Downloaded $file failed checksum check!" >&2
+              exit 1
+            fi
+          fi
+          echo "Model ready: $dest"
+        }
+
+        TARGET="''${1:-turbo}"
+        case "$TARGET" in
+          turbo|qwen3.8-27b-turbo)
+            download_model "Qwen3.8-27B Turbo (Heretic Uncensored sm86)" "$TURBO_URL" "$TURBO_FILE" "$TURBO_HASH"
+            ;;
+          *)
+            echo "usage: ninfer-fetch-models [turbo]" >&2
+            exit 1
+            ;;
+        esac
+      '';
     in {
       specialisation.homelab.configuration = {
-        environment.systemPackages = [ninfer];
+        environment.systemPackages = [ninfer ninferFetchModels];
         # Passwordless unit state management for ninfer switch CLI.
         # Without this, systemctl stop/start blocks on interactive polkit auth (25s hang).
         # Grants active local sessions or wheel users permission to manage ninfer-* and bonsai2 units.
@@ -407,10 +454,9 @@ FISH
           # Qwen3.8-27B daemon (port 8092), starts by default at boot on the homelab spec.
           conflicts = [
             "bonsai2.service"
-            "ninfer-df2-abliterated.service"
+            "ninfer-df2-turbo.service"
             "ninfer-35b.service"
             "ninfer-35b-abliterated.service"
-            "ninfer-hemmingway-1-heretic.service"
           ];
 
           # run.sh resolves bash via `#!/usr/bin/env bash`. The NixOS
@@ -483,9 +529,9 @@ FISH
           };
         };
 
-        # On-demand Qwen3.8-27B Abliterated daemon (port 8094).
-        systemd.services.ninfer-df2-abliterated = {
-          description = "ninfer 0.15.0 Qwen3.8-27B DFlash2 (Abliterated)";
+        # On-demand Qwen3.8-27B Turbo daemon (port 8092).
+        systemd.services.ninfer-df2-turbo = {
+          description = "ninfer 0.15.0 Qwen3.8-27B DFlash2 Turbo (Heretic Uncensored)";
           after = ["network-online.target"];
           wants = ["network-online.target"];
           conflicts = [
@@ -493,18 +539,19 @@ FISH
             "ninfer-df2.service"
             "ninfer-35b.service"
             "ninfer-35b-abliterated.service"
-            "ninfer-hemmingway-1-heretic.service"
           ];
           serviceConfig = {
             Type = "simple";
             User = "ayin";
             WorkingDirectory = ninferRoot;
-            ExecCondition = pkgs.writeShellScript "ninfer-df2-abl-boot-gate" ''
+            ExecCondition = pkgs.writeShellScript "ninfer-df2-turbo-boot-gate" ''
               i=0
               until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
                 i=$((i+1)); [ $i -gt 60 ] && exit 1
                 sleep 1
               done
+              echo "ff82cb06fdb6a61d95778f8299c74f3b9e474e0487511a153b42f07a95e59ae1  ${ninferRoot}/models/qwen38_turbo_sm86.ninfer" \
+                | ${pkgs.coreutils}/bin/sha256sum -c -
             '';
             Environment = let
               ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);
@@ -522,12 +569,8 @@ FISH
               "NINFER_HOST_STATE_SLOTS=6"
               "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
-            ExecStart = pkgs.writeShellScript "ninfer-df2-abl-start" ''
-              if [ -f "${ninferRoot}/models/swift_1_5_qwen3_8_27b.ninfer" ]; then
-                export NINFER_MODEL="${ninferRoot}/models/swift_1_5_qwen3_8_27b.ninfer"
-              elif [ -f "${ninferRoot}/models/obliterated_qwen3_8_27b.ninfer" ]; then
-                export NINFER_MODEL="${ninferRoot}/models/obliterated_qwen3_8_27b.ninfer"
-              fi
+            ExecStart = pkgs.writeShellScript "ninfer-df2-turbo-start" ''
+              export NINFER_MODEL="${ninferRoot}/models/qwen38_turbo_sm86.ninfer"
               exec ${ninferRoot}/run.sh qwen38-27b tuned
             '';
             MemoryHigh = "10G";
@@ -548,9 +591,8 @@ FISH
           conflicts = [
             "bonsai2.service"
             "ninfer-df2.service"
-            "ninfer-df2-abliterated.service"
+            "ninfer-df2-turbo.service"
             "ninfer-35b-abliterated.service"
-            "ninfer-hemmingway-1-heretic.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -600,9 +642,8 @@ FISH
           conflicts = [
             "bonsai2.service"
             "ninfer-df2.service"
-            "ninfer-df2-abliterated.service"
+            "ninfer-df2-turbo.service"
             "ninfer-35b.service"
-            "ninfer-hemmingway-1-heretic.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -647,59 +688,6 @@ FISH
           };
         };
 
-        # On-demand Hemmingway-1 (Abliterated) daemon (single-lane throughput optimized).
-        systemd.services.ninfer-hemmingway-1-heretic = {
-          description = "ninfer 0.15.0 Hemmingway-1 (Abliterated)";
-          after = ["network-online.target"];
-          wants = ["network-online.target"];
-          conflicts = [
-            "bonsai2.service"
-            "ninfer-df2.service"
-            "ninfer-df2-abliterated.service"
-            "ninfer-35b.service"
-            "ninfer-35b-abliterated.service"
-          ];
-          serviceConfig = {
-            Type = "simple";
-            User = "ayin";
-            WorkingDirectory = ninferRoot;
-            ExecCondition = pkgs.writeShellScript "ninfer-hemmingway-boot-gate" ''
-              i=0
-              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
-                i=$((i+1)); [ $i -gt 60 ] && exit 1
-                sleep 1
-              done
-            '';
-            Environment = let
-              ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);
-            in [
-              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
-              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
-              "LD_LIBRARY_PATH=${ld}"
-              "NINFER_SPEC=mtp"
-              "NINFER_HOST=0.0.0.0"
-              "NINFER_PORT=${toString ninferPort}"
-              "NINFER_FALLBACK=off"
-              "NINFER_CONCURRENCY=1"
-              "NINFER_CONTEXT=262144"
-              "NINFER_KV_CAPACITY=262144"
-              "NINFER_HOST_STATE_SLOTS=1"
-              "NINFER_PREFILL_CHUNK=4096"
-              "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
-            ];
-            ExecStart = pkgs.writeShellScript "ninfer-hemmingway-start" ''
-              export NINFER_MODEL="${ninferRoot}/models/hemmingway_1_heretic.ninfer"
-              exec ${ninferRoot}/run.sh hemmingway-1-heretic tuned
-            '';
-            MemoryHigh = "10G";
-            MemoryMax = "12G";
-            Restart = "on-failure";
-            RestartSec = "10s";
-            ProtectSystem = "strict";
-            NoNewPrivileges = true;
-            PrivateTmp = true;
-          };
-        };
 
         # Tailscale firewall: open single ninfer port (:8092).
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [

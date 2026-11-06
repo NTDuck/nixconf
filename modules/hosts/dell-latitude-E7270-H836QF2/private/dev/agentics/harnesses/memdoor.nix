@@ -5,7 +5,7 @@
 #      tailnet address (http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1).
 #   2. `memdoorl` wrapper script sets AI_GATEWAY_* vendor engine variables
 #      to route all requests directly to legion's ninfer engine on Qwen 3.8 27B
-#      (Abliterated) without requiring local GPU or cloud credentials.
+#      Turbo without requiring local GPU or cloud credentials.
 {den, ...}: {
   den.aspects.dell-latitude-E7270-H836QF2 = {
     homeManager = {
@@ -26,8 +26,8 @@
           thinking = true;
         }
         {
-          id = "qwen3.8-27b-abliterated";
-          name = "Qwen 3.8 27B (Abliterated)";
+          id = "qwen3.8-27b-turbo";
+          name = "Qwen 3.8 27B Turbo (Heretic)";
           context = 65536;
           max_output = 16384;
           inputs = ["text" "image"];
@@ -49,22 +49,6 @@
           inputs = ["text" "image"];
           thinking = true;
         }
-        {
-          id = "hemmingway-1-abliterated";
-          name = "Hemmingway-1 (Abliterated)";
-          context = 262144;
-          max_output = 16384;
-          inputs = ["text" "image"];
-          thinking = true;
-        }
-        {
-          id = "hemmingway-1-abliterated-nth";
-          name = "Hemmingway-1 (Abliterated, non-thinking)";
-          context = 262144;
-          max_output = 16384;
-          inputs = ["text" "image"];
-          thinking = false;
-        }
       ];
 
       providersConfig = {
@@ -81,8 +65,8 @@
         ];
       };
 
-      # memdoorl wrapper: points memdoor turns to remote ninfer on legion
-      # over tailnet, pinning Qwen 3.8 27B Abliterated in ~/.memdoor/model.json.
+# memdoorl wrapper: points memdoor turns to remote ninfer on legion
+# over tailnet, pinning Qwen 3.8 27B Turbo in ~/.memdoor/model.json.
       memdoorlWrapper = pkgs.writeShellScriptBin "memdoorl" ''
         set -euo pipefail
 
@@ -94,7 +78,7 @@
 {
   "by_actor": {
     "": {
-      "model": "ninfer/qwen3.8-27b-abliterated"
+      "model": "ninfer/qwen3.8-27b-turbo"
     }
   }
 }

@@ -177,10 +177,9 @@
           # whichever resident engine holds the card.
           conflicts = [
             "ninfer-df2.service"
-            "ninfer-df2-abliterated.service"
+            "ninfer-df2-turbo.service"
             "ninfer-35b.service"
             "ninfer-35b-abliterated.service"
-            "ninfer-hemmingway-1-heretic.service"
             "bonsai2.service"
           ];
 

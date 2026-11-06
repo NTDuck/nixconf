@@ -161,8 +161,8 @@
               maxTokens = 16384;
             }
             {
-              id = "qwen3.8-27b-abliterated";
-              name = "Qwen 3.8 27B (Abliterated)";
+              id = "qwen3.8-27b-turbo";
+              name = "Qwen 3.8 27B Turbo (Heretic)";
               reasoning = true;
               input = ["text" "image"];
               contextWindow = 65536;
@@ -182,23 +182,6 @@
               reasoning = true;
               input = ["text" "image"];
               contextWindow = 65536;
-              maxTokens = 16384;
-            }
-            {
-              id = "hemmingway-1-abliterated";
-              name = "Hemmingway-1 (Abliterated)";
-              reasoning = true;
-              input = ["text" "image"];
-              contextWindow = 262144;
-              maxTokens = 16384;
-            }
-            # 2026-10-31: Non-thinking variant of Hemmingway-1 Abliterated for low-latency turns
-            {
-              id = "hemmingway-1-abliterated-nth";
-              name = "Hemmingway-1 (Abliterated, non-thinking)";
-              reasoning = false;
-              input = ["text" "image"];
-              contextWindow = 262144;
               maxTokens = 16384;
             }
           ];
@@ -288,24 +271,22 @@
       # + engine logs 2026-10-11).
       omplOverlay = {
         modelRoles = {
-          default = "ninfer/qwen3.8-27b-abliterated:high";
-          smol = "ninfer/qwen3.8-27b-abliterated:high";
-          slow = "ninfer/qwen3.8-27b-abliterated:high";
-          vision = "ninfer/qwen3.8-27b-abliterated:high";
-          plan = "ninfer/qwen3.8-27b-abliterated:high";
-          commit = "ninfer/qwen3.8-27b-abliterated:high";
-          task = "ninfer/qwen3.8-27b-abliterated:high";
-          advisor = "ninfer/qwen3.8-27b-abliterated:high";
-          judge = "ninfer/qwen3.8-27b-abliterated:high";
+          default = "ninfer/qwen3.8-27b-turbo:high";
+          smol = "ninfer/qwen3.8-27b-turbo:high";
+          slow = "ninfer/qwen3.8-27b-turbo:high";
+          vision = "ninfer/qwen3.8-27b-turbo:high";
+          plan = "ninfer/qwen3.8-27b-turbo:high";
+          commit = "ninfer/qwen3.8-27b-turbo:high";
+          task = "ninfer/qwen3.8-27b-turbo:high";
+          advisor = "ninfer/qwen3.8-27b-turbo:high";
+          judge = "ninfer/qwen3.8-27b-turbo:high";
         };
 
         enabledModels = [
           "ninfer/qwen3.8-27b"
-          "ninfer/qwen3.8-27b-abliterated"
+          "ninfer/qwen3.8-27b-turbo"
           "ninfer/qwen3.6-35b-a3b"
           "ninfer/qwen3.6-35b-a3b-abliterated"
-          "ninfer/hemmingway-1-abliterated"
-          "ninfer/hemmingway-1-abliterated-nth"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -364,24 +345,22 @@
       #   git.enabled: false           - suppress git branch/status checks and UI indicators
       omprpOverlay = {
         modelRoles = {
-          default = "ninfer/qwen3.8-27b-abliterated:high";
-          smol = "ninfer/qwen3.8-27b-abliterated:high";
-          slow = "ninfer/qwen3.8-27b-abliterated:high";
-          vision = "ninfer/qwen3.8-27b-abliterated:high";
-          plan = "ninfer/qwen3.8-27b-abliterated:high";
-          commit = "ninfer/qwen3.8-27b-abliterated:high";
-          task = "ninfer/qwen3.8-27b-abliterated:high";
-          advisor = "ninfer/qwen3.8-27b-abliterated:high";
-          judge = "ninfer/qwen3.8-27b-abliterated:high";
+          default = "ninfer/qwen3.8-27b-turbo:high";
+          smol = "ninfer/qwen3.8-27b-turbo:high";
+          slow = "ninfer/qwen3.8-27b-turbo:high";
+          vision = "ninfer/qwen3.8-27b-turbo:high";
+          plan = "ninfer/qwen3.8-27b-turbo:high";
+          commit = "ninfer/qwen3.8-27b-turbo:high";
+          task = "ninfer/qwen3.8-27b-turbo:high";
+          advisor = "ninfer/qwen3.8-27b-turbo:high";
+          judge = "ninfer/qwen3.8-27b-turbo:high";
         };
 
         enabledModels = [
           "ninfer/qwen3.8-27b"
-          "ninfer/qwen3.8-27b-abliterated"
+          "ninfer/qwen3.8-27b-turbo"
           "ninfer/qwen3.6-35b-a3b"
           "ninfer/qwen3.6-35b-a3b-abliterated"
-          "ninfer/hemmingway-1-abliterated"
-          "ninfer/hemmingway-1-abliterated-nth"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -510,12 +489,12 @@
       };
       # ompl wrapper (2026-10-30): dynamically queries active model via ninfer active,
       # generates a runtime overlay in $XDG_RUNTIME_DIR/omp/ompl-active.yml,
-      # and sets modelRoles to the active model instead of hardcoding qwen3.8-27b-abliterated.
+      # and sets modelRoles to the active model instead of hardcoding qwen3.8-27b-turbo.
       omplWrapper = pkgs.writeShellScriptBin "ompl" ''
         set -euo pipefail
 
         active_model="$( ninfer active 2>/dev/null || true )"
-        active_model="''${active_model:-qwen3.8-27b-abliterated}"
+        active_model="''${active_model:-qwen3.8-27b-turbo}"
 
         runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
         mkdir -p "$runtime_dir"
@@ -545,7 +524,7 @@ EOF
         set -euo pipefail
 
         active_model="$( ninfer active 2>/dev/null || true )"
-        active_model="''${active_model:-qwen3.8-27b-abliterated}"
+        active_model="''${active_model:-qwen3.8-27b-turbo}"
 
         runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
         mkdir -p "$runtime_dir"

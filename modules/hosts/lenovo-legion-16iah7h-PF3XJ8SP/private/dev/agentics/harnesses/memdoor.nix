@@ -3,9 +3,9 @@
 #
 # Memdoor is configured with:
 #   1. ~/.memdoor/providers.json defining the local keyless ninfer provider
-#      serving the 4 canonical Qwen and 2 Hemmingway variants.
+#      serving the canonical Qwen variants.
 #   2. `memdoorl` wrapper script synchronizing dynamically with the active
-#      ninfer model via `ninfer active` (fallback: qwen3.8-27b-abliterated),
+#      ninfer model via `ninfer active` (fallback: qwen3.8-27b-turbo),
 #      setting AI_GATEWAY_* vendor engine variables to pin turns directly
 #      to the local 3090 inference engine without cloud leaks.
 {den, ...}: {
@@ -28,8 +28,8 @@
           thinking = true;
         }
         {
-          id = "qwen3.8-27b-abliterated";
-          name = "Qwen 3.8 27B (Abliterated)";
+          id = "qwen3.8-27b-turbo";
+          name = "Qwen 3.8 27B Turbo (Heretic)";
           context = 65536;
           max_output = 16384;
           inputs = ["text" "image"];
@@ -50,22 +50,6 @@
           max_output = 16384;
           inputs = ["text" "image"];
           thinking = true;
-        }
-        {
-          id = "hemmingway-1-abliterated";
-          name = "Hemmingway-1 (Abliterated)";
-          context = 262144;
-          max_output = 16384;
-          inputs = ["text" "image"];
-          thinking = true;
-        }
-        {
-          id = "hemmingway-1-abliterated-nth";
-          name = "Hemmingway-1 (Abliterated, non-thinking)";
-          context = 262144;
-          max_output = 16384;
-          inputs = ["text" "image"];
-          thinking = false;
         }
       ];
 
@@ -91,7 +75,7 @@
         set -euo pipefail
 
         active_model="$( ninfer active 2>/dev/null || true )"
-        active_model="''${active_model:-qwen3.8-27b-abliterated}"
+        active_model="''${active_model:-qwen3.8-27b-turbo}"
 
         memdoor_dir="''${HOME}/.memdoor"
         mkdir -p -m 0700 "$memdoor_dir"
