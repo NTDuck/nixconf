@@ -26,13 +26,17 @@
           NODE_ENV = "production";
         };
 
-        # From the official compose healthcheck.
+        # Healthcheck from official compose, plus host gateway mapping so
+        # SillyTavern's backend proxy can reach the shared KoboldCpp inference
+        # engine on the host at http://host.docker.internal:5001 (or direct
+        # browser connection at http://127.0.0.1:5001).
         extraOptions = [
           "--health-cmd=node src/healthcheck.js"
           "--health-interval=30s"
           "--health-timeout=10s"
           "--health-start-period=20s"
           "--health-retries=3"
+          "--add-host=host.docker.internal:host-gateway"
         ];
       };
 
@@ -49,8 +53,11 @@
           for _ in $(seq 1 20); do
             if (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null; then
               ${pkgs.xdg-utils}/bin/xdg-open "http://127.0.0.1:$port" >/dev/null
-              echo "sillytavern: streaming podman-sillytavern logs — Ctrl+C to stop (browser stays open)"
-              exec ${pkgs.systemd}/bin/journalctl --no-pager -n 5 -fu podman-sillytavern
+              echo "sillytavern: streaming logs — Ctrl+C to stop (browser stays open; KoboldCpp BE at :5001)"
+              # Handle both docker-sillytavern and podman-sillytavern unit names cleanly
+              unit="docker-sillytavern"
+              ${pkgs.systemd}/bin/systemctl is-active --quiet podman-sillytavern 2>/dev/null && unit="podman-sillytavern"
+              exec ${pkgs.systemd}/bin/journalctl --no-pager -n 5 -fu "$unit"
             fi
             sleep 0.5
           done
