@@ -255,15 +255,15 @@
       # + engine logs 2026-10-11).
       omplOverlay = {
         modelRoles = {
-          default = "ninfer/qwen3.8-27b-turbo:high";
-          smol = "ninfer/qwen3.8-27b-turbo:high";
-          slow = "ninfer/qwen3.8-27b-turbo:high";
-          vision = "ninfer/qwen3.8-27b-turbo:high";
-          plan = "ninfer/qwen3.8-27b-turbo:high";
-          commit = "ninfer/qwen3.8-27b-turbo:high";
-          task = "ninfer/qwen3.8-27b-turbo:high";
-          advisor = "ninfer/qwen3.8-27b-turbo:high";
-          judge = "ninfer/qwen3.8-27b-turbo:high";
+          default = "ninfer/qwen3.8-27b:high";
+          smol = "ninfer/qwen3.8-27b:high";
+          slow = "ninfer/qwen3.8-27b:high";
+          vision = "ninfer/qwen3.8-27b:high";
+          plan = "ninfer/qwen3.8-27b:high";
+          commit = "ninfer/qwen3.8-27b:high";
+          task = "ninfer/qwen3.8-27b:high";
+          advisor = "ninfer/qwen3.8-27b:high";
+          judge = "ninfer/qwen3.8-27b:high";
         };
 
         enabledModels = [
@@ -327,15 +327,15 @@
       #   git.enabled: false           - suppress git branch/status checks and UI indicators
       omprpOverlay = {
         modelRoles = {
-          default = "ninfer/qwen3.8-27b-turbo:high";
-          smol = "ninfer/qwen3.8-27b-turbo:high";
-          slow = "ninfer/qwen3.8-27b-turbo:high";
-          vision = "ninfer/qwen3.8-27b-turbo:high";
-          plan = "ninfer/qwen3.8-27b-turbo:high";
-          commit = "ninfer/qwen3.8-27b-turbo:high";
-          task = "ninfer/qwen3.8-27b-turbo:high";
-          advisor = "ninfer/qwen3.8-27b-turbo:high";
-          judge = "ninfer/qwen3.8-27b-turbo:high";
+          default = "ninfer/qwen3.8-27b:high";
+          smol = "ninfer/qwen3.8-27b:high";
+          slow = "ninfer/qwen3.8-27b:high";
+          vision = "ninfer/qwen3.8-27b:high";
+          plan = "ninfer/qwen3.8-27b:high";
+          commit = "ninfer/qwen3.8-27b:high";
+          task = "ninfer/qwen3.8-27b:high";
+          advisor = "ninfer/qwen3.8-27b:high";
+          judge = "ninfer/qwen3.8-27b:high";
         };
 
         enabledModels = [
@@ -473,8 +473,11 @@
       omplWrapper = pkgs.writeShellScriptBin "ompl" ''
         set -euo pipefail
 
-        active_model="$( ninfer active 2>/dev/null || true )"
-        active_model="''${active_model:-qwen3.8-27b-turbo}"
+        active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
+        if [ -z "$active_model" ]; then
+          active_model="$( ninfer active 2>/dev/null || true )"
+        fi
+        active_model="''${active_model:-qwen3.8-27b}"
 
         runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
         mkdir -p "$runtime_dir"
@@ -503,8 +506,11 @@ EOF
       omprpWrapper = pkgs.writeShellScriptBin "omprp" ''
         set -euo pipefail
 
-        active_model="$( ninfer active 2>/dev/null || true )"
-        active_model="''${active_model:-qwen3.8-27b-turbo}"
+        active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
+        if [ -z "$active_model" ]; then
+          active_model="$( ninfer active 2>/dev/null || true )"
+        fi
+        active_model="''${active_model:-qwen3.8-27b}"
 
         runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
         mkdir -p "$runtime_dir"

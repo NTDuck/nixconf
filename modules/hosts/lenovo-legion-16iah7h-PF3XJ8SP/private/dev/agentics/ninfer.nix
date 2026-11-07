@@ -77,6 +77,9 @@
             shift
           fi
         done
+        if [[ -n "''${NINFER_MODEL_ID:-}" ]]; then
+          out+=(--model-id "$NINFER_MODEL_ID")
+        fi
         exec "$REAL" "''${out[@]}"
       '';
 
@@ -608,6 +611,7 @@ FISH
               "NINFER_KV_CAPACITY=65536"
               "NINFER_HOST_STATE_SLOTS=6"
               "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
+              "NINFER_MODEL_ID=qwen3.8-27b"
             ];
             ExecStart = "${ninferRoot}/run.sh qwen38-27b tuned";
 
@@ -628,7 +632,7 @@ FISH
 
         # On-demand Qwen3.8-27B Turbo daemon (port 8092).
         systemd.services.ninfer-df2-turbo = {
-          description = "ninfer 0.15.0 Qwen3.8-27B DFlash2 Turbo (Heretic Uncensored)";
+          description = "ninfer 0.15.0 Qwen3.8-27B MTP3 Turbo (Heretic Uncensored)";
           after = ["network-online.target"];
           wants = ["network-online.target"];
           conflicts = [
@@ -654,10 +658,12 @@ FISH
               "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
               "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
               "LD_LIBRARY_PATH=${ld}"
-              "NINFER_SPEC=dflash2"
+              "NINFER_SPEC=mtp"
+              "NINFER_DRAFT_TOKENS=3"
               "NINFER_HOST=0.0.0.0"
               "NINFER_PORT=${toString ninferPort}"
               "NINFER_FALLBACK=off"
+              "NINFER_MODEL_ID=qwen3.8-27b-turbo"
               "NINFER_CONCURRENCY=6"
               "NINFER_CONTEXT=65536"
               "NINFER_KV_CAPACITY=65536"
