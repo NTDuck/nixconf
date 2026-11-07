@@ -48,6 +48,10 @@
       den.aspects.apps.office.pandoc
       den.aspects.apps.office.texlive
       den.aspects.apps.office.zathura
+      # Rust Office suite (2026-11-07 user request): WordCraft, GridCraft, DeckCraft
+      den.aspects.apps.office.wordcraft
+      den.aspects.apps.office.gridcraft
+      den.aspects.apps.office.deckcraft
       den.aspects.apps.mermaid
       den.aspects.apps.editors.obsidian
       den.aspects.apps.editors.emeraldian

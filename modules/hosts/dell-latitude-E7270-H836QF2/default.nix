@@ -46,6 +46,10 @@
       den.aspects.apps.editors.helix
       # Office suite (2026-09-27 user request): same aspect legion uses.
       den.aspects.apps.office.libreoffice
+      # Rust Office suite (2026-11-07 user request): WordCraft, GridCraft, DeckCraft
+      den.aspects.apps.office.wordcraft
+      den.aspects.apps.office.gridcraft
+      den.aspects.apps.office.deckcraft
       # Discord client via Vesktop (2026-11-03 user request): parity with legion.
       den.aspects.apps.messaging.discord
       # omp + ninfer-over-tailscale (models.yml points at legion).
