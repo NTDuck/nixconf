@@ -148,7 +148,7 @@
             ;;
         esac
 
-        chmod 0755 "$MODELS_DIR" 2>/dev/null || true
+        chmod 0775 "$MODELS_DIR" 2>/dev/null || true
         echo "Done. Models ready in $MODELS_DIR for KoboldCpp router mode."
       '';
 
@@ -217,7 +217,7 @@
             # model directory on every unit startup. Create models dir directly in ExecStartPre.
             ExecStartPre = pkgs.writeShellScript "koboldcpp-prestart" ''
               mkdir -p ${modelsDir}
-              chmod 0755 /var/lib/koboldcpp ${modelsDir} 2>/dev/null || true
+              chmod 0775 /var/lib/koboldcpp ${modelsDir} 2>/dev/null || true
             '';
 
             ExecStart = "${koboldcppLauncher}/bin/koboldcpp-launcher";
