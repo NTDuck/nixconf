@@ -20,14 +20,11 @@
 # parallelism x context (+50% concurrency, +54% throughput). Production stays
 # on v0.15.0 C6x65k; v0.16.0 is staged at ~/models/q27-bench/ashalliants/
 # ninfer-rtx3090-linux-x64-0.16.0-rtx3090 with shim for future engine updates.
-# WHY THE VENDOR TREE IS CONSUMED IN PLACE, NOT STORED: the release is a
-# 20 GiB unpacked tree (17.7 GiB .ninfer artifact + binaries), and /home
-# sits at 94%. A store copy would double that transiently (measured
-# ENOSPC twice on 2026-09-29 for the 17 GiB ninfer artifact). The
-# benchmark staged tree at ~/models/q27-bench/ashalliants/
-# ninfer-rtx3090-linux-x64-0.15.0-rtx3090 is hash-verified below and
-# referenced directly (ProtectHome=false for this unit only; artifact
-# and /home are single-user ayin-owned).
+# 2026-11-07 MIGRATION TO NIX STORE: The engine distribution and pinned
+# model artifacts are packaged as idiomatic Nix store derivations
+# (fetchzip for release binaries, fetchurl for .ninfer weights, and
+# runCommand wrapper). Units use ProtectHome=true and run strictly
+# against store paths.
 #
 # WHY run.sh + the hostkv shim: the vendor launcher pins the tuned
 # profile (--spec dflash2 --draft-tokens 7 --lm-head-draft --kv-dtype
@@ -61,8 +58,53 @@
       lib,
       ...
     }: let
-      ninferRoot = "/home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090";
+      # Idiomatic Nix store derivations for ninfer 0.15.0 and pinned model artifacts.
+      ninferRelease = pkgs.fetchzip {
+        url = "https://github.com/ashalliants/ninfer-3090/releases/download/v0.15.0-rtx3090/ninfer-rtx3090-linux-x64-0.15.0-rtx3090.tar.gz";
+        hash = "sha256-f/u4NHbVDiigLrxKrEX8vZaYPM2GKNqoVbDkgp1Rsxk=";
+      };
 
+      ninferServeHostkvShim = pkgs.writeShellScript "ninfer-serve.hostkv-shim" ''
+        set -euo pipefail
+        REAL="$(dirname "$0")/ninfer-serve.real"
+        out=()
+        while (($#)); do
+          if [[ "$1" == "--host-kv-mib" ]]; then
+            out+=(--host-kv-mib 2048)
+            shift 2
+          else
+            out+=("$1")
+            shift
+          fi
+        done
+        exec "$REAL" "''${out[@]}"
+      '';
+
+      ninferQwen38Model = pkgs.fetchurl {
+        url = "https://huggingface.co/WarlaxZ/Qwen3.8-27B-NInfer-3090/resolve/d47f2732d369acaec76dc44228f67c72b081df2f/qwen3_8_27b.ninfer";
+        hash = "sha256-fyoAhqBx7pMsZhBuFVLRGKhc/sjd7xPGelTNZKuzlwY=";
+        curlOptsList = ["--http1.1"];
+      };
+
+      ninferTurboModel = pkgs.fetchurl {
+        url = "https://huggingface.co/amynporb/Qwen3.8-27B-TURBO-NInfer/resolve/main/qwen38_turbo_sm86.ninfer";
+        hash = "sha256-eU+7rEJuFusCe7Xmg94ZA0a716ODGBclU8Xpk/elo84=";
+        curlOptsList = ["--http1.1"];
+      };
+
+      ninferRoot = pkgs.runCommand "ninfer-rtx3090-0.15.0" {} ''
+        mkdir -p $out/models
+        cp -r ${ninferRelease}/* $out/
+        chmod -R u+w $out
+        mv $out/ninfer-serve $out/ninfer-serve.real
+        cp ${ninferServeHostkvShim} $out/ninfer-serve.hostkv-shim
+        ln -s ninfer-serve.hostkv-shim $out/ninfer-serve
+        chmod +x $out/ninfer-serve.hostkv-shim
+        cp -r ${./ninfer-tools} $out/tools
+        ln -s ${ninferQwen38Model} $out/models/qwen3_8_27b.ninfer
+        ln -s ${ninferTurboModel} $out/models/qwen38_turbo_sm86.ninfer
+        ln -s ${ninferTurboModel} $out/models/qwen3_8_27b_turbo.ninfer
+      '';
       # The four non-bundled ldd deps of the 0.15.0 binary (skill:
       # ninfer-ash-hostkv-clamp). prism-llamacpp-libs covers
       # cublas/cudart, the driver package covers libcuda (via
@@ -470,64 +512,9 @@ FISH
           runHook postInstall
         '';
       };
-      # Model artifact fetcher for out-of-band GGUF/NInfer binaries.
-      # 2026-11-06: Added Qwen3.8-27B Turbo Heretic (DavidAU / amynporb).
-      ninferFetchModels = pkgs.writeShellScriptBin "ninfer-fetch-models" ''
-        set -euo pipefail
-        MODELS_DIR="${ninferRoot}/models"
-        mkdir -p "$MODELS_DIR"
-
-        TURBO_URL="https://huggingface.co/amynporb/Qwen3.8-27B-TURBO-NInfer/resolve/main/qwen38_turbo_sm86.ninfer"
-        TURBO_FILE="qwen38_turbo_sm86.ninfer"
-        TURBO_HASH="ff82cb06fdb6a61d95778f8299c74f3b9e474e0487511a153b42f07a95e59ae1"
-
-        download_model() {
-          local name="$1"
-          local url="$2"
-          local file="$3"
-          local expected_hash="$4"
-          local dest="$MODELS_DIR/$file"
-
-          echo "=== Processing $name ==="
-          if [ -f "$dest" ]; then
-            echo "Checking existing $dest..."
-            local current_hash
-            current_hash="$(${pkgs.coreutils}/bin/sha256sum "$dest" | ${pkgs.gawk}/bin/awk '{print $1}')"
-            if [ "$current_hash" = "$expected_hash" ]; then
-              echo "Hash verified: $dest matches expected $expected_hash."
-              return 0
-            else
-              echo "Hash mismatch for $dest ($current_hash vs $expected_hash). Re-downloading..."
-              ${pkgs.curl}/bin/curl -L -C - --http1.1 --retry 5 -o "$dest" "$url"
-            fi
-          else
-            echo "Downloading $name to $dest..."
-            ${pkgs.curl}/bin/curl -L -C - --http1.1 --retry 5 -o "$dest" "$url"
-            echo "Verifying checksum..."
-            local current_hash
-            current_hash="$(${pkgs.coreutils}/bin/sha256sum "$dest" | ${pkgs.gawk}/bin/awk '{print $1}')"
-            if [ "$current_hash" != "$expected_hash" ]; then
-              echo "ERROR: Downloaded $file failed checksum check!" >&2
-              exit 1
-            fi
-          fi
-          echo "Model ready: $dest"
-        }
-
-        TARGET="''${1:-turbo}"
-        case "$TARGET" in
-          turbo|qwen3.8-27b-turbo)
-            download_model "Qwen3.8-27B Turbo (Heretic Uncensored sm86)" "$TURBO_URL" "$TURBO_FILE" "$TURBO_HASH"
-            ;;
-          *)
-            echo "usage: ninfer-fetch-models [turbo]" >&2
-            exit 1
-            ;;
-        esac
-      '';
     in {
       specialisation.homelab.configuration = {
-        environment.systemPackages = [ninfer ninferFetchModels];
+        environment.systemPackages = [ninfer];
         # Passwordless unit state management for ninfer switch CLI.
         # Without this, systemctl stop/start blocks on interactive polkit auth (25s hang).
         # Grants active local sessions or wheel users permission to manage ninfer-* and bonsai2 units.
@@ -616,8 +603,7 @@ FISH
             MemoryMax = "12G";
             Restart = "on-failure";
             RestartSec = "10s";
-            # /home artifact tree: ProtectHome must stay OFF for this unit
-            # (runs.sh + binary live under /home/ayin/models). ProtectSystem
+            ProtectHome = true;
             # still pins the rest of the FS.
             ProtectSystem = "strict";
             NoNewPrivileges = true;
@@ -644,7 +630,7 @@ FISH
                 i=$((i+1)); [ $i -gt 60 ] && exit 1
                 sleep 1
               done
-              echo "ff82cb06fdb6a61d95778f8299c74f3b9e474e0487511a153b42f07a95e59ae1  ${ninferRoot}/models/qwen38_turbo_sm86.ninfer" \
+              echo "794fbbac426e16eb027bb5e683de190346bbd7a38318172553c5e993f7a5a3ce  ${ninferRoot}/models/qwen38_turbo_sm86.ninfer" \
                 | ${pkgs.coreutils}/bin/sha256sum -c -
             '';
             Environment = let
@@ -671,6 +657,7 @@ FISH
             MemoryMax = "12G";
             Restart = "on-failure";
             RestartSec = "10s";
+            ProtectHome = true;
             ProtectSystem = "strict";
             NoNewPrivileges = true;
             PrivateTmp = true;
