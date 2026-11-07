@@ -52,6 +52,9 @@
       '';
 
       # FHS wrapper providing glibc, standard C++ runtimes, and access to NVIDIA driver libraries.
+      # Precedent in axolotl/default.nix: mounting a tmpfs on /run first, then binding the driver
+      # store paths (/run/opengl-driver{,-32}) and /run/current-system/sw/bin allows libcuda.so.1
+      # to be dlopened and nvidia-smi to be called without mount-over-bind collision.
       koboldcppFhs = pkgs.buildFHSEnv {
         name = "koboldcpp";
         targetPkgs = pkgs: with pkgs; [
@@ -61,7 +64,15 @@
           openssl
           curl
         ];
+        extraBwrapArgs = [
+          "--tmpfs /run"
+          "--ro-bind /run/opengl-driver /run/opengl-driver"
+          "--ro-bind /run/opengl-driver-32 /run/opengl-driver-32"
+          "--ro-bind /run/systemd/resolve /run/systemd/resolve"
+          "--ro-bind /run/current-system/sw/bin /run/current-system/sw/bin"
+        ];
         profile = ''
+          export PATH="/run/current-system/sw/bin:$PATH"
           export LD_LIBRARY_PATH="/run/opengl-driver/lib:/run/opengl-driver-32/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
         '';
         runScript = "${koboldcppBin}/bin/koboldcpp-unwrapped";
@@ -156,8 +167,8 @@
           $model_args \
           --port ${toString koboldcppPort} \
           --host 0.0.0.0 \
-          --usecuda 0 \
-          --gpulayers -1 \
+          --usecuda 1 \
+          --gpulayers 999 \
           --contextsize 16384 \
           --flashattention \
           --smartcontext \
@@ -216,6 +227,13 @@
             TimeoutStartSec = 120;
           };
         };
+
+        # Pre-create model directory with wheel write permissions so users can run
+        # koboldcpp-fetch-models directly without sudo.
+        systemd.tmpfiles.rules = [
+          "d /var/lib/koboldcpp 0775 root wheel -"
+          "d ${modelsDir} 0775 root wheel -"
+        ];
 
         # Passwordless unit state management for koboldcpp.service
         security.polkit.extraConfig = ''
