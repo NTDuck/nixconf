@@ -224,6 +224,7 @@ get_active() {
       *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
       *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
     esac
+  fi
 
   return 1
 }
