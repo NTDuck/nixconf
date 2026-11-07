@@ -86,11 +86,25 @@
         curlOptsList = ["--http1.1"];
       };
 
-      ninferTurboModel = pkgs.fetchurl {
+      # Upstream HF artifact is still NInfer v2 (nixinfer-serve 0.15.0
+      # refuses it); converted to v3 in ninferTurboModel below.
+      ninferTurboModelV2 = pkgs.fetchurl {
         url = "https://huggingface.co/amynporb/Qwen3.8-27B-TURBO-NInfer/resolve/main/qwen38_turbo_sm86.ninfer";
-        hash = "sha256-eU+7rEJuFusCe7Xmg94ZA0a716ODGBclU8Xpk/elo84=";
+        hash = "sha256-/4LLBv22ph2Vd4+CmcdPO55HTgSHURoVO0LwepXlmuE=";
         curlOptsList = ["--http1.1"];
       };
+
+      # v3 conversion of the upstream v2 artifact. The upgrade tool's
+      # header identity is pinned (see ninfer-tools/upgrade script) so
+      # this build is deterministic and byte-identical to the locally
+      # verified artifact (sha256 794fbbac...).
+      ninferTurboModel = pkgs.runCommand "qwen38_turbo_sm86-v3.ninfer" {
+        nativeBuildInputs = [pkgs.python3];
+      } ''
+        cp -r ${./ninfer-tools} ./ninfer-tools
+        python3 ./ninfer-tools/upgrade_ninfer_v2_to_v3.py \
+          ${ninferTurboModelV2} $out
+      '';
 
       ninferRoot = pkgs.runCommand "ninfer-rtx3090-0.15.0" {} ''
         mkdir -p $out/models

@@ -796,7 +796,12 @@ def upgrade(input_path, output_path):
     if any(path.exists() for path in targets):
         raise FileExistsError("an output file already exists")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    identity = uuid.uuid4().bytes
+    # Nix fixed-output derivations require byte-identical output across
+    # builds, so the header identity cannot be random. Pinned to the
+    # UUID of the locally verified v3 artifact
+    # (qwen38_turbo_sm86.ninfer, sha256 794fbbac...) so the converted
+    # file hashes identically to it.
+    identity = bytes.fromhex("98f3a4c3fc7e4958b5ce66d06b35fb41")
     temporary, published = [], []
     try:
         with input_path.open("rb") as source:
