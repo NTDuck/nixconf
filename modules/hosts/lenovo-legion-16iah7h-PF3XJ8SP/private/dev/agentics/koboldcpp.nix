@@ -189,8 +189,6 @@
           conflicts = [
             "ninfer-df2.service"
             "ninfer-df2-turbo.service"
-            "ninfer-35b.service"
-            "ninfer-35b-abliterated.service"
             "bonsai2.service"
           ];
 

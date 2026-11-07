@@ -33,22 +33,6 @@
           inputs = ["text" "image"];
           thinking = true;
         }
-        {
-          id = "qwen3.6-35b-a3b";
-          name = "Qwen 3.6 35B A3B (Vision)";
-          context = 65536;
-          max_output = 16384;
-          inputs = ["text" "image"];
-          thinking = true;
-        }
-        {
-          id = "qwen3.6-35b-a3b-abliterated";
-          name = "Qwen 3.6 35B A3B (Abliterated)";
-          context = 65536;
-          max_output = 16384;
-          inputs = ["text" "image"];
-          thinking = true;
-        }
       ];
 
       providersConfig = {

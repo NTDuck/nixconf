@@ -168,22 +168,6 @@
               contextWindow = 65536;
               maxTokens = 16384;
             }
-            {
-              id = "qwen3.6-35b-a3b";
-              name = "Qwen 3.6 35B A3B (Vision)";
-              reasoning = true;
-              input = ["text" "image"];
-              contextWindow = 65536;
-              maxTokens = 16384;
-            }
-            {
-              id = "qwen3.6-35b-a3b-abliterated";
-              name = "Qwen 3.6 35B A3B (Abliterated)";
-              reasoning = true;
-              input = ["text" "image"];
-              contextWindow = 65536;
-              maxTokens = 16384;
-            }
           ];
         };
       };
@@ -285,8 +269,6 @@
         enabledModels = [
           "ninfer/qwen3.8-27b"
           "ninfer/qwen3.8-27b-turbo"
-          "ninfer/qwen3.6-35b-a3b"
-          "ninfer/qwen3.6-35b-a3b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -359,8 +341,6 @@
         enabledModels = [
           "ninfer/qwen3.8-27b"
           "ninfer/qwen3.8-27b-turbo"
-          "ninfer/qwen3.6-35b-a3b"
-          "ninfer/qwen3.6-35b-a3b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes

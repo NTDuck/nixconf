@@ -114,7 +114,7 @@
           # ../ninfer.nix): starting any of the units natively stops
           # the others (ninfer's units declare the symmetric Conflicts
           # set).
-          conflicts = ["ninfer-df2.service" "ninfer-35b.service"];
+          conflicts = ["ninfer-df2.service" "ninfer-df2-turbo.service"];
 
           serviceConfig = {
             # Static 3090 pin (2026-09-25, homelab-spec visibility request):

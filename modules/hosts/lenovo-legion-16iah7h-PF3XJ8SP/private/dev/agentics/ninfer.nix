@@ -84,7 +84,8 @@
       # 2026-10-18: Native shell CLI. Fast (<5ms), minimal UI,
       # canonical IDs only (no aliases), <nil> unloader, and full shell completions.
       # 2026-10-31: Renamed ashalliant CLI to ninfer (clean cutover).
-      # 2026-11-06: Replaced qwen3.8-27b-abliterated with qwen3.8-27b-turbo and removed hemmingway-1.
+      # 2026-11-06: Replaced qwen3.8-27b-abliterated with qwen3.8-27b-turbo.
+      # 2026-11-07: Removed qwen3.6 models; enhanced switch with responsive progress bar and milestone logging.
       ninfer = pkgs.stdenv.mkDerivation {
         pname = "ninfer";
         version = "1.0.0";
@@ -105,8 +106,6 @@ SYSTEMCTL=( "${pkgs.systemd}/bin/systemctl" --no-ask-password )
 MODELS=(
   "qwen3.8-27b|ninfer-df2.service|${toString ninferPort}|6x65k"
   "qwen3.8-27b-turbo|ninfer-df2-turbo.service|${toString ninferPort}|6x65k"
-  "qwen3.6-35b-a3b|ninfer-35b.service|${toString ninferPort}|3x65k"
-  "qwen3.6-35b-a3b-abliterated|ninfer-35b-abliterated.service|${toString ninferPort}|3x65k"
 )
 
 show_list() {
@@ -166,12 +165,9 @@ get_active() {
   mpath="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.model_path // empty' 2>/dev/null || true )"
   if [ -n "$mpath" ]; then
     case "$mpath" in
-      *qwen3_6_35b_a3b_huihui_abliterated*) echo "qwen3.6-35b-a3b-abliterated"; return 0 ;;
-      *qwen3_6_35b_a3b*) echo "qwen3.6-35b-a3b"; return 0 ;;
       *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
       *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
     esac
-  fi
 
   return 1
 }
@@ -181,32 +177,39 @@ do_switch() {
   local state_dir="''${XDG_RUNTIME_DIR:-/tmp}/ninfer"
   local state_file="$state_dir/active-model"
 
-  # Clean cutover: no backward-compat aliases.
   if [ "$target" = "<nil>" ] || [ "$target" = "nil" ]; then
+    local stopping=0
     for entry in "''${MODELS[@]}"; do
       IFS='|' read -r mid svc port shape <<< "$entry"
       if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
-        "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
+        printf "Stopping %s (%s)... " "$mid" "$svc"
+        "''${SYSTEMCTL[@]}" stop "$svc" 2>/dev/null || true
+        echo "done."
+        stopping=1
       fi
     done
     rm -f "$state_file" 2>/dev/null || true
-    echo "switched to <nil>"
+    echo "✔ Unloaded all models (switched to <nil>)"
     return 0
   fi
 
   local found_svc=""
   local canonical=""
+  local target_port=""
+  local target_shape=""
   for entry in "''${MODELS[@]}"; do
     IFS='|' read -r mid svc port shape <<< "$entry"
     if [ "$mid" = "$target" ]; then
       found_svc="$svc"
       canonical="$mid"
+      target_port="$port"
+      target_shape="$shape"
       break
     fi
   done
 
   if [ -z "$found_svc" ]; then
-    echo "unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-turbo, qwen3.6-35b-a3b, qwen3.6-35b-a3b-abliterated, <nil>" >&2
+    echo "error: unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-turbo, <nil>" >&2
     exit 1
   fi
 
@@ -215,29 +218,126 @@ do_switch() {
   mkdir -p "$state_dir" 2>/dev/null || true
   echo "$canonical" > "$state_file" 2>/dev/null || true
 
+  # Fast path: already active and responding on HTTP
   if "''${SYSTEMCTL[@]}" is-active --quiet "$found_svc" 2>/dev/null; then
-    if [ "$prev_active" = "$canonical" ]; then
-      echo "already on $canonical"
-    else
-      echo "switched to $canonical"
+    if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:$target_port/v1/models" >/dev/null 2>&1; then
+      echo "✔ Already active and responding on $canonical (:$target_port)"
+      return 0
     fi
-    return 0
   fi
 
+  # Stop any conflicting active services first
   for entry in "''${MODELS[@]}"; do
     IFS='|' read -r mid svc port shape <<< "$entry"
     if [ "$svc" != "$found_svc" ] && "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+      printf "Stopping %s (%s)... " "$mid" "$svc"
       "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
+      while "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; do
+        sleep 0.1
+      done
+      echo "done."
     fi
   done
 
-  if "''${SYSTEMCTL[@]}" start "$found_svc"; then
-    echo "switched to $canonical"
-  else
+  echo "Switching to $canonical ($target_shape)..."
+
+  local start_sec=$SECONDS
+  local journal_cursor
+  journal_cursor="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f2- || true)"
+
+  if ! "''${SYSTEMCTL[@]}" start --no-block "$found_svc"; then
     rm -f "$state_file" 2>/dev/null || true
-    echo "failed to start $found_svc" >&2
+    echo "error: failed to start $found_svc" >&2
     exit 1
   fi
+
+  local is_tty=0
+  [ -t 1 ] && is_tty=1
+
+  local spinner_chars=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+  local spin_idx=0
+  local last_status=""
+  local last_logged_line=""
+  local substate=""
+
+  while true; do
+    local elapsed=$(( SECONDS - start_sec ))
+    local spin="''${spinner_chars[$spin_idx]}"
+    spin_idx=$(( (spin_idx + 1) % ''${#spinner_chars[@]} ))
+
+    if "''${SYSTEMCTL[@]}" is-failed --quiet "$found_svc" 2>/dev/null; then
+      [ "$is_tty" -eq 1 ] && printf "\r\033[K"
+      echo "❌ $found_svc failed to start!" >&2
+      ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 15 --no-pager >&2 || true
+      rm -f "$state_file" 2>/dev/null || true
+      exit 1
+    fi
+
+    # Check if HTTP endpoint is live
+    if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:$target_port/v1/models" >/dev/null 2>&1; then
+      [ "$is_tty" -eq 1 ] && printf "\r\033[K"
+      echo "✔ Ready in ''${elapsed}s | listening on http://0.0.0.0:$target_port"
+      echo "switched to $canonical"
+      return 0
+    fi
+
+    local latest_line=""
+    if [ -n "$journal_cursor" ]; then
+      latest_line="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" --after-cursor="$journal_cursor" -o cat --no-pager 2>/dev/null | tail -n 1 || true)"
+    else
+      latest_line="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 1 -o cat --no-pager 2>/dev/null || true)"
+    fi
+
+    local progress_desc=""
+    if [[ "$latest_line" =~ loading[[:space:]]+weights[[:space:]]+([0-9.]+)% ]]; then
+      local pct="''${BASH_REMATCH[1]}"
+      local int_pct=''${pct%.*}
+      int_pct=''${int_pct:-0}
+      local bar_width=20
+      local filled=$(( int_pct * bar_width / 100 ))
+      local empty=$(( bar_width - filled ))
+      local bar=""
+      for ((b=0; b<filled; b++)); do bar+="█"; done
+      for ((b=0; b<empty; b++)); do bar+="░"; done
+      progress_desc="[$bar] $pct% ($latest_line)"
+    elif [ -n "$latest_line" ] && [ "$latest_line" != "$last_logged_line" ]; then
+      if [[ "$latest_line" =~ (weights\ ready|host\ state\ pinned|host\ KV\ pinned|CUDA\ graphs\ ready|engine\ ready|starting\ engine|API:) ]]; then
+        if [ "$is_tty" -eq 1 ]; then
+          printf "\r\033[K  → %s\n" "$latest_line"
+        else
+          echo "  → $latest_line"
+        fi
+        last_logged_line="$latest_line"
+      else
+        progress_desc="$latest_line"
+      fi
+    fi
+
+    if [ -z "$progress_desc" ]; then
+      substate="$(${pkgs.systemd}/bin/systemctl show -p SubState --value "$found_svc" 2>/dev/null || echo "starting")"
+      if [ "$substate" = "condition" ] || [ "$substate" = "start-pre" ]; then
+        progress_desc="[boot-gate] verifying GPU & model artifact..."
+      else
+        progress_desc="initializing engine ($substate)..."
+      fi
+    fi
+
+    if [ "$is_tty" -eq 1 ]; then
+      printf "\r\033[K  %s %s (%ds)" "$spin" "$progress_desc" "$elapsed"
+    elif [ "$progress_desc" != "$last_status" ] && [ "$(( elapsed % 3 ))" -eq 0 ]; then
+      echo "  [ninfer] $progress_desc (''${elapsed}s)"
+      last_status="$progress_desc"
+    fi
+
+    if [ "$elapsed" -gt 180 ]; then
+      [ "$is_tty" -eq 1 ] && printf "\r\033[K"
+      echo "error: timeout waiting for $found_svc to become ready (>180s)" >&2
+      ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 20 --no-pager >&2 || true
+      exit 1
+    fi
+
+    sleep 0.2
+  done
 }
 
 
@@ -300,8 +400,6 @@ _ninfer() {
   models=(
     'qwen3.8-27b:Qwen3.8-27B DFlash2 (6x65k :8092)'
     'qwen3.8-27b-turbo:Qwen3.8-27B Turbo Heretic (6x65k :8092)'
-    'qwen3.6-35b-a3b:Qwen3.6-35B-A3B MTP3 (3x65k :8140)'
-    'qwen3.6-35b-a3b-abliterated:Qwen3.6-35B-A3B Abliterated (3x65k :8142)'
     '\<nil\>:Unload all ninfer models'
     'nil:Unload all ninfer models'
   )
@@ -342,7 +440,7 @@ _ninfer_completion() {
   cur="''${COMP_WORDS[COMP_CWORD]}"
   prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-  local models="qwen3.8-27b qwen3.8-27b-turbo qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated <nil> nil"
+  local models="qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
   local commands="switch list status active current"
 
   case "$prev" in
@@ -366,8 +464,8 @@ complete -c ninfer -n "__fish_use_subcommand" -a list -d "list models"
 complete -c ninfer -n "__fish_use_subcommand" -a status -d "show status"
 complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
 complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
-complete -c ninfer -n "__fish_use_subcommand" -a "qwen3.8-27b qwen3.8-27b-turbo qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated <nil> nil"
-complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-turbo qwen3.6-35b-a3b qwen3.6-35b-a3b-abliterated <nil> nil"
+complete -c ninfer -n "__fish_use_subcommand" -a "qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
 FISH
           runHook postInstall
         '';
@@ -455,8 +553,6 @@ FISH
           conflicts = [
             "bonsai2.service"
             "ninfer-df2-turbo.service"
-            "ninfer-35b.service"
-            "ninfer-35b-abliterated.service"
           ];
 
           # run.sh resolves bash via `#!/usr/bin/env bash`. The NixOS
@@ -537,8 +633,6 @@ FISH
           conflicts = [
             "bonsai2.service"
             "ninfer-df2.service"
-            "ninfer-35b.service"
-            "ninfer-35b-abliterated.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -582,112 +676,6 @@ FISH
             PrivateTmp = true;
           };
         };
-
-        # On-demand Qwen3.6-35B-A3B daemon (port 8140).
-        systemd.services.ninfer-35b = {
-          description = "ninfer 0.15.0 Qwen3.6-35B-A3B MTP3";
-          after = ["network-online.target"];
-          wants = ["network-online.target"];
-          conflicts = [
-            "bonsai2.service"
-            "ninfer-df2.service"
-            "ninfer-df2-turbo.service"
-            "ninfer-35b-abliterated.service"
-          ];
-          serviceConfig = {
-            Type = "simple";
-            User = "ayin";
-            WorkingDirectory = ninferRoot;
-            ExecCondition = pkgs.writeShellScript "ninfer-35b-boot-gate" ''
-              i=0
-              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
-                i=$((i+1)); [ $i -gt 60 ] && exit 1
-                sleep 1
-              done
-              echo "3e33297645dc33557751be1a3c407a74ed7c00f34909b5d4e8cfdce91b3dbe84  ${ninferRoot}/models/qwen3_6_35b_a3b.ninfer" \
-                | ${pkgs.coreutils}/bin/sha256sum -c -
-            '';
-            Environment = let
-              ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);
-            in [
-              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
-              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
-              "LD_LIBRARY_PATH=${ld}"
-              "NINFER_SPEC=mtp"
-              "NINFER_HOST=0.0.0.0"
-              "NINFER_PORT=${toString ninferPort}"
-              "NINFER_FALLBACK=off"
-              "NINFER_CONCURRENCY=3"
-              "NINFER_CONTEXT=65536"
-              "NINFER_KV_CAPACITY=65536"
-              "NINFER_HOST_STATE_SLOTS=3"
-              "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
-            ];
-            ExecStart = "${ninferRoot}/run.sh qwen36-35b-a3b tuned";
-            MemoryHigh = "10G";
-            MemoryMax = "12G";
-            Restart = "on-failure";
-            RestartSec = "10s";
-            ProtectSystem = "strict";
-            NoNewPrivileges = true;
-            PrivateTmp = true;
-          };
-        };
-
-        # On-demand Qwen3.6-35B-A3B Abliterated daemon (port 8142).
-        systemd.services.ninfer-35b-abliterated = {
-          description = "ninfer 0.15.0 Qwen3.6-35B-A3B MTP3 (Abliterated)";
-          after = ["network-online.target"];
-          wants = ["network-online.target"];
-          conflicts = [
-            "bonsai2.service"
-            "ninfer-df2.service"
-            "ninfer-df2-turbo.service"
-            "ninfer-35b.service"
-          ];
-          serviceConfig = {
-            Type = "simple";
-            User = "ayin";
-            WorkingDirectory = ninferRoot;
-            ExecCondition = pkgs.writeShellScript "ninfer-35b-abl-boot-gate" ''
-              i=0
-              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
-                i=$((i+1)); [ $i -gt 60 ] && exit 1
-                sleep 1
-              done
-            '';
-            Environment = let
-              ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);
-            in [
-              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
-              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
-              "LD_LIBRARY_PATH=${ld}"
-              "NINFER_SPEC=mtp"
-              "NINFER_HOST=0.0.0.0"
-              "NINFER_PORT=${toString ninferPort}"
-              "NINFER_FALLBACK=off"
-              "NINFER_CONCURRENCY=3"
-              "NINFER_CONTEXT=65536"
-              "NINFER_KV_CAPACITY=65536"
-              "NINFER_HOST_STATE_SLOTS=3"
-              "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
-            ];
-            ExecStart = pkgs.writeShellScript "ninfer-35b-abl-start" ''
-              if [ -f "${ninferRoot}/models/qwen3_6_35b_a3b_huihui_abliterated.ninfer" ]; then
-                export NINFER_MODEL="${ninferRoot}/models/qwen3_6_35b_a3b_huihui_abliterated.ninfer"
-              fi
-              exec ${ninferRoot}/run.sh qwen36-35b-a3b tuned
-            '';
-            MemoryHigh = "10G";
-            MemoryMax = "12G";
-            Restart = "on-failure";
-            RestartSec = "10s";
-            ProtectSystem = "strict";
-            NoNewPrivileges = true;
-            PrivateTmp = true;
-          };
-        };
-
 
         # Tailscale firewall: open single ninfer port (:8092).
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
