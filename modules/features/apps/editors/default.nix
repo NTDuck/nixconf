@@ -2,7 +2,6 @@
   den.aspects.apps.editors = {
     includes = [
       den.aspects.apps.editors.helix
-      den.aspects.apps.editors.intellij
       den.aspects.apps.editors.openidea
       den.aspects.apps.editors.emeraldian
       den.aspects.apps.editors.obsidian

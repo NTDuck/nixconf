@@ -7,7 +7,6 @@
       den.aspects.dev.agentics.harnesses.codex
       den.aspects.dev.agentics.harnesses.disco
       den.aspects.dev.agentics.harnesses.learnharness
-      den.aspects.dev.agentics.harnesses.memdoor
       den.aspects.dev.agentics.harnesses.oh-my-pi
       den.aspects.dev.agentics.harnesses.reasonix
     ];
