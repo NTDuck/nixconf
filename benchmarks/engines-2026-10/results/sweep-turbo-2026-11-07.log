@@ -1,0 +1,16 @@
+=== ashalliants-turbo-65k ctx=0 c=8 ===
+RESULT ashalliants-turbo-65k ctx=0 c=8 ok=8/8 mean_decode=104.45 agg_decode=835.63 ttft=6.624 vram=20634
+=== ashalliants-turbo-65k ctx=16384 c=8 ===
+RESULT ashalliants-turbo-65k ctx=16384 c=8 ok=8/8 mean_decode=83.03 agg_decode=664.25 ttft=34.088 vram=20644
+=== ashalliants-turbo-65k ctx=65536 c=8 ===
+RESULT ashalliants-turbo-65k ctx=65536 c=8 ok=8/8 mean_decode=106.84 agg_decode=854.73 ttft=163.231 vram=20862
+=== ashalliants-turbo-96k ctx=98304 c=4 ===
+RESULT ashalliants-turbo-96k ctx=98304 c=4 ok=4/4 mean_decode=95.7 agg_decode=382.79 ttft=158.628 vram=20792
+=== ashalliants-turbo-128k ctx=131072 c=4 ===
+RESULT ashalliants-turbo-128k ctx=131072 c=4 ok=4/4 mean_decode=97.45 agg_decode=389.81 ttft=243.943 vram=21388
+=== ashalliants-turbo-192k ctx=196608 c=2 ===
+RESULT ashalliants-turbo-192k ctx=196608 c=2 ok=2/2 mean_decode=84.53 agg_decode=169.06 ttft=278.097 vram=22212
+=== ashalliants-turbo-256k ctx=262144 c=2 ===
+RESULT ashalliants-turbo-256k ctx=262144 c=2 ok=2/2 mean_decode=75.05 agg_decode=150.1 ttft=452.482 vram=23402
+=== ashalliants-turbo-256k ctx=262144 c=1 ===
+RESULT ashalliants-turbo-256k ctx=262144 c=1 ok=1/1 mean_decode=72.77 agg_decode=72.77 ttft=300.558 vram=23342

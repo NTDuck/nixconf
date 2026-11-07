@@ -269,9 +269,17 @@
   {
    "ctx": 65536,
    "conc": 8,
-   "tps": 61.22,
+   "tps": 106.84,
    "winners": [
-    "ninfer-061"
+    "ashalliants-turbo-65k"
+   ]
+  },
+  {
+   "ctx": 98304,
+   "conc": 4,
+   "tps": 95.7,
+   "winners": [
+    "ashalliants-turbo-96k"
    ]
   },
   {
@@ -299,11 +307,27 @@
    ]
   },
   {
+   "ctx": 196608,
+   "conc": 2,
+   "tps": 84.53,
+   "winners": [
+    "ashalliants-turbo-192k"
+   ]
+  },
+  {
    "ctx": 262144,
    "conc": 1,
    "tps": 99.5,
    "winners": [
     "ashalliants-df2-256k"
+   ]
+  },
+  {
+   "ctx": 262144,
+   "conc": 2,
+   "tps": 75.05,
+   "winners": [
+    "ashalliants-turbo-256k"
    ]
   }
  ],
