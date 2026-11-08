@@ -65,6 +65,10 @@
       den.aspects.apps.zoxide
       den.aspects.apps.editors.helix
       den.aspects.dev.gits.git
+      # omp harness (oh-my-pi): config.default.yml + omp alias; the
+      # host-private agentics.nix pins models.yml to the local BitNet
+      # engine and defines ompl.
+      den.aspects.dev.agentics.harnesses.oh-my-pi
 
       # Shell & prompt
       den.aspects.desktop.shells.zsh

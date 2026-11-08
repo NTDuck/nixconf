@@ -388,3 +388,35 @@ python3 run_sweep.py --stage long                 # survivors, 32K-256K
 .venv/bin/python analyze.py                       # CSV + 3D surfaces
 .venv/bin/python report.py                        # this file
 ```
+
+## CPU-only host: HP ProBook 450 G3 (2026-11-08)
+
+i7-6500U (Skylake, 2C/4T, AVX2+FMA, no AVX-512), 7.7 GiB RAM, powersave governor @2.5 GHz.
+`llama.cpp` = nixpkgs `llama-cpp` (BLAS/netlib backend, b64739e). `bitnet.cpp` = source build
+at `~/src/BitNet` on the ProBook (x86 TL2 OFF, i2_s), model converted via
+`convert-hf-to-gguf-bitnet.py --outtype i2_s` (uses the model's own `weight_scale`; the
+setup_env f32→llama-quantize route produced garbage output — its C `quantize_i2_s` packs
+linearly while the GEMM kernel expects the 128-block interleaved layout, and it re-derives
+scale as first-nonzero-abs instead of the trained one).
+
+Metric: `llama-bench`, pp128 / tg64 tok/s, greedy, single request.
+
+| model | engine | t1 pp/tg | t2 pp/tg | t4 pp/tg |
+|---|---|---|---|---|
+| BitNet-b1.58-2B-4T (i2_s, 1.10 GiB) | bitnet.cpp | 23.4 / 8.1 | 46.4 / 14.3 | 51.3 / 17.5 |
+| Qwen3-1.7B Q4_K_M (1.19 GiB) | llama.cpp | 15.6 / 1.0 | 21.3 / 2.0 | 22.9 / 2.1 |
+| LFM2-1.2B Q4_K_M (695 MiB) | llama.cpp | 31.3 / 1.7 | 38.4 / 3.3 | 39.7 / 3.4 |
+
+BitNet i2_s decode is ~8x faster than Qwen3-1.7B Q4_K_M at equal footprint on this CPU
+(packed 2-bit ternary weights → ~4x less memory bandwidth per weight plus the BitNet LUT
+kernels). LFM2 prefill beats BitNet's at t1 (conv-state arch), but BitNet dominates tg.
+
+Setup notes (ProBook):
+- BitNet build needs `nix shell nixpkgs#cmake clang gnumake` + `~/venv-bitnet` (torch needs
+  `stdenv.cc.cc.lib` on `LD_LIBRARY_PATH`); UI assets must be pre-extracted into
+  `3rdparty/llama.cpp/tools/ui/dist` — the HF-bucket build-time download fails offline and
+  the pinned submodule's `llama-ui-embed` additionally requires a `loading.html` that no
+  bucket version ships (synthesize a minimal one).
+- `llama-cli -no-cnv` is gone in this submodule: use `llama-completion --jinja`.
+- nixpkgs llama.cpp ships the netlib reference BLAS; `LD_PRELOAD`ing OpenBLAS did not
+  change tg (decode is bandwidth-bound, not GEMM-bound at this size).
