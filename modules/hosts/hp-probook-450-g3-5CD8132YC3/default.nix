@@ -64,11 +64,7 @@
       den.aspects.apps.tmux
       den.aspects.apps.zoxide
       den.aspects.apps.editors.helix
-      den.aspects.dev.gits.git
-      # omp harness (oh-my-pi): config.default.yml + omp alias; the
-      # host-private agentics.nix pins models.yml to the local BitNet
-      # engine and defines ompl.
-      den.aspects.dev.agentics.harnesses.oh-my-pi
+      den.aspects.dev
 
       # Shell & prompt
       den.aspects.desktop.shells.zsh
@@ -100,13 +96,17 @@
       # `#includedir /etc/sudoers.d` line — a sudoers.d drop-in was
       # silently ignored (found 2026-11-08); extraRules lands in the
       # generated /etc/sudoers directly.
-      security.sudo.extraRules = [{
-        users = ["ayin"];
-        commands = [{
-          command = "ALL";
-          options = ["NOPASSWD"];
-        }];
-      }];
+      security.sudo.extraRules = [
+        {
+          users = ["ayin"];
+          commands = [
+            {
+              command = "ALL";
+              options = ["NOPASSWD"];
+            }
+          ];
+        }
+      ];
     };
   };
 }
