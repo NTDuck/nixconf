@@ -35,7 +35,8 @@
       yaml = pkgs.formats.yaml {};
 
       # omp release binary (2026-11-09): upstream omp-linux-x64, hash-
-      # pinned in _omp-release.nix, autoPatched to the store glibc.
+      # pinned in _omp-release.nix, interpreter-only patchelf to the
+      # store glibc.
       # Download-only on bumps — no more llm-agents source build.
       ompBinPath =
         ((import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix") {inherit pkgs lib;})
@@ -74,32 +75,34 @@
       };
 
       models = {
-        providers = lib.recursiveUpdate {
-          # NetMind CodeV gateway (restored 2026-10-16 per user request).
-          codev = {
-            baseUrl = "https://netmind.viettel.vn/gateway/v1";
-            api = "openai-completions";
-            apiKey = "CODEV_API_KEY";
-            authHeader = true;
+        providers =
+          lib.recursiveUpdate {
+            # NetMind CodeV gateway (restored 2026-10-16 per user request).
+            codev = {
+              baseUrl = "https://netmind.viettel.vn/gateway/v1";
+              api = "openai-completions";
+              apiKey = "CODEV_API_KEY";
+              authHeader = true;
 
-            models = [
-              {
-                id = "MiniMax/MiniMax-M3";
-                name = "MiniMax M3 (NetMind)";
-                contextWindow = 196608;
-                maxTokens = 65536;
-              }
-              {
-                id = "zai-org/GLM-5.3-Flash";
-                name = "GLM 5.3 Flash (NetMind)";
-                contextWindow = 1048576;
-                maxTokens = 131072;
-              }
-            ];
-          };
+              models = [
+                {
+                  id = "MiniMax/MiniMax-M3";
+                  name = "MiniMax M3 (NetMind)";
+                  contextWindow = 196608;
+                  maxTokens = 65536;
+                }
+                {
+                  id = "zai-org/GLM-5.3-Flash";
+                  name = "GLM 5.3 Flash (NetMind)";
+                  contextWindow = 1048576;
+                  maxTokens = 131072;
+                }
+              ];
+            };
 
-          ninfer = ninferProvider;
-        } geminiOverrides;
+            ninfer = ninferProvider;
+          }
+          geminiOverrides;
       };
 
       # `ompl` = a Qwen3.8-27B-ONLY harness mirroring Legion's ompl profile
@@ -107,15 +110,15 @@
       # ninfer engine on Legion (:8092), running under an isolated profile dir.
       omplOverlay = {
         modelRoles = {
-          default = "ninfer/qwen3.8-27b:high";
-          smol = "ninfer/qwen3.8-27b:high";
-          slow = "ninfer/qwen3.8-27b:high";
-          vision = "ninfer/qwen3.8-27b:high";
-          plan = "ninfer/qwen3.8-27b:high";
-          commit = "ninfer/qwen3.8-27b:high";
-          task = "ninfer/qwen3.8-27b:high";
-          advisor = "ninfer/qwen3.8-27b:high";
-          judge = "ninfer/qwen3.8-27b:high";
+          default = "ninfer/qwen3.8-27b-turbo:high";
+          smol = "ninfer/qwen3.8-27b-turbo:high";
+          slow = "ninfer/qwen3.8-27b-turbo:high";
+          vision = "ninfer/qwen3.8-27b-turbo:high";
+          plan = "ninfer/qwen3.8-27b-turbo:high";
+          commit = "ninfer/qwen3.8-27b-turbo:high";
+          task = "ninfer/qwen3.8-27b-turbo:high";
+          advisor = "ninfer/qwen3.8-27b-turbo:high";
+          judge = "ninfer/qwen3.8-27b-turbo:high";
         };
 
         enabledModels = [
@@ -163,15 +166,15 @@
       #   git.enabled: false           - suppress git branch/status checks and UI indicators
       omprpOverlay = {
         modelRoles = {
-          default = "ninfer/qwen3.8-27b:high";
-          smol = "ninfer/qwen3.8-27b:high";
-          slow = "ninfer/qwen3.8-27b:high";
-          vision = "ninfer/qwen3.8-27b:high";
-          plan = "ninfer/qwen3.8-27b:high";
-          commit = "ninfer/qwen3.8-27b:high";
-          task = "ninfer/qwen3.8-27b:high";
-          advisor = "ninfer/qwen3.8-27b:high";
-          judge = "ninfer/qwen3.8-27b:high";
+          default = "ninfer/qwen3.8-27b-turbo:high";
+          smol = "ninfer/qwen3.8-27b-turbo:high";
+          slow = "ninfer/qwen3.8-27b-turbo:high";
+          vision = "ninfer/qwen3.8-27b-turbo:high";
+          plan = "ninfer/qwen3.8-27b-turbo:high";
+          commit = "ninfer/qwen3.8-27b-turbo:high";
+          task = "ninfer/qwen3.8-27b-turbo:high";
+          advisor = "ninfer/qwen3.8-27b-turbo:high";
+          judge = "ninfer/qwen3.8-27b-turbo:high";
         };
 
         enabledModels = [
@@ -299,7 +302,7 @@
 
         ompl = lib.removeSuffix "\n" ''
           active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
-          active_model="''${active_model:-qwen3.8-27b}"
+          active_model="''${active_model:-qwen3.8-27b-turbo}"
           runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
           mkdir -p "$runtime_dir"
           active_overlay="$runtime_dir/ompl-active.yml"
@@ -321,7 +324,7 @@
 
         omprp = lib.removeSuffix "\n" ''
           active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
-          active_model="''${active_model:-qwen3.8-27b}"
+          active_model="''${active_model:-qwen3.8-27b-turbo}"
           runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
           mkdir -p "$runtime_dir"
           active_overlay="$runtime_dir/omprp-active.yml"

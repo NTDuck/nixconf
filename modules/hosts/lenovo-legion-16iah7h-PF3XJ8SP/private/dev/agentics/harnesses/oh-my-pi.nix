@@ -12,7 +12,11 @@
 #
 # 2026-10-12: ollama removed entirely (user request — ninfer is the
 # sole local engine). The local attrset now only carries ninfer.
-{den, inputs, ...}: {
+{
+  den,
+  inputs,
+  ...
+}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
     homeManager = {
       lib,
@@ -23,9 +27,11 @@
       yaml = pkgs.formats.yaml {};
 
       # omp release binary (2026-11-09): upstream omp-linux-x64, hash-
-      # pinned in _omp-release.nix, autoPatched to the store glibc.
-      # Replaces the patched llm-agents source build (vibe patch cancelled
-      # 2026-11-09, so no source build is needed anywhere anymore).
+      # pinned in _omp-release.nix, interpreter-only patchelf to the
+      # store glibc (autoPatchelfHook corrupts the bun-embedded bundle —
+      # see _omp-release.nix header). Replaces the patched llm-agents
+      # source build (vibe patch cancelled 2026-11-09, so no source
+      # build is needed anywhere anymore).
       ompBinPath =
         ((import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix") {inherit pkgs lib;})
         .omp;
@@ -184,14 +190,16 @@
       geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-gemini-overrides.nix";
 
       models = {
-        providers = lib.recursiveUpdate (
-          cloudProviders
-          // (
-            if onHomelabSpec
-            then local
-            else {}
+        providers =
+          lib.recursiveUpdate (
+            cloudProviders
+            // (
+              if onHomelabSpec
+              then local
+              else {}
+            )
           )
-        ) geminiOverrides;
+          geminiOverrides;
       };
 
       # `ompl` = a Qwen3.8-27B-ONLY harness: every chat role pinned to
@@ -249,15 +257,15 @@
       # + engine logs 2026-10-11).
       omplOverlay = {
         modelRoles = {
-          default = "ninfer/qwen3.8-27b:high";
-          smol = "ninfer/qwen3.8-27b:high";
-          slow = "ninfer/qwen3.8-27b:high";
-          vision = "ninfer/qwen3.8-27b:high";
-          plan = "ninfer/qwen3.8-27b:high";
-          commit = "ninfer/qwen3.8-27b:high";
-          task = "ninfer/qwen3.8-27b:high";
-          advisor = "ninfer/qwen3.8-27b:high";
-          judge = "ninfer/qwen3.8-27b:high";
+          default = "ninfer/qwen3.8-27b-turbo:high";
+          smol = "ninfer/qwen3.8-27b-turbo:high";
+          slow = "ninfer/qwen3.8-27b-turbo:high";
+          vision = "ninfer/qwen3.8-27b-turbo:high";
+          plan = "ninfer/qwen3.8-27b-turbo:high";
+          commit = "ninfer/qwen3.8-27b-turbo:high";
+          task = "ninfer/qwen3.8-27b-turbo:high";
+          advisor = "ninfer/qwen3.8-27b-turbo:high";
+          judge = "ninfer/qwen3.8-27b-turbo:high";
         };
 
         enabledModels = [
@@ -315,15 +323,15 @@
       #   git.enabled: false           - suppress git branch/status checks and UI indicators
       omprpOverlay = {
         modelRoles = {
-          default = "ninfer/qwen3.8-27b:high";
-          smol = "ninfer/qwen3.8-27b:high";
-          slow = "ninfer/qwen3.8-27b:high";
-          vision = "ninfer/qwen3.8-27b:high";
-          plan = "ninfer/qwen3.8-27b:high";
-          commit = "ninfer/qwen3.8-27b:high";
-          task = "ninfer/qwen3.8-27b:high";
-          advisor = "ninfer/qwen3.8-27b:high";
-          judge = "ninfer/qwen3.8-27b:high";
+          default = "ninfer/qwen3.8-27b-turbo:high";
+          smol = "ninfer/qwen3.8-27b-turbo:high";
+          slow = "ninfer/qwen3.8-27b-turbo:high";
+          vision = "ninfer/qwen3.8-27b-turbo:high";
+          plan = "ninfer/qwen3.8-27b-turbo:high";
+          commit = "ninfer/qwen3.8-27b-turbo:high";
+          task = "ninfer/qwen3.8-27b-turbo:high";
+          advisor = "ninfer/qwen3.8-27b-turbo:high";
+          judge = "ninfer/qwen3.8-27b-turbo:high";
         };
 
         enabledModels = [
@@ -458,68 +466,67 @@
       # generates a runtime overlay in $XDG_RUNTIME_DIR/omp/ompl-active.yml,
       # and sets modelRoles to the active model instead of hardcoding qwen3.8-27b-turbo.
       omplWrapper = pkgs.writeShellScriptBin "ompl" ''
-        set -euo pipefail
+                set -euo pipefail
 
-        active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
-        if [ -z "$active_model" ]; then
-          active_model="$( ninfer active 2>/dev/null || true )"
-        fi
-        active_model="''${active_model:-qwen3.8-27b}"
+                active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
+                if [ -z "$active_model" ]; then
+                  active_model="$( ninfer active 2>/dev/null || true )"
+                fi
+                active_model="''${active_model:-qwen3.8-27b-turbo}"
 
-        runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
-        mkdir -p "$runtime_dir"
-        active_overlay="$runtime_dir/ompl-active.yml"
+                runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
+                mkdir -p "$runtime_dir"
+                active_overlay="$runtime_dir/ompl-active.yml"
 
-        cat << EOF > "$active_overlay"
-modelRoles:
-  default: ninfer/$active_model:high
-  smol: ninfer/$active_model:high
-  slow: ninfer/$active_model:high
-  vision: ninfer/$active_model:high
-  plan: ninfer/$active_model:high
-  commit: ninfer/$active_model:high
-  task: ninfer/$active_model:high
-  advisor: ninfer/$active_model:high
-  judge: ninfer/$active_model:high
-EOF
+                cat << EOF > "$active_overlay"
+        modelRoles:
+          default: ninfer/$active_model:high
+          smol: ninfer/$active_model:high
+          slow: ninfer/$active_model:high
+          vision: ninfer/$active_model:high
+          plan: ninfer/$active_model:high
+          commit: ninfer/$active_model:high
+          task: ninfer/$active_model:high
+          advisor: ninfer/$active_model:high
+          judge: ninfer/$active_model:high
+        EOF
 
-        export PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml:$active_overlay"
-        exec "${ompBinPath}/bin/omp" --profile ompl "$@"
+                export PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml:$active_overlay"
+                exec "${ompBinPath}/bin/omp" --profile ompl "$@"
       '';
 
       # omprp wrapper (2026-11-01): dynamically queries active model via ninfer active,
       # generates a runtime overlay in $XDG_RUNTIME_DIR/omp/omprp-active.yml,
       # and sets modelRoles to the active model, optimized for roleplay.
       omprpWrapper = pkgs.writeShellScriptBin "omprp" ''
-        set -euo pipefail
+                set -euo pipefail
 
-        active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
-        if [ -z "$active_model" ]; then
-          active_model="$( ninfer active 2>/dev/null || true )"
-        fi
-        active_model="''${active_model:-qwen3.8-27b}"
+                active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
+                if [ -z "$active_model" ]; then
+                  active_model="$( ninfer active 2>/dev/null || true )"
+                fi
+                active_model="''${active_model:-qwen3.8-27b-turbo}"
 
-        runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
-        mkdir -p "$runtime_dir"
-        active_overlay="$runtime_dir/omprp-active.yml"
+                runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
+                mkdir -p "$runtime_dir"
+                active_overlay="$runtime_dir/omprp-active.yml"
 
-        cat << EOF > "$active_overlay"
-modelRoles:
-  default: ninfer/$active_model:high
-  smol: ninfer/$active_model:high
-  slow: ninfer/$active_model:high
-  vision: ninfer/$active_model:high
-  plan: ninfer/$active_model:high
-  commit: ninfer/$active_model:high
-  task: ninfer/$active_model:high
-  advisor: ninfer/$active_model:high
-  judge: ninfer/$active_model:high
-EOF
+                cat << EOF > "$active_overlay"
+        modelRoles:
+          default: ninfer/$active_model:high
+          smol: ninfer/$active_model:high
+          slow: ninfer/$active_model:high
+          vision: ninfer/$active_model:high
+          plan: ninfer/$active_model:high
+          commit: ninfer/$active_model:high
+          task: ninfer/$active_model:high
+          advisor: ninfer/$active_model:high
+          judge: ninfer/$active_model:high
+        EOF
 
-        export PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/omprp.yml:$active_overlay"
-        exec "${ompBinPath}/bin/omp" --profile omprp "$@"
+                export PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/omprp.yml:$active_overlay"
+                exec "${ompBinPath}/bin/omp" --profile omprp "$@"
       '';
-
     in {
       # force = true (2026-10-18): self-heal over pre-existing unmanaged or
       # test-linked models.yml/ompl.yml so HM activation checkLinkTargets does not fail.
@@ -549,8 +556,7 @@ EOF
           app.clipboard.pasteImage: "alt+v"
       '';
 
-      home.file.".omp/profiles/omprp/agent/extensions/pi-reasonix.js".source =
-        "${reasonixPkg}/share/omp/extensions/pi-reasonix.js";
+      home.file.".omp/profiles/omprp/agent/extensions/pi-reasonix.js".source = "${reasonixPkg}/share/omp/extensions/pi-reasonix.js";
 
       # --- ompl profile support files (~/.omp/profiles/ompl/agent/) ---
       home.file.".omp/profiles/ompl/agent/models.yml" = {
@@ -562,16 +568,14 @@ EOF
           app.clipboard.pasteImage: "alt+v"
       '';
 
-      home.file.".omp/profiles/ompl/agent/extensions/pi-reasonix.js".source =
-        "${reasonixPkg}/share/omp/extensions/pi-reasonix.js";
+      home.file.".omp/profiles/ompl/agent/extensions/pi-reasonix.js".source = "${reasonixPkg}/share/omp/extensions/pi-reasonix.js";
 
       # Extension entry for the DEFAULT agent dir (~/.omp/agent/
       # extensions/) — ompl stays qwen-only by design; this is the
       # gemini-3.8-flash wire-format fix, so it must NOT land in the
       # ompl profile (its disabledProviders also already excludes the
       # google-antigravity cloud provider).
-      home.file.".omp/agent/extensions/pi-antigravity.js".source =
-        "${antigravityPkg}/share/omp/extensions/pi-antigravity.js";
+      home.file.".omp/agent/extensions/pi-antigravity.js".source = "${antigravityPkg}/share/omp/extensions/pi-antigravity.js";
 
       home.packages = [
         omplWrapper
@@ -586,7 +590,6 @@ EOF
         source = "${omprpWrapper}/bin/omprp";
         force = true;
       };
-
 
       home.shellAliases = {
         omp = ''
