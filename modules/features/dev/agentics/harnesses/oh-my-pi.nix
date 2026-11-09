@@ -86,8 +86,9 @@ in {
     in {
       environment.systemPackages = [
         # Release binary (2026-11-09): upstream omp-linux-x64 from GitHub
-        # releases, hash-pinned, autoPatched to the store glibc (see
-        # _omp-release.nix). Replaces the llm-agents source build (~10min
+        # releases, hash-pinned, interpreter-only patchelf to the store
+        # glibc (see _omp-release.nix; autoPatchelfHook breaks the bun
+        # embedded bundle). Replaces the llm-agents source build (~10min
         # bun+cargo per bump); bumps are download-only everywhere. NOT
         # the upstream flake (inputs.omp) — that always builds from
         # source.
@@ -111,8 +112,7 @@ in {
       };
       ompPkg = ((import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix") {inherit pkgs lib;}).omp;
     in {
-      home.file.".omp/agent/extensions/pi-reasonix.js".source =
-        "${reasonixPkg}/share/omp/extensions/pi-reasonix.js";
+      home.file.".omp/agent/extensions/pi-reasonix.js".source = "${reasonixPkg}/share/omp/extensions/pi-reasonix.js";
       # Ctrl+V remap (2026-09-25 user report: "when ctrl v it says keycap
       # picture insert mode instead of pasting"): omp binds
       # app.clipboard.pasteImage to ctrl+v by default (getDefaultPaste-
