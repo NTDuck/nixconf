@@ -65,6 +65,9 @@
       };
     };
 
+  # omp from the upstream release binary (2026-11-09) — see
+  # _omp-release.nix for the derivation, pin, and rationale.
+
   # Shared omp TUI defaults (moved from legion's private aspect
   # 2026-09-22): pure UI/behavior preferences with no host coupling, so
   # both hosts get the same baseline (dell's ascii override reverted to
@@ -74,16 +77,21 @@
   defaultConfig = import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-default-config.nix";
 in {
   den.aspects.dev.agentics.harnesses.oh-my-pi = {
-    nixos = {pkgs, ...}: {
+    nixos = {
+      pkgs,
+      lib,
+      ...
+    }: let
+      ompPkg = ((import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix") {inherit pkgs lib;}).omp;
+    in {
       environment.systemPackages = [
-        # Same package the aliases use (llm-agents.nix), NOT the upstream
-        # flake (inputs.omp): upstream's flake builds omp from source
-        # (bun compile + cargo LTO, ~10min local) on every flake bump,
-        # while llm-agents.nix publishes the identical derivation to
-        # cache.numtide.com (see harnesses/default.nix substituter), so
-        # bumps are download-only. Upstream source build remains the
-        # automatic fallback if the cache ever lags a bump.
-        inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp
+        # Release binary (2026-11-09): upstream omp-linux-x64 from GitHub
+        # releases, hash-pinned, autoPatched to the store glibc (see
+        # _omp-release.nix). Replaces the llm-agents source build (~10min
+        # bun+cargo per bump); bumps are download-only everywhere. NOT
+        # the upstream flake (inputs.omp) — that always builds from
+        # source.
+        ompPkg
         (pi-reasonix {
           inherit pkgs;
           inherit (pkgs) lib;
@@ -91,13 +99,17 @@ in {
       ];
     };
 
-    homeManager = {pkgs, ...}: let
+    homeManager = {
+      pkgs,
+      lib,
+      ...
+    }: let
       yaml = pkgs.formats.yaml {};
       reasonixPkg = pi-reasonix {
         inherit pkgs;
         inherit (pkgs) lib;
       };
-      ompPkg = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp;
+      ompPkg = ((import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix") {inherit pkgs lib;}).omp;
     in {
       home.file.".omp/agent/extensions/pi-reasonix.js".source =
         "${reasonixPkg}/share/omp/extensions/pi-reasonix.js";

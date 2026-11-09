@@ -29,9 +29,17 @@
     homeManager = {
       osConfig,
       pkgs,
+      lib,
       ...
     }: let
       yaml = pkgs.formats.yaml {};
+
+      # omp release binary (2026-11-09): upstream omp-linux-x64, hash-
+      # pinned in _omp-release.nix, autoPatched to the store glibc.
+      # Download-only on bumps — no more llm-agents source build.
+      ompBinPath =
+        ((import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix") {inherit pkgs lib;})
+        .omp;
 
       # Caps Gemini models from default 1M to 256k contextWindow across all active
       # Gemini-bearing providers (2026-10-18 user request).
@@ -286,7 +294,7 @@
         omp = lib.mkForce (lib.removeSuffix "\n" ''
           CODEV_API_KEY="$(cat ${osConfig.age.secrets."codev-api-key".path} 2>/dev/null || cat ~/.codev/auth.json 2>/dev/null | ${pkgs.jq}/bin/jq -r '.api_key // empty')" \
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml" \
-          ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp
+          ${ompBinPath}/bin/omp
         '');
 
         ompl = lib.removeSuffix "\n" ''
@@ -308,7 +316,7 @@
             judge: ninfer/$active_model:high
           EOF
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml:$active_overlay" \
-          ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp --profile ompl
+          ${ompBinPath}/bin/omp --profile ompl
         '';
 
         omprp = lib.removeSuffix "\n" ''
@@ -330,7 +338,7 @@
             judge: ninfer/$active_model:high
           EOF
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/omprp.yml:$active_overlay" \
-          ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp --profile omprp
+          ${ompBinPath}/bin/omp --profile omprp
         '';
       };
     };

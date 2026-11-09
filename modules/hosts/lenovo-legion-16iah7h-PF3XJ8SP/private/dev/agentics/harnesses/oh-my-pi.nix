@@ -22,6 +22,14 @@
     }: let
       yaml = pkgs.formats.yaml {};
 
+      # omp release binary (2026-11-09): upstream omp-linux-x64, hash-
+      # pinned in _omp-release.nix, autoPatched to the store glibc.
+      # Replaces the patched llm-agents source build (vibe patch cancelled
+      # 2026-11-09, so no source build is needed anywhere anymore).
+      ompBinPath =
+        ((import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix") {inherit pkgs lib;})
+        .omp;
+
       # Port the ninfer-serve listens on. Single source of
       # truth for this host; remote hosts (dell) duplicate the value
       # with a sync comment in their models.yml. The den module system
@@ -175,20 +183,6 @@
       # Gemini-bearing providers (2026-10-18 user request).
       geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-gemini-overrides.nix";
 
-      # omp + the local vibe.defaultOnStartup patch (patches/
-      # omp-vibe-default-on-startup.patch — see the omplOverlay comment).
-      # overrideAttrs only re-runs the source patch + downstream rebuild;
-      # cargo/bun vendor hashes are untouched.
-      ompVibePkg = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp.overrideAttrs (old: {
-        patches = (old.patches or []) ++ [
-          (builtins.path {
-            path = inputs.self + "/patches/omp-vibe-default-on-startup.patch";
-            name = "omp-vibe-default-on-startup.patch";
-            filter = path: _: baseNameOf path == "omp-vibe-default-on-startup.patch";
-          })
-        ];
-      });
-
       models = {
         providers = lib.recursiveUpdate (
           cloudProviders
@@ -290,17 +284,12 @@
         autolearn.enabled = false;
 
         # vibe-by-default (2026-10-22, user request "make ompl vibe on by
-        # default"): omp 18.12.3 has NO config surface for vibe mode —
-        # /vibe is a TUI-only toggle (verified against the embedded
-        # vibe-mode.md doc and the settings registry in the binary). The
-        # `vibe.defaultOnStartup` key is a local upstream patch
-        # (patches/omp-vibe-default-on-startup.patch, mirroring
-        # plan.defaultOnStartup: brand-new sessions only, after
-        # #applyPlanModeDefault so plan mode still wins a conflict). The
-        # patched binary ships ONLY on the ompl alias below; the vanilla
-        # `omp` alias silently ignores this key (unknown settings keys in
-        # config-file layers pass through without breaking startup).
-        vibe.defaultOnStartup = true;
+        # default"): REVERTED 2026-11-09 — the vibe.defaultOnStartup key
+        # required a local source patch (patches/omp-vibe-default-on-
+        # startup.patch) that blocked switching omp to the upstream
+        # release binary. The patch is gone; start vibe with /vibe or the
+        # TUI toggle. Unknown settings keys pass through harmlessly, but
+        # the key no longer does anything, so it is removed entirely.
       };
 
       # Profile-local qwen-only models.yml. Reuses local.ninfer
@@ -316,12 +305,11 @@
 
       # `omprp` = roleplaying harness (2026-11-01): runs under `--profile omprp`
       # (~/.omp/profiles/omprp/agent) wired to the active ninfer model.
-      # Unlike ompl (stateless coding scratchpad with vibe-on-startup),
-      # omprp is tuned for roleplay and creative prose:
+      # Unlike ompl (stateless coding scratchpad), omprp is tuned for
+      # roleplay and creative prose:
       #   hideThinkingBlock: true      - suppress reasoning/thinking logs in output
       #   memory.backend: mnemopi      - persistent SQLite memory across sessions
       #   autolearn.enabled: true      - persist learnings and memories
-      #   vibe.defaultOnStartup: false - vibe mode disabled
       #   advisor.enabled: false       - advisor runtime disabled (no passive turns/notes)
       #   personality: "none"          - omit engineering personality constraints
       #   git.enabled: false           - suppress git branch/status checks and UI indicators
@@ -362,7 +350,6 @@
         memory.backend = "mnemopi";
         autolearn.enabled = true;
 
-        vibe.defaultOnStartup = false;
         advisor.enabled = false;
         personality = "none";
         git.enabled = false;
@@ -497,7 +484,7 @@ modelRoles:
 EOF
 
         export PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml:$active_overlay"
-        exec "${ompVibePkg}/bin/omp" --profile ompl "$@"
+        exec "${ompBinPath}/bin/omp" --profile ompl "$@"
       '';
 
       # omprp wrapper (2026-11-01): dynamically queries active model via ninfer active,
@@ -530,7 +517,7 @@ modelRoles:
 EOF
 
         export PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/omprp.yml:$active_overlay"
-        exec "${ompVibePkg}/bin/omp" --profile omprp "$@"
+        exec "${ompBinPath}/bin/omp" --profile omprp "$@"
       '';
 
     in {
@@ -608,7 +595,7 @@ EOF
           OPENCODE_API_KEY="$(cat ${osConfig.age.secrets."opencode-api-key".path} 2>/dev/null)" \
           OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."openrouter-api-key".path} 2>/dev/null)" \
           TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path} 2>/dev/null)" \
-          ${inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp}/bin/omp'';
+          ${ompBinPath}/bin/omp'';
 
         # Same omp binary plus `--profile ompl`: isolated agent dir
         # (see the omplOverlay comment — no shared sessions/history/
@@ -619,14 +606,10 @@ EOF
         # mkDefault; the 5-secret export block above is duplicated by
         # design for `omp` — see its comment).
         #
-        # ompVibePkg (2026-10-22): vanilla llm-agents omp + the local
-        # vibe.defaultOnStartup patch (see the omplOverlay comment).
-        # ONLY this alias uses it — the vanilla `omp` alias and
-        # systemPackages stay on the unpatched, cache-friendly build.
-        # Cargo/bun hashes are untouched (source-only TS patch), so the
-        # derivation differs only in the patched source tree and any
-        # llm-agents bump rebuilds it locally (~10min, upstream source
-        # build cost) instead of downloading.
+        # 2026-11-09: all aliases now run the upstream release binary
+        # (ompBinPath, _omp-release.nix). The former ompVibePkg source
+        # patch (vibe.defaultOnStartup) was cancelled — see the
+        # omplOverlay comment.
         ompl = "${omplWrapper}/bin/ompl";
         omprp = "${omprpWrapper}/bin/omprp";
       };

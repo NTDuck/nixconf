@@ -13,9 +13,12 @@
         # experimental-features = ["nix-command" "flakes" "pipe-operators"];
         trusted-users = ["@wheel"];
 
-        # Numtide cache hosts prebuilt binaries for inputs.llm-agents (omp, codegraph,
-        # open-code-review). Configured in system.settings so all hosts (including Dell,
-        # which imports individual agentic aspects directly) get substituters without building from source.
+        # NOTE (2026-11-09): cache.numtide.com does NOT serve llm-agents.nix
+        # package builds — no workflow in that repo publishes them (narinfo
+        # 404 for omp/codegraph/open-code-review under every eval). Kept
+        # configured because it DOES serve flake source tarballs and other
+        # numtide artifacts; omp itself no longer needs any cache (upstream
+        # release binary, see dev/agentics/harnesses/_omp-release.nix).
         extra-substituters = [
           "https://cache.numtide.com"
         ];
