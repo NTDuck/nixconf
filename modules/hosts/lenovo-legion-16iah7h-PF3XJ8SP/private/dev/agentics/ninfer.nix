@@ -101,13 +101,14 @@
       # header identity is pinned (see ninfer-tools/upgrade script) so
       # this build is deterministic and byte-identical to the locally
       # verified artifact (sha256 794fbbac...).
-      ninferTurboModel = pkgs.runCommand "qwen38_turbo_sm86-v3.ninfer" {
-        nativeBuildInputs = [pkgs.python3];
-      } ''
-        cp -r ${./ninfer-tools} ./ninfer-tools
-        python3 ./ninfer-tools/upgrade_ninfer_v2_to_v3.py \
-          ${ninferTurboModelV2} $out
-      '';
+      ninferTurboModel =
+        pkgs.runCommand "qwen38_turbo_sm86-v3.ninfer" {
+          nativeBuildInputs = [pkgs.python3];
+        } ''
+          cp -r ${./ninfer-tools} ./ninfer-tools
+          python3 ./ninfer-tools/upgrade_ninfer_v2_to_v3.py \
+            ${ninferTurboModelV2} $out
+        '';
 
       ninferRoot = pkgs.runCommand "ninfer-rtx3090-0.15.0" {} ''
         mkdir -p $out/models
@@ -152,382 +153,382 @@
         dontUnpack = true;
 
         installPhase = ''
-          runHook preInstall
-          mkdir -p $out/bin $out/share/zsh/site-functions $out/share/bash-completion/completions $out/share/fish/vendor_completions.d
+                    runHook preInstall
+                    mkdir -p $out/bin $out/share/zsh/site-functions $out/share/bash-completion/completions $out/share/fish/vendor_completions.d
 
-          cat << 'SCRIPT' > $out/bin/ninfer
-#!/usr/bin/env bash
-set -euo pipefail
+                    cat << 'SCRIPT' > $out/bin/ninfer
+          #!/usr/bin/env bash
+          set -euo pipefail
 
-# Pass --no-ask-password to prevent hanging on polkit TTY prompts when non-interactive.
-SYSTEMCTL=( "${pkgs.systemd}/bin/systemctl" --no-ask-password )
+          # Pass --no-ask-password to prevent hanging on polkit TTY prompts when non-interactive.
+          SYSTEMCTL=( "${pkgs.systemd}/bin/systemctl" --no-ask-password )
 
-MODELS=(
-  "qwen3.8-27b|ninfer-df2.service|${toString ninferPort}|6x65k"
-  "qwen3.8-27b-turbo|ninfer-df2-turbo.service|${toString ninferPort}|6x65k"
-)
+          MODELS=(
+            "qwen3.8-27b|ninfer-df2.service|${toString ninferPort}|6x65k"
+            "qwen3.8-27b-turbo|ninfer-df2-turbo.service|${toString ninferPort}|6x65k"
+          )
 
-show_list() {
-  local active_mid
-  active_mid="$(get_active 2>/dev/null || true)"
-  local any_active=0
-  for entry in "''${MODELS[@]}"; do
-    IFS='|' read -r mid svc port shape <<< "$entry"
-    local state="inactive"
-    if [ "$mid" = "$active_mid" ]; then
-      state="active"
-      any_active=1
-    elif [ -z "$active_mid" ] && "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
-      state="active"
-      any_active=1
-    fi
-    printf "%-30s %-8s %-10s :%s\n" "$mid" "$shape" "$state" "$port"
-  done
-  local nil_state="inactive"
-  if [ "$any_active" -eq 0 ]; then
-    nil_state="active"
-  fi
-  printf "%-30s %-8s %-10s -\n" "<nil>" "-" "$nil_state"
-}
+          show_list() {
+            local active_mid
+            active_mid="$(get_active 2>/dev/null || true)"
+            local any_active=0
+            for entry in "''${MODELS[@]}"; do
+              IFS='|' read -r mid svc port shape <<< "$entry"
+              local state="inactive"
+              if [ "$mid" = "$active_mid" ]; then
+                state="active"
+                any_active=1
+              elif [ -z "$active_mid" ] && "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+                state="active"
+                any_active=1
+              fi
+              printf "%-30s %-8s %-10s :%s\n" "$mid" "$shape" "$state" "$port"
+            done
+            local nil_state="inactive"
+            if [ "$any_active" -eq 0 ]; then
+              nil_state="active"
+            fi
+            printf "%-30s %-8s %-10s -\n" "<nil>" "-" "$nil_state"
+          }
 
-get_active() {
-  # Consult persistent user runtime state file first so multi-variant targets
-  # accurately report the user-selected variant rather than always defaulting to the first match.
-  local state_file="''${XDG_RUNTIME_DIR:-/tmp}/ninfer/active-model"
-  if [ -r "$state_file" ]; then
-    local saved_mid
-    saved_mid="$(cat "$state_file" 2>/dev/null || true)"
-    if [ -n "$saved_mid" ]; then
-      for entry in "''${MODELS[@]}"; do
-        IFS='|' read -r mid svc port shape <<< "$entry"
-        if [ "$mid" = "$saved_mid" ]; then
-          if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
-            echo "$saved_mid"
-            return 0
-          fi
-          break
-        fi
-      done
-    fi
-  fi
+          get_active() {
+            # Consult persistent user runtime state file first so multi-variant targets
+            # accurately report the user-selected variant rather than always defaulting to the first match.
+            local state_file="''${XDG_RUNTIME_DIR:-/tmp}/ninfer/active-model"
+            if [ -r "$state_file" ]; then
+              local saved_mid
+              saved_mid="$(cat "$state_file" 2>/dev/null || true)"
+              if [ -n "$saved_mid" ]; then
+                for entry in "''${MODELS[@]}"; do
+                  IFS='|' read -r mid svc port shape <<< "$entry"
+                  if [ "$mid" = "$saved_mid" ]; then
+                    if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+                      echo "$saved_mid"
+                      return 0
+                    fi
+                    break
+                  fi
+                done
+              fi
+            fi
 
-  for entry in "''${MODELS[@]}"; do
-    IFS='|' read -r mid svc port shape <<< "$entry"
-    if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
-      echo "$mid"
-      return 0
-    fi
-  done
+            for entry in "''${MODELS[@]}"; do
+              IFS='|' read -r mid svc port shape <<< "$entry"
+              if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+                echo "$mid"
+                return 0
+              fi
+            done
 
-  # Fallback: probe ninfer directly on its port if started outside systemctl
-  local mpath
-  mpath="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.model_path // empty' 2>/dev/null || true )"
-  if [ -n "$mpath" ]; then
-    case "$mpath" in
-      *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
-      *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
-    esac
-  fi
+            # Fallback: probe ninfer directly on its port if started outside systemctl
+            local mpath
+            mpath="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.model_path // empty' 2>/dev/null || true )"
+            if [ -n "$mpath" ]; then
+              case "$mpath" in
+                *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
+                *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
+              esac
+            fi
 
-  return 1
-}
+            return 1
+          }
 
-do_switch() {
-  local target="$1"
-  local state_dir="''${XDG_RUNTIME_DIR:-/tmp}/ninfer"
-  local state_file="$state_dir/active-model"
+          do_switch() {
+            local target="$1"
+            local state_dir="''${XDG_RUNTIME_DIR:-/tmp}/ninfer"
+            local state_file="$state_dir/active-model"
 
-  if [ "$target" = "<nil>" ] || [ "$target" = "nil" ]; then
-    local stopping=0
-    for entry in "''${MODELS[@]}"; do
-      IFS='|' read -r mid svc port shape <<< "$entry"
-      if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
-        printf "Stopping %s (%s)... " "$mid" "$svc"
-        "''${SYSTEMCTL[@]}" stop "$svc" 2>/dev/null || true
-        echo "done."
-        stopping=1
-      fi
-    done
-    rm -f "$state_file" 2>/dev/null || true
-    echo "✔ Unloaded all models (switched to <nil>)"
-    return 0
-  fi
+            if [ "$target" = "<nil>" ] || [ "$target" = "nil" ]; then
+              local stopping=0
+              for entry in "''${MODELS[@]}"; do
+                IFS='|' read -r mid svc port shape <<< "$entry"
+                if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+                  printf "Stopping %s (%s)... " "$mid" "$svc"
+                  "''${SYSTEMCTL[@]}" stop "$svc" 2>/dev/null || true
+                  echo "done."
+                  stopping=1
+                fi
+              done
+              rm -f "$state_file" 2>/dev/null || true
+              echo "✔ Unloaded all models (switched to <nil>)"
+              return 0
+            fi
 
-  local found_svc=""
-  local canonical=""
-  local target_port=""
-  local target_shape=""
-  for entry in "''${MODELS[@]}"; do
-    IFS='|' read -r mid svc port shape <<< "$entry"
-    if [ "$mid" = "$target" ]; then
-      found_svc="$svc"
-      canonical="$mid"
-      target_port="$port"
-      target_shape="$shape"
-      break
-    fi
-  done
+            local found_svc=""
+            local canonical=""
+            local target_port=""
+            local target_shape=""
+            for entry in "''${MODELS[@]}"; do
+              IFS='|' read -r mid svc port shape <<< "$entry"
+              if [ "$mid" = "$target" ]; then
+                found_svc="$svc"
+                canonical="$mid"
+                target_port="$port"
+                target_shape="$shape"
+                break
+              fi
+            done
 
-  if [ -z "$found_svc" ]; then
-    echo "error: unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-turbo, <nil>" >&2
-    exit 1
-  fi
+            if [ -z "$found_svc" ]; then
+              echo "error: unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-turbo, <nil>" >&2
+              exit 1
+            fi
 
-  local prev_active
-  prev_active="$(get_active 2>/dev/null || true)"
-  mkdir -p "$state_dir" 2>/dev/null || true
-  echo "$canonical" > "$state_file" 2>/dev/null || true
+            local prev_active
+            prev_active="$(get_active 2>/dev/null || true)"
+            mkdir -p "$state_dir" 2>/dev/null || true
+            echo "$canonical" > "$state_file" 2>/dev/null || true
 
-  # Fast path: already active and responding on HTTP
-  if "''${SYSTEMCTL[@]}" is-active --quiet "$found_svc" 2>/dev/null; then
-    if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:$target_port/v1/models" >/dev/null 2>&1; then
-      echo "✔ Already active and responding on $canonical (:$target_port)"
-      return 0
-    fi
-  fi
+            # Fast path: already active and responding on HTTP
+            if "''${SYSTEMCTL[@]}" is-active --quiet "$found_svc" 2>/dev/null; then
+              if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:$target_port/v1/models" >/dev/null 2>&1; then
+                echo "✔ Already active and responding on $canonical (:$target_port)"
+                return 0
+              fi
+            fi
 
-  # Stop any conflicting active services first
-  for entry in "''${MODELS[@]}"; do
-    IFS='|' read -r mid svc port shape <<< "$entry"
-    if [ "$svc" != "$found_svc" ] && "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
-      printf "Stopping %s (%s)... " "$mid" "$svc"
-      "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
-      while "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; do
-        sleep 0.1
-      done
-      echo "done."
-    fi
-  done
+            # Stop any conflicting active services first
+            for entry in "''${MODELS[@]}"; do
+              IFS='|' read -r mid svc port shape <<< "$entry"
+              if [ "$svc" != "$found_svc" ] && "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+                printf "Stopping %s (%s)... " "$mid" "$svc"
+                "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
+                while "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; do
+                  sleep 0.1
+                done
+                echo "done."
+              fi
+            done
 
-  echo "Switching to $canonical ($target_shape)..."
+            echo "Switching to $canonical ($target_shape)..."
 
-  local start_sec=$SECONDS
-  local journal_cursor
-  journal_cursor="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f2- || true)"
+            local start_sec=$SECONDS
+            local journal_cursor
+            journal_cursor="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f2- || true)"
 
-  if ! "''${SYSTEMCTL[@]}" start --no-block "$found_svc"; then
-    rm -f "$state_file" 2>/dev/null || true
-    echo "error: failed to start $found_svc" >&2
-    exit 1
-  fi
+            if ! "''${SYSTEMCTL[@]}" start --no-block "$found_svc"; then
+              rm -f "$state_file" 2>/dev/null || true
+              echo "error: failed to start $found_svc" >&2
+              exit 1
+            fi
 
-  local is_tty=0
-  [ -t 1 ] && is_tty=1
+            local is_tty=0
+            [ -t 1 ] && is_tty=1
 
-  local spinner_chars=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
-  local spin_idx=0
-  local last_status=""
-  local last_logged_line=""
-  local substate=""
+            local spinner_chars=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+            local spin_idx=0
+            local last_status=""
+            local last_logged_line=""
+            local substate=""
 
-  while true; do
-    local elapsed=$(( SECONDS - start_sec ))
-    local spin="''${spinner_chars[$spin_idx]}"
-    spin_idx=$(( (spin_idx + 1) % ''${#spinner_chars[@]} ))
+            while true; do
+              local elapsed=$(( SECONDS - start_sec ))
+              local spin="''${spinner_chars[$spin_idx]}"
+              spin_idx=$(( (spin_idx + 1) % ''${#spinner_chars[@]} ))
 
-    if "''${SYSTEMCTL[@]}" is-failed --quiet "$found_svc" 2>/dev/null; then
-      [ "$is_tty" -eq 1 ] && printf "\r\033[K"
-      echo "❌ $found_svc failed to start!" >&2
-      ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 15 --no-pager >&2 || true
-      rm -f "$state_file" 2>/dev/null || true
-      exit 1
-    fi
+              if "''${SYSTEMCTL[@]}" is-failed --quiet "$found_svc" 2>/dev/null; then
+                [ "$is_tty" -eq 1 ] && printf "\r\033[K"
+                echo "❌ $found_svc failed to start!" >&2
+                ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 15 --no-pager >&2 || true
+                rm -f "$state_file" 2>/dev/null || true
+                exit 1
+              fi
 
-    # Check if HTTP endpoint is live
-    if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:$target_port/v1/models" >/dev/null 2>&1; then
-      [ "$is_tty" -eq 1 ] && printf "\r\033[K"
-      echo "✔ Ready in ''${elapsed}s | listening on http://0.0.0.0:$target_port"
-      echo "switched to $canonical"
-      return 0
-    fi
+              # Check if HTTP endpoint is live
+              if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:$target_port/v1/models" >/dev/null 2>&1; then
+                [ "$is_tty" -eq 1 ] && printf "\r\033[K"
+                echo "✔ Ready in ''${elapsed}s | listening on http://0.0.0.0:$target_port"
+                echo "switched to $canonical"
+                return 0
+              fi
 
-    local latest_line=""
-    if [ -n "$journal_cursor" ]; then
-      latest_line="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" --after-cursor="$journal_cursor" -o cat --no-pager 2>/dev/null | tail -n 1 || true)"
-    else
-      latest_line="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 1 -o cat --no-pager 2>/dev/null || true)"
-    fi
+              local latest_line=""
+              if [ -n "$journal_cursor" ]; then
+                latest_line="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" --after-cursor="$journal_cursor" -o cat --no-pager 2>/dev/null | tail -n 1 || true)"
+              else
+                latest_line="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 1 -o cat --no-pager 2>/dev/null || true)"
+              fi
 
-    local progress_desc=""
-    if [[ "$latest_line" =~ loading[[:space:]]+weights[[:space:]]+([0-9.]+)% ]]; then
-      local pct="''${BASH_REMATCH[1]}"
-      local int_pct=''${pct%.*}
-      int_pct=''${int_pct:-0}
-      local bar_width=20
-      local filled=$(( int_pct * bar_width / 100 ))
-      local empty=$(( bar_width - filled ))
-      local bar=""
-      for ((b=0; b<filled; b++)); do bar+="█"; done
-      for ((b=0; b<empty; b++)); do bar+="░"; done
-      progress_desc="[$bar] $pct% ($latest_line)"
-    elif [ -n "$latest_line" ] && [ "$latest_line" != "$last_logged_line" ]; then
-      if [[ "$latest_line" =~ (weights\ ready|host\ state\ pinned|host\ KV\ pinned|CUDA\ graphs\ ready|engine\ ready|starting\ engine|API:) ]]; then
-        if [ "$is_tty" -eq 1 ]; then
-          printf "\r\033[K  → %s\n" "$latest_line"
-        else
-          echo "  → $latest_line"
-        fi
-        last_logged_line="$latest_line"
-      else
-        progress_desc="$latest_line"
-      fi
-    fi
+              local progress_desc=""
+              if [[ "$latest_line" =~ loading[[:space:]]+weights[[:space:]]+([0-9.]+)% ]]; then
+                local pct="''${BASH_REMATCH[1]}"
+                local int_pct=''${pct%.*}
+                int_pct=''${int_pct:-0}
+                local bar_width=20
+                local filled=$(( int_pct * bar_width / 100 ))
+                local empty=$(( bar_width - filled ))
+                local bar=""
+                for ((b=0; b<filled; b++)); do bar+="█"; done
+                for ((b=0; b<empty; b++)); do bar+="░"; done
+                progress_desc="[$bar] $pct% ($latest_line)"
+              elif [ -n "$latest_line" ] && [ "$latest_line" != "$last_logged_line" ]; then
+                if [[ "$latest_line" =~ (weights\ ready|host\ state\ pinned|host\ KV\ pinned|CUDA\ graphs\ ready|engine\ ready|starting\ engine|API:) ]]; then
+                  if [ "$is_tty" -eq 1 ]; then
+                    printf "\r\033[K  → %s\n" "$latest_line"
+                  else
+                    echo "  → $latest_line"
+                  fi
+                  last_logged_line="$latest_line"
+                else
+                  progress_desc="$latest_line"
+                fi
+              fi
 
-    if [ -z "$progress_desc" ]; then
-      substate="$(${pkgs.systemd}/bin/systemctl show -p SubState --value "$found_svc" 2>/dev/null || echo "starting")"
-      if [ "$substate" = "condition" ] || [ "$substate" = "start-pre" ]; then
-        progress_desc="[boot-gate] verifying GPU & model artifact..."
-      else
-        progress_desc="initializing engine ($substate)..."
-      fi
-    fi
+              if [ -z "$progress_desc" ]; then
+                substate="$(${pkgs.systemd}/bin/systemctl show -p SubState --value "$found_svc" 2>/dev/null || echo "starting")"
+                if [ "$substate" = "condition" ] || [ "$substate" = "start-pre" ]; then
+                  progress_desc="[boot-gate] verifying GPU & model artifact..."
+                else
+                  progress_desc="initializing engine ($substate)..."
+                fi
+              fi
 
-    if [ "$is_tty" -eq 1 ]; then
-      printf "\r\033[K  %s %s (%ds)" "$spin" "$progress_desc" "$elapsed"
-    elif [ "$progress_desc" != "$last_status" ] && [ "$(( elapsed % 3 ))" -eq 0 ]; then
-      echo "  [ninfer] $progress_desc (''${elapsed}s)"
-      last_status="$progress_desc"
-    fi
+              if [ "$is_tty" -eq 1 ]; then
+                printf "\r\033[K  %s %s (%ds)" "$spin" "$progress_desc" "$elapsed"
+              elif [ "$progress_desc" != "$last_status" ] && [ "$(( elapsed % 3 ))" -eq 0 ]; then
+                echo "  [ninfer] $progress_desc (''${elapsed}s)"
+                last_status="$progress_desc"
+              fi
 
-    if [ "$elapsed" -gt 180 ]; then
-      [ "$is_tty" -eq 1 ] && printf "\r\033[K"
-      echo "error: timeout waiting for $found_svc to become ready (>180s)" >&2
-      ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 20 --no-pager >&2 || true
-      exit 1
-    fi
+              if [ "$elapsed" -gt 180 ]; then
+                [ "$is_tty" -eq 1 ] && printf "\r\033[K"
+                echo "error: timeout waiting for $found_svc to become ready (>180s)" >&2
+                ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 20 --no-pager >&2 || true
+                exit 1
+              fi
 
-    sleep 0.2
-  done
-}
+              sleep 0.2
+            done
+          }
 
 
 
-cmd="''${1:-}"
-case "$cmd" in
-  active|current)
-    get_active
-    ;;
-  ""|list|status)
-    show_list
-    ;;
-  switch|-s|--switch)
-    if [ $# -lt 2 ]; then
-      echo "error: model required" >&2
-      exit 2
-    fi
-    do_switch "$2"
-    ;;
-  -h|--help|help)
-    echo "usage: ninfer [switch <model> | -s <model>]"
-    ;;
-  *)
-    for entry in "''${MODELS[@]}"; do
-      IFS='|' read -r mid svc port shape <<< "$entry"
-      if [ "$mid" = "$cmd" ]; then
-        do_switch "$cmd"
-        exit 0
-      fi
-    done
-    if [ "$cmd" = "<nil>" ] || [ "$cmd" = "nil" ]; then
-      do_switch "<nil>"
-      exit 0
-    fi
-    echo "unknown command '$cmd', run 'ninfer -h' for usage" >&2
-    exit 1
-    ;;
-esac
-SCRIPT
-          chmod +x $out/bin/ninfer
+          cmd="''${1:-}"
+          case "$cmd" in
+            active|current)
+              get_active
+              ;;
+            ""|list|status)
+              show_list
+              ;;
+            switch|-s|--switch)
+              if [ $# -lt 2 ]; then
+                echo "error: model required" >&2
+                exit 2
+              fi
+              do_switch "$2"
+              ;;
+            -h|--help|help)
+              echo "usage: ninfer [switch <model> | -s <model>]"
+              ;;
+            *)
+              for entry in "''${MODELS[@]}"; do
+                IFS='|' read -r mid svc port shape <<< "$entry"
+                if [ "$mid" = "$cmd" ]; then
+                  do_switch "$cmd"
+                  exit 0
+                fi
+              done
+              if [ "$cmd" = "<nil>" ] || [ "$cmd" = "nil" ]; then
+                do_switch "<nil>"
+                exit 0
+              fi
+              echo "unknown command '$cmd', run 'ninfer -h' for usage" >&2
+              exit 1
+              ;;
+          esac
+          SCRIPT
+                    chmod +x $out/bin/ninfer
 
-          # Shell completions supporting both subcommands (switch, list, status, active)
-          # and direct model invocation (e.g. `ninfer qwen3.8-27b`), fixing tab completion in zsh/bash/fish.
-          cat << 'ZSH' > $out/share/zsh/site-functions/_ninfer
-#compdef ninfer
+                    # Shell completions supporting both subcommands (switch, list, status, active)
+                    # and direct model invocation (e.g. `ninfer qwen3.8-27b`), fixing tab completion in zsh/bash/fish.
+                    cat << 'ZSH' > $out/share/zsh/site-functions/_ninfer
+          #compdef ninfer
 
-_ninfer() {
-  local curcontext="$curcontext" state line
-  typeset -A opt_args
+          _ninfer() {
+            local curcontext="$curcontext" state line
+            typeset -A opt_args
 
-  local -a commands models
-  commands=(
-    'switch:switch active model'
-    'active:show active model'
-    'current:show active model'
-    'list:list models'
-    'status:show status'
-  )
+            local -a commands models
+            commands=(
+              'switch:switch active model'
+              'active:show active model'
+              'current:show active model'
+              'list:list models'
+              'status:show status'
+            )
 
-  models=(
-    'qwen3.8-27b:Qwen3.8-27B DFlash2 (6x65k :8092)'
-    'qwen3.8-27b-turbo:Qwen3.8-27B Turbo Heretic (6x65k :8092)'
-    '\<nil\>:Unload all ninfer models'
-    'nil:Unload all ninfer models'
-  )
+            models=(
+              'qwen3.8-27b:Qwen3.8-27B DFlash2 (6x65k :8092)'
+              'qwen3.8-27b-turbo:Qwen3.8-27B Turbo Heretic (6x65k :8092)'
+              '\<nil\>:Unload all ninfer models'
+              'nil:Unload all ninfer models'
+            )
 
-  _arguments -C \
-    '-s[switch active model]:model:->models' \
-    '--switch[switch active model]:model:->models' \
-    '-h[show help]' \
-    '--help[show help]' \
-    '1:command or model:->cmd_or_model' \
-    '*:args:->args' \
-    && return 0
+            _arguments -C \
+              '-s[switch active model]:model:->models' \
+              '--switch[switch active model]:model:->models' \
+              '-h[show help]' \
+              '--help[show help]' \
+              '1:command or model:->cmd_or_model' \
+              '*:args:->args' \
+              && return 0
 
-  case "$state" in
-    cmd_or_model)
-      _describe -t commands 'command' commands
-      _describe -t models 'model' models
-      ;;
-    args)
-      case "''${words[2]}" in
-        switch|-s|--switch)
-          _describe -t models 'model' models
-          ;;
-      esac
-      ;;
-    models)
-      _describe -t models 'model' models
-      ;;
-  esac
-}
+            case "$state" in
+              cmd_or_model)
+                _describe -t commands 'command' commands
+                _describe -t models 'model' models
+                ;;
+              args)
+                case "''${words[2]}" in
+                  switch|-s|--switch)
+                    _describe -t models 'model' models
+                    ;;
+                esac
+                ;;
+              models)
+                _describe -t models 'model' models
+                ;;
+            esac
+          }
 
-_ninfer "$@"
-ZSH
+          _ninfer "$@"
+          ZSH
 
-          cat << 'BASH' > $out/share/bash-completion/completions/ninfer
-_ninfer_completion() {
-  local cur prev
-  cur="''${COMP_WORDS[COMP_CWORD]}"
-  prev="''${COMP_WORDS[COMP_CWORD-1]}"
+                    cat << 'BASH' > $out/share/bash-completion/completions/ninfer
+          _ninfer_completion() {
+            local cur prev
+            cur="''${COMP_WORDS[COMP_CWORD]}"
+            prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-  local models="qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
-  local commands="switch list status active current"
+            local models="qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+            local commands="switch list status active current"
 
-  case "$prev" in
-    switch|-s|--switch)
-      COMPREPLY=( $(compgen -W "$models" -- "$cur") )
-      return 0
-      ;;
-  esac
+            case "$prev" in
+              switch|-s|--switch)
+                COMPREPLY=( $(compgen -W "$models" -- "$cur") )
+                return 0
+                ;;
+            esac
 
-  if [ "$COMP_CWORD" -eq 1 ]; then
-    COMPREPLY=( $(compgen -W "$commands -s --switch -h --help $models" -- "$cur") )
-  fi
-}
+            if [ "$COMP_CWORD" -eq 1 ]; then
+              COMPREPLY=( $(compgen -W "$commands -s --switch -h --help $models" -- "$cur") )
+            fi
+          }
 
-complete -F _ninfer_completion ninfer
-BASH
+          complete -F _ninfer_completion ninfer
+          BASH
 
-          cat << 'FISH' > $out/share/fish/vendor_completions.d/ninfer.fish
-complete -c ninfer -n "__fish_use_subcommand" -a switch -d "switch active model"
-complete -c ninfer -n "__fish_use_subcommand" -a list -d "list models"
-complete -c ninfer -n "__fish_use_subcommand" -a status -d "show status"
-complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
-complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
-complete -c ninfer -n "__fish_use_subcommand" -a "qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
-complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
-FISH
-          runHook postInstall
+                    cat << 'FISH' > $out/share/fish/vendor_completions.d/ninfer.fish
+          complete -c ninfer -n "__fish_use_subcommand" -a switch -d "switch active model"
+          complete -c ninfer -n "__fish_use_subcommand" -a list -d "list models"
+          complete -c ninfer -n "__fish_use_subcommand" -a status -d "show status"
+          complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
+          complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
+          complete -c ninfer -n "__fish_use_subcommand" -a "qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+          complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+          FISH
+                    runHook postInstall
         '';
       };
     in {
@@ -548,13 +549,13 @@ FISH
           });
         '';
 
+        # Qwen3.8-27B DFlash2 daemon (port 8092), on-demand since
+        # 2026-11-09 (turbo is the boot default; switch with
+        # `ninfer qwen3.8-27b`).
         systemd.services.ninfer-df2 = {
           description = "ninfer 0.15.0 Qwen3.8-27B DFlash2";
           after = ["network-online.target"];
           wants = ["network-online.target"];
-          wantedBy = ["multi-user.target"];
-
-          # Qwen3.8-27B daemon (port 8092), starts by default at boot on the homelab spec.
           conflicts = [
             "bonsai2.service"
             "ninfer-df2-turbo.service"
@@ -630,11 +631,14 @@ FISH
           };
         };
 
-        # On-demand Qwen3.8-27B Turbo daemon (port 8092).
+        # Qwen3.8-27B Turbo daemon (port 8092), starts by default at boot
+        # on the homelab spec (2026-11-09 user request: turbo is the new
+        # default model; DFlash2 moved to on-demand).
         systemd.services.ninfer-df2-turbo = {
           description = "ninfer 0.15.0 Qwen3.8-27B MTP3 Turbo (Heretic Uncensored)";
           after = ["network-online.target"];
           wants = ["network-online.target"];
+          wantedBy = ["multi-user.target"];
           conflicts = [
             "bonsai2.service"
             "ninfer-df2.service"
