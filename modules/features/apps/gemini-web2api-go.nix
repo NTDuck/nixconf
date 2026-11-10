@@ -35,8 +35,6 @@
       ...
     }: let
       port = 8083;
-      # GHCR `latest` index digest (2026-10-20, upstream push 2026-10-19).
-      imageRef = "ghcr.io/zexadev/gemini-web2api-go@sha256:36e1a57cfcadba8531a44cfcf1a170e0228ce3cc92688576b96563d201f6d4e9";
     in {
       # Rootful podman is the systemd-managed runtime for the unit below
       # (the HM podman socket aspect alone doesn't run system units).
@@ -69,8 +67,9 @@
             --sdnotify=conmon \
             -d --replace \
             -p 127.0.0.1:${toString port}:${toString port} \
+            # GHCR `latest` index digest (2026-10-20, upstream push 2026-10-19).
             -v gw2a-data:/data \
-            ${imageRef}
+            ghcr.io/zexadev/gemini-web2api-go@sha256:36e1a57cfcadba8531a44cfcf1a170e0228ce3cc92688576b96563d201f6d4e9
         '';
 
         preStop = "podman stop --ignore --cidfile=/run/podman-gemini-web2api/ctr-id";

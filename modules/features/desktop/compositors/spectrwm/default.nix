@@ -132,7 +132,6 @@
       lib,
       ...
     }: let
-      tags = map builtins.toString (lib.range 1 9);
       # "181616" → "18/16/16" (spectrwm's core-protocol color form).
       hexToRgb = h: "${builtins.substring 0 2 h}/${builtins.substring 2 2 h}/${builtins.substring 4 2 h}";
 

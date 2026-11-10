@@ -9,27 +9,29 @@
       pname = "world-monitor";
       version = "2.5.23";
 
-      asset =
-        {
-          x86_64-linux = {
-            arch = "amd64";
-            hash = "sha256-QEuPgOX1D0m08upP544NLCv5jXLnrHcCRT1TJIHKNY0=";
-          };
+      src =
+        let
+          asset =
+            {
+              x86_64-linux = {
+                arch = "amd64";
+                hash = "sha256-QEuPgOX1D0m08upP544NLCv5jXLnrHcCRT1TJIHKNY0=";
+              };
 
-          aarch64-linux = {
-            arch = "aarch64";
-            hash = "sha256-ZISYarD8Kwgd9pulfbeId7gmL3YUDVtxAPlcecw19lQ=";
+              aarch64-linux = {
+                arch = "aarch64";
+                hash = "sha256-ZISYarD8Kwgd9pulfbeId7gmL3YUDVtxAPlcecw19lQ=";
+              };
+            }
+              .${
+              pkgs.stdenv.hostPlatform.system
+            }
+                or (throw "World Monitor does not support ${pkgs.stdenv.hostPlatform.system}");
+        in
+          pkgs.fetchurl {
+            url = "https://github.com/koala73/worldmonitor/releases/download/v${version}/World.Monitor_${version}_${asset.arch}.AppImage";
+            inherit (asset) hash;
           };
-        }
-          .${
-          pkgs.stdenv.hostPlatform.system
-        }
-            or (throw "World Monitor does not support ${pkgs.stdenv.hostPlatform.system}");
-
-      src = pkgs.fetchurl {
-        url = "https://github.com/koala73/worldmonitor/releases/download/v${version}/World.Monitor_${version}_${asset.arch}.AppImage";
-        inherit (asset) hash;
-      };
 
       appimageContents = pkgs.appimageTools.extractType2 {
         inherit pname version src;

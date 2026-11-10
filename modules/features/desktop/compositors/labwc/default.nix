@@ -20,7 +20,6 @@
       # Bar + notifications now live in their own aspects; labwc only wires
       # them into the session.
       den.aspects.desktop.launchers.bemenu
-      den.aspects.desktop.panels.yambar
       den.aspects.desktop.notifications.mako
       (den.aspects.desktop.portals.xdg {internalOutput = "eDP-1";})
     ];
@@ -35,9 +34,7 @@
         # (not a writeShellScriptBin) because nixpkgs programs.labwc feeds
         # the package into services.displayManager.sessionPackages, which
         # demands passthru.providedSessions — a bare script has none.
-        package = let
-          inner = pkgs.labwc;
-          wrapped = inner.overrideAttrs (old: {
+        package = pkgs.labwc.overrideAttrs (old: {
             nativeBuildInputs =
               (old.nativeBuildInputs or [])
               ++ [pkgs.makeWrapper];
@@ -59,9 +56,7 @@
                 # by uid 0 and have the setuid bit set" (DELL, 2026-09-19).
                 makeWrapper $out/bin/labwc-raw $out/bin/labwc --run 'export PATH="/run/wrappers/bin:$HOME/.nix-profile/bin:$HOME/.local/state/nix/profiles/profile/bin:/run/current-system/sw/bin:$PATH"' --set XDG_CURRENT_DESKTOP labwc --set XDG_SESSION_DESKTOP labwc --set XDG_SESSION_TYPE wayland --set ELECTRON_OZONE_PLATFORM_HINT auto --set MOZ_ENABLE_WAYLAND 1 --set NIXOS_OZONE_WL 1
               '';
-          });
-        in
-          wrapped;
+        });
       };
 
       # Session env vars for login shells/graphical apps started by labwc.
@@ -396,8 +391,8 @@
       # clipboard, brightness/audio control. All binaries referenced from rc
       # keybinds and this list use explicit store-path refs so labwc keybinds
       # cannot silently resolve to the wrong binary. Bar, notifications and
-      # the launcher moved to their own aspects (panels.yambar,
-      # notifications.mako, launchers.bemenu).
+      # the launcher moved to their own aspects (notifications.mako,
+      # launchers.bemenu).
       home.packages = [
         pkgs.unstable.brightnessctl
         pkgs.unstable.grim # W-S-s screenshots

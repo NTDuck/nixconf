@@ -30,40 +30,8 @@
   lib,
   ...
 }: let
-  # pi-reasonix (restored 2026-10-20, exact shape of the pre-9011d32
-  # block): DeepSeek-native optimizations — cache-first prefix
-  # stabilization, tool-call repair, cost control. Activates only for
-  # model ids containing "deepseek-"; zero overhead elsewhere.
-  pi-reasonix = {
-    pkgs,
-    lib,
-  }:
-    pkgs.stdenv.mkDerivation rec {
-      pname = "pi-reasonix";
-      version = "1.1.0";
-
-      src = pkgs.fetchurl {
-        url = "https://registry.npmjs.org/pi-reasonix/-/pi-reasonix-${version}.tgz";
-        hash = "sha512-pK9ig80y8l8shFoWGJx+ylg+dQ2qj9a/3z+nIkCDcsCW+3TsbqyeNrm0B/Pb4YcaczUjDBnVJHtByzbh+JJVzQ==";
-      };
-
-      dontBuild = true;
-
-      installPhase = ''
-        runHook preInstall
-        mkdir -p $out/lib/node_modules/pi-reasonix
-        cp -r * $out/lib/node_modules/pi-reasonix/
-        mkdir -p $out/share/omp/extensions
-        ln -s $out/lib/node_modules/pi-reasonix/dist/extensions/index.js $out/share/omp/extensions/pi-reasonix.js
-        runHook postInstall
-      '';
-
-      meta = {
-        description = "DeepSeek-native optimizations for Pi / Oh-My-Pi: cache-first prefix stabilization, tool-call repair, and cost control";
-        homepage = "https://github.com/TheTrebor/pi-reasonix";
-        license = lib.licenses.mit;
-      };
-    };
+  # pi-reasonix extension derivation (restored 2026-10-20, exact shape
+  # of the pre-9011d32 block) lives in the sibling _pi-reasonix.nix.
 
   # omp from the upstream release binary (2026-11-09) — see
   # _omp-release.nix for the derivation, pin, and rationale.
@@ -74,16 +42,13 @@
   # the shared "nerd" 2026-09-25). modelRoles stay out — /model picks
   # belong in the mutable config.yml (PI_CONFIG_FILES merges this file
   # OVER it).
-  defaultConfig = import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-default-config.nix";
 in {
   den.aspects.dev.agentics.harnesses.oh-my-pi = {
     nixos = {
       pkgs,
       lib,
       ...
-    }: let
-      ompPkg = ((import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix") {inherit pkgs lib;}).omp;
-    in {
+    }: {
       environment.systemPackages = [
         # Release binary (2026-11-09): upstream omp-linux-x64 from GitHub
         # releases, hash-pinned, interpreter-only patchelf to the store
@@ -92,10 +57,9 @@ in {
         # bun+cargo per bump); bumps are download-only everywhere. NOT
         # the upstream flake (inputs.omp) — that always builds from
         # source.
-        ompPkg
-        (pi-reasonix {
-          inherit pkgs;
-          inherit (pkgs) lib;
+        (import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix" {inherit pkgs lib;})
+        (import "${inputs.self}/modules/features/dev/agentics/harnesses/_pi-reasonix.nix" {
+          inherit pkgs lib;
         })
       ];
     };
@@ -104,15 +68,9 @@ in {
       pkgs,
       lib,
       ...
-    }: let
-      yaml = pkgs.formats.yaml {};
-      reasonixPkg = pi-reasonix {
-        inherit pkgs;
-        inherit (pkgs) lib;
-      };
-      ompPkg = ((import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix") {inherit pkgs lib;}).omp;
-    in {
-      home.file.".omp/agent/extensions/pi-reasonix.js".source = "${reasonixPkg}/share/omp/extensions/pi-reasonix.js";
+    }: {
+      home.file.".omp/agent/extensions/pi-reasonix.js".source =
+        "${(import "${inputs.self}/modules/features/dev/agentics/harnesses/_pi-reasonix.nix" {inherit pkgs lib;})}/share/omp/extensions/pi-reasonix.js";
       # Ctrl+V remap (2026-09-25 user report: "when ctrl v it says keycap
       # picture insert mode instead of pasting"): omp binds
       # app.clipboard.pasteImage to ctrl+v by default (getDefaultPaste-
@@ -134,7 +92,8 @@ in {
       # on every launch. This file is a read-only overlay merged OVER
       # config.yml via PI_CONFIG_FILES (set in the omp alias below).
       home.file.".omp/agent/config.default.yml".source =
-        yaml.generate ".omp.agent.config.default.yml" defaultConfig;
+        (pkgs.formats.yaml {}).generate ".omp.agent.config.default.yml"
+        (import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-default-config.nix");
 
       # Stream watchdog env (2026-10-20): gemini-3.8-flash turns died
       # "Request was aborted" after ~60.2s on three consecutive attempts
@@ -171,7 +130,7 @@ in {
         # exactly at the binary path.
         omp = lib.mkDefault (lib.removeSuffix "\n" ''
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml" \
-          ${ompPkg}/bin/omp
+          ${import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix" {inherit pkgs lib;}}/bin/omp
         '');
       };
     };

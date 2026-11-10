@@ -13,10 +13,10 @@
 #
 # WHY OUR OWN DOCKERFILE: the v0.2.1 tag has no Dockerfile — container support
 # (Dockerfile/compose/scripts/docker-start.mjs) exists only on main, a dev
-# branch. The image below is adapted from main's, minus the apt git install
-# (only the test suite needs git) and the docker-gateway launcher. Pinned to
-# main's exact base: node:24.14.0-slim by digest (same Node as CI,
-# engines >=24.14.0).
+# branch. The image is built from ./Dockerfile, adapted from main's, minus
+# the apt git install (only the test suite needs git) and the docker-gateway
+# launcher. Pinned to main's exact base: node:24.14.0-slim by digest (same
+# Node as CI, engines >=24.14.0).
 #
 # WHY --network=host (structural loopback-only): vite binds 127.0.0.1 in the
 # HOST netns — no -p publish exists to widen by accident, and the browser
@@ -56,36 +56,7 @@
       config,
       ...
     }: let
-      version = "0.2.1";
       port = 4173;
-
-      src = pkgs.fetchFromGitHub {
-        owner = "bilawalsidhu";
-        repo = "gods-eye-view";
-        rev = "v${version}";
-        hash = "sha256-V4MXFts1h5XUKMGTu0MZg+SE4Hb2m7CpFBeyVOF2is0=";
-      };
-
-      dockerfile = pkgs.writeText "gods-eye-view-Dockerfile" ''
-        # Adapted from upstream main's Dockerfile (base digest identical);
-        # see module header for the deltas (no apt git, no docker-start).
-        FROM node:24.14.0-slim@sha256:d8e448a56fc63242f70026718378bd4b00f8c82e78d20eefb199224a4d8e33d8
-
-        # Puppeteer is a QA-scripts-only devDep; skip its ~150MB Chromium.
-        ENV PUPPETEER_SKIP_DOWNLOAD=1
-
-        WORKDIR /app
-        USER node
-
-        COPY --chown=node:node package.json package-lock.json ./
-        RUN npm ci
-
-        COPY --chown=node:node . .
-
-        EXPOSE 4173
-        # Shell form so PORT stays operator-overridable via podman -e.
-        CMD ["sh", "-c", "exec node node_modules/vite/bin/vite.js --host 127.0.0.1 --port ''${PORT:-4173} --strictPort"]
-      '';
 
       stateDir = "/var/lib/gods-eye-view";
     in {
@@ -116,7 +87,14 @@
           chown 1000:1000 "${stateDir}/.env"
           mkdir -p "${stateDir}/gev-cache" "${stateDir}/gev-logs"
           chown -R 1000:1000 "${stateDir}/gev-cache" "${stateDir}/gev-logs"
-          podman build -f ${dockerfile} -t gods-eye-view:local ${src}
+          podman build -f ${./Dockerfile} -t gods-eye-view:local ${
+            pkgs.fetchFromGitHub {
+              owner = "bilawalsidhu";
+              repo = "gods-eye-view";
+              rev = "v0.2.1";
+              hash = "sha256-V4MXFts1h5XUKMGTu0MZg+SE4Hb2m7CpFBeyVOF2is0=";
+            }
+          }
         '';
 
         script = ''

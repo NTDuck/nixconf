@@ -20,35 +20,33 @@
       appimageContents = pkgs.appimageTools.extractType2 {
         inherit pname version src;
       };
-
-      learnharness = pkgs.appimageTools.wrapType2 {
-        inherit pname version src;
-
-        extraPkgs = pkgs: [
-          pkgs.libglvnd
-          pkgs.libxkbcommon
-          pkgs.wayland
-        ];
-
-        extraInstallCommands = ''
-          install -Dm444 "${appimageContents}/learnharness.desktop" "$out/share/applications/learnharness.desktop"
-          install -Dm444 "${appimageContents}/usr/share/icons/hicolor/512x512/apps/learnharness.png" "$out/share/icons/hicolor/512x512/apps/learnharness.png"
-          substituteInPlace "$out/share/applications/learnharness.desktop" \
-            --replace-fail "Exec=AppRun" "Exec=learnharness"
-        '';
-
-        meta = {
-          description = "An agent harness for learning: adaptive teaching, practice, and a persistent knowledge graph";
-          homepage = "https://github.com/amosblomqvist/learnharness";
-          license = lib.licenses.agpl3Only;
-          mainProgram = pname;
-          platforms = ["x86_64-linux"];
-          sourceProvenance = [lib.sourceTypes.binaryNativeCode];
-        };
-      };
     in {
       environment.systemPackages = [
-        learnharness
+        (pkgs.appimageTools.wrapType2 {
+          inherit pname version src;
+
+          extraPkgs = _pkgs: [
+            pkgs.libglvnd
+            pkgs.libxkbcommon
+            pkgs.wayland
+          ];
+
+          extraInstallCommands = ''
+            install -Dm444 "${appimageContents}/learnharness.desktop" "$out/share/applications/learnharness.desktop"
+            install -Dm444 "${appimageContents}/usr/share/icons/hicolor/512x512/apps/learnharness.png" "$out/share/icons/hicolor/512x512/apps/learnharness.png"
+            substituteInPlace "$out/share/applications/learnharness.desktop" \
+              --replace-fail "Exec=AppRun" "Exec=learnharness"
+          '';
+
+          meta = {
+            description = "An agent harness for learning: adaptive teaching, practice, and a persistent knowledge graph";
+            homepage = "https://github.com/amosblomqvist/learnharness";
+            license = lib.licenses.agpl3Only;
+            mainProgram = pname;
+            platforms = ["x86_64-linux"];
+            sourceProvenance = [lib.sourceTypes.binaryNativeCode];
+          };
+        })
       ];
     };
   };

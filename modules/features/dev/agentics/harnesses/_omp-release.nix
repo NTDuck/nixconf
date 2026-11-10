@@ -17,9 +17,7 @@
 # libpthread/libdl via baked-in search; verified with `env -i`).
 #
 # Consumers: harnesses/oh-my-pi.nix (shared aspect + dell aliases) and
-# the legion-private oh-my-pi.nix (omp/ompl/omprp wrappers). Single
-# source of truth for the version+hash pin: bump BOTH fields together,
-# then smoke-test `omp --version` (must print omp/..., never bun).
+# the legion-private oh-my-pi.nix (omp/ompl/omprp wrappers).
 {
   lib,
   pkgs,
@@ -28,55 +26,42 @@
   # Upstream SHA256SUMS.txt is raw-hex; hash below is the same digest in
   # nix base64 (hex 8c9a178fed74ec1da21aafb7d28cd9839b3b0c9e7d607c86cc3b
   # 6177355729f4).
-  ompRelease = {
-    version = "18.18.3";
-    hash = "sha256-jJoXj+107B2iGq+30ozZg5s7DJ59YHyGzDthdzVXKfQ=";
-  };
+  version = "18.18.3";
+  hash = "sha256-jJoXj+107B2iGq+30ozZg5s7DJ59YHyGzDthdzVXKfQ=";
+in
+  pkgs.stdenv.mkDerivation {
+    pname = "omp";
+    inherit version;
 
-  omp-bin = {
-    pkgs,
-    lib,
-  }: {
-    version,
-    hash,
-  }:
-    pkgs.stdenv.mkDerivation {
-      pname = "omp";
-      inherit version;
-
-      src = pkgs.fetchurl {
-        url = "https://github.com/can1357/oh-my-pi/releases/download/v${version}/omp-linux-x64";
-        inherit hash;
-      };
-
-      dontUnpack = true;
-      dontBuild = true;
-      # Bun single-file executables break under strip/autoPatchelf (see
-      # header comment): interpreter-only patchelf is the entire
-      # safe-patch surface.
-      dontStrip = true;
-      dontPatchELF = true;
-
-      nativeBuildInputs = [pkgs.patchelf];
-
-      installPhase = ''
-        runHook preInstall
-        install -Dm755 $src $out/bin/omp
-        # Interpreter-only rewrite: nix glibc ld.so resolves the needed
-        # libc/libm/libpthread/libdl itself.
-        patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $out/bin/omp
-        runHook postInstall
-      '';
-
-      meta = {
-        description = "Oh-My-Pi (omp) agent harness, upstream release binary";
-        homepage = "https://github.com/can1357/oh-my-pi";
-        license = lib.licenses.mit;
-        mainProgram = "omp";
-        platforms = ["x86_64-linux"];
-      };
+    src = pkgs.fetchurl {
+      url = "https://github.com/can1357/oh-my-pi/releases/download/v${version}/omp-linux-x64";
+      inherit hash;
     };
-in {
-  inherit ompRelease;
-  omp = omp-bin {inherit pkgs lib;} ompRelease;
-}
+
+    dontUnpack = true;
+    dontBuild = true;
+    # Bun single-file executables break under strip/autoPatchelf (see
+    # header comment): interpreter-only patchelf is the entire
+    # safe-patch surface.
+    dontStrip = true;
+    dontPatchELF = true;
+
+    nativeBuildInputs = [pkgs.patchelf];
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 $src $out/bin/omp
+      # Interpreter-only rewrite: nix glibc ld.so resolves the needed
+      # libc/libm/libpthread/libdl itself.
+      patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $out/bin/omp
+      runHook postInstall
+    '';
+
+    meta = {
+      description = "Oh-My-Pi (omp) agent harness, upstream release binary";
+      homepage = "https://github.com/can1357/oh-my-pi";
+      license = lib.licenses.mit;
+      mainProgram = "omp";
+      platforms = ["x86_64-linux"];
+    };
+  }

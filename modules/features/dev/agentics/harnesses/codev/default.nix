@@ -68,50 +68,49 @@
         };
       };
 
-      codevhub = pkgs.unstable.buildNpmPackage rec {
-        pname = "codev-ai";
-        version = "0.5.17";
-
-        src = pkgs.fetchurl {
-          url = "https://registry.npmjs.org/codev-ai/-/codev-ai-${version}.tgz";
-          hash = "sha256-IqfzdXYIAwyPnpANBWo/dmCkwlkbFtMDfQYReleW7/4=";
-        };
-
-        postPatch = ''
-          cp ${inputs.self}/modules/features/dev/agentics/harnesses/codev/package-lock.json package-lock.json
-          # registry.npmjs.org over H2 resets mid-stream on lossy routes
-          # (prefetch-npm-deps/isahc has no per-request fallback; a ~200-
-          # tarball FOD needs one clean pass). npmmirror serves the same
-          # content over a clean route (2026-10-01). cacache keys index by
-          # URL, so npmDepsHash differs from the npmjs hash.
-          sed -i 's#https://registry.npmjs.org/#https://registry.npmmirror.com/#g' package-lock.json
-          ${pkgs.unstable.jq}/bin/jq '.scripts = {}' package.json > package.json.tmp && mv package.json.tmp package.json
-        '';
-
-        npmDepsHash = "sha256-rdOariAintkR/vyPyNDlhYcbEon0pzLwuf36F2UT/Zs=";
-        dontNpmBuild = true;
-
-        nativeBuildInputs = [pkgs.makeWrapper];
-
-        postInstall = ''
-          wrapProgram $out/bin/codevhub \
-            --prefix PATH : "${lib.makeBinPath [codev-code]}" \
-            --set-default NODE_USE_SYSTEM_CA 1 \
-            --set-default NODE_USE_ENV_PROXY 1
-        '';
-
-        meta = {
-          description = "CoDev, Internal LLM";
-          homepage = "https://github.com/mnguyencuny/codev";
-          license = lib.licenses.mit;
-          mainProgram = "codevhub";
-          platforms = lib.platforms.all;
-        };
-      };
     in {
       environment.systemPackages = [
         codev-code
-        codevhub
+        (pkgs.unstable.buildNpmPackage rec {
+          pname = "codev-ai";
+          version = "0.5.17";
+
+          src = pkgs.fetchurl {
+            url = "https://registry.npmjs.org/codev-ai/-/codev-ai-${version}.tgz";
+            hash = "sha256-IqfzdXYIAwyPnpANBWo/dmCkwlkbFtMDfQYReleW7/4=";
+          };
+
+          postPatch = ''
+            cp ${inputs.self}/modules/features/dev/agentics/harnesses/codev/package-lock.json package-lock.json
+            # registry.npmjs.org over H2 resets mid-stream on lossy routes
+            # (prefetch-npm-deps/isahc has no per-request fallback; a ~200-
+            # tarball FOD needs one clean pass). npmmirror serves the same
+            # content over a clean route (2026-10-01). cacache keys index by
+            # URL, so npmDepsHash differs from the npmjs hash.
+            sed -i 's#https://registry.npmjs.org/#https://registry.npmmirror.com/#g' package-lock.json
+            ${pkgs.unstable.jq}/bin/jq '.scripts = {}' package.json > package.json.tmp && mv package.json.tmp package.json
+          '';
+
+          npmDepsHash = "sha256-rdOariAintkR/vyPyNDlhYcbEon0pzLwuf36F2UT/Zs=";
+          dontNpmBuild = true;
+
+          nativeBuildInputs = [pkgs.makeWrapper];
+
+          postInstall = ''
+            wrapProgram $out/bin/codevhub \
+              --prefix PATH : "${lib.makeBinPath [codev-code]}" \
+              --set-default NODE_USE_SYSTEM_CA 1 \
+              --set-default NODE_USE_ENV_PROXY 1
+          '';
+
+          meta = {
+            description = "CoDev, Internal LLM";
+            homepage = "https://github.com/mnguyencuny/codev";
+            license = lib.licenses.mit;
+            mainProgram = "codevhub";
+            platforms = lib.platforms.all;
+          };
+        })
       ];
     };
   };

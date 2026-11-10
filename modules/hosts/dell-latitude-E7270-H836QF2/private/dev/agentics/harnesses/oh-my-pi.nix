@@ -39,8 +39,7 @@
       # store glibc.
       # Download-only on bumps — no more llm-agents source build.
       ompBinPath =
-        ((import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix") {inherit pkgs lib;})
-        .omp;
+        import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix" {inherit pkgs lib;};
 
       # Caps Gemini models from default 1M to 256k contextWindow across all active
       # Gemini-bearing providers (2026-10-18 user request).

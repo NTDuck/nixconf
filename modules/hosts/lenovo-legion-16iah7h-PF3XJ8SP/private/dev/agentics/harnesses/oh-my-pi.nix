@@ -33,8 +33,7 @@
       # source build (vibe patch cancelled 2026-11-09, so no source
       # build is needed anywhere anymore).
       ompBinPath =
-        ((import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix") {inherit pkgs lib;})
-        .omp;
+        import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix" {inherit pkgs lib;};
 
       # Port the ninfer-serve listens on. Single source of
       # truth for this host; remote hosts (dell) duplicate the value

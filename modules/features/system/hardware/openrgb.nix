@@ -40,14 +40,14 @@
       og = "${openrgb}/bin/openrgb";
       coreutils = pkgs.coreutils;
       grep = "${pkgs.gnugrep}/bin/grep";
-      devName = "ASUS ROG STRIX GeForce RTX 3090 Gaming White OC";
       pciPath = "/sys/bus/pci/devices/0000:06:00.0";
-      setOnArgs = "-m static -c FFFFFF";
       stateFile = "/home/ayin/.local/state/egpu-rgb/state";
 
       egpu-rgb = pkgs.writeShellScriptBin "egpu-rgb" ''
         set -eu
-        dev="${devName}"
+        # RTX 3090 card name in OpenRGB's --list-devices output, used verbatim
+        # for -d targeting.
+        dev="ASUS ROG STRIX GeForce RTX 3090 Gaming White OC"
         state=${stateFile}
         enumerated() {
           ${og} --list-devices 2>/dev/null | ${grep} -q "RTX 3090"
@@ -84,7 +84,8 @@
           ${coreutils}/bin/echo "$1" > "$state"
         }
         on() {
-          apply ${setOnArgs} || { echo "egpu-rgb: failed to set mode (server restarting? retry)" >&2; exit 1; }
+          # Static white mode: the only color set this script ever applies.
+          apply -m static -c FFFFFF || { echo "egpu-rgb: failed to set mode (server restarting? retry)" >&2; exit 1; }
           set_state on
           echo "egpu-rgb: 3090 RGB on (static white)"
         }
