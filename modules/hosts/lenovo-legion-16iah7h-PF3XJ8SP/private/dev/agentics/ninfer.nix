@@ -363,7 +363,8 @@
             done
 
             if [ -z "''$found_svc" ]; then
-              echo "error: unknown model ''''$target', available: qwen3.8-27b, qwen3.8-27b-turbo, <nil>" >&2
+              echo "error: unknown model ''$target" >&2
+              echo "       available: qwen3.8-27b, qwen3.8-27b-turbo, <nil>" >&2
               exit 1
             fi
 
@@ -380,7 +381,7 @@
               local ctx_conc_val
               ctx_conc_val="''$(shape_for_ctx "''$canonical" "''$want_ctx" | cut -d' ' -f1)" || true
               if [ -z "''$ctx_conc_val" ]; then
-                echo "error: context ''''$want_ctx', not a measured shape for ''''$canonical'" >&2
+                echo "error: context ''$want_ctx is not a measured shape for ''$canonical" >&2
                 echo "       measured: ''$(shapes_column "''$canonical")" >&2
                 return 1
               fi
