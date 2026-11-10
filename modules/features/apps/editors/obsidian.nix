@@ -17,6 +17,14 @@
           commandLineArgs = "--disable-gpu";
         };
 
+        # Obsidian CLI (obsidian-cli, ships in the same package): writes
+        # cli=true into ~/.config/obsidian/obsidian.json so the CLI can
+        # talk to a running Obsidian over ~/.obsidian-cli.sock (verified
+        # 2026-11-10: `obsidian-cli --help` lists the full command set
+        # once the flag is on; without it the CLI exits with "Command
+        # line interface is not enabled").
+        cli.enable = true;
+
         defaultSettings = {
           appearance = {
             accentColor = "#ffd700";
