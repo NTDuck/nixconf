@@ -5,7 +5,7 @@
   # appimageTools-wrapped (no FUSE at runtime, hash-pinned). MimeType
   # carries x-scheme-handler/tabularis (deep links from the app UI).
   # https://github.com/TabularisDB/tabularis
-  den.aspects.dev.toolchains.sql.tabularis = {
+  den.aspects.apps.sql.tabularis = {
     homeManager = {
       pkgs,
       lib,

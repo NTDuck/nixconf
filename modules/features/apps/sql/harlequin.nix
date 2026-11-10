@@ -1,5 +1,5 @@
 {den, ...}: {
-  den.aspects.dev.toolchains.sql.harlequin = {
+  den.aspects.apps.sql.harlequin = {
     nixos = {pkgs, ...}: {
       environment.systemPackages = [
         pkgs.unstable.harlequin
