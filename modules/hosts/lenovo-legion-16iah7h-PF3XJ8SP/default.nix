@@ -29,12 +29,12 @@
       den.aspects.apps.gaming.roleplaying.rp
       den.aspects.apps.gaming.steam
       den.aspects.apps.gaming.romi
-      den.aspects.apps.lemonhunt
+      # lemonhunt un-included (2026-11-10 user request).
       den.aspects.remote-desktop.sunshine
       den.aspects.system.network.tailscale
       den.aspects.system.network.wait-online
       den.aspects.apps.messaging.discord
-      den.aspects.apps.messaging.lark-cli
+      # lark-cli un-included (2026-11-10 user request).
       den.aspects.apps.messaging.telegram
       den.aspects.apps.multimedia.ffmpeg
       den.aspects.apps.multimedia.gallery-dl
@@ -54,9 +54,13 @@
       den.aspects.apps.office.deckcraft
       den.aspects.apps.mermaid
       den.aspects.apps.editors.obsidian
-      den.aspects.apps.editors.emeraldian
-      den.aspects.apps.taskwarrior
-      den.aspects.apps.tomato
+      # emeraldian, taskwarrior, tomato un-included (2026-11-10 user
+      # request).
+      # SQL clients moved dev.toolchains.sql → apps.sql (2026-11-10);
+      # re-listed explicitly since the dev umbrella no longer carries
+      # the app clients.
+      den.aspects.apps.sql.dbeaver
+      den.aspects.apps.sql.tabularis
       den.aspects.apps.world-monitor
       den.aspects.apps.gods-eye-view
       den.aspects.apps.gemini-web2api-go
@@ -71,7 +75,7 @@
       den.aspects.apps.torrents.rtorrent
       den.aspects.apps.torrents.torrent-tui
       den.aspects.apps.torrents.webtorrent
-      den.aspects.dev.agentics.harnesses.learnharness
+      # learnharness un-included (2026-11-10 user request).
       den.aspects.dev
       den.aspects.dev.gitlab-runner
       den.aspects.system.bluetooth
@@ -142,4 +146,3 @@
     ];
   };
 }
-

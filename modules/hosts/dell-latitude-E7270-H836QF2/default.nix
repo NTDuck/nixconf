@@ -31,7 +31,6 @@
       # urxvt).
       den.aspects.apps.terminals.st
       den.aspects.apps.editors.obsidian
-      den.aspects.apps.editors.emeraldian
       den.aspects.apps.editors.openidea
       den.aspects.apps.editors.zed-editor
       den.aspects.apps.editors.helix
@@ -45,7 +44,7 @@
       den.aspects.apps.messaging.discord
       # omp + ninfer-over-tailscale (models.yml points at legion).
       den.aspects.dev.agentics.harnesses.codev
-      den.aspects.dev.agentics.harnesses.learnharness
+      # learnharness un-included (2026-11-10 user request).
       den.aspects.dev.agentics.harnesses.oh-my-pi
       # CodeGraph CLI (repo indexer used by the coding agents).
       den.aspects.dev.agentics.codegraph
@@ -54,7 +53,7 @@
       den.aspects.dev.agentics.open-code-review
       den.aspects.dev.agentics.openspec
       den.aspects.dev.envs.mise
-      den.aspects.dev.toolchains.sql.tabularis
+      den.aspects.apps.sql.tabularis
       den.aspects.dev.toolchains.java-kotlin
       den.aspects.dev.toolchains.javascript-typescript
       den.aspects.dev.toolchains.nix
@@ -108,6 +107,5 @@
         session = _config: "dell-latitude-E7270-H836QF2-x11-session";
       })
     ];
-
   };
 }

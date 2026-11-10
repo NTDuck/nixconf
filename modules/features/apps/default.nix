@@ -17,8 +17,8 @@
       den.aspects.apps.rufus
       den.aspects.apps.fastfetch
       den.aspects.apps.speedtest-cli
-      den.aspects.apps.taskwarrior
-      den.aspects.apps.tomato
+      # taskwarrior + tomato un-included (2026-11-10 user request);
+      # aspects stay declared in their files.
       den.aspects.apps.mermaid
       den.aspects.apps.world-monitor
       den.aspects.apps.gemini-web2api-go
