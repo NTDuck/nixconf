@@ -26,6 +26,18 @@
 # runCommand wrapper). Units use ProtectHome=true and run strictly
 # against store paths.
 #
+# 2026-11-11 VRAM SHAPE SWEEP (live nvidia-smi peaks, engine alone +
+# ~150 MiB desktop, v0.15.0, no host-RAM KV): max concurrency per
+# context — dflash2: 8x16k 21150 MiB, 7x32k 21144 (C8 OOMs: 6.41 GiB
+# runtime vs 6.31 free), 6x65k 21462 (C7 OOMs), 4x128k 22000 (C5
+# OOMs), 1x262k 23364 (C2 OOMs). turbo/mtp3: 8x16k 19562, 8x32k 19860,
+# 8x65k 20454, 8x128k 21644, 5x262k 23526 (C6 OOMs). mtp3 draft state
+# is ~1.6 GiB cheaper than dflash2's K=7, so turbo holds C8 to 128k.
+# `ninfer list` shows these as the {C}x{ctx} column; `ninfer switch
+# --context <ctx>` writes a per-unit EnvironmentFile override
+# (/run/user/1000/ninfer/shape-<unit>.env) consumed by both units;
+# `ninfer -i` opens the Bubble Tea TUI (ninfer-tools/ninfer-tui).
+#
 # WHY run.sh + the hostkv shim: the vendor launcher pins the tuned
 # profile (--spec dflash2 --draft-tokens 7 --lm-head-draft --kv-dtype
 # rk4v4 --gdn-state-fp16 --vision-residency overlay, context 262144,
@@ -59,6 +71,16 @@
       ...
     }: let
       # Idiomatic Nix store derivations for ninfer 0.15.0 and pinned model artifacts.
+      # Bubble Tea TUI for `ninfer -i`. Source lives in ninfer-tools/ninfer-tui;
+      # buildGoModule vendors deps via go.sum (proxy off-line build).
+      ninferTui = pkgs.buildGoModule {
+        pname = "ninfer-tui";
+        version = "1.0.0";
+        src = ./ninfer-tools/ninfer-tui;
+        env.CGO_ENABLED = 0;
+        vendorHash = null;
+        meta.mainProgram = "ninfer-tui";
+      };
       ninferRelease = pkgs.fetchzip {
         url = "https://github.com/ashalliants/ninfer-3090/releases/download/v0.15.0-rtx3090/ninfer-rtx3090-linux-x64-0.15.0-rtx3090.tar.gz";
         hash = "sha256-f/u4NHbVDiigLrxKrEX8vZaYPM2GKNqoVbDkgp1Rsxk=";
@@ -164,17 +186,75 @@
           SYSTEMCTL=( "${pkgs.systemd}/bin/systemctl" --no-ask-password )
 
           MODELS=(
-            "qwen3.8-27b|ninfer-df2.service|${toString ninferPort}|6x65k"
-            "qwen3.8-27b-turbo|ninfer-df2-turbo.service|${toString ninferPort}|6x65k"
+            "qwen3.8-27b|ninfer-df2.service|${toString ninferPort}"
+            "qwen3.8-27b-turbo|ninfer-df2-turbo.service|${toString ninferPort}"
           )
+
+          # Measured max concurrency per context on the RTX 3090 (2026-11-11,
+          # engine v0.15.0, engine alone + ~150 MiB desktop, no host-RAM KV):
+          # each "C x ctx : peak-MiB" triple is a live nvidia-smi peak; the
+          # next concurrency up at the same context OOM'd at startup
+          # (dflash2 C8x32k wanted 6.41 GiB runtime vs 6.31 free). dflash2
+          # costs ~1.6 GiB more than turbo at the same shape (K=7 draft
+          # state), so its table is strictly worse except 16k.
+          # Format: model|ctx:conc:peak,ctx:conc:peak,...
+          SHAPES=(
+            "qwen3.8-27b|16384:8:21150,32768:7:21144,65536:6:21462,131072:4:22000,262144:1:23364"
+            "qwen3.8-27b-turbo|16384:8:19562,32768:8:19860,65536:8:20454,131072:8:21644,262144:5:23526"
+          )
+          # Unit default shape (what Environment= in the unit pins); a
+          # --context equal to this clears the override file instead of
+          # writing one.
+          DEFAULT_CTX=65536
+          DEFAULT_CONC=6
+
+          shapes_for() {
+            for entry in "''${SHAPES[@]}"; do
+              IFS='|' read -r mid specs <<< "$entry"
+              if [ "$mid" = "$1" ]; then
+                echo "$specs"
+                return 0
+              fi
+            done
+            return 1
+          }
+
+          # Validate ctx against the measured table; echo "conc ctx" on hit.
+          shape_for_ctx() {
+            local specs ctx c ctxv peak
+            specs="$(shapes_for "$1")" || return 1
+            for pair in ''${specs//,/ }; do
+              IFS=':' read -r ctxv c peak <<< "$pair"
+              if [ "$ctxv" = "$2" ]; then
+                echo "$c $ctxv"
+                return 0
+              fi
+            done
+            return 1
+          }
+
+          shapes_column() {
+            local specs pair ctxv c peak out=""
+            specs="$(shapes_for "$1")" || { echo "-"; return 0; }
+            out="{ "
+            local first=1
+            for pair in ''${specs//,/ }; do
+              IFS=':' read -r ctxv c peak <<< "$pair"
+              [ "$first" = 1 ] || out+=", "
+              out+="''${c}x$ctxv"
+              first=0
+            done
+            echo "$out }"
+          }
 
           show_list() {
             local active_mid
             active_mid="$(get_active 2>/dev/null || true)"
             local any_active=0
+            local shapes shapes_disp state
             for entry in "''${MODELS[@]}"; do
-              IFS='|' read -r mid svc port shape <<< "$entry"
-              local state="inactive"
+              IFS='|' read -r mid svc port <<< "$entry"
+              state="inactive"
               if [ "$mid" = "$active_mid" ]; then
                 state="active"
                 any_active=1
@@ -182,7 +262,8 @@
                 state="active"
                 any_active=1
               fi
-              printf "%-30s %-8s %-10s :%s\n" "$mid" "$shape" "$state" "$port"
+              shapes="$(shapes_column "$mid")"
+              printf "%-30s %-8s %-10s :%s\n" "$mid" "''${shapes:--}" "$state" "$port"
             done
             local nil_state="inactive"
             if [ "$any_active" -eq 0 ]; then
@@ -200,7 +281,7 @@
               saved_mid="$(cat "$state_file" 2>/dev/null || true)"
               if [ -n "$saved_mid" ]; then
                 for entry in "''${MODELS[@]}"; do
-                  IFS='|' read -r mid svc port shape <<< "$entry"
+                  IFS='|' read -r mid svc port <<< "$entry"
                   if [ "$mid" = "$saved_mid" ]; then
                     if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
                       echo "$saved_mid"
@@ -213,7 +294,7 @@
             fi
 
             for entry in "''${MODELS[@]}"; do
-              IFS='|' read -r mid svc port shape <<< "$entry"
+              IFS='|' read -r mid svc port <<< "$entry"
               if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
                 echo "$mid"
                 return 0
@@ -234,22 +315,36 @@
           }
 
           do_switch() {
-            local target="$1"
+            local target="''$1"
+            local want_ctx="''${2:-}"
             local state_dir="''${XDG_RUNTIME_DIR:-/tmp}/ninfer"
-            local state_file="$state_dir/active-model"
+            local state_file="''$state_dir/active-model"
+            # Per-unit shape override file read by the system manager
+            # (EnvironmentFile=-/run/user/1000/ninfer/shape-<unit>.env; optional
+            # '-' so a missing file = unit Environment= defaults). Read by the
+            # manager itself (root), so PrivateTmp/ProtectSystem are irrelevant;
+            # /run/user/1000 (User=ayin, UID 1000, pinned below) avoids /tmp
+            # tmpfiles age-cleanup and sits beside active-model. Cleared on
+            # <nil> and on default-shape switches so a boot restart uses the
+            # unit default shape.
+            local shape_dir="''${XDG_RUNTIME_DIR:-/run/user/1000}/ninfer"
+            shape_env_for() {
+              echo "''$shape_dir/shape-''$1.env"
+            }
 
-            if [ "$target" = "<nil>" ] || [ "$target" = "nil" ]; then
+            if [ "''$target" = "<nil>" ] || [ "''$target" = "nil" ]; then
               local stopping=0
               for entry in "''${MODELS[@]}"; do
-                IFS='|' read -r mid svc port shape <<< "$entry"
-                if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
-                  printf "Stopping %s (%s)... " "$mid" "$svc"
-                  "''${SYSTEMCTL[@]}" stop "$svc" 2>/dev/null || true
+                IFS='|' read -r mid svc port <<< "''$entry"
+                if "''${SYSTEMCTL[@]}" is-active --quiet "''$svc" 2>/dev/null; then
+                  printf "Stopping %s (%s)... " "''$mid" "''$svc"
+                  "''${SYSTEMCTL[@]}" stop "''$svc" 2>/dev/null || true
                   echo "done."
                   stopping=1
                 fi
               done
-              rm -f "$state_file" 2>/dev/null || true
+              rm -f "''$state_file" 2>/dev/null || true
+              rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" 2>/dev/null || true
               echo "✔ Unloaded all models (switched to <nil>)"
               return 0
             fi
@@ -257,39 +352,70 @@
             local found_svc=""
             local canonical=""
             local target_port=""
-            local target_shape=""
             for entry in "''${MODELS[@]}"; do
-              IFS='|' read -r mid svc port shape <<< "$entry"
-              if [ "$mid" = "$target" ]; then
-                found_svc="$svc"
-                canonical="$mid"
-                target_port="$port"
-                target_shape="$shape"
+              IFS='|' read -r mid svc port <<< "''$entry"
+              if [ "''$mid" = "''$target" ]; then
+                found_svc="''$svc"
+                canonical="''$mid"
+                target_port="''$port"
                 break
               fi
             done
 
-            if [ -z "$found_svc" ]; then
-              echo "error: unknown model '$target', available: qwen3.8-27b, qwen3.8-27b-turbo, <nil>" >&2
+            if [ -z "''$found_svc" ]; then
+              echo "error: unknown model ''''$target', available: qwen3.8-27b, qwen3.8-27b-turbo, <nil>" >&2
               exit 1
             fi
 
             local prev_active
-            prev_active="$(get_active 2>/dev/null || true)"
-            mkdir -p "$state_dir" 2>/dev/null || true
-            echo "$canonical" > "$state_file" 2>/dev/null || true
+            prev_active="''$(get_active 2>/dev/null || true)"
+            mkdir -p "''$state_dir" "''$shape_dir" 2>/dev/null || true
+            echo "''$canonical" > "''$state_file" 2>/dev/null || true
 
-            # Fast path: already active and responding on HTTP
-            if "''${SYSTEMCTL[@]}" is-active --quiet "$found_svc" 2>/dev/null; then
-              if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:$target_port/v1/models" >/dev/null 2>&1; then
-                echo "✔ Already active and responding on $canonical (:$target_port)"
-                return 0
+            # Shape selection: --context validated against the measured table.
+            local target_shape="''${DEFAULT_CONC}x''${DEFAULT_CTX}"
+            local shape_file
+            shape_file="''$(shape_env_for ''${found_svc%.service})"
+            if [ -n "''$want_ctx" ]; then
+              local ctx_conc_val
+              ctx_conc_val="''$(shape_for_ctx "''$canonical" "''$want_ctx" | cut -d' ' -f1)" || true
+              if [ -z "''$ctx_conc_val" ]; then
+                echo "error: context ''''$want_ctx', not a measured shape for ''''$canonical'" >&2
+                echo "       measured: ''$(shapes_column "''$canonical")" >&2
+                return 1
+              fi
+              if [ "''$want_ctx" = "''$DEFAULT_CTX" ]; then
+                rm -f "''$shape_file" 2>/dev/null || true
+              else
+                {
+                  echo "NINFER_CONCURRENCY=''${ctx_conc_val}"
+                  echo "NINFER_CONTEXT=''${want_ctx}"
+                  echo "NINFER_KV_CAPACITY=''${want_ctx}"
+                  echo "NINFER_HOST_STATE_SLOTS=''${ctx_conc_val}"
+                } > "''$shape_file"
+              fi
+              target_shape="''${ctx_conc_val}x''$want_ctx"
+            else
+              # No --context: unit default shape; clear any stale override.
+              rm -f "''$shape_file" 2>/dev/null || true
+            fi
+
+            # Fast path: already active and responding on HTTP. Only when NO
+            # --context was given: the engine may currently run a non-default
+            # shape (a prior `switch -c` left its EnvironmentFile), so a
+            # context switch must always restart to apply the shape file.
+            if [ -z "''$want_ctx" ]; then
+              if "''${SYSTEMCTL[@]}" is-active --quiet "''$found_svc" 2>/dev/null; then
+                if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''$target_port/v1/models" >/dev/null 2>&1; then
+                  echo "✔ Already active and responding on ''$canonical (:''$target_port)"
+                  return 0
+                fi
               fi
             fi
 
             # Stop any conflicting active services first
             for entry in "''${MODELS[@]}"; do
-              IFS='|' read -r mid svc port shape <<< "$entry"
+              IFS='|' read -r mid svc port <<< "$entry"
               if [ "$svc" != "$found_svc" ] && "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
                 printf "Stopping %s (%s)... " "$mid" "$svc"
                 "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
@@ -335,7 +461,7 @@
               fi
 
               # Check if HTTP endpoint is live
-              if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:$target_port/v1/models" >/dev/null 2>&1; then
+              if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''''$target_port/v1/models" >/dev/null 2>&1; then
                 [ "$is_tty" -eq 1 ] && printf "\r\033[K"
                 echo "✔ Ready in ''${elapsed}s | listening on http://0.0.0.0:$target_port"
                 echo "switched to $canonical"
@@ -416,21 +542,53 @@
                 echo "error: model required" >&2
                 exit 2
               fi
-              do_switch "$2"
+              sw_target="" sw_ctx=""
+              shift
+              while [ $# -gt 0 ]; do
+                case "$1" in
+                  --context|-c)
+                    [ $# -ge 2 ] || { echo "error: --context needs a value" >&2; exit 2; }
+                    sw_ctx="$2"; shift 2 ;;
+                  --context=*)
+                    sw_ctx="''${1#*=}"; shift ;;
+                  *)
+                    if [ -z "$sw_target" ]; then sw_target="$1"; else
+                      echo "error: unexpected argument '$1'" >&2; exit 2
+                    fi
+                    shift ;;
+                esac
+              done
+              [ -n "$sw_target" ] || { echo "error: model required" >&2; exit 2; }
+              do_switch "$sw_target" "$sw_ctx"
+              ;;
+            -i|--interactive)
+              exec ${ninferTui}/bin/ninfer-tui
               ;;
             -h|--help|help)
-              echo "usage: ninfer [switch <model> | -s <model>]"
+              echo "usage: ninfer [switch <model> [--context/-c <ctx>] | -s <model> [-c <ctx>] | -i | list | active]"
+              echo "  -c <ctx>   context in tokens; measured shapes per model shown by 'ninfer list'"
+              echo "  -i         interactive TUI (model + context picker)"
               ;;
             *)
+              plain_ctx=""
               for entry in "''${MODELS[@]}"; do
-                IFS='|' read -r mid svc port shape <<< "$entry"
+                IFS='|' read -r mid svc port <<< "$entry"
                 if [ "$mid" = "$cmd" ]; then
-                  do_switch "$cmd"
+                  # Direct model invocation: ninfer <model> [-c ctx]
+                  shift
+                  while [ $# -gt 0 ]; do
+                    case "$1" in
+                      --context|-c) plain_ctx="$2"; shift 2 ;;
+                      --context=*) plain_ctx="''${1#*=}"; shift ;;
+                      *) echo "error: unexpected argument '$1'" >&2; exit 2 ;;
+                    esac
+                  done
+                  do_switch "$cmd" "$plain_ctx"
                   exit 0
                 fi
               done
               if [ "$cmd" = "<nil>" ] || [ "$cmd" = "nil" ]; then
-                do_switch "<nil>"
+                do_switch "<nil>" ""
                 exit 0
               fi
               echo "unknown command '$cmd', run 'ninfer -h' for usage" >&2
@@ -456,18 +614,32 @@
               'current:show active model'
               'list:list models'
               'status:show status'
+              '-i:interactive TUI'
+              '--interactive:interactive TUI'
             )
 
             models=(
-              'qwen3.8-27b:Qwen3.8-27B DFlash2 (6x65k :8092)'
-              'qwen3.8-27b-turbo:Qwen3.8-27B Turbo Heretic (6x65k :8092)'
+              'qwen3.8-27b:Qwen3.8-27B DFlash2 (8x16k 7x32k 6x65k 4x128k 1x262k :8092)'
+              'qwen3.8-27b-turbo:Qwen3.8-27B Turbo Heretic (8x16k 8x32k 8x65k 8x128k 5x262k :8092)'
               '\<nil\>:Unload all ninfer models'
               'nil:Unload all ninfer models'
+            )
+
+            local -a contexts
+            contexts=(
+              '16384:16k context'
+              '32768:32k context'
+              '65536:64k context'
+              '131072:128k context'
+              '262144:262k context'
             )
 
             _arguments -C \
               '-s[switch active model]:model:->models' \
               '--switch[switch active model]:model:->models' \
+              '-c[context tokens (per-model measured shapes)]:context:->ctxs' \
+              '--context[context tokens (per-model measured shapes)]:context:->ctxs' \
+              '(-i --interactive)'{-i,--interactive}'[interactive TUI]' \
               '-h[show help]' \
               '--help[show help]' \
               '1:command or model:->cmd_or_model' \
@@ -478,6 +650,9 @@
               cmd_or_model)
                 _describe -t commands 'command' commands
                 _describe -t models 'model' models
+                ;;
+              ctxs)
+                _describe -t contexts 'context' contexts
                 ;;
               args)
                 case "''${words[2]}" in
@@ -502,17 +677,24 @@
             prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
             local models="qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
-            local commands="switch list status active current"
+            local commands="switch list status active current -i --interactive"
+            local contexts="16384 32768 65536 131072 262144"
 
             case "$prev" in
               switch|-s|--switch)
                 COMPREPLY=( $(compgen -W "$models" -- "$cur") )
                 return 0
                 ;;
+              -c|--context)
+                COMPREPLY=( $(compgen -W "$contexts" -- "$cur") )
+                return 0
+                ;;
             esac
 
             if [ "$COMP_CWORD" -eq 1 ]; then
-              COMPREPLY=( $(compgen -W "$commands -s --switch -h --help $models" -- "$cur") )
+              COMPREPLY=( $(compgen -W "$commands -s --switch -c --context -h --help $models" -- "$cur") )
+            elif [ "$COMP_CWORD" -eq 3 ]; then
+              COMPREPLY=( $(compgen -W "-c --context" -- "$cur") )
             fi
           }
 
@@ -525,8 +707,10 @@
           complete -c ninfer -n "__fish_use_subcommand" -a status -d "show status"
           complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
+          complete -c ninfer -n "__fish_use_subcommand" -s i -l interactive -d "interactive TUI"
           complete -c ninfer -n "__fish_use_subcommand" -a "qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
           complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+          complete -c ninfer -s c -l context -d "context tokens (per-model measured shapes)" -a "16384 32768 65536 131072 262144"
           FISH
                     runHook postInstall
         '';
@@ -614,6 +798,12 @@
               "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
               "NINFER_MODEL_ID=qwen3.8-27b"
             ];
+            # Optional per-shape override written by `ninfer switch -c <ctx>`
+            # (NINFER_CONCURRENCY/CONTEXT/KV_CAPACITY/HOST_STATE_SLOTS).
+            # EnvironmentFile values override the Environment= defaults; the
+            # '-' prefix makes a missing file (= default shape) a no-op.
+            # Read by the system manager, so unit sandboxing is irrelevant.
+            EnvironmentFile = "-/run/user/1000/ninfer/shape-ninfer-df2.env";
             ExecStart = "${ninferRoot}/run.sh qwen38-27b tuned";
 
             # Second belt after the 2 GiB hostkv clamp: throttle at 10G,
@@ -674,6 +864,8 @@
               "NINFER_HOST_STATE_SLOTS=6"
               "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
+            # Same per-shape override contract as ninfer-df2 above.
+            EnvironmentFile = "-/run/user/1000/ninfer/shape-ninfer-df2-turbo.env";
             ExecStart = pkgs.writeShellScript "ninfer-df2-turbo-start" ''
               export NINFER_MODEL="${ninferRoot}/models/qwen38_turbo_sm86.ninfer"
               exec ${ninferRoot}/run.sh qwen38-27b tuned
