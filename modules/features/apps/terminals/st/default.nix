@@ -71,9 +71,9 @@
         patches =
           (old.patches or [])
           ++ [
-            "${inputs.self}/modules/features/apps/terminals/st-scrollback-0.9.2.diff"
-            "${inputs.self}/modules/features/apps/terminals/st-scrollback-mouse-0.9.2.diff"
-            "${inputs.self}/modules/features/apps/terminals/st-scrollback-mouse-altscreen-20220127-2c5edf2.diff"
+            "${inputs.self}/modules/features/apps/terminals/st/st-scrollback-0.9.2.diff"
+            "${inputs.self}/modules/features/apps/terminals/st/st-scrollback-mouse-0.9.2.diff"
+            "${inputs.self}/modules/features/apps/terminals/st/st-scrollback-mouse-altscreen-20220127-2c5edf2.diff"
           ];
 
         # Ensure python3 is available for the colorname[] replacement.
