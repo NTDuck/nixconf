@@ -3,10 +3,18 @@
     homeManager = {pkgs, ...}: {
       programs.obsidian = {
         enable = true;
-        # --in-process-gpu avoids GPU process crash (FATAL:content/browser/gpu/gpu_data_manager_impl_private.cc)
-        # on Linux X11 sessions with Intel integrated graphics, which caused a black screen on launch.
+        # --disable-gpu (2026-11-10): the prior --in-process-gpu (added for
+        # a GPU-process black screen on Intel iGPU X11) now segfaults the
+        # whole app — kernel log: `traps: Chrome_InProcGp general
+        # protection fault ... in libgbm.so.1.0.0` — Mesa GBM derefs a
+        # null buffer after an EGL_BAD_ALLOC loop (684 eglCreateImage
+        # 0x3003 errors in a 12s launch). In-process mode routes that
+        # broken gbm path into the main process, so the GPF kills
+        # everything. No-flag also hits the EGL loop (GPU init is broken
+        # on this host regardless); --disable-gpu skips GPU init entirely
+        # and launches clean (0 EGL errors, no traps, 20s soak).
         package = pkgs.unstable.obsidian.override {
-          commandLineArgs = "--in-process-gpu";
+          commandLineArgs = "--disable-gpu";
         };
 
         defaultSettings = {
