@@ -184,6 +184,58 @@
           ];
         };
       };
+
+      # Web-LLM tunnel (2026-11-10): local Gemini web gateway exposed as
+      # an OpenAI-compatible provider so omp agents can route advice
+      # turns to free web LLMs. Key is read at alias launch (env-var
+      # interpolation) — see the omp alias secret block.
+      #
+      #   gw2a — gemini-web2api-go (podman, 127.0.0.1:8083): Gemini web
+      #          UI → /v1/chat/completions. Key auto-generated at first
+      #          container boot, rotatable in the admin dashboard
+      #          (http://127.0.0.1:8083/admin). Cookie optional (adds
+      #          gemini-3.1-pro/3.8-flash/4-argon + image/music/video).
+      #
+      # CLIProxyAPI (127.0.0.1:8317) is deliberately NOT listed here:
+      # its model ids are DYNAMIC per logged-in OAuth account (tier-
+      # suffixed, e.g. gemini-3.5-flash-low) and would 404 if hardcoded.
+      # Agents use the `ask-web-llm` skill, which probes /v1/models.
+      webTunnelProviders = {
+        gw2a = {
+          baseUrl = "http://127.0.0.1:8083/v1";
+          api = "openai-completions";
+          apiKey = "GEMINI_WEB2API_KEY";
+          authHeader = true;
+
+          models = [
+            {
+              id = "gemini-3.6-flash";
+              name = "Gemini 3.6 Flash (Web)";
+              contextWindow = 256000;
+              maxTokens = 65536;
+            }
+            {
+              id = "gemini-3.5-flash-lite";
+              name = "Gemini 3.5 Flash Lite (Web)";
+              contextWindow = 256000;
+              maxTokens = 65536;
+            }
+            {
+              id = "gemini-3.1-pro";
+              name = "Gemini 3.1 Pro (Web, cookie)";
+              reasoning = true;
+              contextWindow = 256000;
+              maxTokens = 65536;
+            }
+            {
+              id = "gemini-3.8-flash";
+              name = "Gemini 3.8 Flash (Web, paid cookie)";
+              contextWindow = 256000;
+              maxTokens = 65536;
+            }
+          ];
+        };
+      };
       # Caps Gemini models from default 1M to 256k contextWindow across all active
       # Gemini-bearing providers (2026-10-18 user request).
       geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-gemini-overrides.nix";
@@ -192,6 +244,7 @@
         providers =
           lib.recursiveUpdate (
             cloudProviders
+            // webTunnelProviders
             // (
               if onHomelabSpec
               then local
@@ -597,6 +650,8 @@
           OPENCODE_API_KEY="$(cat ${osConfig.age.secrets."opencode-api-key".path} 2>/dev/null)" \
           OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."openrouter-api-key".path} 2>/dev/null)" \
           TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path} 2>/dev/null)" \
+          GEMINI_WEB2API_KEY="$(cat ''${XDG_CONFIG_HOME:-$HOME/.config}/webllm/gemini-web2api-key 2>/dev/null)" \
+          CLIPROXY_API_KEY="$(sudo -n cat /var/lib/cli-proxy-api/api-key 2>/dev/null || cat /var/lib/cli-proxy-api/api-key 2>/dev/null)" \
           ${ompBinPath}/bin/omp'';
 
         # Same omp binary plus `--profile ompl`: isolated agent dir
