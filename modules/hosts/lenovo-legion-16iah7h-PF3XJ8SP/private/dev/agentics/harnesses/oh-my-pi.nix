@@ -651,7 +651,7 @@
           OPENROUTER_API_KEY="$(cat ${osConfig.age.secrets."openrouter-api-key".path} 2>/dev/null)" \
           TABIAI_API_KEY="$(cat ${osConfig.age.secrets."tabiai-api-key".path} 2>/dev/null)" \
           GEMINI_WEB2API_KEY="$(cat ''${XDG_CONFIG_HOME:-$HOME/.config}/webllm/gemini-web2api-key 2>/dev/null)" \
-          CLIPROXY_API_KEY="$(sudo -n cat /var/lib/cli-proxy-api/api-key 2>/dev/null || cat /var/lib/cli-proxy-api/api-key 2>/dev/null)" \
+          CLIPROXY_API_KEY="$(cat /var/lib/cli-proxy-api/api-key 2>/dev/null)" \
           ${ompBinPath}/bin/omp'';
 
         # Same omp binary plus `--profile ompl`: isolated agent dir
