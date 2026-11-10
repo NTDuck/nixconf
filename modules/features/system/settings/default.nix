@@ -18,7 +18,7 @@
         # 404 for omp/codegraph/open-code-review under every eval). Kept
         # configured because it DOES serve flake source tarballs and other
         # numtide artifacts; omp itself no longer needs any cache (upstream
-        # release binary, see dev/agentics/harnesses/_omp-release.nix).
+        # release binary, see dev/agentics/harnesses/omp/_release.nix).
         extra-substituters = [
           "https://cache.numtide.com"
         ];

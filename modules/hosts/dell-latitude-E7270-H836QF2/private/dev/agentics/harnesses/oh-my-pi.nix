@@ -39,11 +39,11 @@
       # store glibc.
       # Download-only on bumps — no more llm-agents source build.
       ompBinPath =
-        import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix" {inherit pkgs lib;};
+        import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_release.nix" {inherit pkgs lib;};
 
       # Caps Gemini models from default 1M to 256k contextWindow across all active
       # Gemini-bearing providers (2026-10-18 user request).
-      geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-gemini-overrides.nix";
+      geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_gemini-overrides.nix";
 
       # Consolidated ninfer engine on legion (port 8092 over tailscale0).
       # Single provider hosting all 4 canonical model variants (27B DFlash2, 27B Abliterated,

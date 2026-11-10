@@ -33,7 +33,7 @@
       # source build (vibe patch cancelled 2026-11-09, so no source
       # build is needed anywhere anymore).
       ompBinPath =
-        import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix" {inherit pkgs lib;};
+        import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_release.nix" {inherit pkgs lib;};
 
       # Port the ninfer-serve listens on. Single source of
       # truth for this host; remote hosts (dell) duplicate the value
@@ -238,7 +238,7 @@
       };
       # Caps Gemini models from default 1M to 256k contextWindow across all active
       # Gemini-bearing providers (2026-10-18 user request).
-      geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-gemini-overrides.nix";
+      geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_gemini-overrides.nix";
 
       models = {
         providers =

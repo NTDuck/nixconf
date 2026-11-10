@@ -32,10 +32,8 @@
 }: let
   # pi-reasonix extension derivation (restored 2026-10-20, exact shape
   # of the pre-9011d32 block) lives in the sibling _pi-reasonix.nix.
-
   # omp from the upstream release binary (2026-11-09) — see
   # _omp-release.nix for the derivation, pin, and rationale.
-
   # Shared omp TUI defaults (moved from legion's private aspect
   # 2026-09-22): pure UI/behavior preferences with no host coupling, so
   # both hosts get the same baseline (dell's ascii override reverted to
@@ -57,8 +55,8 @@ in {
         # bun+cargo per bump); bumps are download-only everywhere. NOT
         # the upstream flake (inputs.omp) — that always builds from
         # source.
-        (import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix" {inherit pkgs lib;})
-        (import "${inputs.self}/modules/features/dev/agentics/harnesses/_pi-reasonix.nix" {
+        (import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_release.nix" {inherit pkgs lib;})
+        (import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_pi-reasonix.nix" {
           inherit pkgs lib;
         })
       ];
@@ -69,8 +67,7 @@ in {
       lib,
       ...
     }: {
-      home.file.".omp/agent/extensions/pi-reasonix.js".source =
-        "${(import "${inputs.self}/modules/features/dev/agentics/harnesses/_pi-reasonix.nix" {inherit pkgs lib;})}/share/omp/extensions/pi-reasonix.js";
+      home.file.".omp/agent/extensions/pi-reasonix.js".source = "${(import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_pi-reasonix.nix" {inherit pkgs lib;})}/share/omp/extensions/pi-reasonix.js";
       # Ctrl+V remap (2026-09-25 user report: "when ctrl v it says keycap
       # picture insert mode instead of pasting"): omp binds
       # app.clipboard.pasteImage to ctrl+v by default (getDefaultPaste-
@@ -93,7 +90,7 @@ in {
       # config.yml via PI_CONFIG_FILES (set in the omp alias below).
       home.file.".omp/agent/config.default.yml".source =
         (pkgs.formats.yaml {}).generate ".omp.agent.config.default.yml"
-        (import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-default-config.nix");
+        (import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_default-config.nix");
 
       # Stream watchdog env (2026-10-20): gemini-3.8-flash turns died
       # "Request was aborted" after ~60.2s on three consecutive attempts
@@ -130,7 +127,7 @@ in {
         # exactly at the binary path.
         omp = lib.mkDefault (lib.removeSuffix "\n" ''
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml" \
-          ${import "${inputs.self}/modules/features/dev/agentics/harnesses/_omp-release.nix" {inherit pkgs lib;}}/bin/omp
+          ${import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_release.nix" {inherit pkgs lib;}}/bin/omp
         '');
       };
     };
