@@ -5,7 +5,7 @@
 
       den.aspects.dev.agentics.agent-browser
       den.aspects.dev.agentics.codegraph
-      den.aspects.dev.agentics.cliproxyapi
+      # cliproxyapi un-included (2026-11-11 user request).
       den.aspects.dev.agentics.ctx7
       den.aspects.dev.agentics.heretic
       den.aspects.dev.agentics.huggingface

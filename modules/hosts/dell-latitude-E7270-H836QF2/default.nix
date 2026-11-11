@@ -48,7 +48,7 @@
       den.aspects.dev.agentics.harnesses.oh-my-pi
       # CodeGraph CLI (repo indexer used by the coding agents).
       den.aspects.dev.agentics.codegraph
-      den.aspects.dev.agentics.cliproxyapi
+      # cliproxyapi un-included (2026-11-11 user request).
       den.aspects.dev.agentics.ctx7
       den.aspects.dev.agentics.open-code-review
       den.aspects.dev.agentics.openspec

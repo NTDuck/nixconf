@@ -33,7 +33,7 @@
       den.aspects.dev.agentics.harnesses.oh-my-pi
       den.aspects.dev.agentics.harnesses.codev
       den.aspects.dev.agentics.harnesses.codex
-      den.aspects.dev.agentics.cliproxyapi
+      # cliproxyapi un-included (2026-11-11 user request).
       den.aspects.dev.agentics.codegraph
       den.aspects.dev.agentics.ctx7
       den.aspects.dev.agentics.openspec
