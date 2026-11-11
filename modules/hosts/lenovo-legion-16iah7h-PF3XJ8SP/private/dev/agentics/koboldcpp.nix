@@ -1,8 +1,8 @@
 # KoboldCpp (v1.124.2 prebuilt binary, bundled CUDA/cuBLAS) — Roleplaying backend
 #
 # Target host: Lenovo Legion (RTX 3090 TB4 eGPU, 24GB VRAM).
-# HOMELAB-ONLY: lives inside specialisation.homelab.configuration (mirrors ninfer.nix
-# and prism/default.nix). The 3090 is absent when undocked.
+# HOMELAB-ONLY: lives inside specialisation.homelab.configuration (mirrors ninfer.nix).
+# The 3090 is absent when undocked.
 #
 # WHY PREBUILT RELEASE BINARY (v1.124.2 koboldcpp-linux-x64):
 # Compiling CUDA builds with cublasSupport=true in the Nix sandbox cascades into

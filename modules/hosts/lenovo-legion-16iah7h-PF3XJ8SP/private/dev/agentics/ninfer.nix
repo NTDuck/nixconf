@@ -1,4 +1,6 @@
-# ninfer 0.15.0 (RTX 3090 release binary) — Qwen3.8-27B
+# ninfer (RTX 3090 release binaries) — Qwen3.8-27B on v0.15.0 +
+# Ternary Bonsai 2 27B on v0.17.2 (two engine derivations; ternary
+# support landed upstream in v0.16.1)
 # DFlash2 server, added 2026-10-09 from the engines-2026-10 benchmark:
 # the Qwen-arm winner on BOTH criteria — peak 162.7 tok/s per-agent
 # (fresh C1) and high-parallelism x deep-ctx (C6x65k 769.4 agg tok/s,
@@ -51,8 +53,9 @@
 #
 # VRAM ARBITRATION (24.5 GiB card, single resource): ninfer is the
 # Qwen3.8 winner (23.3 GiB peak with weights+KV, measured), bonsai2
-# 21.9 GiB. Both daemons declare symmetric Conflicts — starting any
-# stops the other natively.
+# 14.2 GiB worst case (2026-11-11 measured sweep on engine v0.17.2,
+# C8x262k). All three daemons declare symmetric Conflicts — starting
+# any stops the others natively.
 #
 # PORT (2026-10-12): the den module system does NOT support top-level
 # `options` (it wraps values in aspect objects, so `den.aspects.X.port`
@@ -132,6 +135,71 @@
             ${ninferTurboModelV2} $out
         '';
 
+      # 2026-11-11 BONSAI ADDITION: v0.17.2 engine (2026-11-07 release,
+      # SHA256SUMS-v0.17.2-linux: 4e70a9ff...) as a second derivation.
+      # Why a second engine: v0.15.0 refuses the ternary tensor format
+      # (weight/000258: unknown tensor format: t2_g128_fp16); ternary
+      # Bonsai 2 27B support landed in v0.16.1 (#323). The two existing
+      # Qwen units stay on v0.15.0 (2026-10-15 Pareto eval: C6x65k
+      # 769.4 agg tok/s vs v0.16.0's C4x65k 500.0). v0.17.2 keeps the
+      # flag list identical to v0.17.1 and is the release notes'
+      # officially re-measured Bonsai 2 engine on a rented RTX 3090.
+      ninferReleaseV0172 = pkgs.fetchzip {
+        url = "https://github.com/ashalliants/ninfer-3090/releases/download/v0.17.2-rtx3090/ninfer-rtx3090-linux-x64-0.17.2-rtx3090.tar.gz";
+        # fetchzip hashes the UNPACKED tree (release SHA256SUMS pins the
+        # tar.gz itself: 4e70a9ff..., verified on download).
+        hash = "sha256-ZohPlbp2EOTfuJxGmfVCg7QYQxzmpNFFg7QHkd/xyrk=";
+      };
+
+      # v0.17.2 adds a pinned host-RAM context budget defaulting to 8192
+      # MiB (run.sh: NINFER_HOST_CONTEXT_MIB → --host-context-mib); 8 GiB
+      # pinned RAM oomd-killed this 15 GiB host on 2026-10-08 via the
+      # older --host-kv-mib 8192 default. The shim therefore clamps BOTH
+      # flags: host KV spill → 2048 MiB, host context budget → 0 ("0
+      # keeps everything on the card" — run.sh comment). NINFER_HOST_
+      # CONTEXT_MIB=0 is also exported by the bonsai unit as a belt.
+      ninferServeHostkvShimV0172 = pkgs.writeShellScript "ninfer-serve.hostkv-shim-0172" ''
+        set -euo pipefail
+        out=()
+        while (($#)); do
+          if [[ "$1" == "--host-kv-mib" ]]; then
+            out+=(--host-kv-mib 2048)
+            shift 2
+          elif [[ "$1" == "--host-context-mib" ]]; then
+            out+=(--host-context-mib 0)
+            shift 2
+          else
+            out+=("$1")
+            shift
+          fi
+        done
+        if [[ -n "''${NINFER_MODEL_ID:-}" ]]; then
+          out+=(--model-id "$NINFER_MODEL_ID")
+        fi
+        exec "$(dirname "$0")/ninfer-serve.real" "''${out[@]}"
+      '';
+
+      # Ternary Bonsai 2 27B: 2.125-bit quant of Qwen3.8-27B, 9.52 GB
+      # (6.7 GiB weights). Manifest hash from the release README
+      # (WarlaxZ/Ternary-Bonsai-2-27B-NInfer-3090, verified locally with
+      # sha256sum before packaging).
+      ninferBonsai2Model = pkgs.fetchurl {
+        url = "https://huggingface.co/WarlaxZ/Ternary-Bonsai-2-27B-NInfer-3090/resolve/main/bonsai2_27b.ninfer";
+        hash = "sha256-l1Emd01+H5/6NrZUwKb8DbQsdzuk3V8RlqndxqRtRjQ=";
+        curlOptsList = ["--http1.1"];
+      };
+
+      ninferRootV0172 = pkgs.runCommand "ninfer-rtx3090-0.17.2" {} ''
+        mkdir -p $out/models
+        cp -r ${ninferReleaseV0172}/* $out/
+        chmod -R u+w $out
+        mv $out/ninfer-serve $out/ninfer-serve.real
+        cp ${ninferServeHostkvShimV0172} $out/ninfer-serve.hostkv-shim
+        ln -s ninfer-serve.hostkv-shim $out/ninfer-serve
+        chmod +x $out/ninfer-serve.hostkv-shim
+        ln -s ${ninferBonsai2Model} $out/models/bonsai2_27b.ninfer
+      '';
+
       ninferRoot = pkgs.runCommand "ninfer-rtx3090-0.15.0" {} ''
         mkdir -p $out/models
         cp -r ${ninferRelease}/* $out/
@@ -188,6 +256,7 @@
           MODELS=(
             "qwen3.8-27b|ninfer-df2.service|${toString ninferPort}"
             "qwen3.8-27b-turbo|ninfer-df2-turbo.service|${toString ninferPort}"
+            "bonsai2|bonsai2.service|${toString ninferPort}"
           )
 
           # Measured max concurrency per context on the RTX 3090 (2026-11-11,
@@ -201,12 +270,26 @@
           SHAPES=(
             "qwen3.8-27b|16384:8:21150,32768:7:21144,65536:6:21462,131072:4:22000,262144:1:23364"
             "qwen3.8-27b-turbo|16384:8:19562,32768:8:19860,65536:8:20454,131072:8:21644,262144:5:23526"
+            # bonsai2 on engine v0.17.2 (2026-11-11 sweep, ternary 9.5 GB
+            # weights): 6.7 GiB weights leave so much KV room that C8
+            # (engine's hard --max-concurrency cap) holds at EVERY
+            # context, including full 262k. Peak 14166 MiB = ~10 GiB
+            # headroom below the 24.5 GiB card.
+            "bonsai2|16384:8:9704,32768:8:10002,65536:8:10596,131072:8:11786,262144:8:14166"
           )
           # Unit default shape (what Environment= in the unit pins); a
           # --context equal to this clears the override file instead of
-          # writing one.
+          # writing one. Per-model: bonsai2's champion default is C8 at
+          # 65k (its tiny ternary weights hold C8 at every context),
+          # while both Qwen units run their Pareto winner C6x65k.
           DEFAULT_CTX=65536
           DEFAULT_CONC=6
+          default_conc_for() {
+            case "$1" in
+              bonsai2) echo 8 ;;
+              *) echo "$DEFAULT_CONC" ;;
+            esac
+          }
 
           shapes_for() {
             for entry in "''${SHAPES[@]}"; do
@@ -307,6 +390,7 @@
             if [ -n "$mpath" ]; then
               case "$mpath" in
                 *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
+                *bonsai2*) echo "bonsai2"; return 0 ;;
                 *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
               esac
             fi
@@ -344,7 +428,7 @@
                 fi
               done
               rm -f "''$state_file" 2>/dev/null || true
-              rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" 2>/dev/null || true
+              rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for bonsai2)" 2>/dev/null || true
               echo "✔ Unloaded all models (switched to <nil>)"
               return 0
             fi
@@ -364,7 +448,7 @@
 
             if [ -z "''$found_svc" ]; then
               echo "error: unknown model ''$target" >&2
-              echo "       available: qwen3.8-27b, qwen3.8-27b-turbo, <nil>" >&2
+              echo "       available: qwen3.8-27b, qwen3.8-27b-turbo, bonsai2, <nil>" >&2
               exit 1
             fi
 
@@ -374,7 +458,7 @@
             echo "''$canonical" > "''$state_file" 2>/dev/null || true
 
             # Shape selection: --context validated against the measured table.
-            local target_shape="''${DEFAULT_CONC}x''${DEFAULT_CTX}"
+            local target_shape="''$(default_conc_for "$canonical")x''${DEFAULT_CTX}"
             local shape_file
             shape_file="''$(shape_env_for ''${found_svc%.service})"
             if [ -n "''$want_ctx" ]; then
@@ -622,6 +706,7 @@
             models=(
               'qwen3.8-27b:Qwen3.8-27B DFlash2 (8x16k 7x32k 6x65k 4x128k 1x262k :8092)'
               'qwen3.8-27b-turbo:Qwen3.8-27B Turbo Heretic (8x16k 8x32k 8x65k 8x128k 5x262k :8092)'
+              'bonsai2:Ternary Bonsai 2 27B (8x16k 8x32k 8x65k 8x128k 8x262k :8092)'
               '\<nil\>:Unload all ninfer models'
               'nil:Unload all ninfer models'
             )
@@ -677,7 +762,7 @@
             cur="''${COMP_WORDS[COMP_CWORD]}"
             prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-            local models="qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+            local models="qwen3.8-27b qwen3.8-27b-turbo bonsai2 <nil> nil"
             local commands="switch list status active current -i --interactive"
             local contexts="16384 32768 65536 131072 262144"
 
@@ -709,8 +794,8 @@
           complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -s i -l interactive -d "interactive TUI"
-          complete -c ninfer -n "__fish_use_subcommand" -a "qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
-          complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+          complete -c ninfer -n "__fish_use_subcommand" -a "qwen3.8-27b qwen3.8-27b-turbo bonsai2 <nil> nil"
+          complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-turbo bonsai2 <nil> nil"
           complete -c ninfer -s c -l context -d "context tokens (per-model measured shapes)" -a "16384 32768 65536 131072 262144"
           FISH
                     runHook postInstall
@@ -871,6 +956,84 @@
               export NINFER_MODEL="${ninferRoot}/models/qwen38_turbo_sm86.ninfer"
               exec ${ninferRoot}/run.sh qwen38-27b tuned
             '';
+            MemoryHigh = "10G";
+            MemoryMax = "12G";
+            Restart = "on-failure";
+            RestartSec = "10s";
+            ProtectHome = true;
+            ProtectSystem = "strict";
+            NoNewPrivileges = true;
+            PrivateTmp = true;
+          };
+        };
+
+        # Ternary Bonsai 2 27B (port 8092), on-demand: engine v0.17.2 +
+        # 9.5 GB ternary artifact, switched to with `ninfer bonsai2`.
+        # MTP spec (the shape swept 2026-11-11: C8 holds at every
+        # context, 9704-14166 MiB peaks); default C8x65536.
+        systemd.services.bonsai2 = {
+          description = "ninfer 0.17.2 Ternary Bonsai 2 27B MTP";
+          after = ["network-online.target"];
+          wants = ["network-online.target"];
+          conflicts = [
+            "ninfer-df2.service"
+            "ninfer-df2-turbo.service"
+          ];
+          serviceConfig = {
+            Type = "simple";
+            User = "ayin";
+            WorkingDirectory = ninferRootV0172;
+            # Same GPU wait gate as the Qwen units (thunderbolt eGPU
+            # enumerates late), then artifact hash verify (manifest
+            # 975126774d7e1f9ffa36b654c0a6fc0db42c773ba4dd5f1196a9ddc6a46d4634).
+            ExecCondition = pkgs.writeShellScript "bonsai2-boot-gate" ''
+              i=0
+              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
+                i=$((i+1)); [ $i -gt 60 ] && exit 1
+                sleep 1
+              done
+              echo "975126774d7e1f9ffa36b654c0a6fc0db42c773ba4dd5f1196a9ddc6a46d4634  ${ninferRootV0172}/models/bonsai2_27b.ninfer" \
+                | ${pkgs.coreutils}/bin/sha256sum -c -
+            '';
+            Environment = let
+              # v0.17.2 ldd adds libzstd.so.1 vs v0.15.0 (same prism/
+              # driver/ffmpeg/curl pins; zstd from the same nixpkgs rev).
+              ld = lib.concatStringsSep ":" (ninferLibs ++ [
+                "/run/opengl-driver/lib"
+                "/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib"
+              ]);
+            in [
+              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
+              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
+              "LD_LIBRARY_PATH=${ld}"
+              "NINFER_SPEC=mtp"
+              "NINFER_DRAFT_TOKENS=3"
+              "NINFER_HOST=0.0.0.0"
+              "NINFER_PORT=${toString ninferPort}"
+              "NINFER_FALLBACK=off"
+              "NINFER_CONCURRENCY=8"
+              "NINFER_CONTEXT=65536"
+              "NINFER_KV_CAPACITY=65536"
+              "NINFER_HOST_STATE_SLOTS=8"
+              "NINFER_SERVER=${ninferRootV0172}/ninfer-serve.hostkv-shim"
+              # Belt over the shim's --host-context-mib 0 clamp: v0.17.2
+              # defaults this to 8192 MiB pinned host RAM, the oomd
+              # killer shape from 2026-10-08. 0 = everything on card.
+              "NINFER_HOST_CONTEXT_MIB=0"
+              "NINFER_MODEL_ID=bonsai2"
+            ];
+            EnvironmentFile = "-/run/user/1000/ninfer/shape-bonsai2.env";
+            ExecStart = pkgs.writeShellScript "bonsai2-start" ''
+              # run.sh validates model keys against its bundled list
+              # (qwen38-27b/qwen36-35b-a3b only) BEFORE honoring
+              # NINFER_MODEL, so pass the qwen38-27b key and override
+              # the artifact — the exact invocation the 2026-11-11
+              # VRAM sweep verified for the ternary weights.
+              export NINFER_MODEL="${ninferRootV0172}/models/bonsai2_27b.ninfer"
+              exec ${ninferRootV0172}/run.sh qwen38-27b tuned
+            '';
+            # Measured worst case 14166 MiB device + engine RSS; the
+            # 10G/12G host walls are the second belt after the shim.
             MemoryHigh = "10G";
             MemoryMax = "12G";
             Restart = "on-failure";
