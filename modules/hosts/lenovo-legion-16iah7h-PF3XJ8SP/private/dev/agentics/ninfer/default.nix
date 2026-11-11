@@ -182,22 +182,15 @@
       # (6.7 GiB weights). Manifest hash from the release README
       # (WarlaxZ/Ternary-Bonsai-2-27B-NInfer-3090, verified locally with
       # sha256sum before packaging).
-      # 2026-11-11 CODER390 ADDITION: Qwen3.8-27B-Coder390-EfficientThink
-      # (nerkyor's SFT+RLOO coding tune; fixes the base model's 94K
-      # no-stop failure). GGUF-NInfer family = llama.cpp-style
-      # groupwise-int quants inside an official NInfer v3 package — the
-      # NVFP4-NInfer sibling was rejected: the engine says on sm_86
-      # NVFP4 is A16-only with prefill capped at 16 columns ("cannot
-      # serve"). Q3 LynnStyle + built-in Q8 MTP head (BPW 5.07, 16.6
-      # GiB): C8 512 tok/s measured by upstream on NInfer; spec=mtp
-      # only, no DFlash2 in this family. Served on v0.17.2 with
-      # bonsai2. SHA256 pinned from the repo's SHA256SUMS.
-      ninferCoder390Model = pkgs.fetchurl {
-        url = "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-GGUF-NInfer/resolve/main/GGUF-NInfer/Qwen3.8-27B-Coder390-EfficientThink-Q3LynnStyle-Q8MTP.ninfer";
-        hash = "sha256-gVJBuk2PYgVXINhjJheySBTaO/iBlIhnuOtl28zUvbM=";
-        curlOptsList = ["--http1.1"];
-      };
-
+      # 2026-11-11 CODER390 REJECTED: Qwen3.8-27B-Coder390-EfficientThink
+      # (nerkyor's GGUF-NInfer Q3LynnStyle-Q8MTP, sha256
+      # 815241ba...) FATALs on every store engine — its 263 K-quant
+      # tensors use layout "gguf_blocks_v1", which no ninfer release
+      # implements (0.17.2: "weight/000130: unknown tensor layout";
+      # unit coder390.service never engine-ready; no converter ships).
+      # Re-add only after upstream ships gguf-block support or an
+      # official GGUF->v3 converter. Sweep ladder + findings:
+      # benchmarks/engines-2026-10/results/sweep-coder390-2026-11-11.log
       ninferBonsai2Model = pkgs.fetchurl {
         url = "https://huggingface.co/WarlaxZ/Ternary-Bonsai-2-27B-NInfer-3090/resolve/main/bonsai2_27b.ninfer";
         hash = "sha256-l1Emd01+H5/6NrZUwKb8DbQsdzuk3V8RlqndxqRtRjQ=";
@@ -213,7 +206,6 @@
         ln -s ninfer-serve.hostkv-shim $out/ninfer-serve
         chmod +x $out/ninfer-serve.hostkv-shim
         ln -s ${ninferBonsai2Model} $out/models/bonsai2_27b.ninfer
-        ln -s ${ninferCoder390Model} $out/models/coder390_q3_27b.ninfer
       '';
 
       ninferRoot = pkgs.runCommand "ninfer-rtx3090-0.15.0" {} ''
@@ -249,7 +241,7 @@
       ninferPort = 8092;
       # `ninfer --version` strings. CLI release line + the two engine
       # distributions packaged below (v0.15.0 Qwen arm, v0.17.2
-      # bonsai2/coder390 arm) — bump all three together.
+      # bonsai2 arm) — bump all three together.
       ninferCliVersion = "1.1.0";
       engineVersionV0150 = "0.15.0-rtx3090";
       engineVersionV0172 = "0.17.2-rtx3090";
@@ -282,7 +274,6 @@
           MODELS=(
             "bonsai2-27b|Ternary Bonsai 2 27B|bonsai2.service|${toString ninferPort}"
             "qwen3.8-27b|Qwen 3.8 27B DFlash2|ninfer-df2.service|${toString ninferPort}"
-            "qwen3.8-27b-coder390|Coder390 EfficientThink Q3|coder390.service|${toString ninferPort}"
             "qwen3.8-27b-turbo|Qwen 3.8 27B Turbo (Heretic)|ninfer-df2-turbo.service|${toString ninferPort}"
           )
 
@@ -306,11 +297,6 @@
             # context, including full 262k. Peak 14166 MiB = ~10 GiB
             # headroom below the 24.5 GiB card.
             "bonsai2-27b|262144:8:14166"
-            # coder390 Q3 (16.6 GiB weights): not yet swept — SHAPES row
-            # intentionally omitted until a live nvidia-smi peak sweep
-            # exists (the CLI refuses --context until then). Weights sit
-            # between bonsai2 (6.7) and dense qwen3.8 (19), so
-            # C8x16k..C8x65k is the expected envelope; measure before pinning.
           )
           # Unit default shape (what Environment= in the unit pins); a
           # --context equal to this clears the override file instead of
@@ -325,13 +311,11 @@
           # keeps only its 262k champion cell, so its default IS that
           # cell (the shape file is written on switch; the unit
           # Environment C8x65536 only applies if the unit starts with
-          # no override). coder390's unit pins C8. Used by do_switch
-          # and as the ACTIVE fallback when neither /props nor the
-          # shape file yields values.
+          # no override). Used by do_switch and as the ACTIVE fallback
+          # when neither /props nor the shape file yields values.
           default_shape_for() {
             case "$1" in
               bonsai2-27b) echo "8x262144" ;;
-              qwen3.8-27b-coder390) echo "8x''${DEFAULT_CTX}" ;;
               *) echo "''${DEFAULT_CONC}x''${DEFAULT_CTX}" ;;
             esac
           }
@@ -494,7 +478,6 @@
               case "$mpath" in
                 *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
                 *bonsai2*) echo "bonsai2-27b"; return 0 ;;
-                *coder390*) echo "qwen3.8-27b-coder390"; return 0 ;;
                 *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
               esac
             fi
@@ -533,7 +516,7 @@
                 fi
               done
               rm -f "''$state_file" 2>/dev/null || true
-              rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for bonsai2)" "''$(shape_env_for coder390)" 2>/dev/null || true
+              rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for bonsai2)" 2>/dev/null || true
               echo "✔ Unloaded all models (switched to <nil>)"
               return 0
             fi
@@ -554,7 +537,7 @@
 
             if [ -z "''$found_svc" ]; then
               echo "error: unknown model ''$target" >&2
-              echo "       available: bonsai2-27b, qwen3.8-27b, qwen3.8-27b-coder390, qwen3.8-27b-turbo, <nil>" >&2
+              echo "       available: bonsai2-27b, qwen3.8-27b, qwen3.8-27b-turbo, <nil>" >&2
               exit 1
             fi
 
@@ -590,7 +573,6 @@
               if [ "''$shape_ctx" = "''$DEFAULT_CTX" ] && [ "''$shape_conc" = "''$DEFAULT_CONC" ]; then
                 rm -f "''$shape_file" 2>/dev/null || true
               elif [ "''$shape_conc" = "8" ] && [ "''$shape_ctx" = "''$DEFAULT_CTX" ]; then
-                # C8x65536 (coder390 unit default) also maps to no file.
                 rm -f "''$shape_file" 2>/dev/null || true
               else
                 {
@@ -824,7 +806,6 @@
             models=(
               'bonsai2-27b'
               'qwen3.8-27b'
-              'qwen3.8-27b-coder390'
               'qwen3.8-27b-turbo'
               '\<nil\>'
               'nil'
@@ -877,7 +858,7 @@
             cur="''${COMP_WORDS[COMP_CWORD]}"
             prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-            local models="bonsai2-27b qwen3.8-27b qwen3.8-27b-coder390 qwen3.8-27b-turbo <nil> nil"
+            local models="bonsai2-27b qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
             local commands="switch list status active current version"
             local shapes="8x16384 7x32768 6x65536 4x131072 1x262144 5x262144 8x262144"
 
@@ -904,8 +885,8 @@
           complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -s v -l version -d "show version"
-          complete -c ninfer -n "__fish_use_subcommand" -a "bonsai2-27b qwen3.8-27b qwen3.8-27b-coder390 qwen3.8-27b-turbo <nil> nil"
-          complete -c ninfer -n "__fish_seen_subcommand_from switch" -a "bonsai2-27b qwen3.8-27b qwen3.8-27b-coder390 qwen3.8-27b-turbo <nil> nil"
+          complete -c ninfer -n "__fish_use_subcommand" -a "bonsai2-27b qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+          complete -c ninfer -n "__fish_seen_subcommand_from switch" -a "bonsai2-27b qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
           complete -c ninfer -n "__fish_seen_subcommand_from switch; and __fish_prev_arg_in switch; and test (count (commandline -opc)) -ge 3" -a "8x16384 7x32768 6x65536 4x131072 1x262144 5x262144 8x262144"
           FISH
                     runHook postInstall
@@ -922,7 +903,7 @@
             if (action.id === "org.freedesktop.systemd1.manage-units" &&
                 (subject.isInGroup("wheel") || (subject.local && subject.active))) {
               var unit = action.lookup("unit");
-              if (unit && (unit.indexOf("ninfer-") === 0 || unit === "bonsai2.service" || unit === "coder390.service")) {
+              if (unit && (unit.indexOf("ninfer-") === 0 || unit === "bonsai2.service")) {
                 return polkit.Result.YES;
               }
             }
@@ -939,7 +920,6 @@
           conflicts = [
             "bonsai2.service"
             "ninfer-df2-turbo.service"
-            "coder390.service"
           ];
 
           # run.sh resolves bash via `#!/usr/bin/env bash`. The NixOS
@@ -1029,7 +1009,6 @@
           conflicts = [
             "bonsai2.service"
             "ninfer-df2.service"
-            "coder390.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -1092,7 +1071,6 @@
           conflicts = [
             "ninfer-df2.service"
             "ninfer-df2-turbo.service"
-            "coder390.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -1161,83 +1139,12 @@
           };
         };
 
-        # Qwen3.8-27B-Coder390-EfficientThink Q3 (port 8092), on-demand:
-        # engine v0.17.2 + 16.6 GiB groupwise-int artifact with built-in
-        # Q8 MTP head. Same shape contract as bonsai2 (default C8x65536;
-        # the 2026-11-11 C8 sweep shape applies — artifact is smaller
-        # than the 19 GiB dense qwen3_8_27b that verified C6x65k).
-        systemd.services.coder390 = {
-          description = "ninfer 0.17.2 Coder390 EfficientThink Q3 MTP";
-          after = ["network-online.target"];
-          wants = ["network-online.target"];
-          conflicts = [
-            "ninfer-df2.service"
-            "ninfer-df2-turbo.service"
-            "bonsai2.service"
-          ];
-          serviceConfig = {
-            Type = "simple";
-            User = "ayin";
-            WorkingDirectory = ninferRootV0172;
-            # Same GPU wait gate as the other units (thunderbolt eGPU
-            # enumerates late), then artifact hash verify (pinned from
-            # the repo SHA256SUMS).
-            ExecCondition = pkgs.writeShellScript "coder390-boot-gate" ''
-              i=0
-              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
-                i=$((i+1)); [ $i -gt 60 ] && exit 1
-                sleep 1
-              done
-              echo "815241ba4d8f62055720d8632617b24814da3bf881948867b8eb65dbccd4bdb3  ${ninferRootV0172}/models/coder390_q3_27b.ninfer" \
-                | ${pkgs.coreutils}/bin/sha256sum -c -
-            '';
-            Environment = let
-              # Same ldd set as bonsai2 on v0.17.2 (libzstd.so.1 added
-              # vs v0.15.0; same prism/driver/ffmpeg/curl pins).
-              ld = lib.concatStringsSep ":" (ninferLibs
-                ++ [
-                  "/run/opengl-driver/lib"
-                  "/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib"
-                ]);
-            in [
-              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
-              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
-              "LD_LIBRARY_PATH=${ld}"
-              "NINFER_SPEC=mtp"
-              "NINFER_DRAFT_TOKENS=3"
-              "NINFER_HOST=0.0.0.0"
-              "NINFER_PORT=${toString ninferPort}"
-              "NINFER_FALLBACK=off"
-              "NINFER_CONCURRENCY=8"
-              "NINFER_CONTEXT=65536"
-              "NINFER_KV_CAPACITY=65536"
-              "NINFER_HOST_STATE_SLOTS=8"
-              "NINFER_SERVER=${ninferRootV0172}/ninfer-serve.hostkv-shim"
-              # Belt over the shim's --host-context-mib 0 clamp (see
-              # bonsai2 unit).
-              "NINFER_HOST_CONTEXT_MIB=0"
-              "NINFER_MODEL_ID=qwen3.8-27b-coder390"
-            ];
-            EnvironmentFile = "-/run/user/1000/ninfer/shape-coder390.env";
-            ExecStart = pkgs.writeShellScript "coder390-start" ''
-              # run.sh validates model keys against its bundled list, so
-              # pass the qwen38-27b key and override the artifact (same
-              # pattern as the bonsai2 unit).
-              export NINFER_MODEL="${ninferRootV0172}/models/coder390_q3_27b.ninfer"
-              exec ${ninferRootV0172}/run.sh qwen38-27b tuned
-            '';
-            # Same host walls as the other units (second belt after the
-            # shim; device peak measured for the smaller sibling).
-            MemoryHigh = "10G";
-            MemoryMax = "12G";
-            Restart = "on-failure";
-            RestartSec = "10s";
-            ProtectHome = true;
-            ProtectSystem = "strict";
-            NoNewPrivileges = true;
-            PrivateTmp = true;
-          };
-        };
+        # Qwen3.8-27B-Coder390 unit REMOVED 2026-11-11: its artifact
+        # (gguf_blocks_v1 K-quants) FATALs on engine 0.17.2 ("weight/
+        # 000130: unknown tensor layout") — never engine-ready. Re-add
+        # with a loadable artifact; see the CODER390 REJECTED comment
+        # above and benchmarks/engines-2026-10/results/
+        # sweep-coder390-2026-11-11.log for the full findings.
 
         # Tailscale firewall: open single ninfer port (:8092).
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [

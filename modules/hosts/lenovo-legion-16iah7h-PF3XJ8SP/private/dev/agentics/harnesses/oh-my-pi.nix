@@ -154,11 +154,13 @@
       # onHomelabSpec). Restored verbatim from fb75273 (2026-09-26), the
       # last live-verified state. 2026-10-12: ollama removed; ninfer
       # is the sole local engine. 2026-11-11: ids/names synced with the
-      # `ninfer list` contract (bonsai2 -> bonsai2-27b, coder390 added,
-      # alphabetical).
+      # `ninfer list` contract (bonsai2 -> bonsai2-27b, alphabetical).
+      # coder390 dropped — its artifact FATALs on engine 0.17.2
+      # (gguf_blocks_v1 tensors, see ninfer/default.nix CODER390
+      # REJECTED).
       local = {
         # Consolidated ninfer engine (port 8092, resident 3090 engine).
-        # Single provider hosting all 4 canonical model variants.
+        # Single provider hosting all 3 canonical model variants.
         # Mutual conflicts ensure one daemon runs at a time on :8092,
         # switched on-demand via `ninfer switch <model-id> [C]x<ctx>`.
         ninfer = {
@@ -178,14 +180,6 @@
             {
               id = "qwen3.8-27b";
               name = "Qwen 3.8 27B DFlash2";
-              reasoning = true;
-              input = ["text" "image"];
-              contextWindow = 65536;
-              maxTokens = 16384;
-            }
-            {
-              id = "qwen3.8-27b-coder390";
-              name = "Coder390 EfficientThink Q3";
               reasoning = true;
               input = ["text" "image"];
               contextWindow = 65536;
@@ -341,7 +335,6 @@
         enabledModels = [
           "ninfer/bonsai2-27b"
           "ninfer/qwen3.8-27b"
-          "ninfer/qwen3.8-27b-coder390"
           "ninfer/qwen3.8-27b-turbo"
         ];
         disabledProviders = [
@@ -409,7 +402,6 @@
         enabledModels = [
           "ninfer/bonsai2-27b"
           "ninfer/qwen3.8-27b"
-          "ninfer/qwen3.8-27b-coder390"
           "ninfer/qwen3.8-27b-turbo"
         ];
         disabledProviders = [

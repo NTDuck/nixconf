@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 """Coder390 concurrency x context VRAM sweep (2026-11-11 user task).
 
+BLOCKED 2026-11-11 (see results/sweep-coder390-2026-11-11.log): the
+pinned artifact's 263 gguf_blocks_v1 K-quant tensors load on no ninfer
+engine in the store; the system unit was removed from the config the
+same day (ninfer/default.nix CODER390 REJECTED). Keep this ladder for
+the rerun once upstream ships gguf-block support or an official
+GGUF->v3 converter and a loadable artifact is re-pinned.
+
 Question: what is the maximal {max concurrency} x {context} matrix for
 qwen3.8-27b-coder390 (Q3 LynnStyle + Q8 MTP, 16.6 GiB weights) on the
 RTX 3090? Fills the intentionally-empty SHAPES row in the ninfer CLI.

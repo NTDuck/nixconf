@@ -46,10 +46,12 @@
       geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_gemini-overrides.nix";
 
       # Consolidated ninfer engine on legion (port 8092 over tailscale0).
-      # Single provider hosting all 4 canonical model variants. Legion's
+      # Single provider hosting all 3 canonical model variants. Legion's
       # daemon on :8092 serves whichever model is active. 2026-11-11:
       # ids synced with legion's `ninfer list` contract (bonsai2 ->
-      # bonsai2-27b, coder390 added, alphabetical).
+      # bonsai2-27b, alphabetical). 2026-11-11: coder390 dropped —
+      # its artifact FATALs on engine 0.17.2 (gguf_blocks_v1 tensors,
+      # see ninfer/default.nix CODER390 REJECTED).
       ninferProvider = {
         baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1";
         api = "openai-completions";
@@ -67,14 +69,6 @@
           {
             id = "qwen3.8-27b";
             name = "Qwen 3.8 27B DFlash2";
-            reasoning = true;
-            input = ["text" "image"];
-            contextWindow = 65536;
-            maxTokens = 16384;
-          }
-          {
-            id = "qwen3.8-27b-coder390";
-            name = "Coder390 EfficientThink Q3";
             reasoning = true;
             input = ["text" "image"];
             contextWindow = 65536;
@@ -141,7 +135,6 @@
         enabledModels = [
           "ninfer/bonsai2-27b"
           "ninfer/qwen3.8-27b"
-          "ninfer/qwen3.8-27b-coder390"
           "ninfer/qwen3.8-27b-turbo"
         ];
         disabledProviders = [
@@ -199,7 +192,6 @@
         enabledModels = [
           "ninfer/bonsai2-27b"
           "ninfer/qwen3.8-27b"
-          "ninfer/qwen3.8-27b-coder390"
           "ninfer/qwen3.8-27b-turbo"
         ];
         disabledProviders = [
