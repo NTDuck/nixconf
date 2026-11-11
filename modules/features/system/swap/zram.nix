@@ -3,9 +3,12 @@
     nixos = {lib, ...}: {
       zramSwap = {
         enable = true;
-        # mkDefault allows host-level overrides (e.g. Dell caps at 50%) without
-        # module-system duplicate-definition collisions.
-        memoryPercent = lib.mkDefault 100;
+        # 50% (2026-11-11 user request, was 100%): 15G RAM -> 7.5G zram,
+        # leaving more uncontended RAM for resident engines (the 3090
+        # stack's 12G host walls assume RAM is available). mkDefault
+        # allows host-level overrides without module-system
+        # duplicate-definition collisions.
+        memoryPercent = lib.mkDefault 50;
       };
 
       # Userspace OOM killer: zram has no disk swap to fall back on, so
