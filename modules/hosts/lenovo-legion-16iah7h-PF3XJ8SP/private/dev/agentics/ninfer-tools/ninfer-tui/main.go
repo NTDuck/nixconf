@@ -52,6 +52,9 @@ var modelShapes = map[string][]shape{
 		{ctx: 131072, conc: 8, mib: 11786},
 		{ctx: 262144, conc: 8, mib: 14166},
 	},
+	// coder390 Q3: no measured sweep yet — no entry on purpose; the
+	// shapes view renders "(no measured shapes)" and enter switches
+	// with the unit default instead of a table row.
 }
 
 // defaultShape = the shape the CLI itself picks when `--context` is
@@ -59,9 +62,10 @@ var modelShapes = map[string][]shape{
 // calling `ninfer switch <model>` without --context hits the CLI fast
 // path, so the TUI omits the flag for exactly this shape.
 var defaultShape = map[string]shape{
-	"qwen3.8-27b":       {ctx: 65536, conc: 6},
-	"qwen3.8-27b-turbo": {ctx: 65536, conc: 6},
-	"bonsai2":           {ctx: 65536, conc: 8},
+	"qwen3.8-27b":          {ctx: 65536, conc: 6},
+	"qwen3.8-27b-turbo":    {ctx: 65536, conc: 6},
+	"bonsai2":              {ctx: 65536, conc: 8},
+	"qwen3.8-27b-coder390": {ctx: 65536, conc: 8},
 }
 
 type row struct {

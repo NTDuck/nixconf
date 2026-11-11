@@ -183,6 +183,22 @@
       # (6.7 GiB weights). Manifest hash from the release README
       # (WarlaxZ/Ternary-Bonsai-2-27B-NInfer-3090, verified locally with
       # sha256sum before packaging).
+      # 2026-11-11 CODER390 ADDITION: Qwen3.8-27B-Coder390-EfficientThink
+      # (nerkyor's SFT+RLOO coding tune; fixes the base model's 94K
+      # no-stop failure). GGUF-NInfer family = llama.cpp-style
+      # groupwise-int quants inside an official NInfer v3 package — the
+      # NVFP4-NInfer sibling was rejected: the engine says on sm_86
+      # NVFP4 is A16-only with prefill capped at 16 columns ("cannot
+      # serve"). Q3 LynnStyle + built-in Q8 MTP head (BPW 5.07, 16.6
+      # GiB): C8 512 tok/s measured by upstream on NInfer; spec=mtp
+      # only, no DFlash2 in this family. Served on v0.17.2 with
+      # bonsai2. SHA256 pinned from the repo's SHA256SUMS.
+      ninferCoder390Model = pkgs.fetchurl {
+        url = "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-GGUF-NInfer/resolve/main/GGUF-NInfer/Qwen3.8-27B-Coder390-EfficientThink-Q3LynnStyle-Q8MTP.ninfer";
+        hash = "sha256-gVJBuk2PYgVXINhjJheySBTaO/iBlIhnuOtl28zUvbM=";
+        curlOptsList = ["--http1.1"];
+      };
+
       ninferBonsai2Model = pkgs.fetchurl {
         url = "https://huggingface.co/WarlaxZ/Ternary-Bonsai-2-27B-NInfer-3090/resolve/main/bonsai2_27b.ninfer";
         hash = "sha256-l1Emd01+H5/6NrZUwKb8DbQsdzuk3V8RlqndxqRtRjQ=";
@@ -198,6 +214,7 @@
         ln -s ninfer-serve.hostkv-shim $out/ninfer-serve
         chmod +x $out/ninfer-serve.hostkv-shim
         ln -s ${ninferBonsai2Model} $out/models/bonsai2_27b.ninfer
+        ln -s ${ninferCoder390Model} $out/models/coder390_q3_27b.ninfer
       '';
 
       ninferRoot = pkgs.runCommand "ninfer-rtx3090-0.15.0" {} ''
@@ -257,6 +274,7 @@
             "qwen3.8-27b|ninfer-df2.service|${toString ninferPort}"
             "qwen3.8-27b-turbo|ninfer-df2-turbo.service|${toString ninferPort}"
             "bonsai2|bonsai2.service|${toString ninferPort}"
+            "qwen3.8-27b-coder390|coder390.service|${toString ninferPort}"
           )
 
           # Measured max concurrency per context on the RTX 3090 (2026-11-11,
@@ -276,6 +294,12 @@
             # context, including full 262k. Peak 14166 MiB = ~10 GiB
             # headroom below the 24.5 GiB card.
             "bonsai2|16384:8:9704,32768:8:10002,65536:8:10596,131072:8:11786,262144:8:14166"
+            # coder390 Q3 (16.6 GiB weights): not yet swept — SHAPES row
+            # intentionally omitted until a live nvidia-smi peak sweep
+            # exists (the TUI shows "(no measured shapes)" and the CLI
+            # refuses --context until then). Weights sit between
+            # bonsai2 (6.7) and dense qwen3.8 (19), so C8x16k..C8x65k
+            # is the expected envelope; measure before pinning.
           )
           # Unit default shape (what Environment= in the unit pins); a
           # --context equal to this clears the override file instead of
@@ -287,6 +311,9 @@
           default_conc_for() {
             case "$1" in
               bonsai2) echo 8 ;;
+              # coder390 unit pins C8; until the measured sweep lands,
+              # keep CLI default consistent with the unit Environment.
+              qwen3.8-27b-coder390) echo 8 ;;
               *) echo "$DEFAULT_CONC" ;;
             esac
           }
@@ -391,6 +418,7 @@
               case "$mpath" in
                 *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
                 *bonsai2*) echo "bonsai2"; return 0 ;;
+                *coder390*) echo "qwen3.8-27b-coder390"; return 0 ;;
                 *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
               esac
             fi
@@ -428,7 +456,7 @@
                 fi
               done
               rm -f "''$state_file" 2>/dev/null || true
-              rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for bonsai2)" 2>/dev/null || true
+              rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for bonsai2)" "''$(shape_env_for coder390)" 2>/dev/null || true
               echo "✔ Unloaded all models (switched to <nil>)"
               return 0
             fi
@@ -448,7 +476,7 @@
 
             if [ -z "''$found_svc" ]; then
               echo "error: unknown model ''$target" >&2
-              echo "       available: qwen3.8-27b, qwen3.8-27b-turbo, bonsai2, <nil>" >&2
+              echo "       available: qwen3.8-27b, qwen3.8-27b-turbo, bonsai2, qwen3.8-27b-coder390, <nil>" >&2
               exit 1
             fi
 
@@ -707,6 +735,7 @@
               'qwen3.8-27b:Qwen3.8-27B DFlash2 (8x16k 7x32k 6x65k 4x128k 1x262k :8092)'
               'qwen3.8-27b-turbo:Qwen3.8-27B Turbo Heretic (8x16k 8x32k 8x65k 8x128k 5x262k :8092)'
               'bonsai2:Ternary Bonsai 2 27B (8x16k 8x32k 8x65k 8x128k 8x262k :8092)'
+              'qwen3.8-27b-coder390:Coder390 EfficientThink Q3 MTP (unswept, :8092)'
               '\<nil\>:Unload all ninfer models'
               'nil:Unload all ninfer models'
             )
@@ -762,7 +791,7 @@
             cur="''${COMP_WORDS[COMP_CWORD]}"
             prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-            local models="qwen3.8-27b qwen3.8-27b-turbo bonsai2 <nil> nil"
+            local models="qwen3.8-27b qwen3.8-27b-turbo bonsai2 qwen3.8-27b-coder390 <nil> nil"
             local commands="switch list status active current -i --interactive"
             local contexts="16384 32768 65536 131072 262144"
 
@@ -794,8 +823,8 @@
           complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -s i -l interactive -d "interactive TUI"
-          complete -c ninfer -n "__fish_use_subcommand" -a "qwen3.8-27b qwen3.8-27b-turbo bonsai2 <nil> nil"
-          complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-turbo bonsai2 <nil> nil"
+          complete -c ninfer -n "__fish_use_subcommand" -a "qwen3.8-27b qwen3.8-27b-turbo bonsai2 qwen3.8-27b-coder390 <nil> nil"
+          complete -c ninfer -n "__fish_seen_subcommand_from switch; or __fish_contains_opt -s s switch" -a "qwen3.8-27b qwen3.8-27b-turbo bonsai2 qwen3.8-27b-coder390 <nil> nil"
           complete -c ninfer -s c -l context -d "context tokens (per-model measured shapes)" -a "16384 32768 65536 131072 262144"
           FISH
                     runHook postInstall
@@ -812,7 +841,7 @@
             if (action.id === "org.freedesktop.systemd1.manage-units" &&
                 (subject.isInGroup("wheel") || (subject.local && subject.active))) {
               var unit = action.lookup("unit");
-              if (unit && (unit.indexOf("ninfer-") === 0 || unit === "bonsai2.service")) {
+              if (unit && (unit.indexOf("ninfer-") === 0 || unit === "bonsai2.service" || unit === "coder390.service")) {
                 return polkit.Result.YES;
               }
             }
@@ -829,6 +858,7 @@
           conflicts = [
             "bonsai2.service"
             "ninfer-df2-turbo.service"
+            "coder390.service"
           ];
 
           # run.sh resolves bash via `#!/usr/bin/env bash`. The NixOS
@@ -918,6 +948,7 @@
           conflicts = [
             "bonsai2.service"
             "ninfer-df2.service"
+            "coder390.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -978,6 +1009,7 @@
           conflicts = [
             "ninfer-df2.service"
             "ninfer-df2-turbo.service"
+            "coder390.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -998,10 +1030,11 @@
             Environment = let
               # v0.17.2 ldd adds libzstd.so.1 vs v0.15.0 (same prism/
               # driver/ffmpeg/curl pins; zstd from the same nixpkgs rev).
-              ld = lib.concatStringsSep ":" (ninferLibs ++ [
-                "/run/opengl-driver/lib"
-                "/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib"
-              ]);
+              ld = lib.concatStringsSep ":" (ninferLibs
+                ++ [
+                  "/run/opengl-driver/lib"
+                  "/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib"
+                ]);
             in [
               "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
               "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
@@ -1034,6 +1067,84 @@
             '';
             # Measured worst case 14166 MiB device + engine RSS; the
             # 10G/12G host walls are the second belt after the shim.
+            MemoryHigh = "10G";
+            MemoryMax = "12G";
+            Restart = "on-failure";
+            RestartSec = "10s";
+            ProtectHome = true;
+            ProtectSystem = "strict";
+            NoNewPrivileges = true;
+            PrivateTmp = true;
+          };
+        };
+
+        # Qwen3.8-27B-Coder390-EfficientThink Q3 (port 8092), on-demand:
+        # engine v0.17.2 + 16.6 GiB groupwise-int artifact with built-in
+        # Q8 MTP head. Same shape contract as bonsai2 (default C8x65536;
+        # the 2026-11-11 C8 sweep shape applies — artifact is smaller
+        # than the 19 GiB dense qwen3_8_27b that verified C6x65k).
+        systemd.services.coder390 = {
+          description = "ninfer 0.17.2 Coder390 EfficientThink Q3 MTP";
+          after = ["network-online.target"];
+          wants = ["network-online.target"];
+          conflicts = [
+            "ninfer-df2.service"
+            "ninfer-df2-turbo.service"
+            "bonsai2.service"
+          ];
+          serviceConfig = {
+            Type = "simple";
+            User = "ayin";
+            WorkingDirectory = ninferRootV0172;
+            # Same GPU wait gate as the other units (thunderbolt eGPU
+            # enumerates late), then artifact hash verify (pinned from
+            # the repo SHA256SUMS).
+            ExecCondition = pkgs.writeShellScript "coder390-boot-gate" ''
+              i=0
+              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
+                i=$((i+1)); [ $i -gt 60 ] && exit 1
+                sleep 1
+              done
+              echo "815241ba4d8f62055720d8632617b24814da3bf881948867b8eb65dbccd4bdb3  ${ninferRootV0172}/models/coder390_q3_27b.ninfer" \
+                | ${pkgs.coreutils}/bin/sha256sum -c -
+            '';
+            Environment = let
+              # Same ldd set as bonsai2 on v0.17.2 (libzstd.so.1 added
+              # vs v0.15.0; same prism/driver/ffmpeg/curl pins).
+              ld = lib.concatStringsSep ":" (ninferLibs
+                ++ [
+                  "/run/opengl-driver/lib"
+                  "/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib"
+                ]);
+            in [
+              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
+              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
+              "LD_LIBRARY_PATH=${ld}"
+              "NINFER_SPEC=mtp"
+              "NINFER_DRAFT_TOKENS=3"
+              "NINFER_HOST=0.0.0.0"
+              "NINFER_PORT=${toString ninferPort}"
+              "NINFER_FALLBACK=off"
+              "NINFER_CONCURRENCY=8"
+              "NINFER_CONTEXT=65536"
+              "NINFER_KV_CAPACITY=65536"
+              "NINFER_HOST_STATE_SLOTS=8"
+              "NINFER_SERVER=${ninferRootV0172}/ninfer-serve.hostkv-shim"
+              # Belt over the shim's --host-context-mib 0 clamp (see
+              # bonsai2 unit).
+              "NINFER_HOST_CONTEXT_MIB=0"
+              "NINFER_MODEL_ID=qwen3.8-27b-coder390"
+            ];
+            EnvironmentFile = "-/run/user/1000/ninfer/shape-coder390.env";
+            ExecStart = pkgs.writeShellScript "coder390-start" ''
+              # run.sh validates model keys against its bundled list, so
+              # pass the qwen38-27b key and override the artifact (same
+              # pattern as the bonsai2 unit).
+              export NINFER_MODEL="${ninferRootV0172}/models/coder390_q3_27b.ninfer"
+              exec ${ninferRootV0172}/run.sh qwen38-27b tuned
+            '';
+            # Same host walls as the other units (second belt after the
+            # shim; device peak measured for the smaller sibling).
             MemoryHigh = "10G";
             MemoryMax = "12G";
             Restart = "on-failure";
