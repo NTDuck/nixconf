@@ -10,6 +10,7 @@
       # aspects remain declared in their files but are not part of the
       # umbrella; re-add explicitly per host to reactivate.
       den.aspects.dev.agentics.harnesses.oh-my-pi
+      den.aspects.dev.agentics.harnesses.omp-antigravity-acp-plugin
       den.aspects.dev.agentics.harnesses.reasonix
     ];
   };
