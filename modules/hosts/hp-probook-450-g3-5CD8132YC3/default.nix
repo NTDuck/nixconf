@@ -24,6 +24,8 @@
       den.aspects.apps.tmux
       den.aspects.apps.zoxide
       den.aspects.apps.editors.helix
+      # yazi (2026-11-11 user request: all hosts); previews .md via glow.
+      den.aspects.apps.file-managers.yazi
 
       # Dev — explicit headless set instead of the den.aspects.dev
       # umbrella (2026-11-10 user request: drop GUI on the headless

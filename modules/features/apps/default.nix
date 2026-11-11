@@ -25,6 +25,8 @@
       den.aspects.apps.gnirehtet
       den.aspects.apps.pciutils
       den.aspects.apps.jq
+      # glow (2026-11-11 user request): markdown renderer, also yazi's previewer.
+      den.aspects.apps.glow
     ];
   };
 }

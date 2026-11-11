@@ -21,6 +21,9 @@
       den.aspects.apps.jq
       den.aspects.apps.file-managers.pcmanfm
       den.aspects.apps.file-managers.tfm
+      # yazi + glow (2026-11-11 user request): yazi previews .md via glow.
+      den.aspects.apps.file-managers.yazi
+      den.aspects.apps.glow
       den.aspects.remote-desktop.moonlight
       den.aspects.system.network.tailscale
       den.aspects.apps.fastfetch
