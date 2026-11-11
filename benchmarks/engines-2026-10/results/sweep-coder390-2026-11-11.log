@@ -1,0 +1,46 @@
+=== ashalliants-coder390-16k ctx=0 c=1 ===
+START-FAIL ashalliants-coder390-16k: server ashalliants-coder390-16k exited rc=127
+env: ‘/home/ayin/models/q27-bench/ashalliants/ninfer-rtx3090-linux-x64-0.15.0-rtx3090/run.sh’: No such file or directory
+
+=== ashalliants-coder390-16k ctx=0 c=1 ===
+=== ashalliants-coder390-16k ctx=0 c=1 ===
+START-FAIL ashalliants-coder390-16k: nned host RAM  (NINFER_HOST_CONTEXT_MIB)
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+API: http://127.0.0.1:8150/v1
+
+2026-11-11 18:30:57.646  INFO  starting engine
+2026-11-11 18:30:57.648  ERROR startup failed | initializing CUDA | 1.69 ms
+2026-11-11 18:30:57.649  FATAL server failed during startup | cudaGetDeviceCount failed: cudaErrorSystemDriverMismatch: system has unsupported display driver / cuda driver combination
+
+=== ashalliants-coder390-16k ctx=0 c=1 ===
+START-FAIL ashalliants-coder390-16k:  (overlay)
+Prefill: cuBLAS route, chunk 2048
+Context cache: 8192 MiB pinned host RAM  (NINFER_HOST_CONTEXT_MIB)
+Sampling guard: min-p 0.03, presence penalty 0.5  (NINFER_MIN_P, NINFER_PRESENCE_PENALTY; "default" = registered preset)
+API: http://127.0.0.1:8150/v1
+
+2026-11-11 18:32:19.411  INFO  starting engine
+2026-11-11 18:32:20.030  ERROR startup failed | planning runtime | 491 ms
+2026-11-11 18:32:20.031  FATAL server failed during startup | weight/000130: unknown tensor layout: gguf_blocks_v1
+
+
+=== SWEEP BLOCKED 2026-11-11 18:5x ===
+coder390_q3_27b.ninfer (sha 815241ba4d8f62055720d8632617b248, HF nerkyor
+GGUF-NInfer/Q3LynnStyle-Q8MTP) carries 263 tensors in layout
+"gguf_blocks_v1" (GGUF K-quants q3_k/q4_k/q5_k/q6_k). No ninfer engine
+in the nix store (0.15.0 x4 trees, 0.17.2 x2 trees) implements that
+layout — ninfer-serve 0.17.2 FATALs at startup: "weight/000130: unknown
+tensor layout: gguf_blocks_v1". System unit coder390.service fails
+identically (journalctl 2026-11-11 17:14, one start attempt, never
+engine-ready). Upstream ashalliants/ninfer-3090 has no release newer
+than v0.17.2 (2026-11-07) and no release tree ships a converter
+(ninfer/ninfer-serve/ninfer_bench only). Control artifact bonsai2_27b
+(official-tool conversion: contiguous_le_v1/row_split_k128_v1 only)
+loads fine on the same engine. The committed coder390 unit (cc2d341)
+was never smoke-started before commit.
+Options: (a) wait for upstream gguf-block support/converter; (b) re-
+quantize from the HF GGUF source with a future official tool; (c) drop
+coder390 from the matrix. Sweep scripts + launcher env fixes are in
+place and verified (store run.sh, opengl-driver LD order, NINFER_MODEL
+pin matches the unit) — the moment a loadable artifact lands, rerun:
+python3 sweep_coder390.py
