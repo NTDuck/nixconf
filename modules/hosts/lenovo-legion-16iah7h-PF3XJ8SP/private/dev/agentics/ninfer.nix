@@ -28,6 +28,16 @@
 # runCommand wrapper). Units use ProtectHome=true and run strictly
 # against store paths.
 #
+# DO NOT download .ninfer weights / engine tarballs into ~/models (or
+# anywhere in $HOME) when adding or updating models here: the store
+# derivations above ARE the canonical copies, hash-pinned from
+# upstream SHA256SUMS/HF LFS. A stray copy on disk is invisible to
+# this config (units run with ProtectHome=true) and only wastes ~10-14
+# GiB per file; scratch downloads during probing were deleted
+# 2026-11-11 (~/models/ninfer-new — contents hash-verified against the
+# pins, then removed). To add a model: fetch it once to compute the
+# hash, pin it in a fetchurl here, and delete the scratch copy.
+#
 # 2026-11-11 VRAM SHAPE SWEEP (live nvidia-smi peaks, engine alone +
 # ~150 MiB desktop, v0.15.0, no host-RAM KV): max concurrency per
 # context — dflash2: 8x16k 21150 MiB, 7x32k 21144 (C8 OOMs: 6.41 GiB
