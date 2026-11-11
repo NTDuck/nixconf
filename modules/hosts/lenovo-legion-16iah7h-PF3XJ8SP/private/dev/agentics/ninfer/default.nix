@@ -216,6 +216,22 @@
         curlOptsList = ["--http1.1"];
       };
 
+      # 2026-11-11 QWEN3.8-27B-ABLITERATED: locally converted from
+      # huihui-ai/Huihui-Qwen3.8-27B-abliterated (bf16, 18 shards) with
+      # the ashalliants/ninfer-3090 tools/convert recipe qwen3_8_27b
+      # (components text,vision,mtp + proposal; imatrix from WarlaxZ's
+      # published qwen3_8_27b.imatrix.safetensors). Same pipeline as the
+      # 2026-10-10 campaign's huihui_abl artifact. No public .ninfer
+      # exists for this repo, and the 16.76 GB file CANNOT be store-
+      # ingested: `nix store add-file` OOM-killed this 15 GB-RAM box
+      # repeatedly (2026-11-11, oomd trips = user-visible shutdowns), so
+      # the unit references the artifact at its filesystem path directly
+      # — the same pattern as the pre-0.15.0 units
+      # (WorkingDirectory ninferRoot, ~/models absolute paths, boot-gate
+      # sha256 gate). Artifact has NO dflash2 component ->
+      # NINFER_SPEC=mtp (turbo-unit shape), not dflash2 (dense lane).
+      huihuiAblArtifact = "/home/ayin/models/q27-bench/downloads/huihui_abl_qwen3_8_27b.ninfer";
+
       ninferRootV0172 = pkgs.runCommand "ninfer-rtx3090-0.17.2" {} ''
         mkdir -p $out/models
         cp -r ${ninferReleaseV0172}/* $out/
@@ -240,6 +256,8 @@
         ln -s ${ninferQwen38Model} $out/models/qwen3_8_27b.ninfer
         ln -s ${ninferTurboModel} $out/models/qwen38_turbo_sm86.ninfer
         ln -s ${ninferTurboModel} $out/models/qwen3_8_27b_turbo.ninfer
+        # huihui_abl artifact NOT in the store: 16.76 GB local file,
+        # referenced by path (see huihuiAblArtifact above).
       '';
       # The four non-bundled ldd deps of the 0.15.0 binary (skill:
       # ninfer-ash-hostkv-clamp). prism-llamacpp-libs covers
@@ -295,6 +313,7 @@
             "bonsai2-27b|Ternary Bonsai 2 27B|bonsai2.service|${toString ninferPort}"
             "bonsai2-27b-abliterated|Ternary Bonsai 2 27B Abliterated (Heretic)|bonsai2-abliterated.service|${toString ninferPort}"
             "qwen3.8-27b|Qwen 3.8 27B DFlash2|ninfer-df2.service|${toString ninferPort}"
+            "qwen3.8-27b-abliterated|Qwen 3.8 27B Abliterated (Huihui)|ninfer-df2-abliterated.service|${toString ninferPort}"
             "qwen3.8-27b-turbo|Qwen 3.8 27B Turbo (Heretic)|ninfer-df2-turbo.service|${toString ninferPort}"
           )
 
@@ -323,6 +342,15 @@
             # the sibling's measured C8x262144 = 14166 MiB peak bounds
             # it; verify on first load before trusting beyond that.
             "bonsai2-27b-abliterated|262144:8:14166"
+            # qwen3.8-27b-abliterated: huihui bf16 -> tools/convert
+            # recipe qwen3_8_27b, mtp-only artifact (no dflash2). The
+            # 2026-10-10 campaign measured the SAME conversion recipe
+            # (huihui_abl, artifact since cleaned): same engine spec as
+            # the turbo unit (mtp, no dflash2 draft), so the turbo
+            # table is the correct bound (dflash2's table costs ~1.6
+            # GiB more per shape). Unverified on this artifact — first
+            # load must confirm before trusting C8 at 65k+.
+            "qwen3.8-27b-abliterated|16384:8:19562,32768:8:19860,65536:8:20454,131072:8:21644,262144:5:23526"
           )
           # Unit default shape (what Environment= in the unit pins); a
           # --context equal to this clears the override file instead of
@@ -503,6 +531,7 @@
             if [ -n "$mpath" ]; then
               case "$mpath" in
                 *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
+                *huihui_abl*) echo "qwen3.8-27b-abliterated"; return 0 ;;
                 *bonsai2_27b_heretic*) echo "bonsai2-27b-abliterated"; return 0 ;;
                 *bonsai2*) echo "bonsai2-27b"; return 0 ;;
                 *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
@@ -564,7 +593,7 @@
 
             if [ -z "''$found_svc" ]; then
               echo "error: unknown model ''$target" >&2
-              echo "       available: bonsai2-27b, bonsai2-27b-abliterated, qwen3.8-27b, qwen3.8-27b-turbo, <nil>" >&2
+              echo "       available: bonsai2-27b, bonsai2-27b-abliterated, qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.8-27b-turbo, <nil>" >&2
               exit 1
             fi
 
@@ -886,7 +915,7 @@
             cur="''${COMP_WORDS[COMP_CWORD]}"
             prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-            local models="bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+            local models="bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-turbo <nil> nil"
             local commands="switch list status active current version"
             local shapes="8x16384 7x32768 6x65536 4x131072 1x262144 5x262144 8x262144"
 
@@ -913,8 +942,8 @@
           complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -s v -l version -d "show version"
-          complete -c ninfer -n "__fish_use_subcommand" -a "bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
-          complete -c ninfer -n "__fish_seen_subcommand_from switch" -a "bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+          complete -c ninfer -n "__fish_use_subcommand" -a "bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-turbo <nil> nil"
+          complete -c ninfer -n "__fish_seen_subcommand_from switch" -a "bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-turbo <nil> nil"
           complete -c ninfer -n "__fish_seen_subcommand_from switch; and __fish_prev_arg_in switch; and test (count (commandline -opc)) -ge 3" -a "8x16384 7x32768 6x65536 4x131072 1x262144 5x262144 8x262144"
           FISH
                     runHook postInstall
@@ -949,6 +978,7 @@
             "bonsai2.service"
             "bonsai2-abliterated.service"
             "ninfer-df2-turbo.service"
+            "ninfer-df2-abliterated.service"
           ];
 
           # run.sh resolves bash via `#!/usr/bin/env bash`. The NixOS
@@ -1039,6 +1069,7 @@
             "bonsai2.service"
             "bonsai2-abliterated.service"
             "ninfer-df2.service"
+            "ninfer-df2-abliterated.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -1088,6 +1119,74 @@
           };
         };
 
+        # Qwen3.8-27B Abliterated (Huihui) daemon (port 8092), on-demand
+        # (2026-11-11 user request: reinstate the dense abliterated model).
+        # Locally converted artifact (see huihuiAblArtifact): mtp-only
+        # (no dflash2 component), so NINFER_SPEC=mtp — the turbo unit's
+        # engine spec, NOT the dense unit's dflash2 lane. Same shape
+        # contract (C6x65k default; the 2026-10-10 campaign's huihui_abl
+        # measured 20 cells on the same recipe).
+        systemd.services.ninfer-df2-abliterated = {
+          description = "ninfer 0.15.0 Qwen3.8-27B MTP3 (Huihui Abliterated)";
+          after = ["network-online.target"];
+          wants = ["network-online.target"];
+          conflicts = [
+            "bonsai2.service"
+            "bonsai2-abliterated.service"
+            "ninfer-df2.service"
+            "ninfer-df2-turbo.service"
+          ];
+          serviceConfig = {
+            Type = "simple";
+            User = "ayin";
+            WorkingDirectory = ninferRoot;
+            ExecCondition = pkgs.writeShellScript "ninfer-df2-abliterated-boot-gate" ''
+              i=0
+              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
+                i=$((i+1)); [ $i -gt 60 ] && exit 1
+                sleep 1
+              done
+              # Locally converted artifact; sha256 from the converter run
+              # (2026-11-11, tools/convert recipe qwen3_8_27b).
+              echo "dc0b0cd3cfe8e4106c2bf8bd06630ba0fd8a46f8a9d0c63c6166d137bb7eed31  ${huihuiAblArtifact}" \
+                | ${pkgs.coreutils}/bin/sha256sum -c -
+            '';
+            Environment = let
+              ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);
+            in [
+              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
+              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
+              "LD_LIBRARY_PATH=${ld}"
+              "NINFER_SPEC=mtp"
+              "NINFER_DRAFT_TOKENS=3"
+              "NINFER_HOST=0.0.0.0"
+              "NINFER_PORT=${toString ninferPort}"
+              "NINFER_FALLBACK=off"
+              "NINFER_MODEL_ID=qwen3.8-27b-abliterated"
+              "NINFER_CONCURRENCY=6"
+              "NINFER_CONTEXT=65536"
+              "NINFER_KV_CAPACITY=65536"
+              "NINFER_HOST_STATE_SLOTS=6"
+              "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
+            ];
+            # Same per-shape override contract as ninfer-df2 above.
+            EnvironmentFile = "-/run/user/1000/ninfer/shape-ninfer-df2-abliterated.env";
+            ExecStart = pkgs.writeShellScript "ninfer-df2-abliterated-start" ''
+              export NINFER_MODEL="${huihuiAblArtifact}"
+              exec ${ninferRoot}/run.sh qwen38-27b tuned
+            '';
+            MemoryHigh = "10G";
+            MemoryMax = "12G";
+            Restart = "on-failure";
+            RestartSec = "10s";
+            # NO ProtectHome: the artifact lives at ~/models (see
+            # huihuiAblArtifact) and the engine + boot gate must read it.
+            ProtectSystem = "strict";
+            NoNewPrivileges = true;
+            PrivateTmp = true;
+          };
+        };
+
         # Ternary Bonsai 2 27B (port 8092), on-demand: engine v0.17.2 +
         # 9.5 GB ternary artifact, switched to with `ninfer bonsai2-27b`.
         # MTP spec (the shape swept 2026-11-11: C8 holds at every
@@ -1101,6 +1200,7 @@
           conflicts = [
             "ninfer-df2.service"
             "ninfer-df2-turbo.service"
+            "ninfer-df2-abliterated.service"
             "bonsai2-abliterated.service"
           ];
           serviceConfig = {
@@ -1184,6 +1284,7 @@
           conflicts = [
             "ninfer-df2.service"
             "ninfer-df2-turbo.service"
+            "ninfer-df2-abliterated.service"
             "bonsai2.service"
           ];
           serviceConfig = {

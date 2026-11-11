@@ -46,7 +46,7 @@
       geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_gemini-overrides.nix";
 
       # Consolidated ninfer engine on legion (port 8092 over tailscale0).
-      # Single provider hosting all 4 canonical model variants. Legion's
+      # Single provider hosting all 5 canonical model variants. Legion's
       # daemon on :8092 serves whichever model is active. 2026-11-11:
       # ids synced with legion's `ninfer list` contract (bonsai2 ->
       # bonsai2-27b, alphabetical). 2026-11-11: coder390 dropped —
@@ -81,6 +81,14 @@
             input = ["text" "image"];
             contextWindow = 65536;
             maxTokens = 16384;
+          }
+          {
+            id = "qwen3.8-27b-abliterated";
+            name = "Qwen 3.8 27B Abliterated (Huihui)";
+            reasoning = true;
+            input = ["text" "image"];
+            contextWindow = 262144;
+            maxTokens = 65536;
           }
           {
             id = "qwen3.8-27b-turbo";
@@ -145,6 +153,7 @@
           "ninfer/bonsai2-27b-abliterated"
           "ninfer/qwen3.8-27b"
           "ninfer/qwen3.8-27b-turbo"
+      "ninfer/qwen3.8-27b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -203,6 +212,7 @@
           "ninfer/bonsai2-27b-abliterated"
           "ninfer/qwen3.8-27b"
           "ninfer/qwen3.8-27b-turbo"
+      "ninfer/qwen3.8-27b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
