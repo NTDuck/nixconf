@@ -1,26 +1,50 @@
 package main
 
 import (
+	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+// stubNinfer writes a shell-script stand-in for the ninfer CLI into a
+// per-test temp dir and returns its path. The sandbox has no /tmp/tui-
+// smoke stub (the original smoke harness) — a missing stub there made
+// cmd.Start() fail and the test block forever on the channel (seen as
+// a 600s testing panic inside the Nix build).
+func stubNinfer(t *testing.T) string {
+	t.Helper()
+	script := "#!/usr/bin/env bash\necho \"Stopping bonsai2 (ninfer-df2.service)... done.\"\necho \"  → weights ready\"\necho \"loading weights 42%\"\necho \"✔ Ready in 5s | listening on http://0.0.0.0:8092\"\necho \"switched to bonsai2\"\n"
+	path := filepath.Join(t.TempDir(), "ninfer")
+	if err := os.WriteFile(path, []byte(script), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	return path
+}
+
 // feedCLI runs the stub ninfer binary and pipes its output into lines;
-// the collected buffer lands in out.
-func feedCLI(t *testing.T, lines chan<- string, out chan<- string, args ...string) {
+// the collected buffer lands in out. Start failures fail via Errorf
+// (Fatal is not goroutine-safe) and return early — the deferred
+// close(lines) unblocks the consumer.
+func feedCLI(t *testing.T, stub string, lines chan<- string, out chan<- string, args ...string) {
+	t.Helper()
 	defer close(lines)
-	cmd := exec.Command("/tmp/tui-smoke/ninfer", args...)
+	cmd := exec.Command(stub, args...)
 	cmd.Stderr = cmd.Stdout
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		t.Error(err)
+		// Fatal is not goroutine-safe; feedCLI runs on its own
+		// goroutine — fail via Errorf and close early so the
+		// consumer's drain() sees the terminal state instead of
+		// blocking.
+		t.Errorf("stdout pipe: %v", err)
 		return
 	}
 	if err := cmd.Start(); err != nil {
-		t.Error(err)
+		t.Errorf("stub start: %v", err)
 		return
 	}
 	buf := make([]byte, 4096)
@@ -76,9 +100,12 @@ func drain(t *testing.T, msg tea.Msg) tea.Msg {
 // final collected output lands in switchDoneMsg, and the CLI process is
 // fully reaped (no orphan).
 func TestStreamSwitchFullFlow(t *testing.T) {
+	// Stub is created on the test goroutine (t.TempDir registers
+	// cleanup and is not goroutine-safe).
+	stub := stubNinfer(t)
 	lines := make(chan string, 16)
 	out := make(chan string, 1)
-	go feedCLI(t, lines, out, "switch", "bonsai2")
+	go feedCLI(t, stub, lines, out, "switch", "bonsai2")
 	msg := drain(t, streamSwitch(lines, out))
 	done, ok := msg.(switchDoneMsg)
 	if !ok {
