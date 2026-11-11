@@ -17,7 +17,14 @@ import (
 // a 600s testing panic inside the Nix build).
 func stubNinfer(t *testing.T) string {
 	t.Helper()
-	script := "#!/usr/bin/env bash\necho \"Stopping bonsai2 (ninfer-df2.service)... done.\"\necho \"  → weights ready\"\necho \"loading weights 42%\"\necho \"✔ Ready in 5s | listening on http://0.0.0.0:8092\"\necho \"switched to bonsai2\"\n"
+	// Resolve bash from PATH and bake it into the shebang: the Nix
+	// build sandbox has no /usr/bin/env, so the classic shebang
+	// fails exec there.
+	bash, err := exec.LookPath("bash")
+	if err != nil {
+		t.Fatalf("no bash on PATH: %v", err)
+	}
+	script := "#!" + bash + "\necho \"Stopping bonsai2 (ninfer-df2.service)... done.\"\necho \"  → weights ready\"\necho \"loading weights 42%\"\necho \"✔ Ready in 5s | listening on http://0.0.0.0:8092\"\necho \"switched to bonsai2\"\n"
 	path := filepath.Join(t.TempDir(), "ninfer")
 	if err := os.WriteFile(path, []byte(script), 0o700); err != nil {
 		t.Fatal(err)
@@ -41,10 +48,12 @@ func feedCLI(t *testing.T, stub string, lines chan<- string, out chan<- string, 
 		// consumer's drain() sees the terminal state instead of
 		// blocking.
 		t.Errorf("stdout pipe: %v", err)
+		out <- "" // honor the always-send contract; see fail() note in main.go
 		return
 	}
 	if err := cmd.Start(); err != nil {
 		t.Errorf("stub start: %v", err)
+		out <- "" // honor the always-send contract
 		return
 	}
 	buf := make([]byte, 4096)
@@ -116,6 +125,29 @@ func TestStreamSwitchFullFlow(t *testing.T) {
 	}
 	if !strings.Contains(done.out, "weights ready") {
 		t.Fatalf("missing milestone line in %q", done.out)
+	}
+}
+
+// Regression: when the CLI can't even start (the sandbox has no
+// /usr/bin/env, so a stub with that shebang fails exec), feedCLI
+// returns without sending the collected buffer — streamSwitch must
+// still terminate instead of deadlocking on switchDoneMsg{out: <-out}.
+// The 10-minute testing alarm previously fired here in Nix builds.
+func TestStreamSwitchNoOutput(t *testing.T) {
+	lines := make(chan string, 4)
+	out := make(chan string, 1)
+	close(lines) // feedCLI died before producing anything
+	close(out)   // ...and never sent the buffer
+	msg := drain(t, streamSwitch(lines, out))
+	switch m := msg.(type) {
+	case switchDoneMsg:
+		if m.out != "" {
+			t.Fatalf("expected empty output, got %q", m.out)
+		}
+	case switchErrMsg:
+		// equally terminal; acceptable
+	default:
+		t.Fatalf("expected terminal msg, got %T: %v", msg, msg)
 	}
 }
 

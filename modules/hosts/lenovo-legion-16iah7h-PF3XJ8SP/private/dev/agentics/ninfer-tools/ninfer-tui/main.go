@@ -200,6 +200,11 @@ func runSwitch(target string, ctx int) tea.Cmd {
 			fail := func(err error) {
 				// CLI stderr already carries its own "error:" prefix.
 				lines <- fmt.Sprintf("\x00err:%v: %s", err, collected.String())
+				// The error line ends the relay chain before it
+				// reaches the terminal `out <-` — deliver the
+				// buffer here or streamSwitch deadlocks on
+				// switchDoneMsg{out: <-out}.
+				out <- collected.String()
 			}
 			cmd := exec.Command("ninfer", args...)
 			// CombinedOutput equivalent: fold stderr into the same stream.
