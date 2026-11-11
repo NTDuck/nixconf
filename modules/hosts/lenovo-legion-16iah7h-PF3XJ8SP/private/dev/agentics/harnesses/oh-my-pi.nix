@@ -160,7 +160,7 @@
       # REJECTED).
       local = {
         # Consolidated ninfer engine (port 8092, resident 3090 engine).
-        # Single provider hosting all 3 canonical model variants.
+        # Single provider hosting all 4 canonical model variants.
         # Mutual conflicts ensure one daemon runs at a time on :8092,
         # switched on-demand via `ninfer switch <model-id> [C]x<ctx>`.
         ninfer = {
@@ -172,6 +172,14 @@
             {
               id = "bonsai2-27b";
               name = "Ternary Bonsai 2 27B";
+              reasoning = true;
+              input = ["text" "image"];
+              contextWindow = 262144;
+              maxTokens = 65536;
+            }
+            {
+              id = "bonsai2-27b-abliterated";
+              name = "Ternary Bonsai 2 27B Abliterated (Heretic)";
               reasoning = true;
               input = ["text" "image"];
               contextWindow = 262144;
@@ -334,6 +342,7 @@
 
         enabledModels = [
           "ninfer/bonsai2-27b"
+          "ninfer/bonsai2-27b-abliterated"
           "ninfer/qwen3.8-27b"
           "ninfer/qwen3.8-27b-turbo"
         ];
@@ -401,6 +410,7 @@
 
         enabledModels = [
           "ninfer/bonsai2-27b"
+          "ninfer/bonsai2-27b-abliterated"
           "ninfer/qwen3.8-27b"
           "ninfer/qwen3.8-27b-turbo"
         ];

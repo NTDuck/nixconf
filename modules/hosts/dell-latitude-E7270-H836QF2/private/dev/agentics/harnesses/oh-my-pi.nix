@@ -46,7 +46,7 @@
       geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_gemini-overrides.nix";
 
       # Consolidated ninfer engine on legion (port 8092 over tailscale0).
-      # Single provider hosting all 3 canonical model variants. Legion's
+      # Single provider hosting all 4 canonical model variants. Legion's
       # daemon on :8092 serves whichever model is active. 2026-11-11:
       # ids synced with legion's `ninfer list` contract (bonsai2 ->
       # bonsai2-27b, alphabetical). 2026-11-11: coder390 dropped —
@@ -61,6 +61,14 @@
           {
             id = "bonsai2-27b";
             name = "Ternary Bonsai 2 27B";
+            reasoning = true;
+            input = ["text" "image"];
+            contextWindow = 262144;
+            maxTokens = 65536;
+          }
+          {
+            id = "bonsai2-27b-abliterated";
+            name = "Ternary Bonsai 2 27B Abliterated (Heretic)";
             reasoning = true;
             input = ["text" "image"];
             contextWindow = 262144;
@@ -134,6 +142,7 @@
 
         enabledModels = [
           "ninfer/bonsai2-27b"
+          "ninfer/bonsai2-27b-abliterated"
           "ninfer/qwen3.8-27b"
           "ninfer/qwen3.8-27b-turbo"
         ];
@@ -191,6 +200,7 @@
 
         enabledModels = [
           "ninfer/bonsai2-27b"
+          "ninfer/bonsai2-27b-abliterated"
           "ninfer/qwen3.8-27b"
           "ninfer/qwen3.8-27b-turbo"
         ];

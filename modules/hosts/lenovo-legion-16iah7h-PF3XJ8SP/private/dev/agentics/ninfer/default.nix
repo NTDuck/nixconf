@@ -197,6 +197,25 @@
         curlOptsList = ["--http1.1"];
       };
 
+      # Ternary Bonsai 2 27B Heretic (abliterated): same 9.52 GB v3
+      # container, recipe bonsai2_27b_ternary (provenance in the
+      # manifest: converter ninfer-v3; Heretic LoRA baked into the
+      # ternary codes from Ternary-Bonsai-2-27B-Uncensored-Heretic,
+      # 34/851 matrices touched). Manifest audited 2026-11-11: zero
+      # gguf_blocks_v1 tensors; format/layout set matches the
+      # known-good bonsai2 artifact (t2_g128_fp16 etc., layouts
+      # contiguous_le_v1/row_split_k128_v1) whose strings exist in the
+      # 0.17.2 binary — 0.15.0 lacks t2_g128_fp16 and will refuse it.
+      # Hash = HF LFS oid, agreeing with the repo's SHA256SUMS.
+      # Serving: same shapes as bonsai2-27b (kv rk4v4, NOT the
+      # README's 5090-only rk4v4-e8); C8x262144 measured 14.2 GiB
+      # peak for the sibling artifact.
+      ninferBonsai2HereticModel = pkgs.fetchurl {
+        url = "https://huggingface.co/emiltsoi/Ternary-Bonsai-2-27B-Uncensored-Heretic-NInfer/resolve/main/Ternary-Bonsai-2-27B-Heretic-ninfer.ninfer";
+        hash = "sha256-mflPRL7UiJK3xeHE3INJ4NuLS0TSvYrXzUOM/Bgd4v0=";
+        curlOptsList = ["--http1.1"];
+      };
+
       ninferRootV0172 = pkgs.runCommand "ninfer-rtx3090-0.17.2" {} ''
         mkdir -p $out/models
         cp -r ${ninferReleaseV0172}/* $out/
@@ -206,6 +225,7 @@
         ln -s ninfer-serve.hostkv-shim $out/ninfer-serve
         chmod +x $out/ninfer-serve.hostkv-shim
         ln -s ${ninferBonsai2Model} $out/models/bonsai2_27b.ninfer
+        ln -s ${ninferBonsai2HereticModel} $out/models/bonsai2_27b_heretic.ninfer
       '';
 
       ninferRoot = pkgs.runCommand "ninfer-rtx3090-0.15.0" {} ''
@@ -273,6 +293,7 @@
 
           MODELS=(
             "bonsai2-27b|Ternary Bonsai 2 27B|bonsai2.service|${toString ninferPort}"
+            "bonsai2-27b-abliterated|Ternary Bonsai 2 27B Abliterated (Heretic)|bonsai2-abliterated.service|${toString ninferPort}"
             "qwen3.8-27b|Qwen 3.8 27B DFlash2|ninfer-df2.service|${toString ninferPort}"
             "qwen3.8-27b-turbo|Qwen 3.8 27B Turbo (Heretic)|ninfer-df2-turbo.service|${toString ninferPort}"
           )
@@ -297,6 +318,11 @@
             # context, including full 262k. Peak 14166 MiB = ~10 GiB
             # headroom below the 24.5 GiB card.
             "bonsai2-27b|262144:8:14166"
+            # bonsai2-27b-abliterated: same 9.52 GB ternary container as
+            # bonsai2-27b (same weights layout, LoRA deltas only), so
+            # the sibling's measured C8x262144 = 14166 MiB peak bounds
+            # it; verify on first load before trusting beyond that.
+            "bonsai2-27b-abliterated|262144:8:14166"
           )
           # Unit default shape (what Environment= in the unit pins); a
           # --context equal to this clears the override file instead of
@@ -315,7 +341,7 @@
           # when neither /props nor the shape file yields values.
           default_shape_for() {
             case "$1" in
-              bonsai2-27b) echo "8x262144" ;;
+              bonsai2-27b|bonsai2-27b-abliterated) echo "8x262144" ;;
               *) echo "''${DEFAULT_CONC}x''${DEFAULT_CTX}" ;;
             esac
           }
@@ -477,6 +503,7 @@
             if [ -n "$mpath" ]; then
               case "$mpath" in
                 *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
+                *bonsai2_27b_heretic*) echo "bonsai2-27b-abliterated"; return 0 ;;
                 *bonsai2*) echo "bonsai2-27b"; return 0 ;;
                 *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
               esac
@@ -516,7 +543,7 @@
                 fi
               done
               rm -f "''$state_file" 2>/dev/null || true
-              rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for bonsai2)" 2>/dev/null || true
+              rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for bonsai2)" "''$(shape_env_for bonsai2-abliterated)" 2>/dev/null || true
               echo "✔ Unloaded all models (switched to <nil>)"
               return 0
             fi
@@ -537,7 +564,7 @@
 
             if [ -z "''$found_svc" ]; then
               echo "error: unknown model ''$target" >&2
-              echo "       available: bonsai2-27b, qwen3.8-27b, qwen3.8-27b-turbo, <nil>" >&2
+              echo "       available: bonsai2-27b, bonsai2-27b-abliterated, qwen3.8-27b, qwen3.8-27b-turbo, <nil>" >&2
               exit 1
             fi
 
@@ -805,6 +832,7 @@
 
             models=(
               'bonsai2-27b'
+              'bonsai2-27b-abliterated'
               'qwen3.8-27b'
               'qwen3.8-27b-turbo'
               '\<nil\>'
@@ -858,7 +886,7 @@
             cur="''${COMP_WORDS[COMP_CWORD]}"
             prev="''${COMP_WORDS[COMP_CWORD-1]}"
 
-            local models="bonsai2-27b qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+            local models="bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
             local commands="switch list status active current version"
             local shapes="8x16384 7x32768 6x65536 4x131072 1x262144 5x262144 8x262144"
 
@@ -885,8 +913,8 @@
           complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -s v -l version -d "show version"
-          complete -c ninfer -n "__fish_use_subcommand" -a "bonsai2-27b qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
-          complete -c ninfer -n "__fish_seen_subcommand_from switch" -a "bonsai2-27b qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+          complete -c ninfer -n "__fish_use_subcommand" -a "bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
+          complete -c ninfer -n "__fish_seen_subcommand_from switch" -a "bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-turbo <nil> nil"
           complete -c ninfer -n "__fish_seen_subcommand_from switch; and __fish_prev_arg_in switch; and test (count (commandline -opc)) -ge 3" -a "8x16384 7x32768 6x65536 4x131072 1x262144 5x262144 8x262144"
           FISH
                     runHook postInstall
@@ -903,7 +931,7 @@
             if (action.id === "org.freedesktop.systemd1.manage-units" &&
                 (subject.isInGroup("wheel") || (subject.local && subject.active))) {
               var unit = action.lookup("unit");
-              if (unit && (unit.indexOf("ninfer-") === 0 || unit === "bonsai2.service")) {
+              if (unit && (unit.indexOf("ninfer-") === 0 || unit === "bonsai2.service" || unit === "bonsai2-abliterated.service")) {
                 return polkit.Result.YES;
               }
             }
@@ -919,6 +947,7 @@
           wants = ["network-online.target"];
           conflicts = [
             "bonsai2.service"
+            "bonsai2-abliterated.service"
             "ninfer-df2-turbo.service"
           ];
 
@@ -1008,6 +1037,7 @@
           wantedBy = ["multi-user.target"];
           conflicts = [
             "bonsai2.service"
+            "bonsai2-abliterated.service"
             "ninfer-df2.service"
           ];
           serviceConfig = {
@@ -1071,6 +1101,7 @@
           conflicts = [
             "ninfer-df2.service"
             "ninfer-df2-turbo.service"
+            "bonsai2-abliterated.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -1128,6 +1159,85 @@
             '';
             # Measured worst case 14166 MiB device + engine RSS; the
             # 10G/12G host walls are the second belt after the shim.
+            MemoryHigh = "10G";
+            MemoryMax = "12G";
+            Restart = "on-failure";
+            RestartSec = "10s";
+            ProtectHome = true;
+            ProtectSystem = "strict";
+            NoNewPrivileges = true;
+            PrivateTmp = true;
+          };
+        };
+
+        # Ternary Bonsai 2 27B Heretic, CLI id bonsai2-27b-abliterated
+        # (port 8092), on-demand. Same 0.17.2 engine + shape contract
+        # as bonsai2 (MTP3, C8x65536 default, 8x262144 champion); the
+        # only delta is the artifact (Heretic LoRA baked into the
+        # ternary codes, recipe bonsai2_27b_ternary — see the model
+        # pin comment). MUST stay on 0.17.2: 0.15.0 lacks
+        # t2_g128_fp16 and refuses the container.
+        systemd.services.bonsai2-abliterated = {
+          description = "ninfer 0.17.2 Ternary Bonsai 2 27B Heretic MTP";
+          after = ["network-online.target"];
+          wants = ["network-online.target"];
+          conflicts = [
+            "ninfer-df2.service"
+            "ninfer-df2-turbo.service"
+            "bonsai2.service"
+          ];
+          serviceConfig = {
+            Type = "simple";
+            User = "ayin";
+            WorkingDirectory = ninferRootV0172;
+            # Same GPU wait gate, then artifact hash verify (HF LFS oid
+            # = repo SHA256SUMS line, audited 2026-11-11).
+            ExecCondition = pkgs.writeShellScript "bonsai2-abliterated-boot-gate" ''
+              i=0
+              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
+                i=$((i+1)); [ $i -gt 60 ] && exit 1
+                sleep 1
+              done
+              echo "99f94f44bed48892b7c5e1c4dc8349e0db8b4b44d2bd8ad7cd438cfc181de2fd  ${ninferRootV0172}/models/bonsai2_27b_heretic.ninfer" \
+                | ${pkgs.coreutils}/bin/sha256sum -c -
+            '';
+            Environment = let
+              # Identical ldd set to bonsai2 on v0.17.2.
+              ld = lib.concatStringsSep ":" (ninferLibs
+                ++ [
+                  "/run/opengl-driver/lib"
+                  "/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib"
+                ]);
+            in [
+              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
+              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
+              "LD_LIBRARY_PATH=${ld}"
+              "NINFER_SPEC=mtp"
+              "NINFER_DRAFT_TOKENS=3"
+              "NINFER_HOST=0.0.0.0"
+              "NINFER_PORT=${toString ninferPort}"
+              "NINFER_FALLBACK=off"
+              "NINFER_CONCURRENCY=8"
+              "NINFER_CONTEXT=65536"
+              "NINFER_KV_CAPACITY=65536"
+              "NINFER_HOST_STATE_SLOTS=8"
+              "NINFER_SERVER=${ninferRootV0172}/ninfer-serve.hostkv-shim"
+              # Belt over the shim's --host-context-mib 0 clamp (see
+              # bonsai2 unit).
+              "NINFER_HOST_CONTEXT_MIB=0"
+              "NINFER_MODEL_ID=bonsai2-27b-abliterated"
+            ];
+            EnvironmentFile = "-/run/user/1000/ninfer/shape-bonsai2-abliterated.env";
+            ExecStart = pkgs.writeShellScript "bonsai2-abliterated-start" ''
+              # run.sh validates model keys (qwen38-27b/qwen36-35b-a3b
+              # only) BEFORE honoring NINFER_MODEL — pass the
+              # qwen38-27b key and override the artifact (same
+              # invocation as the bonsai2 unit).
+              export NINFER_MODEL="${ninferRootV0172}/models/bonsai2_27b_heretic.ninfer"
+              exec ${ninferRootV0172}/run.sh qwen38-27b tuned
+            '';
+            # Sibling artifact measured 14166 MiB device peak at
+            # C8x262144; identical walls as bonsai2.
             MemoryHigh = "10G";
             MemoryMax = "12G";
             Restart = "on-failure";
