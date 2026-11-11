@@ -2,7 +2,7 @@
 #
 # Why: DELL has no GPU worth loading 27B on (Intel HD 520); legion serves
 # ninfer on 0.0.0.0:8092 with the tailscale0-only firewall open
-# (modules/hosts/lenovo-legion-16iah7h-PF3XJ8SP/private/dev/agentics/ninfer.nix,
+# (modules/hosts/lenovo-legion-16iah7h-PF3XJ8SP/private/dev/agentics/ninfer/default.nix,
 # 2026-10-10 main-engine switch). MagicDNS resolves the host
 # (lenovo-legion-16iah7h-pf3xj8sp.taild3be63.ts.net, verified 2026-09-20),
 # but the bare name is enough and keeps working if the tailnet is renamed.
@@ -46,8 +46,10 @@
       geminiOverrides = import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_gemini-overrides.nix";
 
       # Consolidated ninfer engine on legion (port 8092 over tailscale0).
-      # Single provider hosting all 4 canonical model variants (27B DFlash2, 27B Abliterated,
-      # 35B MTP3, 35B Abliterated). Legion's daemon on :8092 serves whichever model is active.
+      # Single provider hosting all 4 canonical model variants. Legion's
+      # daemon on :8092 serves whichever model is active. 2026-11-11:
+      # ids synced with legion's `ninfer list` contract (bonsai2 ->
+      # bonsai2-27b, coder390 added, alphabetical).
       ninferProvider = {
         baseUrl = "http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1";
         api = "openai-completions";
@@ -55,8 +57,24 @@
 
         models = [
           {
+            id = "bonsai2-27b";
+            name = "Ternary Bonsai 2 27B";
+            reasoning = true;
+            input = ["text" "image"];
+            contextWindow = 262144;
+            maxTokens = 65536;
+          }
+          {
             id = "qwen3.8-27b";
-            name = "Qwen 3.8 27B";
+            name = "Qwen 3.8 27B DFlash2";
+            reasoning = true;
+            input = ["text" "image"];
+            contextWindow = 65536;
+            maxTokens = 16384;
+          }
+          {
+            id = "qwen3.8-27b-coder390";
+            name = "Coder390 EfficientThink Q3";
             reasoning = true;
             input = ["text" "image"];
             contextWindow = 65536;
@@ -67,8 +85,8 @@
             name = "Qwen 3.8 27B Turbo (Heretic)";
             reasoning = true;
             input = ["text" "image"];
-            contextWindow = 65536;
-            maxTokens = 16384;
+            contextWindow = 262144;
+            maxTokens = 65536;
           }
         ];
       };
@@ -121,7 +139,9 @@
         };
 
         enabledModels = [
+          "ninfer/bonsai2-27b"
           "ninfer/qwen3.8-27b"
+          "ninfer/qwen3.8-27b-coder390"
           "ninfer/qwen3.8-27b-turbo"
         ];
         disabledProviders = [
@@ -177,7 +197,9 @@
         };
 
         enabledModels = [
+          "ninfer/bonsai2-27b"
           "ninfer/qwen3.8-27b"
+          "ninfer/qwen3.8-27b-coder390"
           "ninfer/qwen3.8-27b-turbo"
         ];
         disabledProviders = [

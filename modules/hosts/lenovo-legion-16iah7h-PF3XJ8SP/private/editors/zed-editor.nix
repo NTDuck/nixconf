@@ -5,7 +5,7 @@
         agent = {
           default_model = {
             # ninfer 0.15.0 DFlash2 (OpenAI-compat endpoint,
-            # ../dev/agentics/ninfer.nix). ninfer serves
+            # ../dev/agentics/ninfer/default.nix). ninfer serves
             # /v1/chat/completions; the ninfer provider entry in
             # dev/agentics/harnesses/oh-my-pi.nix pins the real context
             # window (262144, NINFER_FALLBACK=off keeps it exact).
