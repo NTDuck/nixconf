@@ -47,7 +47,9 @@
 # is ~1.6 GiB cheaper than dflash2's K=7, so turbo holds C8 to 128k.
 # `ninfer list` shows these as the {C}x{ctx} column; `ninfer switch
 # --context <ctx>` writes a per-unit EnvironmentFile override
-# (/run/user/1000/ninfer/shape-<unit>.env) consumed by all four units.
+# (/var/lib/ninfer/shape-<unit>.env) consumed by all units; state
+# persists across reboots (ninfer-restore.service re-starts the
+# active model at boot).
 #
 # WHY run.sh + the hostkv shim: the vendor launcher pins the tuned
 # profile (--spec dflash2 --draft-tokens 7 --lm-head-draft --kv-dtype
@@ -545,7 +547,7 @@ SHAPESCONF
             if [ -z "$conc" ] || [ -z "$ctx" ]; then
               local unit shape_file
               unit="$(service_for "$mid")"; unit="''${unit%.service}"
-              shape_file="''${XDG_RUNTIME_DIR:-/run/user/1000}/ninfer/shape-''$unit.env"
+              shape_file="/var/lib/ninfer/shape-''$unit.env"
               if [ -r "$shape_file" ]; then
                 conc="$(${pkgs.gnused}/bin/sed -n 's/^NINFER_CONCURRENCY=//p' "$shape_file")"
                 ctx="$(${pkgs.gnused}/bin/sed -n 's/^NINFER_CONTEXT=//p' "$shape_file")"
@@ -572,9 +574,12 @@ SHAPESCONF
           }
 
           get_active() {
-            # Consult persistent user runtime state file first so multi-variant targets
+            # Consult persistent user state file first so multi-variant targets
             # accurately report the user-selected variant rather than always defaulting to the first match.
-            local state_file="''${XDG_RUNTIME_DIR:-/tmp}/ninfer/active-model"
+            # /var/lib/ninfer (2026-11-12): survives reboots — active-model +
+            # shape overrides persist across machine shutdowns; the boot
+            # ninfer-restore.service re-starts the persisted model.
+            local state_file="/var/lib/ninfer/active-model"
             if [ -r "$state_file" ]; then
               local saved_mid
               saved_mid="$(cat "$state_file" 2>/dev/null || true)"
@@ -622,17 +627,18 @@ SHAPESCONF
           do_switch() {
             local target="''$1"
             local want_shape="''${2:-}"
-            local state_dir="''${XDG_RUNTIME_DIR:-/tmp}/ninfer"
+            # PERSISTENT STATE (2026-11-12): /var/lib/ninfer survives
+            # reboots (XDG_RUNTIME_DIR is tmpfs — the old location lost
+            # both the active model and its shape override at every
+            # shutdown). Owned by user ayin via systemd-tmpfiles; the CLI
+            # (user ayin) writes, the root unit manager reads
+            # EnvironmentFile=-/var/lib/ninfer/shape-<unit>.env, and the
+            # boot ninfer-restore.service re-starts the persisted model.
+            local state_dir="/var/lib/ninfer"
             local state_file="''$state_dir/active-model"
-            # Per-unit shape override file read by the system manager
-            # (EnvironmentFile=-/run/user/1000/ninfer/shape-<unit>.env; optional
-            # '-' so a missing file = unit Environment= defaults). Read by the
-            # manager itself (root), so PrivateTmp/ProtectSystem are irrelevant;
-            # /run/user/1000 (User=ayin, UID 1000, pinned below) avoids /tmp
-            # tmpfiles age-cleanup and sits beside active-model. Cleared on
-            # <nil> and on default-shape switches so a boot restart uses the
-            # unit default shape.
-            local shape_dir="''${XDG_RUNTIME_DIR:-/run/user/1000}/ninfer"
+            # Cleared on <nil> and on default-shape switches so a boot
+            # restart uses the unit default shape.
+            local shape_dir="/var/lib/ninfer"
             shape_env_for() {
               echo "''$shape_dir/shape-''$1.env"
             }
@@ -678,7 +684,6 @@ SHAPESCONF
             local prev_active
             prev_active="''$(get_active 2>/dev/null || true)"
             mkdir -p "''$state_dir" "''$shape_dir" 2>/dev/null || true
-            echo "''$canonical" > "''$state_file" 2>/dev/null || true
 
             # Shape selection: "conc x ctx" validated against the measured
             # table (2026-11-11 grammar: `ninfer switch <model> <C>x<ctx>`;
@@ -734,6 +739,14 @@ SHAPESCONF
                 rm -f "''$shape_file" 2>/dev/null || true
               fi
             fi
+
+            # Persist the active-model pointer ONLY after shape validation
+            # passed (2026-11-12): an invalid-shape switch must not corrupt
+            # the persisted pointer that ninfer-restore.service relies on
+            # across reboots. (Was written before validation — an invalid
+            # `switch <model> <bad-shape>` silently repointed the boot
+            # restore at a model the user never switched to.)
+            echo "''$canonical" > "''$state_file" 2>/dev/null || true
 
             # Fast path: already active and responding on HTTP. Only when NO
             # shape was given: the engine may currently run a non-default
@@ -797,7 +810,7 @@ SHAPESCONF
               fi
 
               # Check if HTTP endpoint is live
-              if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''''$target_port/v1/models" >/dev/null 2>&1; then
+              if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''$target_port/v1/models" >/dev/null 2>&1; then
                 [ "$is_tty" -eq 1 ] && printf "\r\033[K"
                 echo "✔ Ready in ''${elapsed}s | listening on http://0.0.0.0:$target_port"
                 echo "switched to $canonical"
@@ -1071,6 +1084,61 @@ SHAPESCONF
     in {
       specialisation.homelab.configuration = {
         environment.systemPackages = [ninfer];
+
+        # PERSISTENT STATE (2026-11-12): /var/lib/ninfer holds the
+        # user-selected active model and per-unit shape overrides so
+        # they survive shutdowns (XDG_RUNTIME_DIR is tmpfs and lost
+        # them every boot). CLI (user ayin) writes; the root unit
+        # manager reads EnvironmentFile from here; the boot
+        # ninfer-restore.service consumes active-model.
+        systemd.tmpfiles.rules = [
+          "d /var/lib/ninfer 0755 ayin root - -"
+        ];
+
+        # Boot restore: re-start whatever model was active at shutdown.
+        # turbo stays WantedBy=multi-user.target as the fresh-install /
+        # no-state default; starting the persisted unit relies on the
+        # symmetric Conflicts= network to stop it. The engine units'
+        # ExecCondition GPU gate keeps this clean on undocked boots
+        # (60 s wait, then exit 1 = clean skip).
+        systemd.services.ninfer-restore = {
+          description = "Restore the ninfer model active at last shutdown";
+          after = ["multi-user.target" "network-online.target"];
+          wants = ["network-online.target"];
+          wantedBy = ["multi-user.target"];
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            ExecStart = pkgs.writeShellScript "ninfer-restore" ''
+              state=/var/lib/ninfer/active-model
+              [ -r "$state" ] || exit 0
+              mid="$(cat "$state" 2>/dev/null || true)"
+              case "$mid" in
+                ""|"<nil>"|nil) echo "ninfer-restore: no persisted model"; exit 0 ;;
+              esac
+              case "$mid" in
+                bonsai2-27b) svc=bonsai2.service ;;
+                bonsai2-27b-abliterated) svc=bonsai2-abliterated.service ;;
+                qwen3.8-27b-abliterated) svc=ninfer-df2-abliterated.service ;;
+                qwen3.8-27b-coder390) svc=ninfer-df2-coder390.service ;;
+                qwen3.8-27b-turbo) svc=ninfer-df2-turbo.service ;;
+                qwen3.8-27b) svc=ninfer-df2.service ;;
+                *) echo "ninfer-restore: unknown persisted model '$mid'"; exit 0 ;;
+              esac
+              if systemctl is-active --quiet "$svc"; then
+                echo "ninfer-restore: $svc already active"
+                exit 0
+              fi
+              echo "ninfer-restore: re-starting $svc (persisted active model)"
+              # Conflicts= on the engine units stops the boot-default
+              # turbo (or any other active model) first; --no-block +
+              # no wait: the engine unit's own start-up (weight load,
+              # HTTP readiness) proceeds asynchronously.
+              systemctl start --no-block "$svc"
+            '';
+          };
+        };
+
         # Passwordless unit state management for ninfer switch CLI.
         # Without this, systemctl stop/start blocks on interactive polkit auth (25s hang).
         # Grants active local sessions or wheel users permission to manage ninfer-* and bonsai2 units.
@@ -1158,7 +1226,7 @@ SHAPESCONF
             # EnvironmentFile values override the Environment= defaults; the
             # '-' prefix makes a missing file (= default shape) a no-op.
             # Read by the system manager, so unit sandboxing is irrelevant.
-            EnvironmentFile = "-/run/user/1000/ninfer/shape-ninfer-df2.env";
+            EnvironmentFile = "-/var/lib/ninfer/shape-ninfer-df2.env";
             ExecStart = "${ninferRoot}/run.sh qwen38-27b tuned";
 
             # Second belt after the 2 GiB hostkv clamp: throttle at 10G,
@@ -1222,7 +1290,7 @@ SHAPESCONF
               "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
             # Same per-shape override contract as ninfer-df2 above.
-            EnvironmentFile = "-/run/user/1000/ninfer/shape-ninfer-df2-turbo.env";
+            EnvironmentFile = "-/var/lib/ninfer/shape-ninfer-df2-turbo.env";
             ExecStart = pkgs.writeShellScript "ninfer-df2-turbo-start" ''
               export NINFER_MODEL="${ninferRoot}/models/qwen38_turbo_sm86.ninfer"
               exec ${ninferRoot}/run.sh qwen38-27b tuned
@@ -1289,7 +1357,7 @@ SHAPESCONF
               "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
             # Same per-shape override contract as ninfer-df2 above.
-            EnvironmentFile = "-/run/user/1000/ninfer/shape-ninfer-df2-abliterated.env";
+            EnvironmentFile = "-/var/lib/ninfer/shape-ninfer-df2-abliterated.env";
             ExecStart = pkgs.writeShellScript "ninfer-df2-abliterated-start" ''
               export NINFER_MODEL="${huihuiAblArtifact}"
               exec ${ninferRoot}/run.sh qwen38-27b tuned
@@ -1365,7 +1433,7 @@ SHAPESCONF
               "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
             # Same per-shape override contract as ninfer-df2 above.
-            EnvironmentFile = "-/run/user/1000/ninfer/shape-ninfer-df2-coder390.env";
+            EnvironmentFile = "-/var/lib/ninfer/shape-ninfer-df2-coder390.env";
             ExecStart = pkgs.writeShellScript "ninfer-df2-coder390-start" ''
               export NINFER_MODEL="${coder390Artifact}"
               exec ${ninferRoot}/run.sh qwen38-27b tuned
@@ -1442,7 +1510,7 @@ SHAPESCONF
               "NINFER_HOST_CONTEXT_MIB=0"
               "NINFER_MODEL_ID=bonsai2-27b"
             ];
-            EnvironmentFile = "-/run/user/1000/ninfer/shape-bonsai2.env";
+            EnvironmentFile = "-/var/lib/ninfer/shape-bonsai2.env";
             ExecStart = pkgs.writeShellScript "bonsai2-start" ''
               # run.sh validates model keys against its bundled list
               # (qwen38-27b/qwen36-35b-a3b only) BEFORE honoring
@@ -1523,7 +1591,7 @@ SHAPESCONF
               "NINFER_HOST_CONTEXT_MIB=0"
               "NINFER_MODEL_ID=bonsai2-27b-abliterated"
             ];
-            EnvironmentFile = "-/run/user/1000/ninfer/shape-bonsai2-abliterated.env";
+            EnvironmentFile = "-/var/lib/ninfer/shape-bonsai2-abliterated.env";
             ExecStart = pkgs.writeShellScript "bonsai2-abliterated-start" ''
               # run.sh validates model keys (qwen38-27b/qwen36-35b-a3b
               # only) BEFORE honoring NINFER_MODEL — pass the
