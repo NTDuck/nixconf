@@ -328,9 +328,9 @@
           MODELS=(
             "bonsai2-27b|Ternary Bonsai 2 27B|bonsai2.service|${toString ninferPort}"
             "bonsai2-27b-abliterated|Ternary Bonsai 2 27B Abliterated (Heretic)|bonsai2-abliterated.service|${toString ninferPort}"
-            "qwen3.8-27b|Qwen 3.8 27B DFlash2|ninfer-df2.service|${toString ninferPort}"
-            "qwen3.8-27b-abliterated|Qwen 3.8 27B Abliterated (Huihui)|ninfer-df2-abliterated.service|${toString ninferPort}"
-            "qwen3.8-27b-coder390|Qwen 3.8 27B Coder390 (EfficientThink)|ninfer-df2-coder390.service|${toString ninferPort}"
+            "qwen3.8-27b|Qwen 3.8 27B|ninfer-df2.service|${toString ninferPort}"
+            "qwen3.8-27b-abliterated|Huihui Qwen 3.8 27B Abliterated|ninfer-df2-abliterated.service|${toString ninferPort}"
+            "qwen3.8-27b-coder390|Qwen 3.8 27B Coder390 EfficientThink Opus5.5 GPT6Astra Grok4.7 DSV4Pro K3 SFT RLOO|ninfer-df2-coder390.service|${toString ninferPort}"
             "qwen3.8-27b-turbo|Qwen 3.8 27B Turbo (Heretic)|ninfer-df2-turbo.service|${toString ninferPort}"
           )
 
@@ -459,15 +459,15 @@
               IFS='|' read -r mid name svc port <<< "$entry"
               ids+=("$mid"); names+=("$name"); shapes+=("$(shapes_column "$mid")")
             done
-            ids+=("<nil>"); names+=("Unload all ninfer models"); shapes+=("-")
-            local w_id=2 w_name=4 w_shape=20 row i
+            ids+=("<nil>"); names+=(""); shapes+=("-")
+            local w_id=2 w_name=4 i
             for i in "''${!ids[@]}"; do
               [ ''${#ids[$i]} -gt $w_id ] && w_id=''${#ids[$i]}
               [ ''${#names[$i]} -gt $w_name ] && w_name=''${#names[$i]}
-              [ ''${#shapes[$i]} -gt $w_shape ] && w_shape=''${#shapes[$i]}
             done
-            # left-align each cell to its column width + 2-space gutter
-            local fmt="%-''${w_id}s  %-''${w_name}s  %-''${w_shape}s\n"
+            # left-align each cell to its column width + 2-space gutter;
+            # the LAST column is unpadded (docker ps doesn't trail-pad)
+            local fmt="%-''${w_id}s  %-''${w_name}s  %s\n"
             printf "$fmt" "ID" "NAME" "CONCURRENCYxCONTEXT"
             for i in "''${!ids[@]}"; do
               printf "$fmt" "''${ids[$i]}" "''${names[$i]}" "''${shapes[$i]}"
@@ -477,11 +477,11 @@
             if [ -n "$active_mid" ]; then
               local active_shape
               active_shape="$(active_shape_line "$active_mid")"
-              printf "\033[1m%-''${w_id}s  %-''${w_name}s  %-''${w_shape}s\033[0m\n" \
+              printf "\033[1m%-''${w_id}s  %-''${w_name}s  %s\033[0m\n" \
                 "$active_mid" "$(name_for "$active_mid")" "$active_shape"
             else
-              printf "\033[1m%-''${w_id}s  %-''${w_name}s  %-''${w_shape}s\033[0m\n" \
-                "<nil>" "Unload all ninfer models" "-"
+              printf "\033[1m%-''${w_id}s  %-''${w_name}s  %s\033[0m\n" \
+                "<nil>" "" "-"
             fi
           }
 

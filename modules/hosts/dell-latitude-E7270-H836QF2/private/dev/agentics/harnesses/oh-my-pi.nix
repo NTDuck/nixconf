@@ -76,7 +76,7 @@
           }
           {
             id = "qwen3.8-27b";
-            name = "Qwen 3.8 27B DFlash2";
+            name = "Qwen 3.8 27B";
             reasoning = true;
             input = ["text" "image"];
             contextWindow = 65536;
@@ -84,7 +84,7 @@
           }
           {
             id = "qwen3.8-27b-abliterated";
-            name = "Qwen 3.8 27B Abliterated (Huihui)";
+            name = "Huihui Qwen 3.8 27B Abliterated";
             reasoning = true;
             input = ["text" "image"];
             contextWindow = 262144;
@@ -92,7 +92,7 @@
           }
           {
             id = "qwen3.8-27b-coder390";
-            name = "Qwen 3.8 27B Coder390 (EfficientThink)";
+            name = "Qwen 3.8 27B Coder390 EfficientThink Opus5.5 GPT6Astra Grok4.7 DSV4Pro K3 SFT RLOO";
             reasoning = true;
             input = ["text" "image"];
             # Sync with legion (2026-11-12 measured matrix): max
