@@ -194,6 +194,50 @@
       ];
 
       boot.kernelParams = ["gpu_unlock.targets=all"];
+
+      # Real-system DRM coldplug safety net (added 2026-11-12). On the
+      # 2026-11-11 20:57 boot the initrd reordering above worked, but the
+      # real system's /dev/dri/{card0,card1,renderD128,renderD129} node
+      # creation raced the nvidia module load: sysfs had card0/card1/
+      # renderD128, /dev/dri had NOTHING. Chromium's GPU process then
+      # failed to open dri_gbm.so (MESA-LOADER Permission denied) and
+      # vesktop opened with no window (GPU process launch error_code=1002).
+      # This unit re-writes the drm uevents once post-boot; udev then
+      # (re)creates any missing nodes. Idempotent, and exit 0 when all
+      # render nodes already exist so it costs nothing on healthy boots.
+      systemd.services.drm-coldplug = {
+        description = "Re-trigger DRM uevents if /dev/dri nodes are missing";
+        wantedBy = ["multi-user.target"];
+        after = ["systemd-udev-trigger.service" "systemd-modules-load.service"];
+        wants = ["systemd-udevd.service"];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          ExecStart = let
+            coldplug = pkgs.writeShellScript "drm-coldplug" ''
+              missing=0
+              for m in /sys/class/drm/renderD*; do
+                [ -e "$m" ] || continue
+                node="/dev/$(basename "$m")"
+                [ -e "$node" ] || missing=1
+              done
+              # Also require at least one card node when any card exists.
+              if ls /sys/class/drm/card[0-9] >/dev/null 2>&1; then
+                for c in /sys/class/drm/card[0-9]; do
+                  [ -e "/dev/$(basename "$c")" ] || missing=1
+                done
+              fi
+              if [ "$missing" = 0 ]; then
+                echo "drm-coldplug: all /dev/dri nodes present"
+                exit 0
+              fi
+              echo "drm-coldplug: missing /dev/dri nodes; re-triggering drm uevents"
+              udevadm trigger -c add -s drm
+              udevadm settle
+            '';
+          in "${coldplug}";
+        };
+      };
     };
   };
 }
