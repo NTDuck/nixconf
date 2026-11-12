@@ -155,14 +155,14 @@
       # last live-verified state. 2026-10-12: ollama removed; ninfer
       # is the sole local engine. 2026-11-11: ids/names synced with the
       # `ninfer list` contract (bonsai2 -> bonsai2-27b, alphabetical).
-      # coder390 dropped — its artifact FATALs on engine 0.17.2
-      # (gguf_blocks_v1 tensors, see ninfer/default.nix CODER390
-      # REJECTED).
       local = {
         # Consolidated ninfer engine (port 8092, resident 3090 engine).
         # Single provider hosting all 5 canonical model variants.
         # Mutual conflicts ensure one daemon runs at a time on :8092,
         # switched on-demand via `ninfer switch <model-id> [C]x<ctx>`.
+        # 2026-11-11: coder390 re-added — reconverted from the official
+        # HF BF16 via tools/convert (the old pin was a gguf_blocks_v1
+        # artifact; see ninfer/default.nix + conversion-assessment.md).
         ninfer = {
           baseUrl = "http://127.0.0.1:${toString ninferPort}/v1";
           api = "openai-completions";
@@ -202,12 +202,15 @@
               maxTokens = 65536;
             }
             {
-              id = "qwen3.8-27b-abliterated";
-              name = "Qwen 3.8 27B Abliterated (Huihui)";
+              id = "qwen3.8-27b-coder390";
+              name = "Qwen 3.8 27B Coder390 (EfficientThink)";
               reasoning = true;
               input = ["text" "image"];
-              contextWindow = 262144;
-              maxTokens = 65536;
+              # Measured 2026-11-12: max bootable ctx = 131072 (C3),
+              # but the unit default is C4x65536; 262k is not bootable
+              # for the dense 17.2 GiB artifact (C1 dies by 157 MiB).
+              contextWindow = 131072;
+              maxTokens = 16384;
             }
             {
               id = "qwen3.8-27b-turbo";
