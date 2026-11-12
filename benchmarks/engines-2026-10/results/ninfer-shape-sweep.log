@@ -1,0 +1,91 @@
+[22:21:06] sweep: stopping any active engine before start
+[22:22:42] qwen3.8-27b 16384: C8 OK tps=0.0 peak=20862MiB
+[22:23:51] qwen3.8-27b 32768: C8 OK tps=0.0 peak=0MiB
+[22:25:05] qwen3.8-27b 65536: C8 OK tps=0.0 peak=17648MiB
+[22:35:41] sweep: stopping any active engine before start
+[22:40:51] sweep: stopping any active engine before start
+[22:44:24] qwen3.8-27b 16384: C8 OK tps=155.4 peak=21162MiB
+[22:49:23] qwen3.8-27b 32768: C8 FAILED to start (OOM/refusal)
+[22:54:11] qwen3.8-27b 32768: C7 OK tps=141.5 peak=21154MiB
+[22:55:34] sweep: stopping any active engine before start
+[22:56:05] qwen3.8-27b 16384: cached, skip
+[22:56:05] qwen3.8-27b 32768: cached, skip
+[23:00:58] qwen3.8-27b 65536: C8 FAILED to start (OOM/refusal)
+[23:05:55] qwen3.8-27b 65536: C7 FAILED to start (OOM/refusal)
+[23:14:08] qwen3.8-27b 65536: C6 OK tps=128.0 peak=21472MiB
+[23:19:07] qwen3.8-27b 131072: C8 FAILED to start (OOM/refusal)
+[23:24:04] qwen3.8-27b 131072: C7 FAILED to start (OOM/refusal)
+[23:29:01] qwen3.8-27b 131072: C6 FAILED to start (OOM/refusal)
+[23:33:57] qwen3.8-27b 131072: C5 FAILED to start (OOM/refusal)
+[23:46:10] qwen3.8-27b 131072: C4 OK tps=113.1 peak=22010MiB
+[23:51:10] qwen3.8-27b 262144: C8 FAILED to start (OOM/refusal)
+[23:56:07] qwen3.8-27b 262144: C7 FAILED to start (OOM/refusal)
+[00:01:04] qwen3.8-27b 262144: C6 FAILED to start (OOM/refusal)
+[00:06:04] qwen3.8-27b 262144: C5 FAILED to start (OOM/refusal)
+[00:11:01] qwen3.8-27b 262144: C4 FAILED to start (OOM/refusal)
+[00:15:58] qwen3.8-27b 262144: C3 FAILED to start (OOM/refusal)
+[00:20:54] qwen3.8-27b 262144: C2 FAILED to start (OOM/refusal)
+[00:31:46] qwen3.8-27b 262144: C1 OK tps=97.0 peak=23374MiB
+[00:35:02] qwen3.8-27b-turbo 16384: C8 OK tps=116.4 peak=19572MiB
+[00:40:21] qwen3.8-27b-turbo 32768: C8 OK tps=106.8 peak=19870MiB
+[00:48:25] qwen3.8-27b-turbo 65536: C8 OK tps=100.2 peak=20464MiB
+[01:02:48] qwen3.8-27b-turbo 131072: C8 OK tps=92.9 peak=21654MiB
+[01:07:45] qwen3.8-27b-turbo 262144: C8 FAILED to start (OOM/refusal)
+[01:12:39] qwen3.8-27b-turbo 262144: C7 FAILED to start (OOM/refusal)
+[01:17:34] qwen3.8-27b-turbo 262144: C6 FAILED to start (OOM/refusal)
+[01:23:54] qwen3.8-27b-turbo 262144: C5 OK tps=69.5 peak=23536MiB
+[01:28:06] qwen3.8-27b-abliterated 16384: C8 FAILED to start (OOM/refusal)
+[01:32:17] qwen3.8-27b-abliterated 16384: C7 FAILED to start (OOM/refusal)
+[01:36:27] qwen3.8-27b-abliterated 16384: C6 FAILED to start (OOM/refusal)
+[01:40:38] qwen3.8-27b-abliterated 16384: C5 FAILED to start (OOM/refusal)
+[01:44:48] qwen3.8-27b-abliterated 16384: C4 FAILED to start (OOM/refusal)
+[01:48:59] qwen3.8-27b-abliterated 16384: C3 FAILED to start (OOM/refusal)
+[01:53:09] qwen3.8-27b-abliterated 16384: C2 FAILED to start (OOM/refusal)
+[01:57:20] qwen3.8-27b-abliterated 16384: C1 FAILED to start (OOM/refusal)
+[01:57:25] qwen3.8-27b-abliterated 16384: NO concurrency works; recording null
+[02:08:14] sweep: stopping any active engine before start
+[02:08:14] sweep: stopping any active engine before start
+[02:08:34] qwen3.8-27b 16384: cached, skip
+[02:08:34] qwen3.8-27b 16384: cached, skip
+[02:08:34] qwen3.8-27b 32768: cached, skip
+[02:08:34] qwen3.8-27b 32768: cached, skip
+[02:08:34] qwen3.8-27b 65536: cached, skip
+[02:08:34] qwen3.8-27b 65536: cached, skip
+[02:08:34] qwen3.8-27b 131072: cached, skip
+[02:08:34] qwen3.8-27b 131072: cached, skip
+[02:08:34] qwen3.8-27b 262144: cached, skip
+[02:08:34] qwen3.8-27b 262144: cached, skip
+[02:08:34] qwen3.8-27b-turbo 16384: cached, skip
+[02:08:34] qwen3.8-27b-turbo 16384: cached, skip
+[02:08:34] qwen3.8-27b-turbo 32768: cached, skip
+[02:08:34] qwen3.8-27b-turbo 32768: cached, skip
+[02:08:34] qwen3.8-27b-turbo 65536: cached, skip
+[02:08:34] qwen3.8-27b-turbo 65536: cached, skip
+[02:08:34] qwen3.8-27b-turbo 131072: cached, skip
+[02:08:34] qwen3.8-27b-turbo 131072: cached, skip
+[02:08:34] qwen3.8-27b-turbo 262144: cached, skip
+[02:08:34] qwen3.8-27b-turbo 262144: cached, skip
+[02:11:45] bonsai2-27b 16384: C8 OK tps=217.9 peak=9706MiB
+[02:11:45] bonsai2-27b 16384: C8 OK tps=217.9 peak=9706MiB
+[02:18:09] bonsai2-27b 32768: C8 OK tps=169.0 peak=10004MiB
+[02:18:09] bonsai2-27b 32768: C8 OK tps=169.0 peak=10004MiB
+[02:31:22] bonsai2-27b 65536: C8 OK tps=138.0 peak=10598MiB
+[02:31:22] bonsai2-27b 65536: C8 OK tps=138.0 peak=10598MiB
+[03:04:24] bonsai2-27b 131072: C8 OK tps=115.8 peak=11788MiB
+[03:04:24] bonsai2-27b 131072: C8 OK tps=115.8 peak=11788MiB
+[03:45:18] bonsai2-27b 262144: C8 OK tps=76.6 peak=14168MiB
+[03:45:18] bonsai2-27b 262144: C8 OK tps=76.6 peak=14168MiB
+[03:48:37] bonsai2-27b-abliterated 16384: C8 OK tps=195.1 peak=9706MiB
+[03:48:37] bonsai2-27b-abliterated 16384: C8 OK tps=195.1 peak=9706MiB
+[03:55:05] bonsai2-27b-abliterated 32768: C8 OK tps=161.0 peak=10004MiB
+[03:55:05] bonsai2-27b-abliterated 32768: C8 OK tps=161.0 peak=10004MiB
+[04:08:48] bonsai2-27b-abliterated 65536: C8 OK tps=136.1 peak=10598MiB
+[04:08:48] bonsai2-27b-abliterated 65536: C8 OK tps=136.1 peak=10598MiB
+[04:42:10] bonsai2-27b-abliterated 131072: C8 OK tps=105.6 peak=11788MiB
+[04:42:10] bonsai2-27b-abliterated 131072: C8 OK tps=105.6 peak=11788MiB
+[05:23:04] bonsai2-27b-abliterated 262144: C8 OK tps=77.7 peak=14168MiB
+[05:23:04] bonsai2-27b-abliterated 262144: C8 OK tps=77.7 peak=14168MiB
+[05:23:10] sweep: restoring turbo (pre-sweep active model)
+[05:23:10] sweep: restoring turbo (pre-sweep active model)
+[05:23:58] sweep complete
+[05:23:58] sweep complete
