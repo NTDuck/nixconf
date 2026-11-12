@@ -46,7 +46,12 @@
 # OOMs), 1x262k 23364 (C2 OOMs). turbo/mtp3: 8x16k 19562, 8x32k 19860,
 # 8x65k 20454, 8x128k 21644, 5x262k 23526 (C6 OOMs). mtp3 draft state
 # is ~1.6 GiB cheaper than dflash2's K=7, so turbo holds C8 to 128k.
-# `ninfer list` shows these as the {C}x{ctx} column; `ninfer switch
+# 2026-11-13 RE-SWEEP (v0.17.2, same method, +tps): confirms the
+# ladder (peaks within ±20 MiB; bonsai2 C8x262k 14168) and adds
+# per-agent decode tps to every SHAPES row + the `ninfer list` table.
+# bonsai2-27b-abliterated measured directly this time (no sibling
+# bound). `ninfer list` shows these as the {C}x{ctx}(tps) column;
+# `ninfer switch
 # --context <ctx>` writes a per-unit EnvironmentFile override
 # (/var/lib/ninfer/shape-<unit>.env) consumed by all units; state
 # persists across reboots (ninfer-restore.service re-starts the
@@ -303,14 +308,18 @@
       # read so `ninfer switch <model> <TAB>` offers only the shapes
       # valid for THAT model (no dual maintenance). Keep in sync with
       # do_switch's validation (shape_for_ctx) — both consume this list.
-      # Format: "model-id|C1xCTX1,C2xCTX2,...".
+      # Format: "model-id|C1xCTX1k(tps),C2xCTX2k(tps),..." — ctx in
+      # k-notation (k = floor(ctx/1000): 65536 -> 65k, 262144 -> 262k);
+      # parens omitted when tps is 0. These tokens feed shell
+      # completions; user input resolves k against this same table
+      # (accepts raw and k forms).
       ninferShapeTable = [
-        "qwen3.8-27b|8x16384,7x32768,6x65536,4x131072,1x262144"
-        "qwen3.8-27b-turbo|8x16384,8x32768,8x65536,8x131072,5x262144"
-        "bonsai2-27b|8x262144"
-        "bonsai2-27b-abliterated|8x262144"
-        "qwen3.8-27b-abliterated|8x16384,8x32768,8x65536,8x131072,5x262144"
-        "qwen3.8-27b-coder390|6x16384,5x32768,4x65536,3x131072"
+        "qwen3.8-27b|8x16k(155),7x32k(142),6x65k(128),4x131k(113),1x262k(97)"
+        "qwen3.8-27b-turbo|8x16k(116),8x32k(107),8x65k(100),8x131k(93),5x262k(70)"
+        "bonsai2-27b|8x16k(218),8x32k(169),8x65k(138),8x131k(116),8x262k(77)"
+        "bonsai2-27b-abliterated|8x16k(195),8x32k(161),8x65k(136),8x131k(106),8x262k(78)"
+        "qwen3.8-27b-abliterated|8x16k,8x32k,8x65k,8x131k,5x262k"
+        "qwen3.8-27b-coder390|6x16k,5x32k,4x65k,3x131k"
       ];
       # `ninfer --version` strings. CLI release line + the two engine
       # distributions packaged below (v0.15.0 Qwen arm, v0.17.2
@@ -377,24 +386,25 @@ MODELS=(
 # (dflash2 C8x32k wanted 6.41 GiB runtime vs 6.31 free). dflash2
 # costs ~1.6 GiB more than turbo at the same shape (K=7 draft
 # state), so its table is strictly worse except 16k.
-# Format: model|ctx:conc:peak,ctx:conc:peak,...
+# Format: model|ctx:conc:peak[:tps],ctx:conc:peak[:tps],... — tps is
+# per-agent decode tok/s (0/absent until the orchestrator injects it).
 # 2026-11-11 user request: each model pins ONE champion shape
 # (the full per-model tables live in the sweep logs); bonsai2
 # keeps only its max-context C8 cell.
 SHAPES=(
-  "qwen3.8-27b|16384:8:21150,32768:7:21144,65536:6:21462,131072:4:22000,262144:1:23364"
-  "qwen3.8-27b-turbo|16384:8:19562,32768:8:19860,65536:8:20454,131072:8:21644,262144:5:23526"
-  # bonsai2 on engine v0.17.2 (2026-11-11 sweep, ternary 9.5 GB
-  # weights): 6.7 GiB weights leave so much KV room that C8
-  # (engine's hard --max-concurrency cap) holds at EVERY
-  # context, including full 262k. Peak 14166 MiB = ~10 GiB
-  # headroom below the 24.5 GiB card.
-  "bonsai2-27b|262144:8:14166"
-  # bonsai2-27b-abliterated: same 9.52 GB ternary container as
-  # bonsai2-27b (same weights layout, LoRA deltas only), so
-  # the sibling's measured C8x262144 = 14166 MiB peak bounds
-  # it; verify on first load before trusting beyond that.
-  "bonsai2-27b-abliterated|262144:8:14166"
+  # 2026-11-13 sweep (engine v0.17.2): tps = per-agent decode tok/s, median
+  # of 2 reps at the pinned max-C shape for each ctx. C8 held at every ctx
+  # for the bonsai2 pair (weights 9.5G -> big KV headroom).
+  "qwen3.8-27b|16384:8:21162:155,32768:7:21154:142,65536:6:21472:128,131072:4:22010:113,262144:1:23374:97"
+  "qwen3.8-27b-turbo|16384:8:19572:116,32768:8:19870:107,65536:8:20464:100,131072:8:21654:93,262144:5:23536:70"
+  # bonsai2 on engine v0.17.2 (2026-11-13 sweep): C8 held at EVERY
+  # context, including full 262k. Peak 14168 MiB = ~10 GiB
+  # headroom below the 24.5 GiB card. Measured ladder + tps.
+  "bonsai2-27b|16384:8:9706:218,32768:8:10004:169,65536:8:10598:138,131072:8:11788:116,262144:8:14168:77"
+  # bonsai2-27b-abliterated: 2026-11-13 sweep measured ladder — same
+  # 9.52 GB ternary container as bonsai2-27b, C8 held at every ctx
+  # (peaks identical to the sibling; tps ~1-11% lower).
+  "bonsai2-27b-abliterated|16384:8:9706:195,32768:8:10004:161,65536:8:10598:136,131072:8:11788:106,262144:8:14168:78"
   # qwen3.8-27b-abliterated: huihui bf16 -> tools/convert
   # recipe qwen3_8_27b, mtp-only artifact (no dflash2). The
   # 2026-10-10 campaign measured the SAME conversion recipe
@@ -403,7 +413,7 @@ SHAPES=(
   # table is the correct bound (dflash2's table costs ~1.6
   # GiB more per shape). Unverified on this artifact — first
   # load must confirm before trusting C8 at 65k+.
-  "qwen3.8-27b-abliterated|16384:8:19562,32768:8:19860,65536:8:20454,131072:8:21644,262144:5:23526"
+  "qwen3.8-27b-abliterated|16384:8:19562,32768:8:19860,65536:8:20454,131072:8:21644:0,262144:5:23526:0"
   # qwen3.8-27b-coder390: nerkyor HF BF16 -> tools/convert
   # recipe qwen3_8_27b (text,vision,mtp,dflash2; imatrix from
   # the abliterated coder390 sibling — conversion-assessment.
@@ -414,7 +424,7 @@ SHAPES=(
   # 16k C6 ok / C7 7.39G res ✗; 32k C5 ok / C6 6.81G ✗;
   # 65k C4 ok / C5 7.53G ✗; 128k C3 ok (C2 21532 ok) /
   # C4 7.63G ✗; 262k none (C1 6.94G ✗ by 157 MiB).
-  "qwen3.8-27b-coder390|16384:6:20570,32768:5:20572,65536:4:20876,131072:3:21708"
+  "qwen3.8-27b-coder390|16384:6:20570,32768:5:20572,65536:4:20876,131072:3:21708:0"
 )
 # Unit default shape (what Environment= in the unit pins); a
 # --context equal to this clears the override file instead of
@@ -466,14 +476,48 @@ shape_for_ctx() {
   return 1
 }
 
-shapes_column() {
-  local specs pair ctxv c peak out=""
-  specs="$(shapes_for "$1")" || { echo "-"; return 0; }
-  local first=1
+# Dominance pruning (2026-11-12, fixed 2026-11-13): drop a cell only
+# when its conc is STRICTLY below the max conc already kept to its
+# right at a LARGER-or-equal context (it can't win on either axis).
+# The old `> running_max` collapsed flat measured ladders (bonsai2
+# C8 at every ctx) to just the rightmost cell — equal-conc cells at
+# different ctx are never dominated.
+prune_dominated_shapes() {
+  local specs pair ctxv c peak tps
+  specs="$1"
+  local pairs=() ctxs=() concs=()
   for pair in ''${specs//,/ }; do
-    IFS=':' read -r ctxv c peak <<< "$pair"
+    IFS=':' read -r ctxv c peak tps <<< "$pair"
+    pairs+=("$pair"); ctxs+=("$ctxv"); concs+=("$c")
+  done
+  local n=''${#pairs[@]} i running_max=0 out="" keep
+  for ((i = n - 1; i >= 0; i--)); do
+    keep=0
+    if (( ''${concs[$i]} >= running_max )); then
+      keep=1; running_max=''${concs[$i]}
+    fi
+    if (( keep )); then
+      [ -n "$out" ] && out=",''$out"
+      out="''${pairs[$i]}''$out"
+    fi
+  done
+  echo "$out"
+}
+
+# 2026-11-12 display rework: render "Cx{ctx}k" with k = floor(ctx/1000)
+# (user's examples: 65536 -> 65k, 131072 -> 131k, 262144 -> 262k) and
+# append "(tps)" when the measured tps field is present and nonzero.
+shapes_column() {
+  local specs pair ctxv c peak tps
+  specs="$(shapes_for "$1")" || { echo "-"; return 0; }
+  specs="$(prune_dominated_shapes "$specs")"
+  local first=1 out=""
+  for pair in ''${specs//,/ }; do
+    IFS=':' read -r ctxv c peak tps <<< "$pair"
+    tps="''${tps:-0}"
     [ "$first" = 1 ] || out+=","
-    out+="''${c}x$ctxv"
+    out+="''${c}x$((ctxv / 1000))k"
+    [ "$tps" != 0 ] && out+="($tps)"
     first=0
   done
   echo "$out"
@@ -495,7 +539,7 @@ show_list() {
     IFS='|' read -r mid name svc port <<< "$entry"
     ids+=("$mid"); names+=("$name"); shapes+=("$(shapes_column "$mid")")
   done
-  ids+=("<nil>"); names+=(""); shapes+=("-")
+  ids+=("<nil>"); names+=("-"); shapes+=("-")
   local w_id=2 w_name=4 i
   for i in "''${!ids[@]}"; do
     [ ''${#ids[$i]} -gt $w_id ] && w_id=''${#ids[$i]}
@@ -517,7 +561,7 @@ show_list() {
       "$active_mid" "$(name_for "$active_mid")" "$active_shape"
   else
     printf "\033[1m%-''${w_id}s  %-''${w_name}s  %s\033[0m\n" \
-      "<nil>" "" "-"
+      "<nil>" "-" "-"
   fi
 }
 
@@ -698,8 +742,24 @@ do_switch() {
     local shape_conc shape_ctx ctx_conc_val
     shape_conc="''${want_shape%%x*}"
     shape_ctx="''${want_shape#*x}"
+    # 2026-11-12 display rework: accept pasted display tokens too —
+    # strip a trailing "(tps)" suffix, then resolve a "k"/"K" context
+    # against the model's measured table: k = floor(ctx/1000) (user's
+    # examples 65536 -> 65k, 262144 -> 262k), so "4x65k" matches the
+    # 65536 row. A bare N*1000 never equals a real ctx, so match by
+    # the same floor rule instead of multiplying back.
+    shape_ctx="''${shape_ctx%%(*}"
+    if [[ "''$shape_ctx" =~ ^([0-9]+)[kK]$ ]]; then
+      shape_ctx="''$(shapes_for "''$canonical" | awk -F'[,:]' -v k="''${BASH_REMATCH[1]}" '
+        { for (i = 1; i < NF; i += 2) if (int($i / 1000) == k) { print $i; exit } }')"
+      if [ -z "''$shape_ctx" ]; then
+        echo "error: shape ''$want_shape is not a measured shape for ''$canonical" >&2
+        echo "       measured: ''$(shapes_column "''$canonical")" >&2
+        return 1
+      fi
+    fi
     if ! [[ "''$shape_conc" =~ ^[0-9]+$ ]] || ! [[ "''$shape_ctx" =~ ^[0-9]+$ ]]; then
-      echo "error: shape ''$want_shape must look like <concurrency>x<context> (e.g. 8x262144)" >&2
+      echo "error: shape ''$want_shape must look like <concurrency>x<context> (e.g. 8x262144 or 8x262k)" >&2
       return 1
     fi
     ctx_conc_val="''$(shape_for_ctx "''$canonical" "''$shape_ctx" | cut -d' ' -f1)" || true
