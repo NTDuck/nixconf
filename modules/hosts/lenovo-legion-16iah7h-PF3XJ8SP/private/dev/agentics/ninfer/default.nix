@@ -293,10 +293,25 @@
       # this host; remote hosts (dell) duplicate the value with a sync
       # comment in their models.yml.
       ninferPort = 8092;
+      # Per-model measured shape table (conc x ctx), 2026-11-11/12 sweeps
+      # — SINGLE SOURCE OF TRUTH: rendered into the CLI's SHAPES array
+      # AND $out/share/ninfer/shapes.conf, which the shell completions
+      # read so `ninfer switch <model> <TAB>` offers only the shapes
+      # valid for THAT model (no dual maintenance). Keep in sync with
+      # do_switch's validation (shape_for_ctx) — both consume this list.
+      # Format: "model-id|C1xCTX1,C2xCTX2,...".
+      ninferShapeTable = [
+        "qwen3.8-27b|8x16384,7x32768,6x65536,4x131072,1x262144"
+        "qwen3.8-27b-turbo|8x16384,8x32768,8x65536,8x131072,5x262144"
+        "bonsai2-27b|8x262144"
+        "bonsai2-27b-abliterated|8x262144"
+        "qwen3.8-27b-abliterated|8x16384,8x32768,8x65536,8x131072,5x262144"
+        "qwen3.8-27b-coder390|6x16384,5x32768,4x65536,3x131072"
+      ];
       # `ninfer --version` strings. CLI release line + the two engine
       # distributions packaged below (v0.15.0 Qwen arm, v0.17.2
       # bonsai2 arm) — bump all three together.
-      ninferCliVersion = "1.1.0";
+      ninferCliVersion = "1.2.0";
       engineVersionV0150 = "0.15.0-rtx3090";
       engineVersionV0172 = "0.17.2-rtx3090";
       # 2026-10-18: Native shell CLI. Fast (<5ms), minimal UI,
@@ -308,6 +323,11 @@
       # alphabetical, <nil> last, bold ACTIVE row); positional
       # `switch <model-id> [C]x<ctx>` grammar; bonsai2 id -> bonsai2-27b
       # with only the 8x262144 champion shape; --version/-v.
+      # 2026-11-12: per-model shape completions — `switch <model> <TAB>`
+      # offers only THAT model's measured shapes, read from the shipped
+      # share/ninfer/shapes.conf (ninferShapeTable = single source of
+      # truth); zsh/bash/fish; verified functionally (bash live, zsh
+      # extraction, fish 4.9.3).
       ninfer = pkgs.stdenv.mkDerivation {
         pname = "ninfer";
         version = "1.0.0";
@@ -316,7 +336,19 @@
 
         installPhase = ''
                     runHook preInstall
-                    mkdir -p $out/bin $out/share/zsh/site-functions $out/share/bash-completion/completions $out/share/fish/vendor_completions.d
+                    mkdir -p $out/bin $out/share/zsh/site-functions $out/share/bash-completion/completions $out/share/fish/vendor_completions.d $out/share/ninfer
+
+                    # Per-model shape table for the shell completions (single
+                    # source of truth: ninferShapeTable above). One line per
+                    # model: "model-id|C1xCTX1,C2xCTX2,...". The CLI's SHAPES
+                    # array below carries ctx:conc:peak for validation; this
+                    # file carries only the CxCTX tokens completions offer.
+                    # Rendered at column 0: heredoc preserves the Nix source
+                    # indentation, which would corrupt every row after the
+                    # first (completions grep '^model|').
+                    cat << 'SHAPESCONF' > $out/share/ninfer/shapes.conf
+${lib.concatStringsSep "\n" ninferShapeTable}
+SHAPESCONF
 
                     cat << 'SCRIPT' > $out/bin/ninfer
           #!/usr/bin/env bash
@@ -915,15 +947,23 @@
               'nil'
             )
 
-            shapes=(
-              '8x16384'
-              '7x32768'
-              '8x262144'
-              '6x65536'
-              '4x131072'
-              '1x262144'
-              '5x262144'
-            )
+            # Per-model shapes: read the model's row from shapes.conf
+            # (same store file the CLI ships; ninferShapeTable in
+            # default.nix is the single source of truth). `ninfer switch
+            # <model> <TAB>` offers ONLY the measured CxCTX shapes for
+            # THAT model. Fallback: flat union of every model's shapes
+            # when the row is missing (never offer an empty list).
+            local -a model_shapes all_shapes
+            local shapes_conf="$(_ninfer_shapes_conf)"
+            local mid row
+            mid="''${words[3]}"
+            row="$(grep -m1 "^''${mid}|" "$shapes_conf" 2>/dev/null | cut -d'|' -f2)"
+            if [ -n "$row" ]; then
+              model_shapes=("''${(@s/,/)row}")
+            else
+              all_shapes=($(cut -d'|' -f2 "$shapes_conf" 2>/dev/null | tr ',' ' '))
+              model_shapes=("''${all_shapes[@]}")
+            fi
 
             _arguments -C \
               '-v[show version]' \
@@ -945,7 +985,7 @@
                     if [ "$CURRENT" -eq 3 ]; then
                       _describe -t models 'model' models
                     else
-                      _describe -t shapes 'shape' shapes
+                      _describe -t shapes 'shape' model_shapes
                     fi
                     ;;
                 esac
@@ -953,24 +993,44 @@
             esac
           }
 
+          # Locate the shipped shapes.conf (store path) for completion.
+          _ninfer_shapes_conf() {
+            local p
+            for p in "$(dirname "''${commands[ninfer]}")/../share/ninfer/shapes.conf" \
+                     "@out@/share/ninfer/shapes.conf"; do
+              [ -f "$p" ] && { echo "$p"; return 0; }
+            done
+            return 1
+          }
+
           _ninfer "$@"
           ZSH
+          substituteInPlace $out/share/zsh/site-functions/_ninfer \
+            --replace-fail '@out@' "$out"
 
                     cat << 'BASH' > $out/share/bash-completion/completions/ninfer
+          # Per-model shapes for `ninfer switch <model> <TAB>`: read the
+          # model's row from the shipped shapes.conf (ninferShapeTable in
+          # default.nix = single source of truth), fall back to the flat
+          # union when the row is missing. @NINFER_SHAPES_CONF@ is
+          # substituted to the store path at build time.
           _ninfer_completion() {
-            local cur prev
+            local cur prev shapes_conf mid row
             cur="''${COMP_WORDS[COMP_CWORD]}"
             prev="''${COMP_WORDS[COMP_CWORD-1]}"
+            shapes_conf="@NINFER_SHAPES_CONF@"
 
             local models="bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-turbo <nil> nil"
             local commands="switch list status active current version"
-            local shapes="8x16384 7x32768 6x65536 4x131072 1x262144 5x262144 8x262144"
 
             if [ "$COMP_CWORD" -eq 2 ] && [ "''${COMP_WORDS[1]}" = "switch" ]; then
               COMPREPLY=( $(compgen -W "$models" -- "$cur") )
               return 0
             elif [ "$COMP_CWORD" -eq 3 ] && [ "''${COMP_WORDS[1]}" = "switch" ]; then
-              COMPREPLY=( $(compgen -W "$shapes" -- "$cur") )
+              mid="''${COMP_WORDS[2]}"
+              row="$(grep -m1 "^''${mid}|" "$shapes_conf" 2>/dev/null | cut -d'|' -f2 | tr ',' ' ')"
+              [ -z "$row" ] && row="$(cut -d'|' -f2 "$shapes_conf" 2>/dev/null | tr ',' ' ')"
+              COMPREPLY=( $(compgen -W "$row" -- "$cur") )
               return 0
             fi
 
@@ -981,8 +1041,17 @@
 
           complete -F _ninfer_completion ninfer
           BASH
+          substituteInPlace $out/share/bash-completion/completions/ninfer \
+            --replace-fail '@NINFER_SHAPES_CONF@' "$out/share/ninfer/shapes.conf"
 
                     cat << 'FISH' > $out/share/fish/vendor_completions.d/ninfer.fish
+          # Per-model shapes for `ninfer switch <model> <TAB>`: the
+          # @NINFER_SHAPES_CONF@ placeholder is substituted to the store
+          # shapes.conf at build time (ninferShapeTable in default.nix =
+          # single source of truth). Fish evaluates the command
+          # substitution at completion time, greps the typed model's row,
+          # and offers ONLY that model's measured CxCTX shapes; the
+          # fallback term covers unknown models with the flat union.
           complete -c ninfer -n "__fish_use_subcommand" -a switch -d "switch active model"
           complete -c ninfer -n "__fish_use_subcommand" -a list -d "show models"
           complete -c ninfer -n "__fish_use_subcommand" -a status -d "show models"
@@ -991,8 +1060,11 @@
           complete -c ninfer -n "__fish_use_subcommand" -s v -l version -d "show version"
           complete -c ninfer -n "__fish_use_subcommand" -a "bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-turbo <nil> nil"
           complete -c ninfer -n "__fish_seen_subcommand_from switch" -a "bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-turbo <nil> nil"
-          complete -c ninfer -n "__fish_seen_subcommand_from switch; and __fish_prev_arg_in switch; and test (count (commandline -opc)) -ge 3" -a "8x16384 7x32768 6x65536 4x131072 1x262144 5x262144 8x262144"
+          complete -c ninfer -n "__fish_seen_subcommand_from switch; and __fish_prev_arg_in switch; and test (count (commandline -opc)) -ge 3" \
+            -a "(begin; set -l mid (commandline -opc)[3]; set -l row (grep -m1 '^'\$mid'|' @NINFER_SHAPES_CONF@ 2>/dev/null | cut -d'|' -f2); if test -n \"\$row\"; string split ',' \$row; else; grep -v '^#' @NINFER_SHAPES_CONF@ 2>/dev/null | cut -d'|' -f2 | string split ','; end; end)"
           FISH
+          substituteInPlace $out/share/fish/vendor_completions.d/ninfer.fish \
+            --replace-fail '@NINFER_SHAPES_CONF@' "$out/share/ninfer/shapes.conf"
                     runHook postInstall
         '';
       };
