@@ -59,6 +59,11 @@
           # auto-generated key; widening is a deliberate user act.
           # Named volume gw2a-data keeps /data owned by the image's
           # nonroot uid (see header).
+          # GHCR `latest` index digest (2026-10-20, upstream push
+          # 2026-10-19). NOTE: this comment MUST stay above the exec —
+          # a `#` line inside the run continuation swallows the image
+          # argument (podman "requires at least 1 arg(s)", exit 125;
+          # start-limit-hit broke the 2026-11-12 switch).
           exec podman run \
             --name=gemini-web2api \
             --log-driver=journald \
@@ -67,7 +72,6 @@
             --sdnotify=conmon \
             -d --replace \
             -p 127.0.0.1:${toString port}:${toString port} \
-            # GHCR `latest` index digest (2026-10-20, upstream push 2026-10-19).
             -v gw2a-data:/data \
             ghcr.io/zexadev/gemini-web2api-go@sha256:36e1a57cfcadba8531a44cfcf1a170e0228ce3cc92688576b96563d201f6d4e9
         '';
