@@ -20,8 +20,9 @@
 # and C4x128k OOMs (7.59 GiB). v0.16.0 caps out at C4x65k (500.0 agg tok/s).
 # v0.15.0 C6x65k (769.4 agg tok/s) strictly dominates v0.16.0 on Pareto-optimal
 # parallelism x context (+50% concurrency, +54% throughput). Production stays
-# on v0.15.0 C6x65k; v0.16.0 is staged at ~/models/q27-bench/ashalliants/
-# ninfer-rtx3090-linux-x64-0.16.0-rtx3090 with shim for future engine updates.
+# on v0.15.0 C6x65k; the v0.16.0 stage under ~/models was DELETED 2026-11-12
+# (home-dir model-artifact ban, see skill ninfer-model-quant-and-deploy §0)
+# — v0.16.0 was Pareto-dominated and never promoted.
 # 2026-11-07 MIGRATION TO NIX STORE: The engine distribution and pinned
 # model artifacts are packaged as idiomatic Nix store derivations
 # (fetchzip for release binaries, fetchurl for .ninfer weights, and
@@ -225,22 +226,23 @@
       # published qwen3_8_27b.imatrix.safetensors). Same pipeline as the
       # 2026-10-10 campaign's huihui_abl artifact. No public .ninfer
       # exists for this repo, and the 16.76 GB file CANNOT be store-
-      # ingested: `nix store add-file` OOM-killed this 15 GB-RAM box
-      # repeatedly (2026-11-11, oomd trips = user-visible shutdowns), so
-      # the unit references the artifact at its filesystem path directly
-      # — the same pattern as the pre-0.15.0 units
-      # (WorkingDirectory ninferRoot, ~/models absolute paths, boot-gate
-      # sha256 gate). Artifact has NO dflash2 component ->
-      # NINFER_SPEC=mtp (turbo-unit shape), not dflash2 (dense lane).
-      huihuiAblArtifact = "/home/ayin/models/q27-bench/downloads/huihui_abl_qwen3_8_27b.ninfer";
+      # ingested by `nix store add-file` (in-RAM hashing; OOM-killed on
+      # this 15 GiB box, 2026-11-11 and 2026-11-12 — see skill
+      # ninfer-model-quant-and-deploy §0). Cutover 2026-11-12: ingested
+      # via STREAMING fetchurl file:// (curl, 88 MiB memory peak) as a
+      # systemd transient unit; the unit pins the verified store path.
+      # Artifact has NO dflash2 component -> NINFER_SPEC=mtp (turbo-unit
+      # shape), not dflash2 (dense lane).
+      huihuiAblArtifact = "/nix/store/w09s0fdpbi0bl468lxj0v95gqbnlhyhk-huihui_abl_qwen3_8_27b.ninfer";
 
       # Qwen3.8-27B-Coder390-EfficientThink (2026-11-11 re-conversion):
       # nerkyor HF BF16 -> tools/convert recipe qwen3_8_27b, components
       # text,vision,mtp,dflash2, imatrix from the abliterated coder390
-      # sibling (documented substitution — conversion-assessment.md).
-      # Same local-path pattern as huihuiAblArtifact (~20G file, store
-      # ingestion OOMs this box).
-      coder390Artifact = "/home/ayin/models/q27-bench/downloads/coder390/coder390_qwen3_8_27b.ninfer";
+      # sibling (documented substitution — conversion-assessment.md,
+      # archived at benchmarks/engines-2026-10/ninfer-conversion/).
+      # Same streaming-store cutover as huihuiAblArtifact (18G file,
+      # add-file OOMs this box; fetchurl file:// streams at ~88 MiB).
+      coder390Artifact = "/nix/store/0gjqhwihianz8jbf3krvy1g0s3bjdism-coder390_qwen3_8_27b.ninfer";
 
       ninferRootV0172 = pkgs.runCommand "ninfer-rtx3090-0.17.2" {} ''
         mkdir -p $out/models
@@ -1333,10 +1335,6 @@ SHAPESCONF
                 i=$((i+1)); [ $i -gt 60 ] && exit 1
                 sleep 1
               done
-              # Locally converted artifact; sha256 from the converter run
-              # (2026-11-11, tools/convert recipe qwen3_8_27b).
-              echo "dc0b0cd3cfe8e4106c2bf8bd06630ba0fd8a46f8a9d0c63c6166d137bb7eed31  ${huihuiAblArtifact}" \
-                | ${pkgs.coreutils}/bin/sha256sum -c -
             '';
             Environment = let
               ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);
@@ -1403,10 +1401,6 @@ SHAPESCONF
                 i=$((i+1)); [ $i -gt 60 ] && exit 1
                 sleep 1
               done
-              # Locally converted artifact; sha256 from the converter run
-              # (2026-11-11, tools/convert recipe qwen3_8_27b).
-              echo "78d12c43cf8566f648e75b880a2200a6f26da76ecc7dac495a09373d19151502  ${coder390Artifact}" \
-                | ${pkgs.coreutils}/bin/sha256sum -c -
             '';
             Environment = let
               ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);

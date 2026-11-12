@@ -1,0 +1,60 @@
+{
+  "model": "Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+  "source_repo": "nerkyor",
+  "source_rev": "7bb84cd2cb5a3754facb1b1a09bd8e85fa4e152b",
+  "source_files": [
+    "BF16/model-00001-of-00002.safetensors",
+    "BF16/model-00002-of-00002.safetensors",
+    "BF16/mtp-bf16.safetensors",
+    "BF16/DFlash2-FP8/model.safetensors",
+    "BF16/config.json",
+    "BF16/chat_template.jinja",
+    "BF16/tokenizer.json"
+  ],
+  "checksums_verified": "BF16/SHA256SUMS (all OK, 2026-11-11)",
+  "dflash2_note": "FP8-block (weight_scale_inv 128x128) dequantized to bf16 via defp8.py before import; converter has no fp8-block importer; draft is re-quantized Q8 by the recipe, so no fidelity path is lost",
+  "imatrix": "huihui-ai/Huihui-Qwen3.8-27B-Coder390-EfficientThink-abliterated-GGUF abliterated-imatrix1.gguf (prebuilt llama.cpp imatrix on the abliterated sibling of the same fine-tune; documented substitution)",
+  "recipe": "qwen3_8_27b",
+  "components": "text,vision,mtp,dflash2",
+  "proposal": true,
+  "converter": "ashalliants/ninfer-3090 tools/convert @ /home/ayin/models/q27-bench/ninfer-convert",
+  "date": "2026-11-11",
+  "artifact": {
+    "path": "/home/ayin/models/q27-bench/downloads/coder390/coder390_qwen3_8_27b.ninfer",
+    "sha256": "78d12c43cf8566f648e75b880a2200a6f26da76ecc7dac495a09373d19151502",
+    "conversion": "v3 (2026-11-12): resources overridden = tokenizer.json (base Qwen3.8-27B) AND tokenizer_config.json (base Qwen3.8-27B, supplies added_tokens_decoder required by engine v0.17.2 tokenizer registry)",
+    "size_gib": 17.68
+  },
+  "tokenizer_note": "v1 (artifact_id e8612cdb..., sha256 7e3e2a50...) shipped coder390's own tokenizer.json whose pre_tokenizer regex (\\p{L} without \\p{M}) the engine's Qwen tokenizer reader rejects ('pre_tokenizer.Split is not supported'); v2 overrides the tokenizer.json resource with the base Qwen/Qwen3.8-27B tokenizer (semantically identical: same 248044 vocab, same merges modulo list/str format, added_tokens equal); v3 additionally overrides tokenizer_config.json with the base Qwen3.8-27B one (engine 0.17.2 requires added_tokens_decoder; eos/bos/pad/model_max_length verified identical before override)",
+  "attempts": [
+    "v2 341c6ab3... failed boot: missing added_tokens_decoder in tokenizer_config.json (engine FATAL at planning runtime)"
+  ],
+  "matrix": {
+    "date": "2026-11-12",
+    "engine": "0.17.2",
+    "spec": "dflash2",
+    "fallback": "off",
+    "cells": {
+      "16384": {
+        "c_max": 6,
+        "peak_mib": 20570
+      },
+      "32768": {
+        "c_max": 5,
+        "peak_mib": 20572
+      },
+      "65536": {
+        "c_max": 4,
+        "peak_mib": 20876
+      },
+      "131072": {
+        "c_max": 3,
+        "peak_mib": 21708
+      },
+      "262144": {
+        "c_max": null
+      }
+    },
+    "default": "4x65536"
+  }
+}
