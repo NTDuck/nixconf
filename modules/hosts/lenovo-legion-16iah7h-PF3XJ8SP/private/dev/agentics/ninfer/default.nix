@@ -331,7 +331,7 @@
             "qwen3.8-27b|Qwen 3.8 27B|ninfer-df2.service|${toString ninferPort}"
             "qwen3.8-27b-abliterated|Huihui Qwen 3.8 27B Abliterated|ninfer-df2-abliterated.service|${toString ninferPort}"
             "qwen3.8-27b-coder390|Qwen 3.8 27B Coder390 EfficientThink Opus5.5 GPT6Astra Grok4.7 DSV4Pro K3 SFT RLOO|ninfer-df2-coder390.service|${toString ninferPort}"
-            "qwen3.8-27b-turbo|Qwen 3.8 27B Turbo (Heretic)|ninfer-df2-turbo.service|${toString ninferPort}"
+            "qwen3.8-27b-turbo|Qwen 3.8 27B TURBO Fable Cold Fusion 735 882 Heretic Uncensored NM DAU|ninfer-df2-turbo.service|${toString ninferPort}"
           )
 
           # Measured max concurrency per context on the RTX 3090 (2026-11-11,

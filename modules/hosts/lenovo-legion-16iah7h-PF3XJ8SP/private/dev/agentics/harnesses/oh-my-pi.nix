@@ -214,7 +214,7 @@
             }
             {
               id = "qwen3.8-27b-turbo";
-              name = "Qwen 3.8 27B Turbo (Heretic)";
+              name = "Qwen 3.8 27B TURBO Fable Cold Fusion 735 882 Heretic Uncensored NM DAU";
               reasoning = true;
               input = ["text" "image"];
               contextWindow = 262144;
