@@ -182,14 +182,14 @@
       # (6.7 GiB weights). Manifest hash from the release README
       # (WarlaxZ/Ternary-Bonsai-2-27B-NInfer-3090, verified locally with
       # sha256sum before packaging).
-      # 2026-11-11 CODER390 REJECTED: Qwen3.8-27B-Coder390-EfficientThink
-      # (nerkyor's GGUF-NInfer Q3LynnStyle-Q8MTP, sha256
-      # 815241ba...) FATALs on every store engine — its 263 K-quant
-      # tensors use layout "gguf_blocks_v1", which no ninfer release
-      # implements (0.17.2: "weight/000130: unknown tensor layout";
-      # unit coder390.service never engine-ready; no converter ships).
-      # Re-add only after upstream ships gguf-block support or an
-      # official GGUF->v3 converter. Sweep ladder + findings:
+      # 2026-11-11 CODER390: the ORIGINAL pin (nerkyor's GGUF-NInfer
+      # Q3LynnStyle-Q8MTP, sha256 815241ba...) was rejected — its 263
+      # K-quant tensors use layout "gguf_blocks_v1", which no ninfer
+      # release implements (0.17.2: "weight/000130: unknown tensor
+      # layout"). Same day, RE-CONVERTED from the official HF BF16
+      # (see coder390Artifact + conversion-assessment.md); the new
+      # artifact uses the dense recipe and loads natively. Failure
+      # ladder + findings for the rejected artifact remain in
       # benchmarks/engines-2026-10/results/sweep-coder390-2026-11-11.log
       ninferBonsai2Model = pkgs.fetchurl {
         url = "https://huggingface.co/WarlaxZ/Ternary-Bonsai-2-27B-NInfer-3090/resolve/main/bonsai2_27b.ninfer";
@@ -232,6 +232,14 @@
       # NINFER_SPEC=mtp (turbo-unit shape), not dflash2 (dense lane).
       huihuiAblArtifact = "/home/ayin/models/q27-bench/downloads/huihui_abl_qwen3_8_27b.ninfer";
 
+      # Qwen3.8-27B-Coder390-EfficientThink (2026-11-11 re-conversion):
+      # nerkyor HF BF16 -> tools/convert recipe qwen3_8_27b, components
+      # text,vision,mtp,dflash2, imatrix from the abliterated coder390
+      # sibling (documented substitution — conversion-assessment.md).
+      # Same local-path pattern as huihuiAblArtifact (~20G file, store
+      # ingestion OOMs this box).
+      coder390Artifact = "/home/ayin/models/q27-bench/downloads/coder390/coder390_qwen3_8_27b.ninfer";
+
       ninferRootV0172 = pkgs.runCommand "ninfer-rtx3090-0.17.2" {} ''
         mkdir -p $out/models
         cp -r ${ninferReleaseV0172}/* $out/
@@ -259,18 +267,21 @@
         # huihui_abl artifact NOT in the store: 16.76 GB local file,
         # referenced by path (see huihuiAblArtifact above).
       '';
-      # The four non-bundled ldd deps of the 0.15.0 binary (skill:
+      # The non-bundled ldd deps of the engine binaries (skill:
       # ninfer-ash-hostkv-clamp). prism-llamacpp-libs covers
       # cublas/cudart, the driver package covers libcuda (via
       # /run/opengl-driver below), ffmpeg-full covers av*/swscale, curl
-      # covers libcurl.so.4. Pin the exact store paths the benchmark
-      # verified (engines.py LD_LIBRARY_PATH, 2026-10-08/09 sweeps).
+      # covers libcurl.so.4. Store paths re-pinned 2026-11-12 after a
+      # nix GC orphaned the 2026-10 pins (fresh unit starts died on
+      # libcublas.so.12); the new paths carry indirect GC roots in
+      # ~/.local/share/nix-gcroots/ninfer-* so they survive GCs until
+      # the next flake rebuild repins them.
       ninferLibs = [
         "/run/opengl-driver/lib"
-        "/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib"
-        "/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib"
-        "/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib"
-        "/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib"
+        "/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib"
+        "/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib"
+        "/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib"
+        "/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib"
       ];
 
       # Port the ninfer-serve listens on. Single source of truth for
@@ -314,6 +325,7 @@
             "bonsai2-27b-abliterated|Ternary Bonsai 2 27B Abliterated (Heretic)|bonsai2-abliterated.service|${toString ninferPort}"
             "qwen3.8-27b|Qwen 3.8 27B DFlash2|ninfer-df2.service|${toString ninferPort}"
             "qwen3.8-27b-abliterated|Qwen 3.8 27B Abliterated (Huihui)|ninfer-df2-abliterated.service|${toString ninferPort}"
+            "qwen3.8-27b-coder390|Qwen 3.8 27B Coder390 (EfficientThink)|ninfer-df2-coder390.service|${toString ninferPort}"
             "qwen3.8-27b-turbo|Qwen 3.8 27B Turbo (Heretic)|ninfer-df2-turbo.service|${toString ninferPort}"
           )
 
@@ -351,6 +363,17 @@
             # GiB more per shape). Unverified on this artifact — first
             # load must confirm before trusting C8 at 65k+.
             "qwen3.8-27b-abliterated|16384:8:19562,32768:8:19860,65536:8:20454,131072:8:21644,262144:5:23526"
+            # qwen3.8-27b-coder390: nerkyor HF BF16 -> tools/convert
+            # recipe qwen3_8_27b (text,vision,mtp,dflash2; imatrix from
+            # the abliterated coder390 sibling — conversion-assessment.
+            # md). Dense-family weights (17.2 GiB quantized) + 5-layer
+            # dflash2 draft. MEASURED 2026-11-12 smoke ladder on engine
+            # v0.17.2, FALLBACK=off (VRAM peaks in MiB; each max-C cell
+            # boot-verified, boundary cells die on reservation):
+            # 16k C6 ok / C7 7.39G res ✗; 32k C5 ok / C6 6.81G ✗;
+            # 65k C4 ok / C5 7.53G ✗; 128k C3 ok (C2 21532 ok) /
+            # C4 7.63G ✗; 262k none (C1 6.94G ✗ by 157 MiB).
+            "qwen3.8-27b-coder390|16384:6:20570,32768:5:20572,65536:4:20876,131072:3:21708"
           )
           # Unit default shape (what Environment= in the unit pins); a
           # --context equal to this clears the override file instead of
@@ -370,6 +393,9 @@
           default_shape_for() {
             case "$1" in
               bonsai2-27b|bonsai2-27b-abliterated) echo "8x262144" ;;
+              # coder390: measured champion C4x65k (dense 17.2 GiB
+              # weights; C6x65k would OOM — see SHAPES row).
+              qwen3.8-27b-coder390) echo "4x65536" ;;
               *) echo "''${DEFAULT_CONC}x''${DEFAULT_CTX}" ;;
             esac
           }
@@ -530,6 +556,7 @@
             mpath="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.model_path // empty' 2>/dev/null || true )"
             if [ -n "$mpath" ]; then
               case "$mpath" in
+                *coder390*) echo "qwen3.8-27b-coder390"; return 0 ;;
                 *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
                 *huihui_abl*) echo "qwen3.8-27b-abliterated"; return 0 ;;
                 *bonsai2_27b_heretic*) echo "bonsai2-27b-abliterated"; return 0 ;;
@@ -572,7 +599,7 @@
                 fi
               done
               rm -f "''$state_file" 2>/dev/null || true
-              rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for bonsai2)" "''$(shape_env_for bonsai2-abliterated)" 2>/dev/null || true
+              rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for ninfer-df2-abliterated)" "''$(shape_env_for ninfer-df2-coder390)" "''$(shape_env_for bonsai2)" "''$(shape_env_for bonsai2-abliterated)" 2>/dev/null || true
               echo "✔ Unloaded all models (switched to <nil>)"
               return 0
             fi
@@ -593,7 +620,7 @@
 
             if [ -z "''$found_svc" ]; then
               echo "error: unknown model ''$target" >&2
-              echo "       available: bonsai2-27b, bonsai2-27b-abliterated, qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.8-27b-turbo, <nil>" >&2
+              echo "       available: bonsai2-27b, bonsai2-27b-abliterated, qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.8-27b-coder390, qwen3.8-27b-turbo, <nil>" >&2
               exit 1
             fi
 
@@ -863,6 +890,7 @@
               'bonsai2-27b'
               'bonsai2-27b-abliterated'
               'qwen3.8-27b'
+              'qwen3.8-27b-coder390'
               'qwen3.8-27b-turbo'
               '\<nil\>'
               'nil'
@@ -1187,6 +1215,82 @@
           };
         };
 
+        # Qwen3.8-27B Coder390 (EfficientThink) daemon (port 8092),
+        # on-demand (2026-11-11 user request: retry the rejected model
+        # with a proper conversion). Locally converted artifact (see
+        # coder390Artifact): full DFlash2 bundle (text,vision,mtp,
+        # dflash2 — mirrors the official qwen3_8_27b.ninfer shape), so
+        # NINFER_SPEC=dflash2 — the dense unit's winner lane. Same
+        # shape contract (C6x65k default); SHAPES row is UNMEASURED
+        # until sweep_coder390.py runs.
+        systemd.services.ninfer-df2-coder390 = {
+          description = "ninfer 0.15.0 Qwen3.8-27B Coder390 (EfficientThink)";
+          after = ["network-online.target"];
+          wants = ["network-online.target"];
+          conflicts = [
+            "bonsai2.service"
+            "bonsai2-abliterated.service"
+            "ninfer-df2.service"
+            "ninfer-df2-abliterated.service"
+            "ninfer-df2-turbo.service"
+          ];
+          serviceConfig = {
+            Type = "simple";
+            User = "ayin";
+            WorkingDirectory = ninferRoot;
+            ExecCondition = pkgs.writeShellScript "ninfer-df2-coder390-boot-gate" ''
+              i=0
+              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
+                i=$((i+1)); [ $i -gt 60 ] && exit 1
+                sleep 1
+              done
+              # Locally converted artifact; sha256 from the converter run
+              # (2026-11-11, tools/convert recipe qwen3_8_27b).
+              echo "78d12c43cf8566f648e75b880a2200a6f26da76ecc7dac495a09373d19151502  ${coder390Artifact}" \
+                | ${pkgs.coreutils}/bin/sha256sum -c -
+            '';
+            Environment = let
+              ld = lib.concatStringsSep ":" (ninferLibs ++ ["/run/opengl-driver/lib"]);
+            in [
+              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
+              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
+              "LD_LIBRARY_PATH=${ld}"
+              "NINFER_SPEC=dflash2"
+              "NINFER_HOST=0.0.0.0"
+              "NINFER_PORT=${toString ninferPort}"
+              "NINFER_FALLBACK=off"
+              "NINFER_MODEL_ID=qwen3.8-27b-coder390"
+              # Measured sweep (2026-11-12 smoke ladder, FALLBACK=off):
+              # 16k→C6 (20570 MiB), 32k→C5 (20572), 65k→C4 (20876),
+              # 128k→C3 (21708; C2 also fits 21532), 262k→none (C1
+              # dies by 157 MiB). Dense 17.2 GiB weights leave ~6.78
+              # GiB runtime; the dflash2 floor is ~6.6 GiB + ~75 MiB/lane
+              # + ~21 MiB/kctx. Champion default = C4x65k (deepest ctx
+              # at the highest C that holds it).
+              "NINFER_CONCURRENCY=4"
+              "NINFER_CONTEXT=65536"
+              "NINFER_KV_CAPACITY=65536"
+              "NINFER_HOST_STATE_SLOTS=4"
+              "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
+            ];
+            # Same per-shape override contract as ninfer-df2 above.
+            EnvironmentFile = "-/run/user/1000/ninfer/shape-ninfer-df2-coder390.env";
+            ExecStart = pkgs.writeShellScript "ninfer-df2-coder390-start" ''
+              export NINFER_MODEL="${coder390Artifact}"
+              exec ${ninferRoot}/run.sh qwen38-27b tuned
+            '';
+            MemoryHigh = "10G";
+            MemoryMax = "12G";
+            Restart = "on-failure";
+            RestartSec = "10s";
+            # NO ProtectHome: the artifact lives at ~/models (see
+            # coder390Artifact) and the engine + boot gate must read it.
+            ProtectSystem = "strict";
+            NoNewPrivileges = true;
+            PrivateTmp = true;
+          };
+        };
+
         # Ternary Bonsai 2 27B (port 8092), on-demand: engine v0.17.2 +
         # 9.5 GB ternary artifact, switched to with `ninfer bonsai2-27b`.
         # MTP spec (the shape swept 2026-11-11: C8 holds at every
@@ -1349,13 +1453,6 @@
             PrivateTmp = true;
           };
         };
-
-        # Qwen3.8-27B-Coder390 unit REMOVED 2026-11-11: its artifact
-        # (gguf_blocks_v1 K-quants) FATALs on engine 0.17.2 ("weight/
-        # 000130: unknown tensor layout") — never engine-ready. Re-add
-        # with a loadable artifact; see the CODER390 REJECTED comment
-        # above and benchmarks/engines-2026-10/results/
-        # sweep-coder390-2026-11-11.log for the full findings.
 
         # Tailscale firewall: open single ninfer port (:8092).
         networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
