@@ -57,7 +57,7 @@ ENGINES = {
                 "--network", "host",
                 "--device", "/dev/nvidia1", "--device", "/dev/nvidiactl",
                 "--device", "/dev/nvidia-uvm",
-                "-v", "/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/drv:ro",
+                "-v", "/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/drv:ro",
                 "-v", "/home/ayin/models/ninfer-bench/Ternary-Bonsai-2-27B-ninfer-v3.ninfer:/models/bonsai2.ninfer:ro",
                 "-e", "LD_LIBRARY_PATH=/drv", "-e", "CUDA_VISIBLE_DEVICES=0",
                 "--entrypoint", "/opt/ninfer/sm86/ninfer-serve",
@@ -84,7 +84,7 @@ ENGINES = {
         # covers cublas/cudart, nvidia-x11 covers libcuda, ffmpeg-full covers
         # av*/swscale, curl store path covers libcurl.
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8092", "NINFER_FALLBACK": "off",
@@ -99,7 +99,7 @@ ENGINES = {
     "ashalliants-mtp": {
         "model": "auto", "port": 8096,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8096", "NINFER_FALLBACK": "off",
@@ -116,7 +116,7 @@ ENGINES = {
     "ashalliants-df2-128k": {
         "model": "auto", "port": 8120,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8120", "NINFER_FALLBACK": "off",
@@ -129,7 +129,7 @@ ENGINES = {
     "ashalliants-mtp-128k": {
         "model": "auto", "port": 8121,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8121", "NINFER_FALLBACK": "off",
@@ -144,7 +144,7 @@ ENGINES = {
     "ashalliants-df2-65k-c8": {
         "model": "auto", "port": 8122,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8122", "NINFER_FALLBACK": "off",
@@ -157,7 +157,7 @@ ENGINES = {
     "ashalliants-mtp-65k-c8": {
         "model": "auto", "port": 8123,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8123", "NINFER_FALLBACK": "off",
@@ -173,7 +173,7 @@ ENGINES = {
     "ashalliants-df2-65k-c8-reduced": {
         "model": "auto", "port": 8124,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8124", "NINFER_FALLBACK": "off",
@@ -186,7 +186,7 @@ ENGINES = {
     "ashalliants-mtp-65k-c8-reduced": {
         "model": "auto", "port": 8125,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8125", "NINFER_FALLBACK": "off",
@@ -202,7 +202,7 @@ ENGINES = {
     "ashalliants-df2-49k-c8": {
         "model": "auto", "port": 8126,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8126", "NINFER_FALLBACK": "off",
@@ -215,7 +215,7 @@ ENGINES = {
     "ashalliants-mtp-49k-c8": {
         "model": "auto", "port": 8127,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8127", "NINFER_FALLBACK": "off",
@@ -231,7 +231,7 @@ ENGINES = {
     "ashalliants-df2-65k-c6": {
         "model": "auto", "port": 8128,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8128", "NINFER_FALLBACK": "off",
@@ -244,7 +244,7 @@ ENGINES = {
     "ashalliants-mtp-65k-c6": {
         "model": "auto", "port": 8129,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8129", "NINFER_FALLBACK": "off",
@@ -258,7 +258,7 @@ ENGINES = {
     "ashalliants-016-df2-65k-c4": {
         "model": "auto", "port": 8130,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH16}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8130", "NINFER_FALLBACK": "off",
@@ -271,7 +271,7 @@ ENGINES = {
     "ashalliants-016-df2-128k-c2": {
         "model": "auto", "port": 8131,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH16}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8131", "NINFER_FALLBACK": "off",
@@ -284,7 +284,7 @@ ENGINES = {
     "ashalliants-016-df2-32k-c6": {
         "model": "auto", "port": 8132,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH16}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8132", "NINFER_FALLBACK": "off",
@@ -298,7 +298,7 @@ ENGINES = {
     "ashalliants-35b-mtp": {
         "model": "auto", "port": 8140,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen36-35b-a3b", "tuned"],
         "env": {"NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8140", "NINFER_FALLBACK": "off",
@@ -311,7 +311,7 @@ ENGINES = {
     "ashalliants-35b-mtp-c4": {
         "model": "auto", "port": 8141,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen36-35b-a3b", "tuned"],
         "env": {"NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8141", "NINFER_FALLBACK": "off",
@@ -324,7 +324,7 @@ ENGINES = {
     "ashalliants-35b-mtp-128k": {
         "model": "auto", "port": 8142,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen36-35b-a3b", "tuned"],
         "env": {"NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8142", "NINFER_FALLBACK": "off",
@@ -337,7 +337,7 @@ ENGINES = {
     "ashalliants-35b-mtp-256k": {
         "model": "auto", "port": 8143,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen36-35b-a3b", "tuned"],
         "env": {"NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8143", "NINFER_FALLBACK": "off",
@@ -351,7 +351,7 @@ ENGINES = {
     "ashalliants-df2-32k": {
         "model": "auto", "port": 8135,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8135", "NINFER_FALLBACK": "off",
@@ -364,7 +364,7 @@ ENGINES = {
     "ashalliants-df2-65k": {
         "model": "auto", "port": 8136,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8136", "NINFER_FALLBACK": "off",
@@ -377,7 +377,7 @@ ENGINES = {
     "ashalliants-df2-256k": {
         "model": "auto", "port": 8137,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
                 "NINFER_PORT": "8137", "NINFER_FALLBACK": "off",
@@ -396,7 +396,7 @@ ENGINES = {
     "ashalliants-turbo-65k": {
         "model": "auto", "port": 8140,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": f"{ASH}/models/qwen38_turbo_sm86.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_DRAFT_TOKENS": "3",
@@ -411,7 +411,7 @@ ENGINES = {
     "ashalliants-turbo-96k": {
         "model": "auto", "port": 8141,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": f"{ASH}/models/qwen38_turbo_sm86.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_DRAFT_TOKENS": "3",
@@ -426,7 +426,7 @@ ENGINES = {
     "ashalliants-turbo-128k": {
         "model": "auto", "port": 8142,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": f"{ASH}/models/qwen38_turbo_sm86.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_DRAFT_TOKENS": "3",
@@ -441,7 +441,7 @@ ENGINES = {
     "ashalliants-turbo-192k": {
         "model": "auto", "port": 8143,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": f"{ASH}/models/qwen38_turbo_sm86.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_DRAFT_TOKENS": "3",
@@ -456,7 +456,7 @@ ENGINES = {
     "ashalliants-turbo-256k": {
         "model": "auto", "port": 8144,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": f"{ASH}/models/qwen38_turbo_sm86.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_DRAFT_TOKENS": "3",
@@ -478,7 +478,7 @@ ENGINES = {
     "ashalliants-coder390-16k": {
         "model": "auto", "port": 8150,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib:/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib",
+                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib:/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib",
                      "/nix/store/7rhpaphz6jji0gr6i30n0cmzklpd7kbq-ninfer-rtx3090-0.17.2/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": "/nix/store/7rhpaphz6jji0gr6i30n0cmzklpd7kbq-ninfer-rtx3090-0.17.2/models/coder390_q3_27b.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_DRAFT_TOKENS": "3",
@@ -493,7 +493,7 @@ ENGINES = {
     "ashalliants-coder390-32k": {
         "model": "auto", "port": 8151,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib:/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib",
+                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib:/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib",
                      "/nix/store/7rhpaphz6jji0gr6i30n0cmzklpd7kbq-ninfer-rtx3090-0.17.2/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": "/nix/store/7rhpaphz6jji0gr6i30n0cmzklpd7kbq-ninfer-rtx3090-0.17.2/models/coder390_q3_27b.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_DRAFT_TOKENS": "3",
@@ -508,7 +508,7 @@ ENGINES = {
     "ashalliants-coder390-65k": {
         "model": "auto", "port": 8152,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib:/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib",
+                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib:/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib",
                      "/nix/store/7rhpaphz6jji0gr6i30n0cmzklpd7kbq-ninfer-rtx3090-0.17.2/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": "/nix/store/7rhpaphz6jji0gr6i30n0cmzklpd7kbq-ninfer-rtx3090-0.17.2/models/coder390_q3_27b.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_DRAFT_TOKENS": "3",
@@ -523,7 +523,7 @@ ENGINES = {
     "ashalliants-coder390-128k": {
         "model": "auto", "port": 8153,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib:/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib",
+                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib:/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib",
                      "/nix/store/7rhpaphz6jji0gr6i30n0cmzklpd7kbq-ninfer-rtx3090-0.17.2/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": "/nix/store/7rhpaphz6jji0gr6i30n0cmzklpd7kbq-ninfer-rtx3090-0.17.2/models/coder390_q3_27b.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_DRAFT_TOKENS": "3",
@@ -538,7 +538,7 @@ ENGINES = {
     "ashalliants-coder390-256k": {
         "model": "auto", "port": 8154,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib:/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib",
+                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib:/nix/store/2a69456iqj6rzzc2ys7l2yypsv1w6l5m-zstd-1.5.7/lib",
                      "/nix/store/7rhpaphz6jji0gr6i30n0cmzklpd7kbq-ninfer-rtx3090-0.17.2/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": "/nix/store/7rhpaphz6jji0gr6i30n0cmzklpd7kbq-ninfer-rtx3090-0.17.2/models/coder390_q3_27b.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_DRAFT_TOKENS": "3",
@@ -574,7 +574,7 @@ ENGINES = {
         # (18210749936 B); v2 original deleted after upgrade.
         "model": "auto", "port": 8093,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": f"{ASH}/models/swift_qwen3_8_27b_v3.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
@@ -638,7 +638,7 @@ ENGINES = {
     "coder390": {
         "model": "auto", "port": 8110,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": f"{ASH}/models/coder390_dflash2.ninfer",
                 "NINFER_SPEC": "dflash2", "NINFER_HOST": "127.0.0.1",
@@ -655,7 +655,7 @@ ENGINES = {
     "swift15": {
         "model": "auto", "port": 8111,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": f"{ASH}/models/swift15_qwen3_8_27b.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
@@ -669,7 +669,7 @@ ENGINES = {
     "huihui-abl": {
         "model": "auto", "port": 8112,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": f"{ASH}/models/huihui_abl_qwen3_8_27b.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
@@ -683,7 +683,7 @@ ENGINES = {
     "obliterated": {
         "model": "auto", "port": 8113,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "qwen38-27b", "tuned"],
         "env": {"NINFER_MODEL": f"{ASH}/models/obliterated_qwen3_8_27b.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",
@@ -697,7 +697,7 @@ ENGINES = {
     "hemmingway-1-abliterated": {
         "model": "auto", "port": 8120,
         "launcher": ["env",
-                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/pck9wssp6ca6dfxhpz15c8p67z4r59bg-prism-llamacpp-libs/lib:/nix/store/3qixz64pvv7glvnhvqsib5fwb80rrfca-nvidia-x11-595.104.02/lib:/nix/store/rcz6a5zlg8vqx689qsxh1r4m8v3pn3ic-ffmpeg-full-6.1.6-lib/lib:/nix/store/cjxc4x3cnlzlcdrsi92k5i7pkn78ixnz-curl-8.21.0/lib",
+                     "LD_LIBRARY_PATH=/run/opengl-driver/lib:/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib:/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib:/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib:/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib",
                      f"{ASH}/run.sh", "hemmingway-1-abliterated", "tuned"],
         "env": {"NINFER_MODEL": f"{ASH}/models/hemmingway_1_heretic.ninfer",
                 "NINFER_SPEC": "mtp", "NINFER_HOST": "127.0.0.1",

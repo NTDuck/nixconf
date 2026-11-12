@@ -1,0 +1,32 @@
+# Coder390 C_max x ctx matrix — boot-verified smoke ladder, 2026-11-12
+# Artifact: coder390_qwen3_8_27b.ninfer v3 (sha256 78d12c43..., 17.2 GiB weights)
+# Engine: ninfer 0.17.2 RTX 3090, NINFER_SPEC=dflash2, NINFER_FALLBACK=off
+# Method: boot each cell (FALLBACK=off = honest reservation), 1 completion + nvidia-smi peak
+# Runtime reservation boundary: 6781140992 B available (24.5 GiB card - 17.2 GiB weights)
+#
+# ctx      C_max  ready-peak-MiB  boundary-fail
+# 16384    6      20570           C7 res 7.39G, C8 res 8.27G
+# 32768    5      20572           C6 res 6.81G (dies by 32 MiB)
+# 65536    4      20876           C5 res 7.53G
+# 131072   3      21708           C4 res 7.63G; C2 also fits (21532)
+# 262144   none   -               C1 res 6.94G (dies by 157 MiB)
+#
+# Champion default pinned: C4x65536 (deepest ctx at highest C that holds it).
+# Reservation model: ~6.6 GiB dflash2 floor + ~75 MiB/lane + ~21 MiB/kctx (dense
+# 5-layer draft head). 262k unreachable: KV needs 1.55 GiB more than the floor leaves.
+#
+# Notes:
+# - v1 artifact (tokenizer.json from source repo) FATAL: pre_tokenizer Segmented
+# - v2 (base tokenizer.json override) FATAL: missing added_tokens_decoder in
+#   tokenizer_config.json -> v3 adds tokenizer_config.json override. Both fixed
+#   by resource overrides at convert time; weights unchanged.
+# - Systemic: 2026-11-11 nix GC orphaned the pinned engine lib store paths
+#   (prism-llamacpp-libs, nvidia-x11-595.104.02, ffmpeg-full-6.1.6-lib,
+#   curl-8.21.0). Fresh unit starts died on libcublas.so.12. Re-pinned module
+#   ninferLibs to live paths (md1vdf5hlk prism, sfn3qmgia nvidia-x11-595.112.07,
+#   jvqpbsb5 ffmpeg-full-6.1.1-lib, 36alc2m curl-8.22.0) + indirect GC roots in
+#   ~/.local/share/nix-gcroots/ninfer-*. engines.py sweep templates updated too.
+#
+# Post-sweep (02:07): turbo restored manually on 8092 (LD fix + NINFER_SPEC=mtp).
+# nixos-rebuild test built gen 3rjqwlp76...; interactive `switch-to-configuration test`
+# pending (polkit denied non-TTY systemd-run). After switch, units carry live lib pins.

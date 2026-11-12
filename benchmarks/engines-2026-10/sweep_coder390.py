@@ -1,67 +1,53 @@
 #!/usr/bin/env python3
-"""Coder390 concurrency x context VRAM sweep (2026-11-11 user task).
+"""Coder390 concurrency x context sweep (2026-11-11 user task).
 
-BLOCKED 2026-11-11 (see results/sweep-coder390-2026-11-11.log): the
-pinned artifact's 263 gguf_blocks_v1 K-quant tensors load on no ninfer
-engine in the store; the system unit was removed from the config the
-same day (ninfer/default.nix CODER390 REJECTED). Keep this ladder for
-the rerun once upstream ships gguf-block support or an official
-GGUF->v3 converter and a loadable artifact is re-pinned.
+Question: what is the {max concurrency} x {context} matrix for the
+freshly converted qwen3.8-27b-coder390 (dense 19G weights + 5-layer
+dflash2 draft, 0.17.2 engine)? Dense-family expectation: envelope
+C8x16k..C6x65k (weights leave less KV headroom than bonsai2, more than
+turbo at deep ctx because the 5L draft costs less than K=7).
 
-Question: what is the maximal {max concurrency} x {context} matrix for
-qwen3.8-27b-coder390 (Q3 LynnStyle + Q8 MTP, 16.6 GiB weights) on the
-RTX 3090? Fills the intentionally-empty SHAPES row in the ninfer CLI.
+Cells ladder from the production dense shape downward as the KV budget
+allows (rk4v4 ~12 KiB/token). NINFER_FALLBACK=off keeps each cell honest:
+OOM at startup = the cell does not exist for this artifact.
 
-Ladder: C8 down (engine's hard --max-concurrency cap is 8). Weights sit
-between bonsai2 (6.7 GiB, C8 holds at every ctx) and dense qwen3.8 (19
-GiB, C8 OOMs above 16k) — the expected envelope is C8x16k..C8x65k, so
-each context starts at C8 and steps down on OOM/refusal. ctx=0 cells
-are the fresh/short-prompt screen (sweep_turbo 2026-11-07 convention).
-
-Cells marked overflow on CUDA OOM / engine refusal — same done-key rule
-as run_sweep, so a re-run resumes instead of re-burning 20-30 min cells.
-
-Usage: python3 sweep_coder390.py [--cells tag:ctx:conc,...]
+Usage: python3 sweep_coder390.py [--cells tag,ctx,conc ...]
 """
-import argparse, json, sys
+import argparse, sys
 from pathlib import Path
 
 import bench, engines
 
 RESULTS = Path(__file__).resolve().parent / "results"
+ART = "/home/ayin/models/q27-bench/downloads/coder390/coder390_qwen3_8_27b.ninfer"
+ENGINE = "0.17.2"  # nix store hash resolved by engines.py ASH; local artifact overrides NINFER_MODEL
 
-# (tag, ctx, conc) — fresh screen first, then the deep cell per context.
-# Each ctx ladder: C8 first; on OOM step down to C4/C2/C1.
 CELLS = [
-    ("ashalliants-coder390-16k",  0,      8),
-    ("ashalliants-coder390-16k",  16384,  8),
-    ("ashalliants-coder390-32k",  32768,  8),
-    ("ashalliants-coder390-65k",  65536,  8),
-    ("ashalliants-coder390-128k", 131072, 4),
-    ("ashalliants-coder390-256k", 262144, 2),
+    ("ashalliants-coder390-16k-c8",  16384,  8),
+    ("ashalliants-coder390-32k-c8",  32768,  8),
+    ("ashalliants-coder390-32k-c7",  32768,  7),
+    ("ashalliants-coder390-65k-c8",  65536,  8),
+    ("ashalliants-coder390-65k-c6",  65536,  6),
+    ("ashalliants-coder390-65k-c4",  65536,  4),
+    ("ashalliants-coder390-128k-c4", 131072, 4),
+    ("ashalliants-coder390-128k-c2", 131072, 2),
+    ("ashalliants-coder390-256k-c2", 262144, 2),
+    ("ashalliants-coder390-256k-c1", 262144, 1),
 ]
-
-OOM_MARKERS = ("out of memory", "cudaMalloc", "OOM", "kv cache",
-               "cannot serve", "failed to allocate")
 
 
 def done_keys():
-    """Cells already measured OR marked overflow (run_sweep rule)."""
     keys = set()
-    p = RESULTS / "cells.jsonl"
-    if p.exists():
-        for line in p.read_text().splitlines():
-            try:
-                r = json.loads(line)
-                keys.add((r["tag"], r["ctx"], r["conc"]))
-            except Exception:
-                pass
-    ov = RESULTS / "overflow.jsonl"
-    if ov.exists():
-        for line in ov.read_text().splitlines():
-            if line.strip():
-                o = json.loads(line)
-                keys.add((o["tag"], o["ctx"], o["conc"]))
+    for name in ("cells.jsonl", "overflow.jsonl"):
+        p = RESULTS / name
+        if p.exists():
+            import json
+            for line in p.read_text().splitlines():
+                try:
+                    r = json.loads(line)
+                    keys.add((r["tag"], r["ctx"], r["conc"]))
+                except Exception:
+                    pass
     return keys
 
 
@@ -79,47 +65,40 @@ def main():
             tag, ctx, conc = spec.split(":")
             cells.append((tag, int(ctx), int(conc)))
 
-    keys = done_keys()
-    log = (RESULTS / "sweep-coder390-2026-11-11.log").open("a")
     for tag, ctx, conc in cells:
-        if (tag, ctx, conc) in keys:
-            line = f"skip done {tag} ctx={ctx} c={conc}"
-            print(line, flush=True); log.write(line + "\n"); log.flush()
+        if (tag, ctx, conc) in done_keys():
+            print(f"skip done {tag} ctx={ctx} c={conc}", flush=True)
             continue
-        cfg = engines.get(tag)
-        line = f"=== {tag} ctx={ctx} c={conc} ==="
-        print(line, flush=True); log.write(line + "\n"); log.flush()
+        cfg = dict(engines.get("ashalliants-df2-65k-c6"))
+        cfg = dict(cfg)
+        cfg["env"] = dict(cfg["env"])
+        cfg["port"] = 8144
+        cfg["env"]["NINFER_MODEL"] = ART
+        cfg["env"]["NINFER_PORT"] = "8144"
+        cfg["env"]["NINFER_CONCURRENCY"] = str(conc)
+        cfg["env"]["NINFER_CONTEXT"] = str(ctx)
+        cfg["env"]["NINFER_KV_CAPACITY"] = str(ctx)
+        cfg["env"]["NINFER_HOST_STATE_SLOTS"] = str(conc)
+        cfg["env"]["NINFER_SPEC"] = "dflash2"
+        cfg["tag"] = tag
+        print(f"=== {tag} ctx={ctx} c={conc} ===", flush=True)
         try:
             engines.start(cfg)
         except RuntimeError as e:
-            # Distinguish engine OOM/refusal (overflow) from other
-            # startup failures — an OOM at startup means this conc is
-            # above the KV ceiling for this ctx: record and continue.
-            msg = str(e)
-            if any(m.lower() in msg.lower() for m in OOM_MARKERS):
-                line = f"OVERFLOW {tag} ctx={ctx} c={conc} (startup OOM/refusal)"
-                print(line, flush=True); log.write(line + "\n"); log.flush()
-                (RESULTS / "overflow.jsonl").open("a").write(
-                    json.dumps({"tag": tag, "ctx": ctx, "conc": conc,
-                                "reason": msg[-500:]}) + "\n")
-            else:
-                line = f"START-FAIL {tag}: {msg[-500:]}"
-                print(line, flush=True); log.write(line + "\n"); log.flush()
-                (RESULTS / "start-failures.log").open("a").write(
-                    f"{tag} ctx={ctx} c={conc}: {msg}\n")
+            print(f"START-FAIL {tag}: {e}", flush=True)
+            (RESULTS / "start-failures.log").open("a").write(
+                f"{tag} ctx={ctx} c={conc}: {e}\n")
             continue
         try:
             bench.CELL_BUDGET_S = 1200
             agg = bench.run_cell(cfg, ctx, conc, str(RESULTS),
                                  max_tokens=args.max_tokens, reps=1)
-            last = agg["agents"][-1]
-            line = (f"RESULT {tag} ctx={ctx} c={conc} "
-                    f"ok={last['ok']}/{conc} "
-                    f"mean_decode={last['mean_decode_tps']} "
-                    f"agg_decode={last['agg_decode_tps']} "
-                    f"ttft={last['mean_ttft_s']} "
-                    f"vram={last['peak_vram_mib']}")
-            print(line, flush=True); log.write(line + "\n"); log.flush()
+            print(f"RESULT {tag} ctx={ctx} c={conc} "
+                  f"ok={agg['agents'][-1]['ok']}/{conc} "
+                  f"mean_decode={agg['agents'][-1]['mean_decode_tps']} "
+                  f"agg_decode={agg['agents'][-1]['agg_decode_tps']} "
+                  f"ttft={agg['agents'][-1]['mean_ttft_s']} "
+                  f"vram={agg['agents'][-1]['peak_vram_mib']}", flush=True)
         finally:
             engines.stop(cfg)
 
