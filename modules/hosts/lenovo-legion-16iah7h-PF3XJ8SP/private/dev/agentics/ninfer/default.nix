@@ -355,581 +355,581 @@ ${lib.concatStringsSep "\n" ninferShapeTable}
 SHAPESCONF
 
                     cat << 'SCRIPT' > $out/bin/ninfer
-          #!/usr/bin/env bash
-          set -euo pipefail
+#!/usr/bin/env bash
+set -euo pipefail
 
-          # Pass --no-ask-password to prevent hanging on polkit TTY prompts when non-interactive.
-          SYSTEMCTL=( "${pkgs.systemd}/bin/systemctl" --no-ask-password )
+# Pass --no-ask-password to prevent hanging on polkit TTY prompts when non-interactive.
+SYSTEMCTL=( "${pkgs.systemd}/bin/systemctl" --no-ask-password )
 
-          MODELS=(
-            "bonsai2-27b|Ternary Bonsai 2 27B|bonsai2.service|${toString ninferPort}"
-            "bonsai2-27b-abliterated|Ternary Bonsai 2 27B Abliterated (Heretic)|bonsai2-abliterated.service|${toString ninferPort}"
-            "qwen3.8-27b|Qwen 3.8 27B|ninfer-df2.service|${toString ninferPort}"
-            "qwen3.8-27b-abliterated|Huihui Qwen 3.8 27B Abliterated|ninfer-df2-abliterated.service|${toString ninferPort}"
-            "qwen3.8-27b-coder390|Qwen 3.8 27B Coder390 EfficientThink Opus5.5 GPT6Astra Grok4.7 DSV4Pro K3 SFT RLOO|ninfer-df2-coder390.service|${toString ninferPort}"
-            "qwen3.8-27b-turbo|Qwen 3.8 27B TURBO Fable Cold Fusion 735 882 Heretic Uncensored NM DAU|ninfer-df2-turbo.service|${toString ninferPort}"
-          )
+MODELS=(
+  "bonsai2-27b|Ternary Bonsai 2 27B|bonsai2.service|${toString ninferPort}"
+  "bonsai2-27b-abliterated|Ternary Bonsai 2 27B Abliterated (Heretic)|bonsai2-abliterated.service|${toString ninferPort}"
+  "qwen3.8-27b|Qwen 3.8 27B|ninfer-df2.service|${toString ninferPort}"
+  "qwen3.8-27b-abliterated|Huihui Qwen 3.8 27B Abliterated|ninfer-df2-abliterated.service|${toString ninferPort}"
+  "qwen3.8-27b-coder390|Qwen 3.8 27B Coder390 EfficientThink Opus5.5 GPT6Astra Grok4.7 DSV4Pro K3 SFT RLOO|ninfer-df2-coder390.service|${toString ninferPort}"
+  "qwen3.8-27b-turbo|Qwen 3.8 27B TURBO Fable Cold Fusion 735 882 Heretic Uncensored NM DAU|ninfer-df2-turbo.service|${toString ninferPort}"
+)
 
-          # Measured max concurrency per context on the RTX 3090 (2026-11-11,
-          # engine v0.15.0, engine alone + ~150 MiB desktop, no host-RAM KV):
-          # each "C x ctx : peak-MiB" triple is a live nvidia-smi peak; the
-          # next concurrency up at the same context OOM'd at startup
-          # (dflash2 C8x32k wanted 6.41 GiB runtime vs 6.31 free). dflash2
-          # costs ~1.6 GiB more than turbo at the same shape (K=7 draft
-          # state), so its table is strictly worse except 16k.
-          # Format: model|ctx:conc:peak,ctx:conc:peak,...
-          # 2026-11-11 user request: each model pins ONE champion shape
-          # (the full per-model tables live in the sweep logs); bonsai2
-          # keeps only its max-context C8 cell.
-          SHAPES=(
-            "qwen3.8-27b|16384:8:21150,32768:7:21144,65536:6:21462,131072:4:22000,262144:1:23364"
-            "qwen3.8-27b-turbo|16384:8:19562,32768:8:19860,65536:8:20454,131072:8:21644,262144:5:23526"
-            # bonsai2 on engine v0.17.2 (2026-11-11 sweep, ternary 9.5 GB
-            # weights): 6.7 GiB weights leave so much KV room that C8
-            # (engine's hard --max-concurrency cap) holds at EVERY
-            # context, including full 262k. Peak 14166 MiB = ~10 GiB
-            # headroom below the 24.5 GiB card.
-            "bonsai2-27b|262144:8:14166"
-            # bonsai2-27b-abliterated: same 9.52 GB ternary container as
-            # bonsai2-27b (same weights layout, LoRA deltas only), so
-            # the sibling's measured C8x262144 = 14166 MiB peak bounds
-            # it; verify on first load before trusting beyond that.
-            "bonsai2-27b-abliterated|262144:8:14166"
-            # qwen3.8-27b-abliterated: huihui bf16 -> tools/convert
-            # recipe qwen3_8_27b, mtp-only artifact (no dflash2). The
-            # 2026-10-10 campaign measured the SAME conversion recipe
-            # (huihui_abl, artifact since cleaned): same engine spec as
-            # the turbo unit (mtp, no dflash2 draft), so the turbo
-            # table is the correct bound (dflash2's table costs ~1.6
-            # GiB more per shape). Unverified on this artifact — first
-            # load must confirm before trusting C8 at 65k+.
-            "qwen3.8-27b-abliterated|16384:8:19562,32768:8:19860,65536:8:20454,131072:8:21644,262144:5:23526"
-            # qwen3.8-27b-coder390: nerkyor HF BF16 -> tools/convert
-            # recipe qwen3_8_27b (text,vision,mtp,dflash2; imatrix from
-            # the abliterated coder390 sibling — conversion-assessment.
-            # md). Dense-family weights (17.2 GiB quantized) + 5-layer
-            # dflash2 draft. MEASURED 2026-11-12 smoke ladder on engine
-            # v0.17.2, FALLBACK=off (VRAM peaks in MiB; each max-C cell
-            # boot-verified, boundary cells die on reservation):
-            # 16k C6 ok / C7 7.39G res ✗; 32k C5 ok / C6 6.81G ✗;
-            # 65k C4 ok / C5 7.53G ✗; 128k C3 ok (C2 21532 ok) /
-            # C4 7.63G ✗; 262k none (C1 6.94G ✗ by 157 MiB).
-            "qwen3.8-27b-coder390|16384:6:20570,32768:5:20572,65536:4:20876,131072:3:21708"
-          )
-          # Unit default shape (what Environment= in the unit pins); a
-          # --context equal to this clears the override file instead of
-          # writing one. Per-model: bonsai2's champion default is C8
-          # (its tiny ternary weights hold C8 at every context, so its
-          # single SHAPES cell 8x262144 also validates), while both
-          # Qwen units run their Pareto winner C6x65k.
-          DEFAULT_CTX=65536
-          DEFAULT_CONC=6
-          # Per-model unit default shape (2026-11-11): what a bare
-          # `switch <model>` means. bonsai2-27b's user-pruned SHAPES
-          # keeps only its 262k champion cell, so its default IS that
-          # cell (the shape file is written on switch; the unit
-          # Environment C8x65536 only applies if the unit starts with
-          # no override). Used by do_switch and as the ACTIVE fallback
-          # when neither /props nor the shape file yields values.
-          default_shape_for() {
-            case "$1" in
-              bonsai2-27b|bonsai2-27b-abliterated) echo "8x262144" ;;
-              # coder390: measured champion C4x65k (dense 17.2 GiB
-              # weights; C6x65k would OOM — see SHAPES row).
-              qwen3.8-27b-coder390) echo "4x65536" ;;
-              *) echo "''${DEFAULT_CONC}x''${DEFAULT_CTX}" ;;
-            esac
-          }
+# Measured max concurrency per context on the RTX 3090 (2026-11-11,
+# engine v0.15.0, engine alone + ~150 MiB desktop, no host-RAM KV):
+# each "C x ctx : peak-MiB" triple is a live nvidia-smi peak; the
+# next concurrency up at the same context OOM'd at startup
+# (dflash2 C8x32k wanted 6.41 GiB runtime vs 6.31 free). dflash2
+# costs ~1.6 GiB more than turbo at the same shape (K=7 draft
+# state), so its table is strictly worse except 16k.
+# Format: model|ctx:conc:peak,ctx:conc:peak,...
+# 2026-11-11 user request: each model pins ONE champion shape
+# (the full per-model tables live in the sweep logs); bonsai2
+# keeps only its max-context C8 cell.
+SHAPES=(
+  "qwen3.8-27b|16384:8:21150,32768:7:21144,65536:6:21462,131072:4:22000,262144:1:23364"
+  "qwen3.8-27b-turbo|16384:8:19562,32768:8:19860,65536:8:20454,131072:8:21644,262144:5:23526"
+  # bonsai2 on engine v0.17.2 (2026-11-11 sweep, ternary 9.5 GB
+  # weights): 6.7 GiB weights leave so much KV room that C8
+  # (engine's hard --max-concurrency cap) holds at EVERY
+  # context, including full 262k. Peak 14166 MiB = ~10 GiB
+  # headroom below the 24.5 GiB card.
+  "bonsai2-27b|262144:8:14166"
+  # bonsai2-27b-abliterated: same 9.52 GB ternary container as
+  # bonsai2-27b (same weights layout, LoRA deltas only), so
+  # the sibling's measured C8x262144 = 14166 MiB peak bounds
+  # it; verify on first load before trusting beyond that.
+  "bonsai2-27b-abliterated|262144:8:14166"
+  # qwen3.8-27b-abliterated: huihui bf16 -> tools/convert
+  # recipe qwen3_8_27b, mtp-only artifact (no dflash2). The
+  # 2026-10-10 campaign measured the SAME conversion recipe
+  # (huihui_abl, artifact since cleaned): same engine spec as
+  # the turbo unit (mtp, no dflash2 draft), so the turbo
+  # table is the correct bound (dflash2's table costs ~1.6
+  # GiB more per shape). Unverified on this artifact — first
+  # load must confirm before trusting C8 at 65k+.
+  "qwen3.8-27b-abliterated|16384:8:19562,32768:8:19860,65536:8:20454,131072:8:21644,262144:5:23526"
+  # qwen3.8-27b-coder390: nerkyor HF BF16 -> tools/convert
+  # recipe qwen3_8_27b (text,vision,mtp,dflash2; imatrix from
+  # the abliterated coder390 sibling — conversion-assessment.
+  # md). Dense-family weights (17.2 GiB quantized) + 5-layer
+  # dflash2 draft. MEASURED 2026-11-12 smoke ladder on engine
+  # v0.17.2, FALLBACK=off (VRAM peaks in MiB; each max-C cell
+  # boot-verified, boundary cells die on reservation):
+  # 16k C6 ok / C7 7.39G res ✗; 32k C5 ok / C6 6.81G ✗;
+  # 65k C4 ok / C5 7.53G ✗; 128k C3 ok (C2 21532 ok) /
+  # C4 7.63G ✗; 262k none (C1 6.94G ✗ by 157 MiB).
+  "qwen3.8-27b-coder390|16384:6:20570,32768:5:20572,65536:4:20876,131072:3:21708"
+)
+# Unit default shape (what Environment= in the unit pins); a
+# --context equal to this clears the override file instead of
+# writing one. Per-model: bonsai2's champion default is C8
+# (its tiny ternary weights hold C8 at every context, so its
+# single SHAPES cell 8x262144 also validates), while both
+# Qwen units run their Pareto winner C6x65k.
+DEFAULT_CTX=65536
+DEFAULT_CONC=6
+# Per-model unit default shape (2026-11-11): what a bare
+# `switch <model>` means. bonsai2-27b's user-pruned SHAPES
+# keeps only its 262k champion cell, so its default IS that
+# cell (the shape file is written on switch; the unit
+# Environment C8x65536 only applies if the unit starts with
+# no override). Used by do_switch and as the ACTIVE fallback
+# when neither /props nor the shape file yields values.
+default_shape_for() {
+  case "$1" in
+    bonsai2-27b|bonsai2-27b-abliterated) echo "8x262144" ;;
+    # coder390: measured champion C4x65k (dense 17.2 GiB
+    # weights; C6x65k would OOM — see SHAPES row).
+    qwen3.8-27b-coder390) echo "4x65536" ;;
+    *) echo "''${DEFAULT_CONC}x''${DEFAULT_CTX}" ;;
+  esac
+}
 
-          shapes_for() {
-            for entry in "''${SHAPES[@]}"; do
-              IFS='|' read -r mid specs <<< "$entry"
-              if [ "$mid" = "$1" ]; then
-                echo "$specs"
-                return 0
-              fi
-            done
-            return 1
-          }
+shapes_for() {
+  for entry in "''${SHAPES[@]}"; do
+    IFS='|' read -r mid specs <<< "$entry"
+    if [ "$mid" = "$1" ]; then
+      echo "$specs"
+      return 0
+    fi
+  done
+  return 1
+}
 
-          # Validate ctx against the measured table; echo "conc ctx" on hit.
-          shape_for_ctx() {
-            local specs ctx c ctxv peak
-            specs="$(shapes_for "$1")" || return 1
-            for pair in ''${specs//,/ }; do
-              IFS=':' read -r ctxv c peak <<< "$pair"
-              if [ "$ctxv" = "$2" ]; then
-                echo "$c $ctxv"
-                return 0
-              fi
-            done
-            return 1
-          }
+# Validate ctx against the measured table; echo "conc ctx" on hit.
+shape_for_ctx() {
+  local specs ctx c ctxv peak
+  specs="$(shapes_for "$1")" || return 1
+  for pair in ''${specs//,/ }; do
+    IFS=':' read -r ctxv c peak <<< "$pair"
+    if [ "$ctxv" = "$2" ]; then
+      echo "$c $ctxv"
+      return 0
+    fi
+  done
+  return 1
+}
 
-          shapes_column() {
-            local specs pair ctxv c peak out=""
-            specs="$(shapes_for "$1")" || { echo "-"; return 0; }
-            local first=1
-            for pair in ''${specs//,/ }; do
-              IFS=':' read -r ctxv c peak <<< "$pair"
-              [ "$first" = 1 ] || out+=","
-              out+="''${c}x$ctxv"
-              first=0
-            done
-            echo "$out"
-          }
+shapes_column() {
+  local specs pair ctxv c peak out=""
+  specs="$(shapes_for "$1")" || { echo "-"; return 0; }
+  local first=1
+  for pair in ''${specs//,/ }; do
+    IFS=':' read -r ctxv c peak <<< "$pair"
+    [ "$first" = 1 ] || out+=","
+    out+="''${c}x$ctxv"
+    first=0
+  done
+  echo "$out"
+}
 
-          # Output contract (2026-11-11 user request; 2026-11-12
-          # alignment rework per docker-ps reference): header line,
-          # one row per model (alphabetical, <nil> last), blank line,
-          # "ACTIVE:", then the active row in bold. Columns are
-          # width-padded like `docker ps` (bash-only, no column(1)):
-          # two passes — collect rows, measure max width per column,
-          # then print left-aligned cells separated by two spaces.
-          show_list() {
-            local active_mid
-            active_mid="$(get_active 2>/dev/null || true)"
-            local ids=() names=() shapes=()
-            local entry mid name
-            for entry in "''${MODELS[@]}"; do
-              IFS='|' read -r mid name svc port <<< "$entry"
-              ids+=("$mid"); names+=("$name"); shapes+=("$(shapes_column "$mid")")
-            done
-            ids+=("<nil>"); names+=(""); shapes+=("-")
-            local w_id=2 w_name=4 i
-            for i in "''${!ids[@]}"; do
-              [ ''${#ids[$i]} -gt $w_id ] && w_id=''${#ids[$i]}
-              [ ''${#names[$i]} -gt $w_name ] && w_name=''${#names[$i]}
-            done
-            # left-align each cell to its column width + 2-space gutter;
-            # the LAST column is unpadded (docker ps doesn't trail-pad)
-            local fmt="%-''${w_id}s  %-''${w_name}s  %s\n"
-            printf "$fmt" "ID" "NAME" "CONCURRENCYxCONTEXT"
-            for i in "''${!ids[@]}"; do
-              printf "$fmt" "''${ids[$i]}" "''${names[$i]}" "''${shapes[$i]}"
-            done
-            echo
-            echo "ACTIVE:"
-            if [ -n "$active_mid" ]; then
-              local active_shape
-              active_shape="$(active_shape_line "$active_mid")"
-              printf "\033[1m%-''${w_id}s  %-''${w_name}s  %s\033[0m\n" \
-                "$active_mid" "$(name_for "$active_mid")" "$active_shape"
-            else
-              printf "\033[1m%-''${w_id}s  %-''${w_name}s  %s\033[0m\n" \
-                "<nil>" "" "-"
-            fi
-          }
+# Output contract (2026-11-11 user request; 2026-11-12
+# alignment rework per docker-ps reference): header line,
+# one row per model (alphabetical, <nil> last), blank line,
+# "ACTIVE:", then the active row in bold. Columns are
+# width-padded like `docker ps` (bash-only, no column(1)):
+# two passes — collect rows, measure max width per column,
+# then print left-aligned cells separated by two spaces.
+show_list() {
+  local active_mid
+  active_mid="$(get_active 2>/dev/null || true)"
+  local ids=() names=() shapes=()
+  local entry mid name
+  for entry in "''${MODELS[@]}"; do
+    IFS='|' read -r mid name svc port <<< "$entry"
+    ids+=("$mid"); names+=("$name"); shapes+=("$(shapes_column "$mid")")
+  done
+  ids+=("<nil>"); names+=(""); shapes+=("-")
+  local w_id=2 w_name=4 i
+  for i in "''${!ids[@]}"; do
+    [ ''${#ids[$i]} -gt $w_id ] && w_id=''${#ids[$i]}
+    [ ''${#names[$i]} -gt $w_name ] && w_name=''${#names[$i]}
+  done
+  # left-align each cell to its column width + 2-space gutter;
+  # the LAST column is unpadded (docker ps doesn't trail-pad)
+  local fmt="%-''${w_id}s  %-''${w_name}s  %s\n"
+  printf "$fmt" "ID" "NAME" "CONCURRENCYxCONTEXT"
+  for i in "''${!ids[@]}"; do
+    printf "$fmt" "''${ids[$i]}" "''${names[$i]}" "''${shapes[$i]}"
+  done
+  echo
+  echo "ACTIVE:"
+  if [ -n "$active_mid" ]; then
+    local active_shape
+    active_shape="$(active_shape_line "$active_mid")"
+    printf "\033[1m%-''${w_id}s  %-''${w_name}s  %s\033[0m\n" \
+      "$active_mid" "$(name_for "$active_mid")" "$active_shape"
+  else
+    printf "\033[1m%-''${w_id}s  %-''${w_name}s  %s\033[0m\n" \
+      "<nil>" "" "-"
+  fi
+}
 
-          name_for() {
-            local entry mid name svc port
-            for entry in "''${MODELS[@]}"; do
-              IFS='|' read -r mid name svc port <<< "$entry"
-              if [ "$mid" = "$1" ]; then
-                echo "$name"
-                return 0
-              fi
-            done
-            echo "$1"
-          }
+name_for() {
+  local entry mid name svc port
+  for entry in "''${MODELS[@]}"; do
+    IFS='|' read -r mid name svc port <<< "$entry"
+    if [ "$mid" = "$1" ]; then
+      echo "$name"
+      return 0
+    fi
+  done
+  echo "$1"
+}
 
-          # Current engine shape for the active model: prefer the live
-          # engine via /props, fall back to the unit's EnvironmentFile
-          # override, then to the unit Environment= defaults.
-          active_shape_line() {
-            local mid="''$1" conc ctx
-            local props
-            props="$(${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null || true)"
-            if [ -n "$props" ]; then
-              # Live engine: total_slots = concurrency, n_ctx = context
-              # (verified against the 0.15.0 /props schema 2026-11-11).
-              conc="$(${pkgs.jq}/bin/jq -r '.total_slots // empty' <<< "$props" 2>/dev/null || true)"
-              ctx="$(${pkgs.jq}/bin/jq -r '.default_generation_settings.n_ctx // empty' <<< "$props" 2>/dev/null || true)"
-            fi
-            if [ -z "$conc" ] || [ -z "$ctx" ]; then
-              local unit shape_file
-              unit="$(service_for "$mid")"; unit="''${unit%.service}"
-              shape_file="/var/lib/ninfer/shape-''$unit.env"
-              if [ -r "$shape_file" ]; then
-                conc="$(${pkgs.gnused}/bin/sed -n 's/^NINFER_CONCURRENCY=//p' "$shape_file")"
-                ctx="$(${pkgs.gnused}/bin/sed -n 's/^NINFER_CONTEXT=//p' "$shape_file")"
-              fi
-            fi
-            # Last resort: the model's unit default shape — never "?x?".
-            if [ -z "$conc" ] || [ -z "$ctx" ]; then
-              local d="''$(default_shape_for "$mid")"
-              conc="''${d%%x*}"; ctx="''${d#*x}"
-            fi
-            echo "''${conc}x''${ctx}"
-          }
+# Current engine shape for the active model: prefer the live
+# engine via /props, fall back to the unit's EnvironmentFile
+# override, then to the unit Environment= defaults.
+active_shape_line() {
+  local mid="''$1" conc ctx
+  local props
+  props="$(${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null || true)"
+  if [ -n "$props" ]; then
+    # Live engine: total_slots = concurrency, n_ctx = context
+    # (verified against the 0.15.0 /props schema 2026-11-11).
+    conc="$(${pkgs.jq}/bin/jq -r '.total_slots // empty' <<< "$props" 2>/dev/null || true)"
+    ctx="$(${pkgs.jq}/bin/jq -r '.default_generation_settings.n_ctx // empty' <<< "$props" 2>/dev/null || true)"
+  fi
+  if [ -z "$conc" ] || [ -z "$ctx" ]; then
+    local unit shape_file
+    unit="$(service_for "$mid")"; unit="''${unit%.service}"
+    shape_file="/var/lib/ninfer/shape-''$unit.env"
+    if [ -r "$shape_file" ]; then
+      conc="$(${pkgs.gnused}/bin/sed -n 's/^NINFER_CONCURRENCY=//p' "$shape_file")"
+      ctx="$(${pkgs.gnused}/bin/sed -n 's/^NINFER_CONTEXT=//p' "$shape_file")"
+    fi
+  fi
+  # Last resort: the model's unit default shape — never "?x?".
+  if [ -z "$conc" ] || [ -z "$ctx" ]; then
+    local d="''$(default_shape_for "$mid")"
+    conc="''${d%%x*}"; ctx="''${d#*x}"
+  fi
+  echo "''${conc}x''${ctx}"
+}
 
-          service_for() {
-            local entry mid name svc port
-            for entry in "''${MODELS[@]}"; do
-              IFS='|' read -r mid name svc port <<< "$entry"
-              if [ "$mid" = "$1" ]; then
-                echo "$svc"
-                return 0
-              fi
-            done
-            return 1
-          }
+service_for() {
+  local entry mid name svc port
+  for entry in "''${MODELS[@]}"; do
+    IFS='|' read -r mid name svc port <<< "$entry"
+    if [ "$mid" = "$1" ]; then
+      echo "$svc"
+      return 0
+    fi
+  done
+  return 1
+}
 
-          get_active() {
-            # Consult persistent user state file first so multi-variant targets
-            # accurately report the user-selected variant rather than always defaulting to the first match.
-            # /var/lib/ninfer (2026-11-12): survives reboots — active-model +
-            # shape overrides persist across machine shutdowns; the boot
-            # ninfer-restore.service re-starts the persisted model.
-            local state_file="/var/lib/ninfer/active-model"
-            if [ -r "$state_file" ]; then
-              local saved_mid
-              saved_mid="$(cat "$state_file" 2>/dev/null || true)"
-              if [ -n "$saved_mid" ]; then
-                local entry mid name svc port
-                for entry in "''${MODELS[@]}"; do
-                  IFS='|' read -r mid name svc port <<< "$entry"
-                  if [ "$mid" = "$saved_mid" ]; then
-                    if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
-                      echo "$saved_mid"
-                      return 0
-                    fi
-                    break
-                  fi
-                done
-              fi
-            fi
+get_active() {
+  # Consult persistent user state file first so multi-variant targets
+  # accurately report the user-selected variant rather than always defaulting to the first match.
+  # /var/lib/ninfer (2026-11-12): survives reboots — active-model +
+  # shape overrides persist across machine shutdowns; the boot
+  # ninfer-restore.service re-starts the persisted model.
+  local state_file="/var/lib/ninfer/active-model"
+  if [ -r "$state_file" ]; then
+    local saved_mid
+    saved_mid="$(cat "$state_file" 2>/dev/null || true)"
+    if [ -n "$saved_mid" ]; then
+      local entry mid name svc port
+      for entry in "''${MODELS[@]}"; do
+        IFS='|' read -r mid name svc port <<< "$entry"
+        if [ "$mid" = "$saved_mid" ]; then
+          if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+            echo "$saved_mid"
+            return 0
+          fi
+          break
+        fi
+      done
+    fi
+  fi
 
-            local entry mid name svc port
-            for entry in "''${MODELS[@]}"; do
-              IFS='|' read -r mid name svc port <<< "$entry"
-              if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
-                echo "$mid"
-                return 0
-              fi
-            done
+  local entry mid name svc port
+  for entry in "''${MODELS[@]}"; do
+    IFS='|' read -r mid name svc port <<< "$entry"
+    if "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+      echo "$mid"
+      return 0
+    fi
+  done
 
-            # Fallback: probe ninfer directly on its port if started outside systemctl
-            local mpath
-            mpath="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.model_path // empty' 2>/dev/null || true )"
-            if [ -n "$mpath" ]; then
-              case "$mpath" in
-                *coder390*) echo "qwen3.8-27b-coder390"; return 0 ;;
-                *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
-                *huihui_abl*) echo "qwen3.8-27b-abliterated"; return 0 ;;
-                *bonsai2_27b_heretic*) echo "bonsai2-27b-abliterated"; return 0 ;;
-                *bonsai2*) echo "bonsai2-27b"; return 0 ;;
-                *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
-              esac
-            fi
+  # Fallback: probe ninfer directly on its port if started outside systemctl
+  local mpath
+  mpath="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.model_path // empty' 2>/dev/null || true )"
+  if [ -n "$mpath" ]; then
+    case "$mpath" in
+      *coder390*) echo "qwen3.8-27b-coder390"; return 0 ;;
+      *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
+      *huihui_abl*) echo "qwen3.8-27b-abliterated"; return 0 ;;
+      *bonsai2_27b_heretic*) echo "bonsai2-27b-abliterated"; return 0 ;;
+      *bonsai2*) echo "bonsai2-27b"; return 0 ;;
+      *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
+    esac
+  fi
 
-            return 1
-          }
+  return 1
+}
 
-          do_switch() {
-            local target="''$1"
-            local want_shape="''${2:-}"
-            # PERSISTENT STATE (2026-11-12): /var/lib/ninfer survives
-            # reboots (XDG_RUNTIME_DIR is tmpfs — the old location lost
-            # both the active model and its shape override at every
-            # shutdown). Owned by user ayin via systemd-tmpfiles; the CLI
-            # (user ayin) writes, the root unit manager reads
-            # EnvironmentFile=-/var/lib/ninfer/shape-<unit>.env, and the
-            # boot ninfer-restore.service re-starts the persisted model.
-            local state_dir="/var/lib/ninfer"
-            local state_file="''$state_dir/active-model"
-            # Cleared on <nil> and on default-shape switches so a boot
-            # restart uses the unit default shape.
-            local shape_dir="/var/lib/ninfer"
-            shape_env_for() {
-              echo "''$shape_dir/shape-''$1.env"
-            }
+do_switch() {
+  local target="''$1"
+  local want_shape="''${2:-}"
+  # PERSISTENT STATE (2026-11-12): /var/lib/ninfer survives
+  # reboots (XDG_RUNTIME_DIR is tmpfs — the old location lost
+  # both the active model and its shape override at every
+  # shutdown). Owned by user ayin via systemd-tmpfiles; the CLI
+  # (user ayin) writes, the root unit manager reads
+  # EnvironmentFile=-/var/lib/ninfer/shape-<unit>.env, and the
+  # boot ninfer-restore.service re-starts the persisted model.
+  local state_dir="/var/lib/ninfer"
+  local state_file="''$state_dir/active-model"
+  # Cleared on <nil> and on default-shape switches so a boot
+  # restart uses the unit default shape.
+  local shape_dir="/var/lib/ninfer"
+  shape_env_for() {
+    echo "''$shape_dir/shape-''$1.env"
+  }
 
-            if [ "''$target" = "<nil>" ] || [ "''$target" = "nil" ]; then
-              local stopping=0
-              local entry mid name svc port
-              for entry in "''${MODELS[@]}"; do
-                IFS='|' read -r mid name svc port <<< "''$entry"
-                if "''${SYSTEMCTL[@]}" is-active --quiet "''$svc" 2>/dev/null; then
-                  printf "Stopping %s (%s)... " "''$mid" "''$svc"
-                  "''${SYSTEMCTL[@]}" stop "''$svc" 2>/dev/null || true
-                  echo "done."
-                  stopping=1
-                fi
-              done
-              rm -f "''$state_file" 2>/dev/null || true
-              rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for ninfer-df2-abliterated)" "''$(shape_env_for ninfer-df2-coder390)" "''$(shape_env_for bonsai2)" "''$(shape_env_for bonsai2-abliterated)" 2>/dev/null || true
-              echo "✔ Unloaded all models (switched to <nil>)"
-              return 0
-            fi
+  if [ "''$target" = "<nil>" ] || [ "''$target" = "nil" ]; then
+    local stopping=0
+    local entry mid name svc port
+    for entry in "''${MODELS[@]}"; do
+      IFS='|' read -r mid name svc port <<< "''$entry"
+      if "''${SYSTEMCTL[@]}" is-active --quiet "''$svc" 2>/dev/null; then
+        printf "Stopping %s (%s)... " "''$mid" "''$svc"
+        "''${SYSTEMCTL[@]}" stop "''$svc" 2>/dev/null || true
+        echo "done."
+        stopping=1
+      fi
+    done
+    rm -f "''$state_file" 2>/dev/null || true
+    rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for ninfer-df2-abliterated)" "''$(shape_env_for ninfer-df2-coder390)" "''$(shape_env_for bonsai2)" "''$(shape_env_for bonsai2-abliterated)" 2>/dev/null || true
+    echo "✔ Unloaded all models (switched to <nil>)"
+    return 0
+  fi
 
-            local found_svc=""
-            local canonical=""
-            local target_port=""
-            local entry mid name svc port
-            for entry in "''${MODELS[@]}"; do
-              IFS='|' read -r mid name svc port <<< "''$entry"
-              if [ "''$mid" = "''$target" ]; then
-                found_svc="''$svc"
-                canonical="''$mid"
-                target_port="''$port"
-                break
-              fi
-            done
+  local found_svc=""
+  local canonical=""
+  local target_port=""
+  local entry mid name svc port
+  for entry in "''${MODELS[@]}"; do
+    IFS='|' read -r mid name svc port <<< "''$entry"
+    if [ "''$mid" = "''$target" ]; then
+      found_svc="''$svc"
+      canonical="''$mid"
+      target_port="''$port"
+      break
+    fi
+  done
 
-            if [ -z "''$found_svc" ]; then
-              echo "error: unknown model ''$target" >&2
-              echo "       available: bonsai2-27b, bonsai2-27b-abliterated, qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.8-27b-coder390, qwen3.8-27b-turbo, <nil>" >&2
-              exit 1
-            fi
+  if [ -z "''$found_svc" ]; then
+    echo "error: unknown model ''$target" >&2
+    echo "       available: bonsai2-27b, bonsai2-27b-abliterated, qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.8-27b-coder390, qwen3.8-27b-turbo, <nil>" >&2
+    exit 1
+  fi
 
-            local prev_active
-            prev_active="''$(get_active 2>/dev/null || true)"
-            mkdir -p "''$state_dir" "''$shape_dir" 2>/dev/null || true
+  local prev_active
+  prev_active="''$(get_active 2>/dev/null || true)"
+  mkdir -p "''$state_dir" "''$shape_dir" 2>/dev/null || true
 
-            # Shape selection: "conc x ctx" validated against the measured
-            # table (2026-11-11 grammar: `ninfer switch <model> <C>x<ctx>`;
-            # bare <model> = the model's unit default shape).
-            local target_shape
-            target_shape="$(default_shape_for "$canonical")"
-            local shape_file
-            shape_file="''$(shape_env_for ''${found_svc%.service})"
-            if [ -n "''$want_shape" ]; then
-              local shape_conc shape_ctx ctx_conc_val
-              shape_conc="''${want_shape%%x*}"
-              shape_ctx="''${want_shape#*x}"
-              if ! [[ "''$shape_conc" =~ ^[0-9]+$ ]] || ! [[ "''$shape_ctx" =~ ^[0-9]+$ ]]; then
-                echo "error: shape ''$want_shape must look like <concurrency>x<context> (e.g. 8x262144)" >&2
-                return 1
-              fi
-              ctx_conc_val="''$(shape_for_ctx "''$canonical" "''$shape_ctx" | cut -d' ' -f1)" || true
-              if [ -z "''$ctx_conc_val" ] || [ "''$ctx_conc_val" != "''$shape_conc" ]; then
-                echo "error: shape ''$want_shape is not a measured shape for ''$canonical" >&2
-                echo "       measured: ''$(shapes_column "''$canonical")" >&2
-                return 1
-              fi
-              # The override must carry the EXACT requested shape; write it
-              # unless it equals the unit's Environment= shape (C6/C8 at
-              # 65536) so a boot restart without the file stays honest.
-              if [ "''$shape_ctx" = "''$DEFAULT_CTX" ] && [ "''$shape_conc" = "''$DEFAULT_CONC" ]; then
-                rm -f "''$shape_file" 2>/dev/null || true
-              elif [ "''$shape_conc" = "8" ] && [ "''$shape_ctx" = "''$DEFAULT_CTX" ]; then
-                rm -f "''$shape_file" 2>/dev/null || true
-              else
-                {
-                  echo "NINFER_CONCURRENCY=''${shape_conc}"
-                  echo "NINFER_CONTEXT=''${shape_ctx}"
-                  echo "NINFER_KV_CAPACITY=''${shape_ctx}"
-                  echo "NINFER_HOST_STATE_SLOTS=''${shape_conc}"
-                } > "''$shape_file"
-              fi
-              target_shape="''$want_shape"
-            else
-              # No shape given: the model's unit default shape. When that
-              # default is NOT the unit Environment= shape (bonsai2-27b:
-              # 8x262144 vs the unit's C8x65536), write the override so
-              # the "Switching to ..." shape is what actually boots.
-              if [ "''$target_shape" != "8x''$DEFAULT_CTX" ] && [ "''$target_shape" != "''$DEFAULT_CONC"x"''$DEFAULT_CTX" ]; then
-                local d_conc="''${target_shape%%x*}" d_ctx="''${target_shape#*x}"
-                {
-                  echo "NINFER_CONCURRENCY=''${d_conc}"
-                  echo "NINFER_CONTEXT=''${d_ctx}"
-                  echo "NINFER_KV_CAPACITY=''${d_ctx}"
-                  echo "NINFER_HOST_STATE_SLOTS=''${d_conc}"
-                } > "''$shape_file"
-              else
-                rm -f "''$shape_file" 2>/dev/null || true
-              fi
-            fi
+  # Shape selection: "conc x ctx" validated against the measured
+  # table (2026-11-11 grammar: `ninfer switch <model> <C>x<ctx>`;
+  # bare <model> = the model's unit default shape).
+  local target_shape
+  target_shape="$(default_shape_for "$canonical")"
+  local shape_file
+  shape_file="''$(shape_env_for ''${found_svc%.service})"
+  if [ -n "''$want_shape" ]; then
+    local shape_conc shape_ctx ctx_conc_val
+    shape_conc="''${want_shape%%x*}"
+    shape_ctx="''${want_shape#*x}"
+    if ! [[ "''$shape_conc" =~ ^[0-9]+$ ]] || ! [[ "''$shape_ctx" =~ ^[0-9]+$ ]]; then
+      echo "error: shape ''$want_shape must look like <concurrency>x<context> (e.g. 8x262144)" >&2
+      return 1
+    fi
+    ctx_conc_val="''$(shape_for_ctx "''$canonical" "''$shape_ctx" | cut -d' ' -f1)" || true
+    if [ -z "''$ctx_conc_val" ] || [ "''$ctx_conc_val" != "''$shape_conc" ]; then
+      echo "error: shape ''$want_shape is not a measured shape for ''$canonical" >&2
+      echo "       measured: ''$(shapes_column "''$canonical")" >&2
+      return 1
+    fi
+    # The override must carry the EXACT requested shape; write it
+    # unless it equals the unit's Environment= shape (C6/C8 at
+    # 65536) so a boot restart without the file stays honest.
+    if [ "''$shape_ctx" = "''$DEFAULT_CTX" ] && [ "''$shape_conc" = "''$DEFAULT_CONC" ]; then
+      rm -f "''$shape_file" 2>/dev/null || true
+    elif [ "''$shape_conc" = "8" ] && [ "''$shape_ctx" = "''$DEFAULT_CTX" ]; then
+      rm -f "''$shape_file" 2>/dev/null || true
+    else
+      {
+        echo "NINFER_CONCURRENCY=''${shape_conc}"
+        echo "NINFER_CONTEXT=''${shape_ctx}"
+        echo "NINFER_KV_CAPACITY=''${shape_ctx}"
+        echo "NINFER_HOST_STATE_SLOTS=''${shape_conc}"
+      } > "''$shape_file"
+    fi
+    target_shape="''$want_shape"
+  else
+    # No shape given: the model's unit default shape. When that
+    # default is NOT the unit Environment= shape (bonsai2-27b:
+    # 8x262144 vs the unit's C8x65536), write the override so
+    # the "Switching to ..." shape is what actually boots.
+    if [ "''$target_shape" != "8x''$DEFAULT_CTX" ] && [ "''$target_shape" != "''$DEFAULT_CONC"x"''$DEFAULT_CTX" ]; then
+      local d_conc="''${target_shape%%x*}" d_ctx="''${target_shape#*x}"
+      {
+        echo "NINFER_CONCURRENCY=''${d_conc}"
+        echo "NINFER_CONTEXT=''${d_ctx}"
+        echo "NINFER_KV_CAPACITY=''${d_ctx}"
+        echo "NINFER_HOST_STATE_SLOTS=''${d_conc}"
+      } > "''$shape_file"
+    else
+      rm -f "''$shape_file" 2>/dev/null || true
+    fi
+  fi
 
-            # Persist the active-model pointer ONLY after shape validation
-            # passed (2026-11-12): an invalid-shape switch must not corrupt
-            # the persisted pointer that ninfer-restore.service relies on
-            # across reboots. (Was written before validation — an invalid
-            # `switch <model> <bad-shape>` silently repointed the boot
-            # restore at a model the user never switched to.)
-            echo "''$canonical" > "''$state_file" 2>/dev/null || true
+  # Persist the active-model pointer ONLY after shape validation
+  # passed (2026-11-12): an invalid-shape switch must not corrupt
+  # the persisted pointer that ninfer-restore.service relies on
+  # across reboots. (Was written before validation — an invalid
+  # `switch <model> <bad-shape>` silently repointed the boot
+  # restore at a model the user never switched to.)
+  echo "''$canonical" > "''$state_file" 2>/dev/null || true
 
-            # Fast path: already active and responding on HTTP. Only when NO
-            # shape was given: the engine may currently run a non-default
-            # shape (a prior `switch <model> <C>x<ctx>` left its
-            # EnvironmentFile), so a shape switch must always restart to
-            # apply the shape file.
-            if [ -z "''$want_shape" ]; then
-              if "''${SYSTEMCTL[@]}" is-active --quiet "''$found_svc" 2>/dev/null; then
-                if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''$target_port/v1/models" >/dev/null 2>&1; then
-                  echo "✔ Already active and responding on ''$canonical (:''$target_port)"
-                  return 0
-                fi
-              fi
-            fi
+  # Fast path: already active and responding on HTTP. Only when NO
+  # shape was given: the engine may currently run a non-default
+  # shape (a prior `switch <model> <C>x<ctx>` left its
+  # EnvironmentFile), so a shape switch must always restart to
+  # apply the shape file.
+  if [ -z "''$want_shape" ]; then
+    if "''${SYSTEMCTL[@]}" is-active --quiet "''$found_svc" 2>/dev/null; then
+      if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''$target_port/v1/models" >/dev/null 2>&1; then
+        echo "✔ Already active and responding on ''$canonical (:''$target_port)"
+        return 0
+      fi
+    fi
+  fi
 
-            # Stop any conflicting active services first
-            for entry in "''${MODELS[@]}"; do
-              IFS='|' read -r mid name svc port <<< "$entry"
-              if [ "$svc" != "$found_svc" ] && "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
-                printf "Stopping %s (%s)... " "$mid" "$svc"
-                "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
-                while "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; do
-                  sleep 0.1
-                done
-                echo "done."
-              fi
-            done
+  # Stop any conflicting active services first
+  for entry in "''${MODELS[@]}"; do
+    IFS='|' read -r mid name svc port <<< "$entry"
+    if [ "$svc" != "$found_svc" ] && "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+      printf "Stopping %s (%s)... " "$mid" "$svc"
+      "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
+      while "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; do
+        sleep 0.1
+      done
+      echo "done."
+    fi
+  done
 
-            echo "Switching to $canonical ($target_shape)..."
+  echo "Switching to $canonical ($target_shape)..."
 
-            local start_sec=$SECONDS
-            local journal_cursor
-            journal_cursor="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f2- || true)"
+  local start_sec=$SECONDS
+  local journal_cursor
+  journal_cursor="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f2- || true)"
 
-            if ! "''${SYSTEMCTL[@]}" start --no-block "$found_svc"; then
-              rm -f "$state_file" 2>/dev/null || true
-              echo "error: failed to start $found_svc" >&2
-              exit 1
-            fi
+  if ! "''${SYSTEMCTL[@]}" start --no-block "$found_svc"; then
+    rm -f "$state_file" 2>/dev/null || true
+    echo "error: failed to start $found_svc" >&2
+    exit 1
+  fi
 
-            local is_tty=0
-            [ -t 1 ] && is_tty=1
+  local is_tty=0
+  [ -t 1 ] && is_tty=1
 
-            local spinner_chars=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
-            local spin_idx=0
-            local last_status=""
-            local last_logged_line=""
-            local substate=""
+  local spinner_chars=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+  local spin_idx=0
+  local last_status=""
+  local last_logged_line=""
+  local substate=""
 
-            while true; do
-              local elapsed=$(( SECONDS - start_sec ))
-              local spin="''${spinner_chars[$spin_idx]}"
-              spin_idx=$(( (spin_idx + 1) % ''${#spinner_chars[@]} ))
+  while true; do
+    local elapsed=$(( SECONDS - start_sec ))
+    local spin="''${spinner_chars[$spin_idx]}"
+    spin_idx=$(( (spin_idx + 1) % ''${#spinner_chars[@]} ))
 
-              if "''${SYSTEMCTL[@]}" is-failed --quiet "$found_svc" 2>/dev/null; then
-                [ "$is_tty" -eq 1 ] && printf "\r\033[K"
-                echo "❌ $found_svc failed to start!" >&2
-                ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 15 --no-pager >&2 || true
-                rm -f "$state_file" 2>/dev/null || true
-                exit 1
-              fi
+    if "''${SYSTEMCTL[@]}" is-failed --quiet "$found_svc" 2>/dev/null; then
+      [ "$is_tty" -eq 1 ] && printf "\r\033[K"
+      echo "❌ $found_svc failed to start!" >&2
+      ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 15 --no-pager >&2 || true
+      rm -f "$state_file" 2>/dev/null || true
+      exit 1
+    fi
 
-              # Check if HTTP endpoint is live
-              if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''$target_port/v1/models" >/dev/null 2>&1; then
-                [ "$is_tty" -eq 1 ] && printf "\r\033[K"
-                echo "✔ Ready in ''${elapsed}s | listening on http://0.0.0.0:$target_port"
-                echo "switched to $canonical"
-                return 0
-              fi
+    # Check if HTTP endpoint is live
+    if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''$target_port/v1/models" >/dev/null 2>&1; then
+      [ "$is_tty" -eq 1 ] && printf "\r\033[K"
+      echo "✔ Ready in ''${elapsed}s | listening on http://0.0.0.0:$target_port"
+      echo "switched to $canonical"
+      return 0
+    fi
 
-              local latest_line=""
-              if [ -n "$journal_cursor" ]; then
-                latest_line="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" --after-cursor="$journal_cursor" -o cat --no-pager 2>/dev/null | tail -n 1 || true)"
-              else
-                latest_line="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 1 -o cat --no-pager 2>/dev/null || true)"
-              fi
+    local latest_line=""
+    if [ -n "$journal_cursor" ]; then
+      latest_line="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" --after-cursor="$journal_cursor" -o cat --no-pager 2>/dev/null | tail -n 1 || true)"
+    else
+      latest_line="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 1 -o cat --no-pager 2>/dev/null || true)"
+    fi
 
-              local progress_desc=""
-              if [[ "$latest_line" =~ loading[[:space:]]+weights[[:space:]]+([0-9.]+)% ]]; then
-                local pct="''${BASH_REMATCH[1]}"
-                local int_pct=''${pct%.*}
-                int_pct=''${int_pct:-0}
-                local bar_width=20
-                local filled=$(( int_pct * bar_width / 100 ))
-                local empty=$(( bar_width - filled ))
-                local bar=""
-                for ((b=0; b<filled; b++)); do bar+="█"; done
-                for ((b=0; b<empty; b++)); do bar+="░"; done
-                progress_desc="[$bar] $pct% ($latest_line)"
-              elif [ -n "$latest_line" ] && [ "$latest_line" != "$last_logged_line" ]; then
-                if [[ "$latest_line" =~ (weights\ ready|host\ state\ pinned|host\ KV\ pinned|CUDA\ graphs\ ready|engine\ ready|starting\ engine|API:) ]]; then
-                  if [ "$is_tty" -eq 1 ]; then
-                    printf "\r\033[K  → %s\n" "$latest_line"
-                  else
-                    echo "  → $latest_line"
-                  fi
-                  last_logged_line="$latest_line"
-                else
-                  progress_desc="$latest_line"
-                fi
-              fi
+    local progress_desc=""
+    if [[ "$latest_line" =~ loading[[:space:]]+weights[[:space:]]+([0-9.]+)% ]]; then
+      local pct="''${BASH_REMATCH[1]}"
+      local int_pct=''${pct%.*}
+      int_pct=''${int_pct:-0}
+      local bar_width=20
+      local filled=$(( int_pct * bar_width / 100 ))
+      local empty=$(( bar_width - filled ))
+      local bar=""
+      for ((b=0; b<filled; b++)); do bar+="█"; done
+      for ((b=0; b<empty; b++)); do bar+="░"; done
+      progress_desc="[$bar] $pct% ($latest_line)"
+    elif [ -n "$latest_line" ] && [ "$latest_line" != "$last_logged_line" ]; then
+      if [[ "$latest_line" =~ (weights\ ready|host\ state\ pinned|host\ KV\ pinned|CUDA\ graphs\ ready|engine\ ready|starting\ engine|API:) ]]; then
+        if [ "$is_tty" -eq 1 ]; then
+          printf "\r\033[K  → %s\n" "$latest_line"
+        else
+          echo "  → $latest_line"
+        fi
+        last_logged_line="$latest_line"
+      else
+        progress_desc="$latest_line"
+      fi
+    fi
 
-              if [ -z "$progress_desc" ]; then
-                substate="$(${pkgs.systemd}/bin/systemctl show -p SubState --value "$found_svc" 2>/dev/null || echo "starting")"
-                if [ "$substate" = "condition" ] || [ "$substate" = "start-pre" ]; then
-                  progress_desc="[boot-gate] verifying GPU & model artifact..."
-                else
-                  progress_desc="initializing engine ($substate)..."
-                fi
-              fi
+    if [ -z "$progress_desc" ]; then
+      substate="$(${pkgs.systemd}/bin/systemctl show -p SubState --value "$found_svc" 2>/dev/null || echo "starting")"
+      if [ "$substate" = "condition" ] || [ "$substate" = "start-pre" ]; then
+        progress_desc="[boot-gate] verifying GPU & model artifact..."
+      else
+        progress_desc="initializing engine ($substate)..."
+      fi
+    fi
 
-              if [ "$is_tty" -eq 1 ]; then
-                printf "\r\033[K  %s %s (%ds)" "$spin" "$progress_desc" "$elapsed"
-              elif [ "$progress_desc" != "$last_status" ] && [ "$(( elapsed % 3 ))" -eq 0 ]; then
-                echo "  [ninfer] $progress_desc (''${elapsed}s)"
-                last_status="$progress_desc"
-              fi
+    if [ "$is_tty" -eq 1 ]; then
+      printf "\r\033[K  %s %s (%ds)" "$spin" "$progress_desc" "$elapsed"
+    elif [ "$progress_desc" != "$last_status" ] && [ "$(( elapsed % 3 ))" -eq 0 ]; then
+      echo "  [ninfer] $progress_desc (''${elapsed}s)"
+      last_status="$progress_desc"
+    fi
 
-              if [ "$elapsed" -gt 180 ]; then
-                [ "$is_tty" -eq 1 ] && printf "\r\033[K"
-                echo "error: timeout waiting for $found_svc to become ready (>180s)" >&2
-                ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 20 --no-pager >&2 || true
-                exit 1
-              fi
+    if [ "$elapsed" -gt 180 ]; then
+      [ "$is_tty" -eq 1 ] && printf "\r\033[K"
+      echo "error: timeout waiting for $found_svc to become ready (>180s)" >&2
+      ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 20 --no-pager >&2 || true
+      exit 1
+    fi
 
-              sleep 0.2
-            done
-          }
+    sleep 0.2
+  done
+}
 
 
 
-          cmd="''${1:-}"
-          case "$cmd" in
-            active|current)
-              get_active
-              ;;
-            ""|list|status)
-              show_list
-              ;;
-            switch)
-              # Grammar (2026-11-11): switch <model-id> [C]x<ctx>. Model ids
-              # and shapes are validated in do_switch; extra args rejected here.
-              if [ $# -lt 2 ] || [ $# -gt 3 ]; then
-                echo "usage: ninfer switch <model-id> [concurrencyxcontext]" >&2
-                exit 2
-              fi
-              do_switch "$2" "''${3:-}"
-              ;;
-            -v|--version|version)
-              echo "ninfer ${ninferCliVersion} (engine ${engineVersionV0150} / ${engineVersionV0172})"
-              ;;
-            -h|--help|help)
-              echo "usage: ninfer [switch <model-id> [C]x<ctx> | list | active | -v]"
-              echo "  switch <model-id> [C]x<ctx>"
-              echo "                 switch active model; shape validated against the"
-              echo "                 measured table shown by 'ninfer list' (omit for the"
-              echo "                 unit default shape)"
-              echo "  -v, --version show ninfer and engine versions"
-              ;;
-            *)
-              for entry in "''${MODELS[@]}"; do
-                IFS='|' read -r mid name svc port <<< "$entry"
-                if [ "$mid" = "$cmd" ]; then
-                  # Direct model invocation: ninfer <model-id> [C]x<ctx>
-                  if [ $# -gt 2 ]; then
-                    echo "error: unexpected argument '$3'" >&2
-                    exit 2
-                  fi
-                  do_switch "$cmd" "''${2:-}"
-                  exit 0
-                fi
-              done
-              if [ "$cmd" = "<nil>" ] || [ "$cmd" = "nil" ]; then
-                do_switch "<nil>" ""
-                exit 0
-              fi
-              echo "unknown command '$cmd', run 'ninfer -h' for usage" >&2
-              exit 1
-              ;;
-          esac
-          SCRIPT
+cmd="''${1:-}"
+case "$cmd" in
+  active|current)
+    get_active
+    ;;
+  ""|list|status)
+    show_list
+    ;;
+  switch)
+    # Grammar (2026-11-11): switch <model-id> [C]x<ctx>. Model ids
+    # and shapes are validated in do_switch; extra args rejected here.
+    if [ $# -lt 2 ] || [ $# -gt 3 ]; then
+      echo "usage: ninfer switch <model-id> [concurrencyxcontext]" >&2
+      exit 2
+    fi
+    do_switch "$2" "''${3:-}"
+    ;;
+  -v|--version|version)
+    echo "ninfer ${ninferCliVersion} (engine ${engineVersionV0150} / ${engineVersionV0172})"
+    ;;
+  -h|--help|help)
+    echo "usage: ninfer [switch <model-id> [C]x<ctx> | list | active | -v]"
+    echo "  switch <model-id> [C]x<ctx>"
+    echo "                 switch active model; shape validated against the"
+    echo "                 measured table shown by 'ninfer list' (omit for the"
+    echo "                 unit default shape)"
+    echo "  -v, --version show ninfer and engine versions"
+    ;;
+  *)
+    for entry in "''${MODELS[@]}"; do
+      IFS='|' read -r mid name svc port <<< "$entry"
+      if [ "$mid" = "$cmd" ]; then
+        # Direct model invocation: ninfer <model-id> [C]x<ctx>
+        if [ $# -gt 2 ]; then
+          echo "error: unexpected argument '$3'" >&2
+          exit 2
+        fi
+        do_switch "$cmd" "''${2:-}"
+        exit 0
+      fi
+    done
+    if [ "$cmd" = "<nil>" ] || [ "$cmd" = "nil" ]; then
+      do_switch "<nil>" ""
+      exit 0
+    fi
+    echo "unknown command '$cmd', run 'ninfer -h' for usage" >&2
+    exit 1
+    ;;
+esac
+SCRIPT
                     chmod +x $out/bin/ninfer
 
                     # Shell completions (2026-11-11 grammar): ids and
