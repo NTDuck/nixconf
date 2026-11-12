@@ -275,13 +275,18 @@
       # nix GC orphaned the 2026-10 pins (fresh unit starts died on
       # libcublas.so.12); the new paths carry indirect GC roots in
       # ~/.local/share/nix-gcroots/ninfer-* so they survive GCs until
-      # the next flake rebuild repins them.
+      # the next flake rebuild repins them. curl MUST be a build
+      # linked against glibc <= the engine root's (2.42-103): 8.22.0
+      # from the 2.44-era nixpkgs needs GLIBC_2.43 and kills the
+      # engine at dlopen (glibc-2.42: version `GLIBC_2.43' not found;
+      # unit crash-loop, broke the 2026-11-12 switch). 8.7.1 tops out
+      # at GLIBC_2.34 — safe. The engine only needs libcurl.so.4.
       ninferLibs = [
         "/run/opengl-driver/lib"
         "/nix/store/md1vdf5hlk9y2yzdjq27ggq573g7q74z-prism-llamacpp-libs/lib"
         "/nix/store/sfn3qmgia0s6c3hylxk1ld01byydy7b4-nvidia-x11-595.112.07/lib"
         "/nix/store/jvqpbsb5cfh14ybq6znbqzhzdcv1g2nr-ffmpeg-full-6.1.1-lib/lib"
-        "/nix/store/36alc2mwna4nzf6djdj2hvh4w4r3cai5-curl-8.22.0/lib"
+        "/nix/store/36kr91f8s509z2r8hqvpayw5bqyqgyzr-curl-8.7.1/lib"
       ];
 
       # Port the ninfer-serve listens on. Single source of truth for
@@ -438,31 +443,45 @@
             echo "$out"
           }
 
-          # Output contract (2026-11-11 user request): header line, then
-          # "ID<TAB>NAME<TAB>CONCURRENCYxCONTEXT" per model (alphabetical,
-          # <nil> last), blank line, "ACTIVE:", then the active row in
-          # bold. active_shape_line resolves the live shape from the
-          # engine's /props, falling back to the unit's EnvironmentFile
-          # override then its Environment= defaults.
+          # Output contract (2026-11-11 user request; 2026-11-12
+          # alignment rework per docker-ps reference): header line,
+          # one row per model (alphabetical, <nil> last), blank line,
+          # "ACTIVE:", then the active row in bold. Columns are
+          # width-padded like `docker ps` (bash-only, no column(1)):
+          # two passes — collect rows, measure max width per column,
+          # then print left-aligned cells separated by two spaces.
           show_list() {
             local active_mid
             active_mid="$(get_active 2>/dev/null || true)"
-            printf "ID\tNAME\tCONCURRENCYxCONTEXT\n"
-            local entry mid name shapes
+            local ids=() names=() shapes=()
+            local entry mid name
             for entry in "''${MODELS[@]}"; do
               IFS='|' read -r mid name svc port <<< "$entry"
-              shapes="$(shapes_column "$mid")"
-              printf "%s\t%s\t%s\n" "$mid" "$name" "''${shapes:--}"
+              ids+=("$mid"); names+=("$name"); shapes+=("$(shapes_column "$mid")")
             done
-            printf "<nil>\tUnload all ninfer models\t-\n"
+            ids+=("<nil>"); names+=("Unload all ninfer models"); shapes+=("-")
+            local w_id=2 w_name=4 w_shape=20 row i
+            for i in "''${!ids[@]}"; do
+              [ ''${#ids[$i]} -gt $w_id ] && w_id=''${#ids[$i]}
+              [ ''${#names[$i]} -gt $w_name ] && w_name=''${#names[$i]}
+              [ ''${#shapes[$i]} -gt $w_shape ] && w_shape=''${#shapes[$i]}
+            done
+            # left-align each cell to its column width + 2-space gutter
+            local fmt="%-''${w_id}s  %-''${w_name}s  %-''${w_shape}s\n"
+            printf "$fmt" "ID" "NAME" "CONCURRENCYxCONTEXT"
+            for i in "''${!ids[@]}"; do
+              printf "$fmt" "''${ids[$i]}" "''${names[$i]}" "''${shapes[$i]}"
+            done
             echo
             echo "ACTIVE:"
             if [ -n "$active_mid" ]; then
               local active_shape
               active_shape="$(active_shape_line "$active_mid")"
-              printf "\033[1m%s\t%s\t%s\033[0m\n" "$active_mid" "$(name_for "$active_mid")" "$active_shape"
+              printf "\033[1m%-''${w_id}s  %-''${w_name}s  %-''${w_shape}s\033[0m\n" \
+                "$active_mid" "$(name_for "$active_mid")" "$active_shape"
             else
-              printf "\033[1m<nil>\tUnload all ninfer models\t-\033[0m\n"
+              printf "\033[1m%-''${w_id}s  %-''${w_name}s  %-''${w_shape}s\033[0m\n" \
+                "<nil>" "Unload all ninfer models" "-"
             fi
           }
 
