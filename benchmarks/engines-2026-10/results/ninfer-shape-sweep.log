@@ -131,3 +131,36 @@
 [17:11:50] qwen3.8-27b-coder390 262144: C1 OK tps=96.8 peak=23550MiB
 [17:11:57] sweep: restoring turbo (pre-sweep active model)
 [17:12:42] sweep complete
+[22:10:10] sweep: stopping any active engine before start
+[22:12:55] qwen3.8-27b-coder390 16384: C8 OK tps=188.1 peak=21338MiB
+[22:17:08] qwen3.8-27b-coder390 32768: C8 FAILED to start (OOM/refusal)
+[22:20:42] qwen3.8-27b-coder390 32768: C7 OK tps=146.4 peak=21154MiB
+[22:24:54] qwen3.8-27b-coder390 65536: C8 FAILED to start (OOM/refusal)
+[22:29:05] qwen3.8-27b-coder390 65536: C7 FAILED to start (OOM/refusal)
+[22:35:57] qwen3.8-27b-coder390 65536: C6 OK tps=146.8 peak=21472MiB
+[22:40:09] qwen3.8-27b-coder390 131072: C8 FAILED to start (OOM/refusal)
+[22:44:20] qwen3.8-27b-coder390 131072: C7 FAILED to start (OOM/refusal)
+[22:48:30] qwen3.8-27b-coder390 131072: C6 FAILED to start (OOM/refusal)
+[22:52:41] qwen3.8-27b-coder390 131072: C5 FAILED to start (OOM/refusal)
+[23:01:09] sweep: stopping any active engine before start
+[23:03:54] qwen3.8-27b-coder390 16384: C8 OK tps=186.7 peak=21162MiB
+[23:08:06] qwen3.8-27b-coder390 32768: C8 FAILED to start (OOM/refusal)
+[23:11:54] qwen3.8-27b-coder390 32768: C7 OK tps=136.6 peak=21154MiB
+[23:16:06] qwen3.8-27b-coder390 65536: C8 FAILED to start (OOM/refusal)
+[23:20:17] qwen3.8-27b-coder390 65536: C7 FAILED to start (OOM/refusal)
+[23:27:08] qwen3.8-27b-coder390 65536: C6 OK tps=147.1 peak=21472MiB
+[23:31:20] qwen3.8-27b-coder390 131072: C8 FAILED to start (OOM/refusal)
+[23:35:31] qwen3.8-27b-coder390 131072: C7 FAILED to start (OOM/refusal)
+[23:39:42] qwen3.8-27b-coder390 131072: C6 FAILED to start (OOM/refusal)
+[23:43:53] qwen3.8-27b-coder390 131072: C5 FAILED to start (OOM/refusal)
+[23:56:44] qwen3.8-27b-coder390 131072: C4 OK tps=127.6 peak=22010MiB
+[00:00:56] qwen3.8-27b-coder390 262144: C8 FAILED to start (OOM/refusal)
+[00:05:07] qwen3.8-27b-coder390 262144: C7 FAILED to start (OOM/refusal)
+[00:09:17] qwen3.8-27b-coder390 262144: C6 FAILED to start (OOM/refusal)
+[00:13:28] qwen3.8-27b-coder390 262144: C5 FAILED to start (OOM/refusal)
+[00:17:39] qwen3.8-27b-coder390 262144: C4 FAILED to start (OOM/refusal)
+[00:21:49] qwen3.8-27b-coder390 262144: C3 FAILED to start (OOM/refusal)
+[00:26:00] qwen3.8-27b-coder390 262144: C2 FAILED to start (OOM/refusal)
+[00:36:06] qwen3.8-27b-coder390 262144: C1 OK tps=95.2 peak=23374MiB
+[00:36:13] sweep: restoring turbo (pre-sweep active model)
+[00:36:58] sweep complete

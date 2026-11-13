@@ -319,12 +319,12 @@
       # completions; user input resolves k against this same table
       # (accepts raw and k forms).
       ninferShapeTable = [
-        "qwen3.8-27b|8x16k(155),7x32k(142),6x65k(128),4x131k(113),1x262k(97)"
-        "qwen3.8-27b-turbo|8x16k(116),8x32k(107),8x65k(100),8x131k(93),5x262k(70)"
-        "bonsai2-27b|8x16k(218),8x32k(169),8x65k(138),8x131k(116),8x262k(77)"
-        "bonsai2-27b-abliterated|8x16k(195),8x32k(161),8x65k(136),8x131k(106),8x262k(78)"
-        "qwen3.8-27b-abliterated|8x16k(101),8x32k(99),8x65k(101),8x131k(91),8x262k(70)"
-        "qwen3.8-27b-coder390|8x16k(180),7x32k(138),6x65k(136),4x131k(123),1x262k(97)"
+        "qwen3.8-27b|8x16k,7x32k,6x65k,4x131k,1x262k"
+        "qwen3.8-27b-turbo|8x16k,8x32k,8x65k,8x131k,5x262k"
+        "bonsai2-27b|8x16k,8x32k,8x65k,8x131k,8x262k"
+        "bonsai2-27b-abliterated|8x16k,8x32k,8x65k,8x131k,8x262k"
+        "qwen3.8-27b-abliterated|8x16k,8x32k,8x65k,8x131k,8x262k"
+        "qwen3.8-27b-coder390|8x16k,7x32k,6x65k,4x131k,1x262k"
       ];
       # `ninfer --version` strings. CLI release line + the two engine
       # distributions packaged below (v0.15.0 Qwen arm, v0.17.2
@@ -421,13 +421,13 @@ SHAPES=(
   # recipe qwen3_8_27b (text,vision,mtp,dflash2; imatrix from
   # the abliterated coder390 sibling — conversion-assessment.
   # Dense-family weights (17.2 GiB quantized) + 5-layer dflash2.
-  # MEASURED 2026-11-13 sweep on engine v0.15.0, FALLBACK=off
+  # MEASURED 2026-11-13/14 rerun sweep on engine v0.15.0, FALLBACK=off
   # (tokenizer-fixed re-conversion artifact, sha256 5851cb54;
   # VRAM peaks in MiB; each max-C cell boot-verified, boundary
   # cells die on the 6.78G runtime reservation):
   # 16k C8 ok / C9 n/a; 32k C7 ok / C8 8.27G ✗; 65k C6 ok /
   # C7 7.51G ✗; 131k C4 ok / C5 7.92G ✗; 262k C1 ok / C2 7.21G ✗.
-  "qwen3.8-27b-coder390|16384:8:21338:180,32768:7:21330:138,65536:6:21648:136,131072:4:22186:123,262144:1:23550:97"
+  "qwen3.8-27b-coder390|16384:8:21162:187,32768:7:21154:137,65536:6:21472:147,131072:4:22010:128,262144:1:23374:95"
 )
 # Unit default shape (what Environment= in the unit pins); a
 # --context equal to this clears the override file instead of
@@ -451,9 +451,9 @@ default_shape_for() {
     # the champion default (C8x65k 19248 MiB, 101 tok/s).
     qwen3.8-27b-abliterated) echo "8x65536" ;;
     # coder390: measured champion C6x65k (dense 17.2 GiB
-    # weights; 2026-11-13 sweep: C7x65k dies on the 6.78G
-    # runtime reservation — see SHAPES row). C6x65k: 21648
-    # MiB peak, 136 tok/s.
+    # weights; 2026-11-14 rerun sweep: C7x65k dies on the
+    # 6.78G runtime reservation — see SHAPES row). C6x65k:
+    # 21472 MiB peak, 147 tok/s.
     qwen3.8-27b-coder390) echo "6x65536" ;;
     *) echo "''${DEFAULT_CONC}x''${DEFAULT_CTX}" ;;
   esac
@@ -513,8 +513,9 @@ prune_dominated_shapes() {
 }
 
 # 2026-11-12 display rework: render "Cx{ctx}k" with k = floor(ctx/1000)
-# (user's examples: 65536 -> 65k, 131072 -> 131k, 262144 -> 262k) and
-# append "(tps)" when the measured tps field is present and nonzero.
+# (user's examples: 65536 -> 65k, 131072 -> 131k, 262144 -> 262k).
+# 2026-11-13: "(tps)" suffix removed — shape tokens are plain
+# {concurrency}x{context} (user request); tps stays in the sweep JSON.
 shapes_column() {
   local specs pair ctxv c peak tps
   specs="$(shapes_for "$1")" || { echo "-"; return 0; }
@@ -525,7 +526,6 @@ shapes_column() {
     tps="''${tps:-0}"
     [ "$first" = 1 ] || out+=","
     out+="''${c}x$((ctxv / 1000))k"
-    [ "$tps" != 0 ] && out+="($tps)"
     first=0
   done
   echo "$out"
@@ -698,20 +698,32 @@ do_switch() {
   }
 
   if [ "''$target" = "<nil>" ] || [ "''$target" = "nil" ]; then
-    local stopping=0
     local entry mid name svc port
     for entry in "''${MODELS[@]}"; do
       IFS='|' read -r mid name svc port <<< "''$entry"
       if "''${SYSTEMCTL[@]}" is-active --quiet "''$svc" 2>/dev/null; then
+
+        local stop_start=$SECONDS
+        local stop_cursor
+        stop_cursor="$(${pkgs.systemd}/bin/journalctl -u "''$svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f3- || true)"
         printf "Stopping %s (%s)... " "''$mid" "''$svc"
         "''${SYSTEMCTL[@]}" stop "''$svc" 2>/dev/null || true
-        echo "done."
-        stopping=1
+        while "''${SYSTEMCTL[@]}" is-active --quiet "''$svc" 2>/dev/null; do
+          sleep 0.1
+        done
+        local stop_elapsed=$(( SECONDS - stop_start ))
+        # OK lands on the line when the stop succeeded; the pending
+        # form is just ({elapsed}) (user log contract 2026-11-13).
+        echo "OK (''${stop_elapsed}s)"
+        # Operational logs emitted while stopping, verbatim, one per
+        # line, directly after the Stopping line.
+        if [ -n "''$stop_cursor" ]; then
+          ${pkgs.systemd}/bin/journalctl -u "''$svc" --after-cursor="''$stop_cursor" -o cat --no-pager 2>/dev/null | grep -v '^$' || true
+        fi
       fi
     done
     rm -f "''$state_file" 2>/dev/null || true
     rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for ninfer-df2-abliterated)" "''$(shape_env_for ninfer-df2-coder390)" "''$(shape_env_for bonsai2)" "''$(shape_env_for bonsai2-abliterated)" 2>/dev/null || true
-    echo "✔ Unloaded all models (switched to <nil>)"
     return 0
   fi
 
@@ -825,34 +837,62 @@ do_switch() {
   # apply the shape file.
   if [ -z "''$want_shape" ]; then
     if "''${SYSTEMCTL[@]}" is-active --quiet "''$found_svc" 2>/dev/null; then
-      if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''$target_port/v1/models" >/dev/null 2>&1; then
+      # Same model_loading race as the start loop below: 200 with a
+      # {"error":"model_loading"} body means still booting.
+      if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''$target_port/v1/models" 2>/dev/null | grep -q '"id"'; then
         echo "✔ Already active and responding on ''$canonical (:''$target_port)"
         return 0
       fi
     fi
   fi
 
-  # Stop any conflicting active services first
+  # Stop any conflicting active services first (case 1 stop phase:
+  # "Stopping {old} ({svc})... OK ({t})" + stop-phase operational
+  # logs, then the Starting line — user log contract 2026-11-13).
   for entry in "''${MODELS[@]}"; do
     IFS='|' read -r mid name svc port <<< "$entry"
     if [ "$svc" != "$found_svc" ] && "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; then
+      local cstop_start=$SECONDS
+      local cstop_cursor
+      cstop_cursor="$(${pkgs.systemd}/bin/journalctl -u "$svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f3- || true)"
       printf "Stopping %s (%s)... " "$mid" "$svc"
       "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
       while "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; do
         sleep 0.1
       done
-      echo "done."
+      local cstop_elapsed=$(( SECONDS - cstop_start ))
+      echo "OK (''${cstop_elapsed}s)"
+      if [ -n "$cstop_cursor" ]; then
+        ${pkgs.systemd}/bin/journalctl -u "$svc" --after-cursor="$cstop_cursor" -o cat --no-pager 2>/dev/null | grep -v '^$' || true
+      fi
     fi
   done
 
-  echo "Switching to $canonical ($target_shape)..."
-
+  # Start phase (user log contract 2026-11-13):
+  #   "Starting {model} ({C}x{ctx})... ({t}s)"  while pending
+  #   "Starting {model} ({C}x{ctx})... OK ({t}s)" once responding
+  # with operational journal logs printed after the OK line (case 3)
+  # or after the stop phase's OK line (case 1 — handled above; here
+  # the start-phase logs follow the Starting line's OK).
   local start_sec=$SECONDS
   local journal_cursor
-  journal_cursor="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f2- || true)"
+  journal_cursor="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f3- || true)"
 
-  if ! "''${SYSTEMCTL[@]}" start --no-block "$found_svc"; then
+  # restart (not start) when a shape override was given: the unit may
+  # already be running with the old Environment shape.
+  local restart_mode="start"
+  [ -n "$want_shape" ] && restart_mode="restart"
+
+  printf "Starting %s (%s)... " "$canonical" "$target_shape"
+
+  # Shape override on an already-running unit: `systemctl start` is
+  # a no-op there and the ready-gate passes against the still-running
+  # engine — the freshly written shape file would never apply. A
+  # shape switch always restarts (user log contract 2026-11-13).
+  if ! "''${SYSTEMCTL[@]}" $restart_mode --no-block "$found_svc"; then
     rm -f "$state_file" 2>/dev/null || true
+    # Not OK: the pending form stays without OK.
+    echo "($(( SECONDS - start_sec ))s)"
     echo "error: failed to start $found_svc" >&2
     exit 1
   fi
@@ -860,83 +900,62 @@ do_switch() {
   local is_tty=0
   [ -t 1 ] && is_tty=1
 
-  local spinner_chars=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
-  local spin_idx=0
-  local last_status=""
-  local last_logged_line=""
-  local substate=""
-
   while true; do
     local elapsed=$(( SECONDS - start_sec ))
-    local spin="''${spinner_chars[$spin_idx]}"
-    spin_idx=$(( (spin_idx + 1) % ''${#spinner_chars[@]} ))
 
     if "''${SYSTEMCTL[@]}" is-failed --quiet "$found_svc" 2>/dev/null; then
-      [ "$is_tty" -eq 1 ] && printf "\r\033[K"
-      echo "❌ $found_svc failed to start!" >&2
+      # Not OK: pending form without OK, then the failure logs.
+      echo "(''${elapsed}s)"
+      echo "error: $found_svc failed to start" >&2
       ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 15 --no-pager >&2 || true
       rm -f "$state_file" 2>/dev/null || true
       exit 1
     fi
 
-    # Check if HTTP endpoint is live
-    if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''$target_port/v1/models" >/dev/null 2>&1; then
+    # Check if HTTP endpoint is live AND the model is loaded: the
+    # engine binds the socket early and /v1/models answers 200 with
+    # a {"error":"model_loading"} body while weights stream in
+    # (2026-11-13 runtime verification) — gate on real model data.
+    if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''$target_port/v1/models" 2>/dev/null | grep -q '"id"'; then
       [ "$is_tty" -eq 1 ] && printf "\r\033[K"
-      echo "✔ Ready in ''${elapsed}s | listening on http://0.0.0.0:$target_port"
-      echo "switched to $canonical"
+      echo "OK (''${elapsed}s)"
+      # Operational logs from the start phase, verbatim, one per
+      # line. The engine keeps writing boot lines for seconds after
+      # /v1/models first answers (weights 16.7 GiB load + CUDA
+      # graphs span ~14s), so drain until the journal goes quiet
+      # (2s with no new lines, capped at 10s) before the dump.
+      if [ -n "$journal_cursor" ]; then
+        local drain_cursor="$journal_cursor" drain_new="" quiet=0
+        # Two consecutive empty 1s polls: the engine logs "listening"
+        # AFTER binding the port (the ready-gate's curl 200 lands in
+        # that gap), so a single quiet poll can still race the last
+        # line (2026-11-13 runtime verification).
+        for ((d=0; d<15; d++)); do
+          sleep 1
+          drain_new="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" --after-cursor="$drain_cursor" -o cat --no-pager 2>/dev/null | grep -v '^$' || true)"
+          if [ -z "$drain_new" ]; then
+            quiet=$(( quiet + 1 ))
+            [ "$quiet" -ge 2 ] && break
+          else
+            quiet=0
+            drain_cursor="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f3- || true)"
+          fi
+        done
+        ${pkgs.systemd}/bin/journalctl -u "$found_svc" --after-cursor="$journal_cursor" -o cat --no-pager 2>/dev/null | grep -v '^$' || true
+      fi
       return 0
     fi
 
-    local latest_line=""
-    if [ -n "$journal_cursor" ]; then
-      latest_line="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" --after-cursor="$journal_cursor" -o cat --no-pager 2>/dev/null | tail -n 1 || true)"
-    else
-      latest_line="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 1 -o cat --no-pager 2>/dev/null || true)"
-    fi
-
-    local progress_desc=""
-    if [[ "$latest_line" =~ loading[[:space:]]+weights[[:space:]]+([0-9.]+)% ]]; then
-      local pct="''${BASH_REMATCH[1]}"
-      local int_pct=''${pct%.*}
-      int_pct=''${int_pct:-0}
-      local bar_width=20
-      local filled=$(( int_pct * bar_width / 100 ))
-      local empty=$(( bar_width - filled ))
-      local bar=""
-      for ((b=0; b<filled; b++)); do bar+="█"; done
-      for ((b=0; b<empty; b++)); do bar+="░"; done
-      progress_desc="[$bar] $pct% ($latest_line)"
-    elif [ -n "$latest_line" ] && [ "$latest_line" != "$last_logged_line" ]; then
-      if [[ "$latest_line" =~ (weights\ ready|host\ state\ pinned|host\ KV\ pinned|CUDA\ graphs\ ready|engine\ ready|starting\ engine|API:) ]]; then
-        if [ "$is_tty" -eq 1 ]; then
-          printf "\r\033[K  → %s\n" "$latest_line"
-        else
-          echo "  → $latest_line"
-        fi
-        last_logged_line="$latest_line"
-      else
-        progress_desc="$latest_line"
-      fi
-    fi
-
-    if [ -z "$progress_desc" ]; then
-      substate="$(${pkgs.systemd}/bin/systemctl show -p SubState --value "$found_svc" 2>/dev/null || echo "starting")"
-      if [ "$substate" = "condition" ] || [ "$substate" = "start-pre" ]; then
-        progress_desc="[boot-gate] verifying GPU & model artifact..."
-      else
-        progress_desc="initializing engine ($substate)..."
-      fi
-    fi
-
+    # Pending form: update the elapsed marker in place on a TTY;
+    # non-TTY stays a single open line until OK.
     if [ "$is_tty" -eq 1 ]; then
-      printf "\r\033[K  %s %s (%ds)" "$spin" "$progress_desc" "$elapsed"
-    elif [ "$progress_desc" != "$last_status" ] && [ "$(( elapsed % 3 ))" -eq 0 ]; then
-      echo "  [ninfer] $progress_desc (''${elapsed}s)"
-      last_status="$progress_desc"
+      printf "\r\033[KStarting %s (%s)... (%ss)" "$canonical" "$target_shape" "$elapsed"
     fi
 
     if [ "$elapsed" -gt 180 ]; then
       [ "$is_tty" -eq 1 ] && printf "\r\033[K"
+      # Not OK: close the pending line without OK.
+      echo "(''${elapsed}s)"
       echo "error: timeout waiting for $found_svc to become ready (>180s)" >&2
       ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 20 --no-pager >&2 || true
       exit 1
@@ -1447,8 +1466,8 @@ FISH
         # coder390Artifact): full DFlash2 bundle (text,vision,mtp,
         # dflash2 — mirrors the official qwen3_8_27b.ninfer shape), so
         # NINFER_SPEC=dflash2 — the dense unit's winner lane. Same
-        # shape contract (C6x65k default); SHAPES row is UNMEASURED
-        # until sweep_coder390.py runs.
+        # shape contract (C6x65k default); SHAPES row MEASURED in
+        # the 2026-11-14 rerun sweep (see SHAPES comment).
         systemd.services.ninfer-df2-coder390 = {
           description = "ninfer 0.15.0 Qwen3.8-27B Coder390 (EfficientThink)";
           after = ["network-online.target"];
