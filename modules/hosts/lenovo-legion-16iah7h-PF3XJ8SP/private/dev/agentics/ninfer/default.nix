@@ -240,14 +240,19 @@
       # shape), not dflash2 (dense lane).
       huihuiAblArtifact = "/nix/store/bl01zwxxdscz232ihpbcqgsxn0rzsknh-huihui_abl_qwen3_8_27b.ninfer";
 
-      # Qwen3.8-27B-Coder390-EfficientThink (2026-11-11 re-conversion):
+      # Qwen3.8-27B-Coder390-EfficientThink (2026-11-13 re-conversion):
       # nerkyor HF BF16 -> tools/convert recipe qwen3_8_27b, components
       # text,vision,mtp,dflash2, imatrix from the abliterated coder390
       # sibling (documented substitution — conversion-assessment.md,
       # archived at benchmarks/engines-2026-10/ninfer-conversion/).
-      # Same streaming-store cutover as huihuiAblArtifact (18G file,
+      # tokenizer.json + tokenizer_config.json overridden with the base
+      # Qwen3.8-27B resources (--resource, per provenance v2/v3): the
+      # source repo's own tokenizer uses \p{L}-without-\p{M} Split
+      # regex the engine's Qwen reader rejects (2026-11-13 sweep
+      # failure: every cell FATAL pre_tokenizer.Split). Same
+      # streaming-store cutover as huihuiAblArtifact (18G file,
       # add-file OOMs this box; fetchurl file:// streams at ~88 MiB).
-      coder390Artifact = "/nix/store/69d233pijmrzpyhzajqryc42cyfv3y2f-coder390_qwen3_8_27b.ninfer";
+      coder390Artifact = "/nix/store/s9nxfh94rgzv0axmk7yzmz740gz0d3xb-coder390_qwen3_8_27b.ninfer";
 
       ninferRootV0172 = pkgs.runCommand "ninfer-rtx3090-0.17.2" {} ''
         mkdir -p $out/models
@@ -314,12 +319,12 @@
       # completions; user input resolves k against this same table
       # (accepts raw and k forms).
       ninferShapeTable = [
-        "Qwen3.8-27B|8x16k(155),7x32k(142),6x65k(128),4x131k(113),1x262k(97)"
-        "Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP|8x16k(116),8x32k(107),8x65k(100),8x131k(93),5x262k(70)"
-        "Ternary-Bonsai-2-27B|8x16k(218),8x32k(169),8x65k(138),8x131k(116),8x262k(77)"
-        "Ternary-Bonsai-2-27B-Heretic-Abliterated|8x16k(195),8x32k(161),8x65k(136),8x131k(106),8x262k(78)"
-        "Qwen3.8-27B-Huihui-Abliterated|8x16k,8x32k,8x65k,8x131k,5x262k"
-        "Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2|6x16k,5x32k,4x65k,3x131k"
+        "qwen3.8-27b|8x16k(155),7x32k(142),6x65k(128),4x131k(113),1x262k(97)"
+        "qwen3.8-27b-turbo|8x16k(116),8x32k(107),8x65k(100),8x131k(93),5x262k(70)"
+        "bonsai2-27b|8x16k(218),8x32k(169),8x65k(138),8x131k(116),8x262k(77)"
+        "bonsai2-27b-abliterated|8x16k(195),8x32k(161),8x65k(136),8x131k(106),8x262k(78)"
+        "qwen3.8-27b-abliterated|8x16k(101),8x32k(99),8x65k(101),8x131k(91),8x262k(70)"
+        "qwen3.8-27b-coder390|8x16k(180),7x32k(138),6x65k(136),4x131k(123),1x262k(97)"
       ];
       # `ninfer --version` strings. CLI release line + the two engine
       # distributions packaged below (v0.15.0 Qwen arm, v0.17.2
@@ -330,11 +335,11 @@
       # 2026-10-18: Native shell CLI. Fast (<5ms), minimal UI,
       # canonical IDs only (no aliases), <nil> unloader, and full shell completions.
       # 2026-10-31: Renamed ashalliant CLI to ninfer (clean cutover).
-      # 2026-11-06: Replaced Qwen3.8-27B-Huihui-Abliterated with Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP.
+      # 2026-11-06: Replaced qwen3.8-27b-abliterated with qwen3.8-27b-turbo.
       # 2026-11-07: Removed qwen3.6 models; enhanced switch with responsive progress bar and milestone logging.
       # 2026-11-11: TUI removed; tabular list (ID/NAME/CONCURRENCYxCONTEXT,
       # alphabetical, <nil> last, bold ACTIVE row); positional
-      # `switch <model-id> [C]x<ctx>` grammar; bonsai2 id -> Ternary-Bonsai-2-27B
+      # `switch <model-id> [C]x<ctx>` grammar
       # with only the 8x262144 champion shape; --version/-v.
       # 2026-11-12: per-model shape completions — `switch <model> <TAB>`
       # offers only THAT model's measured shapes, read from the shipped
@@ -371,12 +376,12 @@ set -euo pipefail
 SYSTEMCTL=( "${pkgs.systemd}/bin/systemctl" --no-ask-password )
 
 MODELS=(
-  "Ternary-Bonsai-2-27B|Ternary-Bonsai-2-27B|bonsai2.service|${toString ninferPort}"
-  "Ternary-Bonsai-2-27B-Heretic-Abliterated|Ternary-Bonsai-2-27B-Heretic-Abliterated|bonsai2-abliterated.service|${toString ninferPort}"
-  "Qwen3.8-27B|Qwen3.8-27B|ninfer-df2.service|${toString ninferPort}"
-  "Qwen3.8-27B-Huihui-Abliterated|Qwen3.8-27B-Huihui-Abliterated|ninfer-df2-abliterated.service|${toString ninferPort}"
-  "Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2|Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2|ninfer-df2-coder390.service|${toString ninferPort}"
-  "Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP|Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP|ninfer-df2-turbo.service|${toString ninferPort}"
+  "bonsai2-27b|Ternary-Bonsai-2-27B|bonsai2.service|${toString ninferPort}"
+  "bonsai2-27b-abliterated|Ternary-Bonsai-2-27B-Heretic-Abliterated|bonsai2-abliterated.service|${toString ninferPort}"
+  "qwen3.8-27b|Qwen3.8-27B|ninfer-df2.service|${toString ninferPort}"
+  "qwen3.8-27b-abliterated|Qwen3.8-27B-Huihui-Abliterated|ninfer-df2-abliterated.service|${toString ninferPort}"
+  "qwen3.8-27b-coder390|Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2|ninfer-df2-coder390.service|${toString ninferPort}"
+  "qwen3.8-27b-turbo|Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP|ninfer-df2-turbo.service|${toString ninferPort}"
 )
 
 # Measured max concurrency per context on the RTX 3090 (2026-11-11,
@@ -395,36 +400,34 @@ SHAPES=(
   # 2026-11-13 sweep (engine v0.17.2): tps = per-agent decode tok/s, median
   # of 2 reps at the pinned max-C shape for each ctx. C8 held at every ctx
   # for the bonsai2 pair (weights 9.5G -> big KV headroom).
-  "Qwen3.8-27B|16384:8:21162:155,32768:7:21154:142,65536:6:21472:128,131072:4:22010:113,262144:1:23374:97"
-  "Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP|16384:8:19572:116,32768:8:19870:107,65536:8:20464:100,131072:8:21654:93,262144:5:23536:70"
+  "qwen3.8-27b|16384:8:21162:155,32768:7:21154:142,65536:6:21472:128,131072:4:22010:113,262144:1:23374:97"
+  "qwen3.8-27b-turbo|16384:8:19572:116,32768:8:19870:107,65536:8:20464:100,131072:8:21654:93,262144:5:23536:70"
   # bonsai2 on engine v0.17.2 (2026-11-13 sweep): C8 held at EVERY
   # context, including full 262k. Peak 14168 MiB = ~10 GiB
   # headroom below the 24.5 GiB card. Measured ladder + tps.
-  "Ternary-Bonsai-2-27B|16384:8:9706:218,32768:8:10004:169,65536:8:10598:138,131072:8:11788:116,262144:8:14168:77"
+  "bonsai2-27b|16384:8:9706:218,32768:8:10004:169,65536:8:10598:138,131072:8:11788:116,262144:8:14168:77"
   # Ternary-Bonsai-2-27B-Heretic-Abliterated: 2026-11-13 sweep measured ladder — same
   # 9.52 GB ternary container as Ternary-Bonsai-2-27B, C8 held at every ctx
   # (peaks identical to the sibling; tps ~1-11% lower).
-  "Ternary-Bonsai-2-27B-Heretic-Abliterated|16384:8:9706:195,32768:8:10004:161,65536:8:10598:136,131072:8:11788:106,262144:8:14168:78"
+  "bonsai2-27b-abliterated|16384:8:9706:195,32768:8:10004:161,65536:8:10598:136,131072:8:11788:106,262144:8:14168:78"
   # Qwen3.8-27B-Huihui-Abliterated: huihui bf16 -> tools/convert
-  # recipe qwen3_8_27b, mtp-only artifact (no dflash2). The
-  # 2026-10-10 campaign measured the SAME conversion recipe
-  # (huihui_abl, artifact since cleaned): same engine spec as
-  # the turbo unit (mtp, no dflash2 draft), so the turbo
-  # table is the correct bound (dflash2's table costs ~1.6
-  # GiB more per shape). Unverified on this artifact — first
-  # load must confirm before trusting C8 at 65k+.
-  "Qwen3.8-27B-Huihui-Abliterated|16384:8:19562,32768:8:19860,65536:8:20454,131072:8:21644:0,262144:5:23526:0"
+  # recipe qwen3_8_27b, mtp-only artifact (no dflash2). MEASURED
+  # 2026-11-13 sweep on engine v0.15.0 (fresh GPU re-conversion
+  # artifact, sha256 e6e22d36): like the ternary siblings, C8
+  # (engine hard cap) holds at EVERY context including full 262k.
+  # Peak 22818 MiB = ~1.7 GiB headroom below the 24.5 GiB card.
+  "qwen3.8-27b-abliterated|16384:8:18356:101,32768:8:18654:99,65536:8:19248:101,131072:8:20438:91,262144:8:22818:70"
   # Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2: nerkyor HF BF16 -> tools/convert
   # recipe qwen3_8_27b (text,vision,mtp,dflash2; imatrix from
   # the abliterated coder390 sibling — conversion-assessment.
-  # md). Dense-family weights (17.2 GiB quantized) + 5-layer
-  # dflash2 draft. MEASURED 2026-11-12 smoke ladder on engine
-  # v0.17.2, FALLBACK=off (VRAM peaks in MiB; each max-C cell
-  # boot-verified, boundary cells die on reservation):
-  # 16k C6 ok / C7 7.39G res ✗; 32k C5 ok / C6 6.81G ✗;
-  # 65k C4 ok / C5 7.53G ✗; 128k C3 ok (C2 21532 ok) /
-  # C4 7.63G ✗; 262k none (C1 6.94G ✗ by 157 MiB).
-  "Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2|16384:6:20570,32768:5:20572,65536:4:20876,131072:3:21708:0"
+  # Dense-family weights (17.2 GiB quantized) + 5-layer dflash2.
+  # MEASURED 2026-11-13 sweep on engine v0.15.0, FALLBACK=off
+  # (tokenizer-fixed re-conversion artifact, sha256 5851cb54;
+  # VRAM peaks in MiB; each max-C cell boot-verified, boundary
+  # cells die on the 6.78G runtime reservation):
+  # 16k C8 ok / C9 n/a; 32k C7 ok / C8 8.27G ✗; 65k C6 ok /
+  # C7 7.51G ✗; 131k C4 ok / C5 7.92G ✗; 262k C1 ok / C2 7.21G ✗.
+  "qwen3.8-27b-coder390|16384:8:21338:180,32768:7:21330:138,65536:6:21648:136,131072:4:22186:123,262144:1:23550:97"
 )
 # Unit default shape (what Environment= in the unit pins); a
 # --context equal to this clears the override file instead of
@@ -443,10 +446,15 @@ DEFAULT_CONC=6
 # when neither /props nor the shape file yields values.
 default_shape_for() {
   case "$1" in
-    Ternary-Bonsai-2-27B|Ternary-Bonsai-2-27B-Heretic-Abliterated) echo "8x262144" ;;
-    # coder390: measured champion C4x65k (dense 17.2 GiB
-    # weights; C6x65k would OOM — see SHAPES row).
-    Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2) echo "4x65536" ;;
+    bonsai2-27b|bonsai2-27b-abliterated) echo "8x262144" ;;
+    # huihui: C8 holds at every ctx (2026-11-13 sweep); 65k is
+    # the champion default (C8x65k 19248 MiB, 101 tok/s).
+    qwen3.8-27b-abliterated) echo "8x65536" ;;
+    # coder390: measured champion C6x65k (dense 17.2 GiB
+    # weights; 2026-11-13 sweep: C7x65k dies on the 6.78G
+    # runtime reservation — see SHAPES row). C6x65k: 21648
+    # MiB peak, 136 tok/s.
+    qwen3.8-27b-coder390) echo "6x65536" ;;
     *) echo "''${DEFAULT_CONC}x''${DEFAULT_CTX}" ;;
   esac
 }
@@ -658,12 +666,12 @@ get_active() {
   mpath="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.model_path // empty' 2>/dev/null || true )"
   if [ -n "$mpath" ]; then
     case "$mpath" in
-      *coder390*) echo "Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2"; return 0 ;;
-      *turbo*) echo "Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP"; return 0 ;;
-      *huihui_abl*) echo "Qwen3.8-27B-Huihui-Abliterated"; return 0 ;;
-      *bonsai2_27b_heretic*) echo "Ternary-Bonsai-2-27B-Heretic-Abliterated"; return 0 ;;
-      *bonsai2*) echo "Ternary-Bonsai-2-27B"; return 0 ;;
-      *qwen3_8_27b*) echo "Qwen3.8-27B"; return 0 ;;
+      *coder390*) echo "qwen3.8-27b-coder390"; return 0 ;;
+      *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
+      *huihui_abl*) echo "qwen3.8-27b-abliterated"; return 0 ;;
+      *bonsai2_27b_heretic*) echo "bonsai2-27b-abliterated"; return 0 ;;
+      *bonsai2*) echo "bonsai2-27b"; return 0 ;;
+      *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
     esac
   fi
 
@@ -723,7 +731,7 @@ do_switch() {
 
   if [ -z "''$found_svc" ]; then
     echo "error: unknown model ''$target" >&2
-    echo "       available: Ternary-Bonsai-2-27B, Ternary-Bonsai-2-27B-Heretic-Abliterated, Qwen3.8-27B, Qwen3.8-27B-Huihui-Abliterated, Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2, Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP, <nil>" >&2
+    echo "       available: bonsai2-27b, bonsai2-27b-abliterated, qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.8-27b-coder390, qwen3.8-27b-turbo, <nil>" >&2
     exit 1
   fi
 
@@ -1013,12 +1021,12 @@ SCRIPT
             )
 
             models=(
-              'Ternary-Bonsai-2-27B'
-              'Ternary-Bonsai-2-27B-Heretic-Abliterated'
-              'Qwen3.8-27B'
-              'Qwen3.8-27B-Huihui-Abliterated'
-              'Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2'
-              'Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP'
+              'bonsai2-27b'
+              'bonsai2-27b-abliterated'
+              'qwen3.8-27b'
+              'qwen3.8-27b-abliterated'
+              'qwen3.8-27b-coder390'
+              'qwen3.8-27b-turbo'
               '\<nil\>'
               'nil'
             )
@@ -1096,7 +1104,7 @@ SCRIPT
             prev="''${COMP_WORDS[COMP_CWORD-1]}"
             shapes_conf="@NINFER_SHAPES_CONF@"
 
-            local models="Ternary-Bonsai-2-27B Ternary-Bonsai-2-27B-Heretic-Abliterated Qwen3.8-27B Qwen3.8-27B-Huihui-Abliterated Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP <nil> nil"
+            local models="bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-coder390 qwen3.8-27b-turbo <nil> nil"
             local commands="switch list status active current version"
 
             if [ "$COMP_CWORD" -eq 2 ] && [ "''${COMP_WORDS[1]}" = "switch" ]; then
@@ -1180,12 +1188,12 @@ SCRIPT
                 ""|"<nil>"|nil) echo "ninfer-restore: no persisted model"; exit 0 ;;
               esac
               case "$mid" in
-                Ternary-Bonsai-2-27B) svc=bonsai2.service ;;
-                Ternary-Bonsai-2-27B-Heretic-Abliterated) svc=bonsai2-abliterated.service ;;
-                Qwen3.8-27B-Huihui-Abliterated) svc=ninfer-df2-abliterated.service ;;
-                Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2) svc=ninfer-df2-coder390.service ;;
-                Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP) svc=ninfer-df2-turbo.service ;;
-                Qwen3.8-27B) svc=ninfer-df2.service ;;
+                bonsai2-27b) svc=bonsai2.service ;;
+                bonsai2-27b-abliterated) svc=bonsai2-abliterated.service ;;
+                qwen3.8-27b-abliterated) svc=ninfer-df2-abliterated.service ;;
+                qwen3.8-27b-coder390) svc=ninfer-df2-coder390.service ;;
+                qwen3.8-27b-turbo) svc=ninfer-df2-turbo.service ;;
+                qwen3.8-27b) svc=ninfer-df2.service ;;
                 *) echo "ninfer-restore: unknown persisted model '$mid'"; exit 0 ;;
               esac
               if systemctl is-active --quiet "$svc"; then
@@ -1282,7 +1290,7 @@ SCRIPT
               "NINFER_KV_CAPACITY=65536"
               "NINFER_HOST_STATE_SLOTS=6"
               "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
-              "NINFER_MODEL_ID=Qwen3.8-27B"
+              "NINFER_MODEL_ID=qwen3.8-27b"
             ];
             # Optional per-shape override written by `ninfer switch -c <ctx>`
             # (NINFER_CONCURRENCY/CONTEXT/KV_CAPACITY/HOST_STATE_SLOTS).
@@ -1345,7 +1353,7 @@ SCRIPT
               "NINFER_HOST=0.0.0.0"
               "NINFER_PORT=${toString ninferPort}"
               "NINFER_FALLBACK=off"
-              "NINFER_MODEL_ID=Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP"
+              "NINFER_MODEL_ID=qwen3.8-27b-turbo"
               "NINFER_CONCURRENCY=6"
               "NINFER_CONTEXT=65536"
               "NINFER_KV_CAPACITY=65536"
@@ -1408,7 +1416,7 @@ SCRIPT
               "NINFER_HOST=0.0.0.0"
               "NINFER_PORT=${toString ninferPort}"
               "NINFER_FALLBACK=off"
-              "NINFER_MODEL_ID=Qwen3.8-27B-Huihui-Abliterated"
+              "NINFER_MODEL_ID=qwen3.8-27b-abliterated"
               "NINFER_CONCURRENCY=6"
               "NINFER_CONTEXT=65536"
               "NINFER_KV_CAPACITY=65536"
@@ -1473,18 +1481,19 @@ SCRIPT
               "NINFER_HOST=0.0.0.0"
               "NINFER_PORT=${toString ninferPort}"
               "NINFER_FALLBACK=off"
-              "NINFER_MODEL_ID=Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2"
-              # Measured sweep (2026-11-12 smoke ladder, FALLBACK=off):
-              # 16k→C6 (20570 MiB), 32k→C5 (20572), 65k→C4 (20876),
-              # 128k→C3 (21708; C2 also fits 21532), 262k→none (C1
-              # dies by 157 MiB). Dense 17.2 GiB weights leave ~6.78
-              # GiB runtime; the dflash2 floor is ~6.6 GiB + ~75 MiB/lane
-              # + ~21 MiB/kctx. Champion default = C4x65k (deepest ctx
-              # at the highest C that holds it).
-              "NINFER_CONCURRENCY=4"
+              "NINFER_MODEL_ID=qwen3.8-27b-coder390"
+              # Measured sweep (2026-11-13, FALLBACK=off, tokenizer-
+              # fixed artifact): 16k→C8 (21338 MiB, 180 tps), 32k→C7
+              # (21330, 138), 65k→C6 (21648, 136), 131k→C4 (22186,
+              # 123), 262k→C1 (23550, 97). Dense 17.2 GiB weights
+              # leave ~6.78 GiB runtime; boundary cells die on the
+              # engine runtime reservation (32k C8 8.27G, 65k C7
+              # 7.51G, 131k C5 7.92G, 262k C2 7.21G). Champion
+              # default = C6x65k (highest-C mid-ctx cell).
+              "NINFER_CONCURRENCY=6"
               "NINFER_CONTEXT=65536"
               "NINFER_KV_CAPACITY=65536"
-              "NINFER_HOST_STATE_SLOTS=4"
+              "NINFER_HOST_STATE_SLOTS=6"
               "NINFER_SERVER=${ninferRoot}/ninfer-serve.hostkv-shim"
             ];
             # Same per-shape override contract as ninfer-df2 above.

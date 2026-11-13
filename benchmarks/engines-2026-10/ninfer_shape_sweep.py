@@ -45,11 +45,9 @@ PORT = 8092
 
 # model-id -> (unit, spec). spec only matters for reporting.
 MODELS = [
-    # 2026-11-13: qwen3.8-27b + turbo already cached in the sweep JSON; abliterated +
-    # coder390 deferred until their GC'd store artifacts are re-ingested (WaveCut
-    # substitute download + bf16 re-conversion running in /tmp/ninfer-work). Re-add:
-    # ("qwen3.8-27b-abliterated", "ninfer-df2-abliterated", "mtp"),
-    # ("qwen3.8-27b-coder390", "ninfer-df2-coder390", "dflash2"),
+    # 2026-11-13: huihui-abl + coder390 re-converted (GPU) + re-ingested; rows live.
+    ("qwen3.8-27b-abliterated", "ninfer-df2-abliterated", "mtp"),
+    ("qwen3.8-27b-coder390", "ninfer-df2-coder390", "dflash2"),
     ("qwen3.8-27b", "ninfer-df2", "dflash2"),
     ("qwen3.8-27b-turbo", "ninfer-df2-turbo", "mtp"),
     ("bonsai2-27b", "bonsai2", "mtp"),
@@ -137,7 +135,7 @@ def measure_tps(conc, ctx_tokens):
     medians across reps) + aggregate."""
     # bench.sse_chat(port, model, prompt, max_tokens): prompt length
     # scaled to ctx via bench.corpus_prompt so KV pressure is real.
-    # Model id: the engine serves its artifact id (e.g. "qwen3.8-27b"),
+    # Model id: the engine serves its artifact id (e.g. "Qwen3.8-27B"),
     # discovered by healthy(); "test" gets 404 model_not_found.
     # Lanes run CONCURRENTLY (ThreadPoolExecutor): the metric is
     # per-agent decode tps under C-way load, and sequential lanes

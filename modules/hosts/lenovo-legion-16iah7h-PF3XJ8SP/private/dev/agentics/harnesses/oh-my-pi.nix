@@ -170,7 +170,7 @@
 
           models = [
             {
-              id = "Ternary-Bonsai-2-27B";
+              id = "bonsai2-27b";
               name = "Ternary-Bonsai-2-27B";
               reasoning = true;
               input = ["text" "image"];
@@ -178,7 +178,7 @@
               maxTokens = 65536;
             }
             {
-              id = "Ternary-Bonsai-2-27B-Heretic-Abliterated";
+              id = "bonsai2-27b-abliterated";
               name = "Ternary-Bonsai-2-27B-Heretic-Abliterated";
               reasoning = true;
               input = ["text" "image"];
@@ -186,7 +186,7 @@
               maxTokens = 65536;
             }
             {
-              id = "Qwen3.8-27B";
+              id = "qwen3.8-27b";
               name = "Qwen3.8-27B";
               reasoning = true;
               input = ["text" "image"];
@@ -194,7 +194,7 @@
               maxTokens = 16384;
             }
             {
-              id = "Qwen3.8-27B-Huihui-Abliterated";
+              id = "qwen3.8-27b-abliterated";
               name = "Qwen3.8-27B-Huihui-Abliterated";
               reasoning = true;
               input = ["text" "image"];
@@ -202,18 +202,19 @@
               maxTokens = 65536;
             }
             {
-              id = "Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2";
+              id = "qwen3.8-27b-coder390";
               name = "Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2";
               reasoning = true;
               input = ["text" "image"];
-              # Measured 2026-11-12: max bootable ctx = 131072 (C3),
-              # but the unit default is C4x65536; 262k is not bootable
-              # for the dense 17.2 GiB artifact (C1 dies by 157 MiB).
-              contextWindow = 131072;
+              # Measured 2026-11-13 (tokenizer-fixed artifact):
+              # max bootable ctx = 262144 (C1, 23550 MiB); unit
+              # default C6x65536 (136 tok/s). Higher-C cells at
+              # 262k die on the 6.78 GiB runtime reservation.
+              contextWindow = 262144;
               maxTokens = 16384;
             }
             {
-              id = "Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP";
+              id = "qwen3.8-27b-turbo";
               name = "Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP";
               reasoning = true;
               input = ["text" "image"];
@@ -348,23 +349,23 @@
       # + engine logs 2026-10-11).
       omplOverlay = {
         modelRoles = {
-          default = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          smol = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          slow = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          vision = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          plan = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          commit = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          task = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          advisor = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          judge = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          default = "ninfer/qwen3.8-27b-turbo:high";
+          smol = "ninfer/qwen3.8-27b-turbo:high";
+          slow = "ninfer/qwen3.8-27b-turbo:high";
+          vision = "ninfer/qwen3.8-27b-turbo:high";
+          plan = "ninfer/qwen3.8-27b-turbo:high";
+          commit = "ninfer/qwen3.8-27b-turbo:high";
+          task = "ninfer/qwen3.8-27b-turbo:high";
+          advisor = "ninfer/qwen3.8-27b-turbo:high";
+          judge = "ninfer/qwen3.8-27b-turbo:high";
         };
 
         enabledModels = [
-          "ninfer/Ternary-Bonsai-2-27B"
-          "ninfer/Ternary-Bonsai-2-27B-Heretic-Abliterated"
-          "ninfer/Qwen3.8-27B"
-          "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP"
-      "ninfer/Qwen3.8-27B-Huihui-Abliterated"
+          "ninfer/bonsai2-27b"
+          "ninfer/bonsai2-27b-abliterated"
+          "ninfer/qwen3.8-27b"
+          "ninfer/qwen3.8-27b-turbo"
+      "ninfer/qwen3.8-27b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -417,23 +418,23 @@
       #   git.enabled: false           - suppress git branch/status checks and UI indicators
       omprpOverlay = {
         modelRoles = {
-          default = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          smol = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          slow = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          vision = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          plan = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          commit = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          task = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          advisor = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
-          judge = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          default = "ninfer/qwen3.8-27b-turbo:high";
+          smol = "ninfer/qwen3.8-27b-turbo:high";
+          slow = "ninfer/qwen3.8-27b-turbo:high";
+          vision = "ninfer/qwen3.8-27b-turbo:high";
+          plan = "ninfer/qwen3.8-27b-turbo:high";
+          commit = "ninfer/qwen3.8-27b-turbo:high";
+          task = "ninfer/qwen3.8-27b-turbo:high";
+          advisor = "ninfer/qwen3.8-27b-turbo:high";
+          judge = "ninfer/qwen3.8-27b-turbo:high";
         };
 
         enabledModels = [
-          "ninfer/Ternary-Bonsai-2-27B"
-          "ninfer/Ternary-Bonsai-2-27B-Heretic-Abliterated"
-          "ninfer/Qwen3.8-27B"
-          "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP"
-      "ninfer/Qwen3.8-27B-Huihui-Abliterated"
+          "ninfer/bonsai2-27b"
+          "ninfer/bonsai2-27b-abliterated"
+          "ninfer/qwen3.8-27b"
+          "ninfer/qwen3.8-27b-turbo"
+      "ninfer/qwen3.8-27b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
