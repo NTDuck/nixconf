@@ -1088,7 +1088,7 @@ SCRIPT
           }
 
           _ninfer "$@"
-          ZSH
+ZSH
           substituteInPlace $out/share/zsh/site-functions/_ninfer \
             --replace-fail '@out@' "$out"
 
@@ -1124,7 +1124,7 @@ SCRIPT
           }
 
           complete -F _ninfer_completion ninfer
-          BASH
+BASH
           substituteInPlace $out/share/bash-completion/completions/ninfer \
             --replace-fail '@NINFER_SHAPES_CONF@' "$out/share/ninfer/shapes.conf"
 
@@ -1142,11 +1142,11 @@ SCRIPT
           complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -s v -l version -d "show version"
-          complete -c ninfer -n "__fish_use_subcommand" -a "Ternary-Bonsai-2-27B Ternary-Bonsai-2-27B-Heretic-Abliterated Qwen3.8-27B Qwen3.8-27B-Huihui-Abliterated Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP <nil> nil"
-          complete -c ninfer -n "__fish_seen_subcommand_from switch" -a "Ternary-Bonsai-2-27B Ternary-Bonsai-2-27B-Heretic-Abliterated Qwen3.8-27B Qwen3.8-27B-Huihui-Abliterated Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP <nil> nil"
+          complete -c ninfer -n "__fish_use_subcommand" -a "bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-coder390 qwen3.8-27b-turbo <nil> nil"
+          complete -c ninfer -n "__fish_seen_subcommand_from switch" -a "bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-coder390 qwen3.8-27b-turbo <nil> nil"
           complete -c ninfer -n "__fish_seen_subcommand_from switch; and __fish_prev_arg_in switch; and test (count (commandline -opc)) -ge 3" \
             -a "(begin; set -l mid (commandline -opc)[3]; set -l row (grep -m1 '^'\$mid'|' @NINFER_SHAPES_CONF@ 2>/dev/null | cut -d'|' -f2); if test -n \"\$row\"; string split ',' \$row; else; grep -v '^#' @NINFER_SHAPES_CONF@ 2>/dev/null | cut -d'|' -f2 | string split ','; end; end)"
-          FISH
+FISH
           substituteInPlace $out/share/fish/vendor_completions.d/ninfer.fish \
             --replace-fail '@NINFER_SHAPES_CONF@' "$out/share/ninfer/shapes.conf"
                     runHook postInstall
