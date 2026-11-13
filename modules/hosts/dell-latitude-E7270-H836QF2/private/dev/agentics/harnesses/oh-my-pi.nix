@@ -49,7 +49,7 @@
       # Single provider hosting all 6 canonical model variants. Legion's
       # daemon on :8092 serves whichever model is active. 2026-11-11:
       # ids synced with legion's `ninfer list` contract (bonsai2 ->
-      # bonsai2-27b, alphabetical). 2026-11-11: coder390 re-added —
+      # Ternary-Bonsai-2-27B, alphabetical). 2026-11-11: coder390 re-added —
       # reconverted from official HF BF16 (old pin was gguf_blocks_v1,
       # see ninfer/default.nix + conversion-assessment.md).
       ninferProvider = {
@@ -59,40 +59,40 @@
 
         models = [
           {
-            id = "bonsai2-27b";
-            name = "Ternary Bonsai 2 27B";
+            id = "Ternary-Bonsai-2-27B";
+            name = "Ternary-Bonsai-2-27B";
             reasoning = true;
             input = ["text" "image"];
             contextWindow = 262144;
             maxTokens = 65536;
           }
           {
-            id = "bonsai2-27b-abliterated";
-            name = "Ternary Bonsai 2 27B Abliterated (Heretic)";
+            id = "Ternary-Bonsai-2-27B-Heretic-Abliterated";
+            name = "Ternary-Bonsai-2-27B-Heretic-Abliterated";
             reasoning = true;
             input = ["text" "image"];
             contextWindow = 262144;
             maxTokens = 65536;
           }
           {
-            id = "qwen3.8-27b";
-            name = "Qwen 3.8 27B";
+            id = "Qwen3.8-27B";
+            name = "Qwen3.8-27B";
             reasoning = true;
             input = ["text" "image"];
             contextWindow = 65536;
             maxTokens = 16384;
           }
           {
-            id = "qwen3.8-27b-abliterated";
-            name = "Huihui Qwen 3.8 27B Abliterated";
+            id = "Qwen3.8-27B-Huihui-Abliterated";
+            name = "Qwen3.8-27B-Huihui-Abliterated";
             reasoning = true;
             input = ["text" "image"];
             contextWindow = 262144;
             maxTokens = 65536;
           }
           {
-            id = "qwen3.8-27b-coder390";
-            name = "Qwen 3.8 27B Coder390 EfficientThink Opus5.5 GPT6Astra Grok4.7 DSV4Pro K3 SFT RLOO";
+            id = "Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2";
+            name = "Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2";
             reasoning = true;
             input = ["text" "image"];
             # Sync with legion (2026-11-12 measured matrix): max
@@ -102,8 +102,8 @@
             maxTokens = 16384;
           }
           {
-            id = "qwen3.8-27b-turbo";
-            name = "Qwen 3.8 27B TURBO Fable Cold Fusion 735 882 Heretic Uncensored NM DAU";
+            id = "Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP";
+            name = "Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP";
             reasoning = true;
             input = ["text" "image"];
             contextWindow = 262144;
@@ -148,23 +148,23 @@
       # ninfer engine on Legion (:8092), running under an isolated profile dir.
       omplOverlay = {
         modelRoles = {
-          default = "ninfer/qwen3.8-27b-turbo:high";
-          smol = "ninfer/qwen3.8-27b-turbo:high";
-          slow = "ninfer/qwen3.8-27b-turbo:high";
-          vision = "ninfer/qwen3.8-27b-turbo:high";
-          plan = "ninfer/qwen3.8-27b-turbo:high";
-          commit = "ninfer/qwen3.8-27b-turbo:high";
-          task = "ninfer/qwen3.8-27b-turbo:high";
-          advisor = "ninfer/qwen3.8-27b-turbo:high";
-          judge = "ninfer/qwen3.8-27b-turbo:high";
+          default = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          smol = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          slow = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          vision = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          plan = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          commit = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          task = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          advisor = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          judge = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
         };
 
         enabledModels = [
-          "ninfer/bonsai2-27b"
-          "ninfer/bonsai2-27b-abliterated"
-          "ninfer/qwen3.8-27b"
-          "ninfer/qwen3.8-27b-turbo"
-      "ninfer/qwen3.8-27b-abliterated"
+          "ninfer/Ternary-Bonsai-2-27B"
+          "ninfer/Ternary-Bonsai-2-27B-Heretic-Abliterated"
+          "ninfer/Qwen3.8-27B"
+          "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP"
+      "ninfer/Qwen3.8-27B-Huihui-Abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -207,23 +207,23 @@
       #   git.enabled: false           - suppress git branch/status checks and UI indicators
       omprpOverlay = {
         modelRoles = {
-          default = "ninfer/qwen3.8-27b-turbo:high";
-          smol = "ninfer/qwen3.8-27b-turbo:high";
-          slow = "ninfer/qwen3.8-27b-turbo:high";
-          vision = "ninfer/qwen3.8-27b-turbo:high";
-          plan = "ninfer/qwen3.8-27b-turbo:high";
-          commit = "ninfer/qwen3.8-27b-turbo:high";
-          task = "ninfer/qwen3.8-27b-turbo:high";
-          advisor = "ninfer/qwen3.8-27b-turbo:high";
-          judge = "ninfer/qwen3.8-27b-turbo:high";
+          default = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          smol = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          slow = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          vision = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          plan = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          commit = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          task = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          advisor = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
+          judge = "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP:high";
         };
 
         enabledModels = [
-          "ninfer/bonsai2-27b"
-          "ninfer/bonsai2-27b-abliterated"
-          "ninfer/qwen3.8-27b"
-          "ninfer/qwen3.8-27b-turbo"
-      "ninfer/qwen3.8-27b-abliterated"
+          "ninfer/Ternary-Bonsai-2-27B"
+          "ninfer/Ternary-Bonsai-2-27B-Heretic-Abliterated"
+          "ninfer/Qwen3.8-27B"
+          "ninfer/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP"
+      "ninfer/Qwen3.8-27B-Huihui-Abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -346,7 +346,7 @@
 
         ompl = lib.removeSuffix "\n" ''
           active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
-          active_model="''${active_model:-qwen3.8-27b-turbo}"
+          active_model="''${active_model:-Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP}"
           runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
           mkdir -p "$runtime_dir"
           active_overlay="$runtime_dir/ompl-active.yml"
@@ -368,7 +368,7 @@
 
         omprp = lib.removeSuffix "\n" ''
           active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
-          active_model="''${active_model:-qwen3.8-27b-turbo}"
+          active_model="''${active_model:-Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP}"
           runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
           mkdir -p "$runtime_dir"
           active_overlay="$runtime_dir/omprp-active.yml"
