@@ -218,7 +218,11 @@
               name = "Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP";
               reasoning = true;
               input = ["text" "image"];
-              contextWindow = 262144;
+              # Persisted shape = C8x131k (user-selected 2026-11-13;
+              # the engine serves context_length from the shape
+              # override, so register 131072, not the 262k max cell
+              # C5x262k from SHAPES).
+              contextWindow = 131072;
               maxTokens = 65536;
             }
           ];

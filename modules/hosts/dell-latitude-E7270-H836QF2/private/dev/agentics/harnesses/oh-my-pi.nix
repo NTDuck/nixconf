@@ -106,7 +106,10 @@
             name = "Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP";
             reasoning = true;
             input = ["text" "image"];
-            contextWindow = 262144;
+            # Persisted shape = C8x131k (legion engine override,
+            # /var/lib/ninfer/shape-ninfer-df2-turbo.env — the
+            # served context, not the 262k max cell C5x262k).
+            contextWindow = 131072;
             maxTokens = 65536;
           }
         ];
