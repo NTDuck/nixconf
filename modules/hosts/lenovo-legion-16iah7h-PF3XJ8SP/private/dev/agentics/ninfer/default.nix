@@ -514,10 +514,9 @@ prune_dominated_shapes() {
 
 # 2026-11-12 display rework: render "Cx{ctx}k" with k = floor(ctx/1000)
 # (user's examples: 65536 -> 65k, 131072 -> 131k, 262144 -> 262k).
-# 2026-11-13: "(tps)" suffix removed — shape tokens are plain
-# {concurrency}x{context} (user request); tps stays in the sweep JSON.
+# 2026-11-14: append "({x:03d}t/s)" after each concurrencyxcontext pair (no whitespace).
 shapes_column() {
-  local specs pair ctxv c peak tps
+  local specs pair ctxv c peak tps tps_str
   specs="$(shapes_for "$1")" || { echo "-"; return 0; }
   specs="$(prune_dominated_shapes "$specs")"
   local first=1 out=""
@@ -525,7 +524,8 @@ shapes_column() {
     IFS=':' read -r ctxv c peak tps <<< "$pair"
     tps="''${tps:-0}"
     [ "$first" = 1 ] || out+=","
-    out+="''${c}x$((ctxv / 1000))k"
+    printf -v tps_str "(%03dt/s)" "$tps"
+    out+="''${c}x$((ctxv / 1000))k''$tps_str"
     first=0
   done
   echo "$out"

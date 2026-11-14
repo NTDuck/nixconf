@@ -190,8 +190,8 @@
               name = "Qwen3.8-27B";
               reasoning = true;
               input = ["text" "image"];
-              contextWindow = 65536;
-              maxTokens = 16384;
+              contextWindow = 262144;
+              maxTokens = 65536;
             }
             {
               id = "qwen3.8-27b-abliterated";
@@ -211,18 +211,14 @@
               # default C6x65536 (136 tok/s). Higher-C cells at
               # 262k die on the 6.78 GiB runtime reservation.
               contextWindow = 262144;
-              maxTokens = 16384;
+              maxTokens = 65536;
             }
             {
               id = "qwen3.8-27b-turbo";
               name = "Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP";
               reasoning = true;
               input = ["text" "image"];
-              # Persisted shape = C8x131k (user-selected 2026-11-13;
-              # the engine serves context_length from the shape
-              # override, so register 131072, not the 262k max cell
-              # C5x262k from SHAPES).
-              contextWindow = 131072;
+              contextWindow = 262144;
               maxTokens = 65536;
             }
           ];
@@ -368,8 +364,9 @@
           "ninfer/bonsai2-27b"
           "ninfer/bonsai2-27b-abliterated"
           "ninfer/qwen3.8-27b"
+          "ninfer/qwen3.8-27b-abliterated"
+          "ninfer/qwen3.8-27b-coder390"
           "ninfer/qwen3.8-27b-turbo"
-      "ninfer/qwen3.8-27b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -437,8 +434,9 @@
           "ninfer/bonsai2-27b"
           "ninfer/bonsai2-27b-abliterated"
           "ninfer/qwen3.8-27b"
+          "ninfer/qwen3.8-27b-abliterated"
+          "ninfer/qwen3.8-27b-coder390"
           "ninfer/qwen3.8-27b-turbo"
-      "ninfer/qwen3.8-27b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -574,7 +572,7 @@
                 if [ -z "$active_model" ]; then
                   active_model="$( ninfer active 2>/dev/null || true )"
                 fi
-                active_model="''${active_model:-Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP}"
+                active_model="''${active_model:-qwen3.8-27b-turbo}"
 
                 runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
                 mkdir -p "$runtime_dir"
@@ -607,7 +605,7 @@
                 if [ -z "$active_model" ]; then
                   active_model="$( ninfer active 2>/dev/null || true )"
                 fi
-                active_model="''${active_model:-Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP}"
+                active_model="''${active_model:-qwen3.8-27b-turbo}"
 
                 runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
                 mkdir -p "$runtime_dir"

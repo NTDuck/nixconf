@@ -79,8 +79,8 @@
             name = "Qwen3.8-27B";
             reasoning = true;
             input = ["text" "image"];
-            contextWindow = 65536;
-            maxTokens = 16384;
+            contextWindow = 262144;
+            maxTokens = 65536;
           }
           {
             id = "qwen3.8-27b-abliterated";
@@ -99,17 +99,14 @@
             # fixed artifact): max bootable ctx = 262144 (C1,
             # 23550 MiB); unit default C6x65536.
             contextWindow = 262144;
-            maxTokens = 16384;
+            maxTokens = 65536;
           }
           {
             id = "qwen3.8-27b-turbo";
             name = "Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP";
             reasoning = true;
             input = ["text" "image"];
-            # Persisted shape = C8x131k (legion engine override,
-            # /var/lib/ninfer/shape-ninfer-df2-turbo.env — the
-            # served context, not the 262k max cell C5x262k).
-            contextWindow = 131072;
+            contextWindow = 262144;
             maxTokens = 65536;
           }
         ];
@@ -166,8 +163,9 @@
           "ninfer/bonsai2-27b"
           "ninfer/bonsai2-27b-abliterated"
           "ninfer/qwen3.8-27b"
+          "ninfer/qwen3.8-27b-abliterated"
+          "ninfer/qwen3.8-27b-coder390"
           "ninfer/qwen3.8-27b-turbo"
-      "ninfer/qwen3.8-27b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -225,8 +223,9 @@
           "ninfer/bonsai2-27b"
           "ninfer/bonsai2-27b-abliterated"
           "ninfer/qwen3.8-27b"
+          "ninfer/qwen3.8-27b-abliterated"
+          "ninfer/qwen3.8-27b-coder390"
           "ninfer/qwen3.8-27b-turbo"
-      "ninfer/qwen3.8-27b-abliterated"
         ];
         disabledProviders = [
           # implicit keyless local probes
@@ -349,7 +348,7 @@
 
         ompl = lib.removeSuffix "\n" ''
           active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
-          active_model="''${active_model:-Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP}"
+          active_model="''${active_model:-qwen3.8-27b-turbo}"
           runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
           mkdir -p "$runtime_dir"
           active_overlay="$runtime_dir/ompl-active.yml"
@@ -371,7 +370,7 @@
 
         omprp = lib.removeSuffix "\n" ''
           active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
-          active_model="''${active_model:-Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP}"
+          active_model="''${active_model:-qwen3.8-27b-turbo}"
           runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
           mkdir -p "$runtime_dir"
           active_overlay="$runtime_dir/omprp-active.yml"
