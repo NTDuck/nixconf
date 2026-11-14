@@ -375,6 +375,37 @@ set -euo pipefail
 # Pass --no-ask-password to prevent hanging on polkit TTY prompts when non-interactive.
 SYSTEMCTL=( "${pkgs.systemd}/bin/systemctl" --no-ask-password )
 
+# Wait until unit $1 is FULLY stopped (inactive|failed). The old
+# `is-active --quiet` loop exited during 'deactivating' (rc 3 there),
+# reporting OK ~1s into a multi-second teardown (observed 2026-11-14:
+# 'server stopped' logged 11s after the premature OK).
+await_stopped() {
+  local st
+  while :; do
+    st="$(${pkgs.systemd}/bin/systemctl show -p ActiveState --value "$1" 2>/dev/null || true)"
+    case "$st" in
+      inactive|failed|"") return 0 ;;
+    esac
+    sleep 0.1
+  done
+}
+
+# Dump operational journal lines captured since cursor $1 for unit $2
+# (manager job messages, engine boot/INFO lines). Secondary to the CLI
+# contract lines (Stopping/Starting/OK) — dimmed on a TTY (ANSI 2),
+# plain when piped. Empty cursor or no new lines → nothing.
+dump_journal() {
+  local cur="$1" svc="$2" out
+  [ -n "$cur" ] || return 0
+  out="$(${pkgs.systemd}/bin/journalctl -u "$svc" --after-cursor="$cur" -o cat --no-pager 2>/dev/null | grep -v '^$' || true)"
+  [ -n "$out" ] || return 0
+  if [ -t 1 ]; then
+    printf '\033[2m%s\n\033[0m' "$out"
+  else
+    printf '%s\n' "$out"
+  fi
+}
+
 MODELS=(
   "bonsai2-27b|Ternary-Bonsai-2-27B|bonsai2.service|${toString ninferPort}"
   "bonsai2-27b-abliterated|Ternary-Bonsai-2-27B-Heretic-Abliterated|bonsai2-abliterated.service|${toString ninferPort}"
@@ -708,18 +739,14 @@ do_switch() {
         stop_cursor="$(${pkgs.systemd}/bin/journalctl -u "''$svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f3- || true)"
         printf "Stopping %s (%s)... " "''$mid" "''$svc"
         "''${SYSTEMCTL[@]}" stop "''$svc" 2>/dev/null || true
-        while "''${SYSTEMCTL[@]}" is-active --quiet "''$svc" 2>/dev/null; do
-          sleep 0.1
-        done
+        await_stopped "''$svc"
         local stop_elapsed=$(( SECONDS - stop_start ))
         # OK lands on the line when the stop succeeded; the pending
         # form is just ({elapsed}) (user log contract 2026-11-13).
         echo "OK (''${stop_elapsed}s)"
-        # Operational logs emitted while stopping, verbatim, one per
-        # line, directly after the Stopping line.
-        if [ -n "''$stop_cursor" ]; then
-          ${pkgs.systemd}/bin/journalctl -u "''$svc" --after-cursor="''$stop_cursor" -o cat --no-pager 2>/dev/null | grep -v '^$' || true
-        fi
+        # Operational logs emitted while stopping (manager messages,
+        # engine shutdown lines), dimmed, after the Stopping line.
+        dump_journal "''$stop_cursor" "''$svc"
       fi
     done
     rm -f "''$state_file" 2>/dev/null || true
@@ -857,14 +884,12 @@ do_switch() {
       cstop_cursor="$(${pkgs.systemd}/bin/journalctl -u "$svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f3- || true)"
       printf "Stopping %s (%s)... " "$mid" "$svc"
       "''${SYSTEMCTL[@]}" stop --no-block "$svc" 2>/dev/null || true
-      while "''${SYSTEMCTL[@]}" is-active --quiet "$svc" 2>/dev/null; do
-        sleep 0.1
-      done
+      await_stopped "$svc"
       local cstop_elapsed=$(( SECONDS - cstop_start ))
       echo "OK (''${cstop_elapsed}s)"
-      if [ -n "$cstop_cursor" ]; then
-        ${pkgs.systemd}/bin/journalctl -u "$svc" --after-cursor="$cstop_cursor" -o cat --no-pager 2>/dev/null | grep -v '^$' || true
-      fi
+      # Stop-phase operational logs (manager messages, engine
+      # shutdown lines), dimmed, after the Stopping line.
+      dump_journal "$cstop_cursor" "$svc"
     fi
   done
 
@@ -907,7 +932,12 @@ do_switch() {
       # Not OK: pending form without OK, then the failure logs.
       echo "(''${elapsed}s)"
       echo "error: $found_svc failed to start" >&2
-      ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 15 --no-pager >&2 || true
+      # Failure journal (last 15 lines) to stderr, dimmed on a TTY.
+      if [ -t 2 ]; then
+        printf '\033[2m%s\n\033[0m' "$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 15 --no-pager 2>/dev/null | grep -v '^$' || true)"
+      else
+        ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 15 --no-pager >&2 || true
+      fi
       rm -f "$state_file" 2>/dev/null || true
       exit 1
     fi
@@ -917,11 +947,17 @@ do_switch() {
     # a {"error":"model_loading"} body while weights stream in
     # (2026-11-13 runtime verification) — gate on real model data.
     if ${pkgs.curl}/bin/curl -s -m 0.5 "http://127.0.0.1:''$target_port/v1/models" 2>/dev/null | grep -q '"id"'; then
+      # Complete the PENDING Starting line in place: OK must land on
+      # the same line as its Starting text (user report 2026-11-14 —
+      # the bare \r\033[K + OK left OK stranded on its own line).
       [ "$is_tty" -eq 1 ] && printf "\r\033[K"
+      printf "Starting %s (%s)... " "$canonical" "$target_shape"
       echo "OK (''${elapsed}s)"
-      # Operational logs from the start phase, verbatim, one per
-      # line. The engine keeps writing boot lines for seconds after
-      # /v1/models first answers (weights 16.7 GiB load + CUDA
+      # Operational logs from the start phase (engine boot/INFO
+      # lines), verbatim, one per line — dimmed on a TTY
+      # (dump_journal). The engine keeps writing boot lines for
+      # seconds after /v1/models first answers (weights 16.7 GiB
+      # load + CUDA
       # graphs span ~14s), so drain until the journal goes quiet
       # (2s with no new lines, capped at 10s) before the dump.
       if [ -n "$journal_cursor" ]; then
@@ -941,7 +977,7 @@ do_switch() {
             drain_cursor="$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 0 --show-cursor 2>/dev/null | grep '^-- cursor:' | cut -d' ' -f3- || true)"
           fi
         done
-        ${pkgs.systemd}/bin/journalctl -u "$found_svc" --after-cursor="$journal_cursor" -o cat --no-pager 2>/dev/null | grep -v '^$' || true
+        dump_journal "$journal_cursor" "$found_svc"
       fi
       return 0
     fi
@@ -957,7 +993,12 @@ do_switch() {
       # Not OK: close the pending line without OK.
       echo "(''${elapsed}s)"
       echo "error: timeout waiting for $found_svc to become ready (>180s)" >&2
-      ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 20 --no-pager >&2 || true
+      # Timeout journal (last 20 lines) to stderr, dimmed on a TTY.
+      if [ -t 2 ]; then
+        printf '\033[2m%s\n\033[0m' "$(${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 20 --no-pager 2>/dev/null | grep -v '^$' || true)"
+      else
+        ${pkgs.systemd}/bin/journalctl -u "$found_svc" -n 20 --no-pager >&2 || true
+      fi
       exit 1
     fi
 
