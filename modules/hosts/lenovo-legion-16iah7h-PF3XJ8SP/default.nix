@@ -80,6 +80,9 @@
       den.aspects.apps.torrents.webtorrent
       # learnharness un-included (2026-11-10 user request).
       den.aspects.dev
+      # hermes agent (2026-11-14 user request): legion-only; aspect not
+      # in the harnesses umbrella.
+      den.aspects.dev.agentics.harnesses.hermes
       den.aspects.dev.gitlab-runner
       den.aspects.system.bluetooth
       den.aspects.system.boot.systemd

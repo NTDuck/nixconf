@@ -80,6 +80,16 @@
     # resolve directly to cache.numtide.com without failing bun2nix builds)
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.url = "github:NixOS/nixpkgs/885ba4d038f10c3d17d7a92e8c3cc185b99c9158";
+
+    # Hermes agent (NousResearch) — NixOS module + package, built via
+    # uv2nix. NOT following our nixpkgs: its pm-packages.nix backports a
+    # patchelf fix authored against upstream's locked nixpkgs tree; our
+    # unstable ships patchelf 0.15.2 whose sources don't match (4/6 hunks
+    # fail → pm ripgrep and the whole package fail to build, observed
+    # 2026-11-14 with the follow in place). Without the follow, hermes
+    # uses the nixpkgs rev its own lock pins — upstream's CI-tested
+    # combination.
+    hermes-agent.url = "github:NousResearch/hermes-agent";
     # llano V12 Ultra cooling pad control (Holtek USB-HID 374a:b101,
     # Myth.Cool protocol) — source-only input, pinned to the v0.1.4 tag
     # commit (protocol live-verified upstream; master is untested). Packaged

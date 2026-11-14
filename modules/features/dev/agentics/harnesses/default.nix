@@ -6,6 +6,8 @@
       # aspects remain declared in their files but are not part of the
       # umbrella; re-add explicitly per host to reactivate.
       den.aspects.dev.agentics.harnesses.codev
+      # hermes un-included (2026-11-14, CLI-only aspect, legion only):
+      # declared in hermes.nix, included explicitly per host.
       # disco + learnharness un-included (2026-11-10 user request):
       # aspects remain declared in their files but are not part of the
       # umbrella; re-add explicitly per host to reactivate.
