@@ -55,7 +55,7 @@ in {
         # bun+cargo per bump); bumps are download-only everywhere. NOT
         # the upstream flake (inputs.omp) — that always builds from
         # source.
-        (import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_release.nix" {inherit pkgs lib;})
+        (import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_release.nix" {inherit pkgs lib inputs;})
         (import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_pi-reasonix.nix" {
           inherit pkgs lib;
         })
@@ -127,7 +127,7 @@ in {
         # exactly at the binary path.
         omp = lib.mkDefault (lib.removeSuffix "\n" ''
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml" \
-          ${import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_release.nix" {inherit pkgs lib;}}/bin/omp
+          ${import "${inputs.self}/modules/features/dev/agentics/harnesses/omp/_release.nix" {inherit pkgs lib inputs;}}/bin/omp
         '');
       };
     };
