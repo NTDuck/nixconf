@@ -565,6 +565,16 @@
       # ompl wrapper (2026-10-30): dynamically queries active model via ninfer active,
       # generates a runtime overlay in $XDG_RUNTIME_DIR/omp/ompl-active.yml,
       # and sets modelRoles to the active model instead of hardcoding Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP.
+      # 2026-11-14: also patches the profile's models.yml with the live
+      # served context (default_generation_settings.n_ctx from /props):
+      # models.yml pins contextWindow=262144 per variant, but ninfer
+      # serves whatever shape `ninfer switch` applied (65k/131k/262k...).
+      # omp reads modelOverrides ONLY from models.yml (verified: the same
+      # block via PI_CONFIG_FILES overlay is ignored; the Gemini caps in
+      # _gemini-overrides.nix live in models.yml for the same reason), so
+      # the HM-managed symlink is atomically replaced by a patched copy
+      # (yq-go) on every launch; next switch re-patches. If /props is
+      # unreachable the file is left untouched and the 262k pin stands.
       omplWrapper = pkgs.writeShellScriptBin "ompl" ''
                 set -euo pipefail
 
@@ -574,22 +584,27 @@
                 fi
                 active_model="''${active_model:-qwen3.8-27b-turbo}"
 
+                live_ctx="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.default_generation_settings.n_ctx // empty' 2>/dev/null || true )"
+
                 runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
                 mkdir -p "$runtime_dir"
                 active_overlay="$runtime_dir/ompl-active.yml"
 
-                cat << EOF > "$active_overlay"
-        modelRoles:
-          default: ninfer/$active_model:high
-          smol: ninfer/$active_model:high
-          slow: ninfer/$active_model:high
-          vision: ninfer/$active_model:high
-          plan: ninfer/$active_model:high
-          commit: ninfer/$active_model:high
-          task: ninfer/$active_model:high
-          advisor: ninfer/$active_model:high
-          judge: ninfer/$active_model:high
-        EOF
+                {
+                  echo "modelRoles:"
+                  for role in default smol slow vision plan commit task advisor judge; do
+                    echo "  $role: ninfer/$active_model:high"
+                  done
+                } > "$active_overlay"
+
+                if [ -n "$live_ctx" ]; then
+                  models_yml="$HOME/.omp/profiles/ompl/agent/models.yml"
+                  models_src="$(readlink -f "$models_yml" || echo "$models_yml")"
+                  cp "$models_src" "''${models_yml}.tmp"
+                  chmod +w "''${models_yml}.tmp"
+                  ${pkgs.yq-go}/bin/yq -i ".providers.ninfer.modelOverrides.\"$active_model\".contextWindow = $live_ctx" "''${models_yml}.tmp"
+                  mv "''${models_yml}.tmp" "$models_yml"
+                fi
 
                 export PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml:$active_overlay"
                 exec "${ompBinPath}/bin/omp" --profile ompl "$@"
@@ -598,6 +613,8 @@
       # omprp wrapper (2026-11-01): dynamically queries active model via ninfer active,
       # generates a runtime overlay in $XDG_RUNTIME_DIR/omp/omprp-active.yml,
       # and sets modelRoles to the active model, optimized for roleplay.
+      # 2026-11-14: patches profile models.yml with the live served
+      # context — see the ompl wrapper comment for the full rationale.
       omprpWrapper = pkgs.writeShellScriptBin "omprp" ''
                 set -euo pipefail
 
@@ -607,22 +624,27 @@
                 fi
                 active_model="''${active_model:-qwen3.8-27b-turbo}"
 
+                live_ctx="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://127.0.0.1:${toString ninferPort}/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.default_generation_settings.n_ctx // empty' 2>/dev/null || true )"
+
                 runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
                 mkdir -p "$runtime_dir"
                 active_overlay="$runtime_dir/omprp-active.yml"
 
-                cat << EOF > "$active_overlay"
-        modelRoles:
-          default: ninfer/$active_model:high
-          smol: ninfer/$active_model:high
-          slow: ninfer/$active_model:high
-          vision: ninfer/$active_model:high
-          plan: ninfer/$active_model:high
-          commit: ninfer/$active_model:high
-          task: ninfer/$active_model:high
-          advisor: ninfer/$active_model:high
-          judge: ninfer/$active_model:high
-        EOF
+                {
+                  echo "modelRoles:"
+                  for role in default smol slow vision plan commit task advisor judge; do
+                    echo "  $role: ninfer/$active_model:high"
+                  done
+                } > "$active_overlay"
+
+                if [ -n "$live_ctx" ]; then
+                  models_yml="$HOME/.omp/profiles/omprp/agent/models.yml"
+                  models_src="$(readlink -f "$models_yml" || echo "$models_yml")"
+                  cp "$models_src" "''${models_yml}.tmp"
+                  chmod +w "''${models_yml}.tmp"
+                  ${pkgs.yq-go}/bin/yq -i ".providers.ninfer.modelOverrides.\"$active_model\".contextWindow = $live_ctx" "''${models_yml}.tmp"
+                  mv "''${models_yml}.tmp" "$models_yml"
+                fi
 
                 export PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/omprp.yml:$active_overlay"
                 exec "${ompBinPath}/bin/omp" --profile omprp "$@"

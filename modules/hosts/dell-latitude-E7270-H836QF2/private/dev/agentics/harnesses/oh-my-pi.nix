@@ -349,21 +349,32 @@
         ompl = lib.removeSuffix "\n" ''
           active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
           active_model="''${active_model:-qwen3.8-27b-turbo}"
+          # Live served context from the legion engine's /props (2026-11-14
+          # user fix): models.yml pins contextWindow=262144 per variant,
+          # but ninfer serves whatever shape `ninfer switch` applied
+          # (65k/131k/262k...). omp reads modelOverrides ONLY from
+          # models.yml (a PI_CONFIG_FILES overlay block is ignored), so
+          # the HM-managed symlink is atomically replaced by a patched
+          # copy (yq-go) on every launch. If /props is unreachable the
+          # file is left untouched and the 262k pin stands.
+          live_ctx="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://lenovo-legion-16iah7h-pf3xj8sp:8092/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.default_generation_settings.n_ctx // empty' 2>/dev/null || true )"
           runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
           mkdir -p "$runtime_dir"
           active_overlay="$runtime_dir/ompl-active.yml"
-          cat << EOF > "$active_overlay"
-          modelRoles:
-            default: ninfer/$active_model:high
-            smol: ninfer/$active_model:high
-            slow: ninfer/$active_model:high
-            vision: ninfer/$active_model:high
-            plan: ninfer/$active_model:high
-            commit: ninfer/$active_model:high
-            task: ninfer/$active_model:high
-            advisor: ninfer/$active_model:high
-            judge: ninfer/$active_model:high
-          EOF
+          {
+            echo "modelRoles:"
+            for role in default smol slow vision plan commit task advisor judge; do
+              echo "  $role: ninfer/$active_model:high"
+            done
+          } > "$active_overlay"
+          if [ -n "$live_ctx" ]; then
+            models_yml="$HOME/.omp/profiles/ompl/agent/models.yml"
+            models_src="$(readlink -f "$models_yml" || echo "$models_yml")"
+            cp "$models_src" "''${models_yml}.tmp"
+            chmod +w "''${models_yml}.tmp"
+            ${pkgs.yq-go}/bin/yq -i ".providers.ninfer.modelOverrides.\"$active_model\".contextWindow = $live_ctx" "''${models_yml}.tmp"
+            mv "''${models_yml}.tmp" "$models_yml"
+          fi
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/ompl.yml:$active_overlay" \
           ${ompBinPath}/bin/omp --profile ompl
         '';
@@ -371,21 +382,26 @@
         omprp = lib.removeSuffix "\n" ''
           active_model="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://lenovo-legion-16iah7h-pf3xj8sp:8092/v1/models 2>/dev/null | ${pkgs.jq}/bin/jq -r '.data[0].id // empty' 2>/dev/null || true )"
           active_model="''${active_model:-qwen3.8-27b-turbo}"
+          # Live served context from /props — see the ompl alias comment
+          # above for the full rationale.
+          live_ctx="$( ${pkgs.curl}/bin/curl -s -m 0.5 http://lenovo-legion-16iah7h-pf3xj8sp:8092/props 2>/dev/null | ${pkgs.jq}/bin/jq -r '.default_generation_settings.n_ctx // empty' 2>/dev/null || true )"
           runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}/omp"
           mkdir -p "$runtime_dir"
           active_overlay="$runtime_dir/omprp-active.yml"
-          cat << EOF > "$active_overlay"
-          modelRoles:
-            default: ninfer/$active_model:high
-            smol: ninfer/$active_model:high
-            slow: ninfer/$active_model:high
-            vision: ninfer/$active_model:high
-            plan: ninfer/$active_model:high
-            commit: ninfer/$active_model:high
-            task: ninfer/$active_model:high
-            advisor: ninfer/$active_model:high
-            judge: ninfer/$active_model:high
-          EOF
+          {
+            echo "modelRoles:"
+            for role in default smol slow vision plan commit task advisor judge; do
+              echo "  $role: ninfer/$active_model:high"
+            done
+          } > "$active_overlay"
+          if [ -n "$live_ctx" ]; then
+            models_yml="$HOME/.omp/profiles/omprp/agent/models.yml"
+            models_src="$(readlink -f "$models_yml" || echo "$models_yml")"
+            cp "$models_src" "''${models_yml}.tmp"
+            chmod +w "''${models_yml}.tmp"
+            ${pkgs.yq-go}/bin/yq -i ".providers.ninfer.modelOverrides.\"$active_model\".contextWindow = $live_ctx" "''${models_yml}.tmp"
+            mv "''${models_yml}.tmp" "$models_yml"
+          fi
           PI_CONFIG_FILES="$HOME/.omp/agent/config.default.yml:$HOME/.omp/agent/omprp.yml:$active_overlay" \
           ${ompBinPath}/bin/omp --profile omprp
         '';
