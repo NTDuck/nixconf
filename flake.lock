@@ -1022,7 +1022,7 @@
     "omp-atom": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-wOoPUxpg27K3F7yjulbgpEvWzkFbS+Xob3eDoxpGMlM=",
+        "narHash": "sha256-IXOoY2gleWLYDL2Uh9oAdvKIjGYDITEnpexptRQ/AYg=",
         "type": "file",
         "url": "https://github.com/can1357/oh-my-pi/releases.atom"
       },
@@ -1034,7 +1034,7 @@
     "omp-sums": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-A81UkKi8lcGmOwJLqM2UTbpIRwxSKQYIQwsBkoPeg7s=",
+        "narHash": "sha256-eg0FiBltUhHb910JNqHuvvaEXPXMUCqB6fScFncImh8=",
         "type": "file",
         "url": "https://github.com/can1357/oh-my-pi/releases/latest/download/SHA256SUMS.txt"
       },
