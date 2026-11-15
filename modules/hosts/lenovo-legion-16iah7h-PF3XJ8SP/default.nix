@@ -32,6 +32,10 @@
       den.aspects.apps.gaming.roleplaying.rp
       den.aspects.apps.gaming.steam
       den.aspects.apps.gaming.romi
+      # rescuezilla (2026-11-15 user request): Clonezilla-compatible GUI
+      # disk imaging. Legion-only — packaged from the upstream .deb since
+      # it is not in nixpkgs; see rescuezilla.nix header for gaps.
+      den.aspects.apps.gaming.rescuezilla
       # darling-lol un-included (2026-11-15 user request, hours after
       # install — upstream README: the environment currently triggers
       # 3-day "UNSUPPORTED_THIRD_PARTY_TOOLS" suspensions).
