@@ -32,9 +32,9 @@
       den.aspects.apps.gaming.roleplaying.rp
       den.aspects.apps.gaming.steam
       den.aspects.apps.gaming.romi
-      # darling-lol (2026-11-15 user request): macOS League client runtime
-      # via Darling. Legion-only — heavy rootless build at first launch.
-      den.aspects.apps.gaming.darling-lol
+      # darling-lol un-included (2026-11-15 user request, hours after
+      # install — upstream README: the environment currently triggers
+      # 3-day "UNSUPPORTED_THIRD_PARTY_TOOLS" suspensions).
       # lemonhunt un-included (2026-11-10 user request).
       den.aspects.remote-desktop.sunshine
       den.aspects.system.network.tailscale
