@@ -114,7 +114,17 @@
       url = "https://github.com/can1357/oh-my-pi/releases/latest/download/SHA256SUMS.txt";
     };
 
-    # Hermes agent (NousResearch) — NixOS module + package, built via
+    # darling-lol (github:lucannez64/darling-lol) — experimental macOS League
+    # client runtime on Linux via Darling. Supplies ONLY the launcher + FHS
+    # deps (cmake/clang/X11/Vulkan/audio/pythonEnv); the ~40-50 GiB Darling
+    # build + Riot client install happen per-user in the writable workspace
+    # at first `darling-lol` launch (rootless user namespaces, no sudo).
+    # Pinned to master HEAD rev via git+https (github: inputs resolve through
+    # api.github.com and this network's shared egress IP gets API-rate-limited
+    # — same reason as the omp-atom/omp-sums comment above).
+    darling-lol.url = "git+https://github.com/lucannez64/darling-lol?ref=main";
+
+    # hermes agent (NousResearch) — NixOS module + package, built via
     # uv2nix. NOT following our nixpkgs: its pm-packages.nix backports a
     # patchelf fix authored against upstream's locked nixpkgs tree; our
     # unstable ships patchelf 0.15.2 whose sources don't match (4/6 hunks
