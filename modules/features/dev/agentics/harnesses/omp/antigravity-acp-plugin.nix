@@ -17,10 +17,10 @@
   den,
   ...
 }: let
-  pluginVersion = "0.1.42";
+  pluginVersion = "0.3.1";
   ompAntigravityAcpProvider = {pkgs}: pkgs.fetchzip {
     url = "https://registry.npmjs.org/omp-antigravity-acp-provider/-/omp-antigravity-acp-provider-${pluginVersion}.tgz";
-    hash = "sha256-jIHqusjyo+NyRQ0U6tTTWdGWOFDnfrZoUQtrZ4fhv+Y=";
+    hash = "sha256-vSumFgtHDoU8Cw0tIWed2KfenOg7iYXIShqPO5QMNDU=";
     # npm tarballs have a package/ root; fetchzip strips it only with
     # stripRoot (default true) — keep default, source is the unpacked tree.
   };
