@@ -37,8 +37,11 @@
       ...
     }: let
       version = "2.6.2";
+      # Upstream release is NAMED "v2.6.2" but its git TAG is "2.6.2"
+      # (no v prefix); GitHub download URLs key off the tag name, so the
+      # v-prefixed URL 404s (2026-11-16 switch failure).
       deb = pkgs.fetchurl {
-        url = "https://github.com/rescuezilla/rescuezilla/releases/download/v${version}/rescuezilla_${version}-1_all.deb";
+        url = "https://github.com/rescuezilla/rescuezilla/releases/download/${version}/rescuezilla_${version}-1_all.deb";
         hash = "sha256-Wpe3lmD2RGYvahYIB0PsH1466AqopqYCN3qiKYLBhCs=";
       };
 
