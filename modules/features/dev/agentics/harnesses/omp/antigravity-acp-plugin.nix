@@ -46,13 +46,21 @@ in {
         force = true;
       };
       # Enable state (omp plugin list / doctor read this; enableFeatures).
+      # enabled = false (2026-11-16): the plugin's usage/quota provider
+      # polls `agy --app_data_dir=antigravity-acp -p /usage` (unauthenticated
+      # CLI branch — fetchCliQuota has no authReady gate); with the keyring
+      # collection '/org/freedesktop/secrets/aliases/default' locked and no
+      # ~/.gemini/antigravity-acp/acp_token.json, agy print mode falls back
+      # to interactive OAuth and pops a Google sign-in window on every poll
+      # (~60s TTL) while any omp session is open. Flip back to true only
+      # after a successful interactive `agy` login (token file written).
       home.file.".omp/plugins/omp-plugins.lock.json" = {
         text = builtins.toJSON {
           plugins = {
             "omp-antigravity-acp-provider" = {
               version = pluginVersion;
               enabledFeatures = null;
-              enabled = true;
+              enabled = false;
             };
           };
           settings = {};
