@@ -81,39 +81,6 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.url = "github:NixOS/nixpkgs/885ba4d038f10c3d17d7a92e8c3cc185b99c9158";
 
-    # omp auto-pin (2026-11-14): TWO file inputs replace the hand-edited
-    # version/hash pin in harnesses/omp/_release.nix. `nh os switch
-    # ... --update` re-locks both from GitHub CDN (no API rate limit) and
-    # the release derivation tracks latest automatically — no manual pin
-    # edits.
-    #   omp-atom: releases.atom feed — first <entry> <id> carries the
-    #             latest tag (vX.Y.Z), parsed in _release.nix.
-    #   omp-sums: SHA256SUMS.txt of the LATEST release — per-asset raw-hex
-    #             sha256 (used as-is; fetchurl takes "sha256:<hex>").
-    # A bump is therefore a lock refresh only — no file edits. Skew window:
-    # the two fetches are seconds apart during --update; a release landing
-    # between them makes fetchurl fail loudly on hash mismatch (lock pins
-    # tag from atom, sums from the newer release) — rerun --update to heal.
-    # Diagnostic note (2026-11-14, false alarm kept as warning): a lock
-    # narHash (NAR serialization) NEVER matches a fetchurl-file sha256
-    # (raw bytes) even for identical content — if a "hash mismatch" shows
-    # a lock narHash on the fetched side, suspect the diagnostic, not
-    # upstream. Real failures print the RAW file hash.
-    # releases.atom includes prereleases/drafts, so --update follows any
-    # tag newer than the current stable (accepted 2026-11-14 tradeoff).
-    # Plain file URLs, NOT `github:` type: github: inputs resolve via
-    # api.github.com at every lock update, and this network's shared
-    # egress IP gets API-rate-limited (observed 2026-11-14); the CDN file
-    # endpoints below bypass the API entirely.
-    omp-atom = {
-      flake = false;
-      url = "file+https://github.com/can1357/oh-my-pi/releases.atom";
-    };
-    omp-sums = {
-      flake = false;
-      url = "https://github.com/can1357/oh-my-pi/releases/latest/download/SHA256SUMS.txt";
-    };
-
     # darling-lol (github:lucannez64/darling-lol) — experimental macOS League
     # client runtime on Linux via Darling. Supplies ONLY the launcher + FHS
     # deps (cmake/clang/X11/Vulkan/audio/pythonEnv); the ~40-50 GiB Darling

@@ -1019,30 +1019,6 @@
         "type": "github"
       }
     },
-    "omp-atom": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-N2fqQcjhpxWXfa8eSIZuEmv7XLvJpE6zKidI2iUUXjQ=",
-        "type": "file",
-        "url": "https://github.com/can1357/oh-my-pi/releases.atom"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://github.com/can1357/oh-my-pi/releases.atom"
-      }
-    },
-    "omp-sums": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-k8TR2p56fwMfcInBr3scXwtJGWkOw5Y4cyeMO91iytw=",
-        "type": "file",
-        "url": "https://github.com/can1357/oh-my-pi/releases/latest/download/SHA256SUMS.txt"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://github.com/can1357/oh-my-pi/releases/latest/download/SHA256SUMS.txt"
-      }
-    },
     "pyproject-build-systems": {
       "inputs": {
         "nixpkgs": [
@@ -1115,8 +1091,6 @@
         "nixpkgs-unstable": "nixpkgs-unstable",
         "noctalia": "noctalia",
         "nur": "nur",
-        "omp-atom": "omp-atom",
-        "omp-sums": "omp-sums",
         "rust-overlay": "rust-overlay",
         "stylix": "stylix",
         "zen-browser": "zen-browser"
