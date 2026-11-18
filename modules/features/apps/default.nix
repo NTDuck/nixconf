@@ -15,6 +15,7 @@
       den.aspects.apps.ripgrep
       den.aspects.apps.zoxide
       den.aspects.apps.rufus
+      den.aspects.apps.ventoy
       den.aspects.apps.fastfetch
       den.aspects.apps.speedtest-cli
       # taskwarrior + tomato un-included (2026-11-10 user request);

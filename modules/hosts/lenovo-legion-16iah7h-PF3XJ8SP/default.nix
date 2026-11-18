@@ -13,6 +13,9 @@
       den.aspects.apps.tmux
       den.aspects.apps.zoxide
       den.aspects.apps.rufus
+      # ventoy (2026-11-18 user request): multi-boot USB toolkit; hosts
+      # enumerate aspects explicitly, so it must be listed here too.
+      den.aspects.apps.ventoy
       den.aspects.apps.pciutils
       den.aspects.apps.jq
       den.aspects.apps.editors.helix

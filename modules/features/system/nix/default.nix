@@ -35,6 +35,10 @@
             # permittedInsecurePackages (pkgs/stdenv/generic/check-meta.nix),
             # so per-module permit lists are dead — exceptions live here.
             "beekeeper-studio"
+            # ventoy (2026-11-18 user request): marked insecure for its
+            # bootloader binary blobs (nixpkgs#404663); user accepts the
+            # tradeoff for multi-boot USB sticks.
+            "ventoy"
           ];
       };
     in {
