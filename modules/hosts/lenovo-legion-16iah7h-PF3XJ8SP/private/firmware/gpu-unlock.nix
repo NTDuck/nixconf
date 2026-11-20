@@ -51,10 +51,23 @@
             sha256 = "7e118923c7a23edc36114d63273a46e3e04e9af98695a42203e7ac2dfe9fc1dc";
           }
         } -C nvsrc
-        ${pkgs.python3.interpreter} ${src}/firmware/generate_v67.py ${
+        # 2026-11-19: archive.cachyos.org was re-setup and serves an HTML
+        # placeholder for every path, breaking the pinned v3 package.
+        # Repinned to Arch's permanent archive (same fix as upstream
+        # gpu-unlock-ada PR #151): the x86_64 (non-v3) package carries
+        # byte-identical firmware blobs (gsp_ga10x 57237362…, license
+        # c692fb14… — only userland binaries differ, which we never extract).
+        # generate_v67.py self-checks PACKAGE_SHA256, a constant pinned to
+        # the retired v3 hash; upstream main later deleted the constant
+        # instead of repinning, so run a patched copy here. The patched copy
+        # also keeps MANIFEST = Path(__file__).with_name(...) resolving.
+        mkdir gen
+        cp ${src}/firmware/generate_v67.py ${src}/firmware/artifacts-610.43.03.json gen/
+        sed -i 's/PACKAGE_SHA256 = "e17e7c92eeffa178b0fe1f40eb17a47095f8fc3ce4a77bf115cf5bd5a4df86e9"/PACKAGE_SHA256 = "c3367ff68632ac7daf6ca50ef7cbdd1cb5d09f7fe0b26125b312c73e52a34cf4"/' gen/generate_v67.py
+        ${pkgs.python3.interpreter} gen/generate_v67.py ${
           pkgs.fetchurl {
-            url = "https://archive.cachyos.org/archive/cachyos-v3/nvidia-utils-${nv}-1-x86_64_v3.pkg.tar.zst";
-            sha256 = "e17e7c92eeffa178b0fe1f40eb17a47095f8fc3ce4a77bf115cf5bd5a4df86e9";
+            url = "https://archive.archlinux.org/packages/n/nvidia-utils/nvidia-utils-${nv}-1-x86_64.pkg.tar.zst";
+            sha256 = "c3367ff68632ac7daf6ca50ef7cbdd1cb5d09f7fe0b26125b312c73e52a34cf4";
           }
         } assets
         ${pkgs.python3.interpreter} ${src}/firmware/extract_boot_assets.py nvsrc/NVIDIA-kernel-module-source-${nv} assets
