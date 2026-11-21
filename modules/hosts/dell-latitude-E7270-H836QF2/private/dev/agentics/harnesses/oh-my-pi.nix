@@ -75,6 +75,17 @@
             maxTokens = 65536;
           }
           {
+            id = "inkling-2-mini";
+            name = "Inkling-2-Mini";
+            reasoning = true;
+            input = ["text" "image"];
+            # ninfer-all reference recipe on the 3090: C1 x 64K
+            # (DSpark drafts a single request; looped MoE, 48 layer
+            # visits). Engine per-seq context ceiling at this shape.
+            contextWindow = 65536;
+            maxTokens = 16384;
+          }
+          {
             id = "qwen3.8-27b";
             name = "Qwen3.8-27B";
             reasoning = true;
@@ -162,6 +173,7 @@
         enabledModels = [
           "ninfer/bonsai2-27b"
           "ninfer/bonsai2-27b-abliterated"
+          "ninfer/inkling-2-mini"
           "ninfer/qwen3.8-27b"
           "ninfer/qwen3.8-27b-abliterated"
           "ninfer/qwen3.8-27b-coder390"

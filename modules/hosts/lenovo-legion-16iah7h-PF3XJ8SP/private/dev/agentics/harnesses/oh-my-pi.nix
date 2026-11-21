@@ -157,7 +157,8 @@
       # `ninfer list` contract (bonsai2 -> Ternary-Bonsai-2-27B, alphabetical).
       local = {
         # Consolidated ninfer engine (port 8092, resident 3090 engine).
-        # Single provider hosting all 5 canonical model variants.
+        # Single provider hosting all 7 canonical model variants.
+        # 2026-11-21: inkling-2-mini added (ninfer-all engine, C1x64K).
         # Mutual conflicts ensure one daemon runs at a time on :8092,
         # switched on-demand via `ninfer switch <model-id> [C]x<ctx>`.
         # 2026-11-11: coder390 re-added — reconverted from the official
@@ -184,6 +185,17 @@
               input = ["text" "image"];
               contextWindow = 262144;
               maxTokens = 65536;
+            }
+            {
+              id = "inkling-2-mini";
+              name = "Inkling-2-Mini";
+              reasoning = true;
+              input = ["text" "image"];
+              # ninfer-all reference recipe on the 3090: C1 x 64K
+              # (DSpark drafts a single request; looped MoE, 48 layer
+              # visits). Engine per-seq context ceiling at this shape.
+              contextWindow = 65536;
+              maxTokens = 16384;
             }
             {
               id = "qwen3.8-27b";
@@ -363,6 +375,7 @@
         enabledModels = [
           "ninfer/bonsai2-27b"
           "ninfer/bonsai2-27b-abliterated"
+          "ninfer/inkling-2-mini"
           "ninfer/qwen3.8-27b"
           "ninfer/qwen3.8-27b-abliterated"
           "ninfer/qwen3.8-27b-coder390"
@@ -433,6 +446,7 @@
         enabledModels = [
           "ninfer/bonsai2-27b"
           "ninfer/bonsai2-27b-abliterated"
+          "ninfer/inkling-2-mini"
           "ninfer/qwen3.8-27b"
           "ninfer/qwen3.8-27b-abliterated"
           "ninfer/qwen3.8-27b-coder390"

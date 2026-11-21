@@ -1,6 +1,8 @@
 # ninfer (RTX 3090 release binaries) — Qwen3.8-27B on v0.15.0 +
-# Ternary Bonsai 2 27B on v0.17.2 (two engine derivations; ternary
-# support landed upstream in v0.16.1)
+# Ternary Bonsai 2 27B on v0.17.2 + Inkling-2-Mini on ninfer-all
+# 2026-11-21.4 (three engine derivations; ternary support landed
+# upstream in v0.16.1, the looped inkling2_loop architecture only in
+# the ninfer-all line, release 2026-11-21.3)
 # DFlash2 server, added 2026-10-09 from the engines-2026-10 benchmark:
 # the Qwen-arm winner on BOTH criteria — peak 162.7 tok/s per-agent
 # (fresh C1) and high-parallelism x deep-ctx (C6x65k 769.4 agg tok/s,
@@ -158,6 +160,43 @@
         hash = "sha256-ZohPlbp2EOTfuJxGmfVCg7QYQxzmpNFFg7QHkd/xyrk=";
       };
 
+      # 2026-11-21 INKLING-2-MINI ENGINE: third distribution —
+      # iamwavecut/ninfer-all, the consolidation of the Neroued ->
+      # Don-Chad -> ashalliants lineage 0.15.0/0.17.2 came from.
+      # v0.17.2 refuses the looped inkling2_loop architecture; support
+      # landed in ninfer-all release 2026-11-21.3, pinned here at
+      # 2026-11-21.4 (commit bd8195f42e87). Debian 13 (glibc 2.41)
+      # build that SHIPS its CUDA runtime under backends/cuda13.4 —
+      # the prism-llamacpp pin is NOT needed for this engine;
+      # glibc, libstdc++, libz and libcurl stay dynamic (host 26.05
+      # glibc >= the build host's 2.41; the unit's LD pins carry the
+      # rest). Release ships SPLIT volumes + SHA256SUMS; fetchzip
+      # cannot consume split volumes, so fetchurl each part and
+      # reassemble with cat|tar (hashes from the release's
+      # SHA256SUMS-ninfer-linux-x64-cuda13.4-*.txt).
+      ninferAllVol1 = pkgs.fetchurl {
+        url = "https://github.com/iamwavecut/ninfer-all/releases/download/2026-11-21.4/ninfer-linux-x64-cuda13.4-sm75-80-86-89-120a-bd8195f42e87.tar.gz.001";
+        hash = "sha256-ST3dKSwg+bKDynY6cb26donkNBqaczAbjmxc9c+ByeA=";
+      };
+      ninferAllVol2 = pkgs.fetchurl {
+        url = "https://github.com/iamwavecut/ninfer-all/releases/download/2026-11-21.4/ninfer-linux-x64-cuda13.4-sm75-80-86-89-120a-bd8195f42e87.tar.gz.002";
+        hash = "sha256-fxc2S+hZcyih37XWtjL9PFTh9ZuRtyoZmnSJdWTbmNM=";
+      };
+
+      ninferRootAll = pkgs.runCommand "ninfer-all-cuda13.4-bd8195f42e87" {} ''
+        cat ${ninferAllVol1} ${ninferAllVol2} | tar -xz
+        d=''$(ls -d ninfer-linux-x64-cuda13.4-* | head -1)
+        cd "''$d"
+        # Inner integrity sheet shipped inside the archive.
+        sha256sum -c SHA256SUMS.txt --quiet
+        cp -r . $out/
+        # Archive layout: executables at the extracted root, backends/
+        # + help/ beside them (release-archive-linux.md); per-arch
+        # bin/<build>/ staging is the docker-image layout, not this
+        # tarball's.
+        test -x $out/ninfer-serve || { ls -la $out; exit 1; }
+      '';
+
       # v0.17.2 adds a pinned host-RAM context budget defaulting to 8192
       # MiB (run.sh: NINFER_HOST_CONTEXT_MIB → --host-context-mib); 8 GiB
       # pinned RAM oomd-killed this 15 GiB host on 2026-10-08 via the
@@ -221,6 +260,26 @@
       ninferBonsai2HereticModel = pkgs.fetchurl {
         url = "https://huggingface.co/emiltsoi/Ternary-Bonsai-2-27B-Uncensored-Heretic-NInfer/resolve/main/Ternary-Bonsai-2-27B-Heretic-ninfer.ninfer";
         hash = "sha256-mflPRL7UiJK3xeHE3INJ4NuLS0TSvYrXzUOM/Bgd4v0=";
+        curlOptsList = ["--http1.1"];
+      };
+
+      # Inkling-2-Mini (thinkingmachines, 2026-11-20): looped MoE,
+      # 26.4B total / 3.4B active (5.4B effective across the 3 core
+      # passes; 24 stored layers run as 48 visits). WaveCut's
+      # UD-IQ4_XS v3 artifact is the ninfer-all reference recipe:
+      # Unsloth UD-IQ4_XS GGUF blocks byte-exact + Q8_0 vision tower
+      # + DSpark drafter bundled. 16,494,910,976 bytes; hash = HF LFS
+      # oid. 0.15.0/0.17.2 CANNOT read this container — the Inkling 2
+      # family exists only in the ninfer-all line. Upstream 3090
+      # numbers (docs/inkling2.md): 14.6 GiB weights resident + 1.2
+      # GiB workspace, F16 KV 32 KiB/token on the 8 full-attention
+      # visits, one 12,288-token sequence plans 16.5-17.0 GiB, decode
+      # 111.4 plain / 126 tok/s with DSpark; NOT built for this
+      # family: quantized KV (fp16/bf16 only), MTP/DFlash, thinking
+      # budgets, video, DSpark drafting beyond one request.
+      ninferInklingModel = pkgs.fetchurl {
+        url = "https://huggingface.co/WaveCut/Inkling-2-Mini-UD-IQ4_XS-NInfer-v3/resolve/main/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer";
+        hash = "sha256-pKG7+9wRUM7MnfK8Eq6HwHYzC/+BV54kPnh1EVMpu1Q=";
         curlOptsList = ["--http1.1"];
       };
 
@@ -323,15 +382,17 @@
         "qwen3.8-27b-turbo|8x16k,8x32k,8x65k,8x131k,5x262k"
         "bonsai2-27b|8x16k,8x32k,8x65k,8x131k,8x262k"
         "bonsai2-27b-abliterated|8x16k,8x32k,8x65k,8x131k,8x262k"
+        "inkling-2-mini|1x65k"
         "qwen3.8-27b-abliterated|8x16k,8x32k,8x65k,8x131k,8x262k"
         "qwen3.8-27b-coder390|8x16k,7x32k,6x65k,4x131k,1x262k"
       ];
-      # `ninfer --version` strings. CLI release line + the two engine
+      # `ninfer --version` strings. CLI release line + the three engine
       # distributions packaged below (v0.15.0 Qwen arm, v0.17.2
-      # bonsai2 arm) — bump all three together.
+      # bonsai2 arm, ninfer-all inkling arm) — bump all four together.
       ninferCliVersion = "1.2.0";
       engineVersionV0150 = "0.15.0-rtx3090";
       engineVersionV0172 = "0.17.2-rtx3090";
+      engineVersionAll = "all-2026-11-21.4";
       # 2026-10-18: Native shell CLI. Fast (<5ms), minimal UI,
       # canonical IDs only (no aliases), <nil> unloader, and full shell completions.
       # 2026-10-31: Renamed ashalliant CLI to ninfer (clean cutover).
@@ -409,6 +470,7 @@ dump_journal() {
 MODELS=(
   "bonsai2-27b|Ternary-Bonsai-2-27B|bonsai2.service|${toString ninferPort}"
   "bonsai2-27b-abliterated|Ternary-Bonsai-2-27B-Heretic-Abliterated|bonsai2-abliterated.service|${toString ninferPort}"
+  "inkling-2-mini|Inkling-2-Mini|ninfer-inkling.service|${toString ninferPort}"
   "qwen3.8-27b|Qwen3.8-27B|ninfer-df2.service|${toString ninferPort}"
   "qwen3.8-27b-abliterated|Qwen3.8-27B-Huihui-Abliterated|ninfer-df2-abliterated.service|${toString ninferPort}"
   "qwen3.8-27b-coder390|Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2|ninfer-df2-coder390.service|${toString ninferPort}"
@@ -441,6 +503,15 @@ SHAPES=(
   # 9.52 GB ternary container as Ternary-Bonsai-2-27B, C8 held at every ctx
   # (peaks identical to the sibling; tps ~1-11% lower).
   "bonsai2-27b-abliterated|16384:8:9706:195,32768:8:10004:161,65536:8:10598:136,131072:8:11788:106,262144:8:14168:78"
+  # Inkling-2-Mini: the ninfer-all reference recipe for a 24 GB card
+  # is C1 ONLY (docs/inkling2.md support matrix — DSpark drafts a
+  # single request). One champion cell at the recipe's 64K ceiling.
+  # Peak is DERIVED from upstream 2026-11-21 measurements (plan
+  # 16.5-17.0 GiB at a 12k sequence + 2 GiB F16 KV at 65k = ~19 GiB);
+  # tps = upstream decode with DSpark 3 drafts (126 at 128 ctx).
+  # Local nvidia-smi sweep pending — replace both with measured
+  # values after the first live run.
+  "inkling-2-mini|65536:1:19456:126"
   # Qwen3.8-27B-Huihui-Abliterated: huihui bf16 -> tools/convert
   # recipe qwen3_8_27b, mtp-only artifact (no dflash2). MEASURED
   # 2026-11-13 sweep on engine v0.15.0 (fresh GPU re-conversion
@@ -481,6 +552,9 @@ default_shape_for() {
     # huihui: C8 holds at every ctx (2026-11-13 sweep); 65k is
     # the champion default (C8x65k 19248 MiB, 101 tok/s).
     qwen3.8-27b-abliterated) echo "8x65536" ;;
+    # inkling: upstream reference recipe C1 x 64K (DSpark drafts a
+    # single request; 24 GB card recipe "Needs 24 GB").
+    inkling-2-mini) echo "1x65536" ;;
     # coder390: measured champion C6x65k (dense 17.2 GiB
     # weights; 2026-11-14 rerun sweep: C7x65k dies on the
     # 6.78G runtime reservation — see SHAPES row). C6x65k:
@@ -701,6 +775,7 @@ get_active() {
       *turbo*) echo "qwen3.8-27b-turbo"; return 0 ;;
       *huihui_abl*) echo "qwen3.8-27b-abliterated"; return 0 ;;
       *bonsai2_27b_heretic*) echo "bonsai2-27b-abliterated"; return 0 ;;
+      *Inkling-2-Mini*) echo "inkling-2-mini"; return 0 ;;
       *bonsai2*) echo "bonsai2-27b"; return 0 ;;
       *qwen3_8_27b*) echo "qwen3.8-27b"; return 0 ;;
     esac
@@ -749,8 +824,7 @@ do_switch() {
         dump_journal "''$stop_cursor" "''$svc"
       fi
     done
-    rm -f "''$state_file" 2>/dev/null || true
-    rm -f "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for ninfer-df2-abliterated)" "''$(shape_env_for ninfer-df2-coder390)" "''$(shape_env_for bonsai2)" "''$(shape_env_for bonsai2-abliterated)" 2>/dev/null || true
+    rm -f "''$state_file" "''$(shape_env_for ninfer-df2)" "''$(shape_env_for ninfer-df2-turbo)" "''$(shape_env_for ninfer-df2-abliterated)" "''$(shape_env_for ninfer-df2-coder390)" "''$(shape_env_for bonsai2)" "''$(shape_env_for bonsai2-abliterated)" "''$(shape_env_for ninfer-inkling)" 2>/dev/null || true
     return 0
   fi
 
@@ -770,7 +844,7 @@ do_switch() {
 
   if [ -z "''$found_svc" ]; then
     echo "error: unknown model ''$target" >&2
-    echo "       available: bonsai2-27b, bonsai2-27b-abliterated, qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.8-27b-coder390, qwen3.8-27b-turbo, <nil>" >&2
+    echo "       available: bonsai2-27b, bonsai2-27b-abliterated, inkling-2-mini, qwen3.8-27b, qwen3.8-27b-abliterated, qwen3.8-27b-coder390, qwen3.8-27b-turbo, <nil>" >&2
     exit 1
   fi
 
@@ -1026,7 +1100,7 @@ case "$cmd" in
     do_switch "$2" "''${3:-}"
     ;;
   -v|--version|version)
-    echo "ninfer ${ninferCliVersion} (engine ${engineVersionV0150} / ${engineVersionV0172})"
+    echo "ninfer ${ninferCliVersion} (engine ${engineVersionV0150} / ${engineVersionV0172} / ${engineVersionAll})"
     ;;
   -h|--help|help)
     echo "usage: ninfer [switch <model-id> [C]x<ctx> | list | active | -v]"
@@ -1083,6 +1157,7 @@ SCRIPT
             models=(
               'bonsai2-27b'
               'bonsai2-27b-abliterated'
+              'inkling-2-mini'
               'qwen3.8-27b'
               'qwen3.8-27b-abliterated'
               'qwen3.8-27b-coder390'
@@ -1164,7 +1239,7 @@ ZSH
             prev="''${COMP_WORDS[COMP_CWORD-1]}"
             shapes_conf="@NINFER_SHAPES_CONF@"
 
-            local models="bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-coder390 qwen3.8-27b-turbo <nil> nil"
+            local models="bonsai2-27b bonsai2-27b-abliterated inkling-2-mini qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-coder390 qwen3.8-27b-turbo <nil> nil"
             local commands="switch list status active current version"
 
             if [ "$COMP_CWORD" -eq 2 ] && [ "''${COMP_WORDS[1]}" = "switch" ]; then
@@ -1202,8 +1277,8 @@ BASH
           complete -c ninfer -n "__fish_use_subcommand" -a active -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -a current -d "show active model"
           complete -c ninfer -n "__fish_use_subcommand" -s v -l version -d "show version"
-          complete -c ninfer -n "__fish_use_subcommand" -a "bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-coder390 qwen3.8-27b-turbo <nil> nil"
-          complete -c ninfer -n "__fish_seen_subcommand_from switch" -a "bonsai2-27b bonsai2-27b-abliterated qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-coder390 qwen3.8-27b-turbo <nil> nil"
+          complete -c ninfer -n "__fish_use_subcommand" -a "bonsai2-27b bonsai2-27b-abliterated inkling-2-mini qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-coder390 qwen3.8-27b-turbo <nil> nil"
+          complete -c ninfer -n "__fish_seen_subcommand_from switch" -a "bonsai2-27b bonsai2-27b-abliterated inkling-2-mini qwen3.8-27b qwen3.8-27b-abliterated qwen3.8-27b-coder390 qwen3.8-27b-turbo <nil> nil"
           complete -c ninfer -n "__fish_seen_subcommand_from switch; and __fish_prev_arg_in switch; and test (count (commandline -opc)) -ge 3" \
             -a "(begin; set -l mid (commandline -opc)[3]; set -l row (grep -m1 '^'\$mid'|' @NINFER_SHAPES_CONF@ 2>/dev/null | cut -d'|' -f2); if test -n \"\$row\"; string split ',' \$row; else; grep -v '^#' @NINFER_SHAPES_CONF@ 2>/dev/null | cut -d'|' -f2 | string split ','; end; end)"
 FISH
@@ -1250,6 +1325,7 @@ FISH
               case "$mid" in
                 bonsai2-27b) svc=bonsai2.service ;;
                 bonsai2-27b-abliterated) svc=bonsai2-abliterated.service ;;
+                inkling-2-mini) svc=ninfer-inkling.service ;;
                 qwen3.8-27b-abliterated) svc=ninfer-df2-abliterated.service ;;
                 qwen3.8-27b-coder390) svc=ninfer-df2-coder390.service ;;
                 qwen3.8-27b-turbo) svc=ninfer-df2-turbo.service ;;
@@ -1297,6 +1373,7 @@ FISH
             "bonsai2-abliterated.service"
             "ninfer-df2-turbo.service"
             "ninfer-df2-abliterated.service"
+            "ninfer-inkling.service"
           ];
 
           # run.sh resolves bash via `#!/usr/bin/env bash`. The NixOS
@@ -1388,6 +1465,7 @@ FISH
             "bonsai2-abliterated.service"
             "ninfer-df2.service"
             "ninfer-df2-abliterated.service"
+            "ninfer-inkling.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -1453,6 +1531,7 @@ FISH
             "bonsai2-abliterated.service"
             "ninfer-df2.service"
             "ninfer-df2-turbo.service"
+            "ninfer-inkling.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -1519,6 +1598,7 @@ FISH
             "ninfer-df2.service"
             "ninfer-df2-abliterated.service"
             "ninfer-df2-turbo.service"
+            "ninfer-inkling.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -1589,6 +1669,7 @@ FISH
             "ninfer-df2-turbo.service"
             "ninfer-df2-abliterated.service"
             "bonsai2-abliterated.service"
+            "ninfer-inkling.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -1673,6 +1754,7 @@ FISH
             "ninfer-df2-turbo.service"
             "ninfer-df2-abliterated.service"
             "bonsai2.service"
+            "ninfer-inkling.service"
           ];
           serviceConfig = {
             Type = "simple";
@@ -1726,6 +1808,93 @@ FISH
             '';
             # Sibling artifact measured 14166 MiB device peak at
             # C8x262144; identical walls as bonsai2.
+            MemoryHigh = "10G";
+            MemoryMax = "12G";
+            Restart = "on-failure";
+            RestartSec = "10s";
+            ProtectHome = true;
+            ProtectSystem = "strict";
+            NoNewPrivileges = true;
+            PrivateTmp = true;
+          };
+        };
+
+        # Inkling-2-Mini (port 8092), on-demand (2026-11-21): ninfer-all
+        # sm86 build + WaveCut UD-IQ4_XS v3 artifact. C1 x 64K = the
+        # upstream reference recipe (DSpark drafts a single request).
+        # --no-prefix-reuse mirrors the 2026-10 benchmark decision
+        # (engines.py ninfer-all-b2: the default prefix cache pins
+        # host RAM this 15 GiB box does not have — mandatory, "not
+        # cosmetic"). DSpark 3 drafts self-select at C1 (cli.md --spec
+        # default for Inkling 2 artifacts carrying their drafter);
+        # --vision loads the bundled tower for image input. Quantized
+        # KV is NOT built for this family: F16 only, --kv-capacity
+        # follows the shape override's NINFER_KV_CAPACITY (CLI writes
+        # it for every switch; the ashalliants-line HOST_STATE_SLOTS
+        # entry has no ninfer-all equivalent and is not translated).
+        systemd.services.ninfer-inkling = {
+          description = "ninfer-all Inkling-2-Mini (looped MoE, DSpark)";
+          after = ["network-online.target"];
+          wants = ["network-online.target"];
+          conflicts = [
+            "bonsai2.service"
+            "bonsai2-abliterated.service"
+            "ninfer-df2.service"
+            "ninfer-df2-turbo.service"
+            "ninfer-df2-abliterated.service"
+            "ninfer-df2-coder390.service"
+          ];
+          serviceConfig = {
+            Type = "simple";
+            User = "ayin";
+            WorkingDirectory = ninferRootAll;
+            # Same GPU wait gate as the other units (thunderbolt eGPU
+            # enumerates late), then artifact hash verify (HF LFS oid).
+            ExecCondition = pkgs.writeShellScript "ninfer-inkling-boot-gate" ''
+              i=0
+              until [ -e /dev/nvidia-uvm ] && [ -e /dev/nvidia1 ]; do
+                i=$((i+1)); [ $i -gt 60 ] && exit 1
+                sleep 1
+              done
+              echo "a4a1bbfbdc1150cecc9df2bc12ae87c076330bff81579e243e7875115329bb54  ${ninferInklingModel}" \
+                | ${pkgs.coreutils}/bin/sha256sum -c -
+            '';
+            Environment = let
+              # The archive self-contains its CUDA runtime
+              # (backends/cuda13.4); the pins cover the four libraries
+              # the Debian 13 build keeps dynamic: libcuda (driver),
+              # libcurl.so.4 (the proven GLIBC-safe 8.7.1 pin),
+              # libstdc++/libgcc_s (cc runtime), libz.
+              ld = lib.concatStringsSep ":" [
+                "/run/opengl-driver/lib"
+                "/nix/store/36kr91f8s509z2r8hqvpayw5bqyqgyzr-curl-8.7.1/lib"
+                "${pkgs.stdenv.cc.cc.lib}/lib"
+                "${pkgs.zlib}/lib"
+              ];
+            in [
+              "PATH=${lib.makeBinPath [pkgs.bash pkgs.coreutils]}"
+              "CUDA_VISIBLE_DEVICES=GPU-a4e36250-873d-62c5-912e-fde18d238a6c"
+              "LD_LIBRARY_PATH=${ld}"
+              "NINFER_MODEL_ID=inkling-2-mini"
+              # Shape contract: the CLI writes these into
+              # shape-ninfer-inkling.env; defaults = reference recipe.
+              "NINFER_CONCURRENCY=1"
+              "NINFER_CONTEXT=65536"
+              "NINFER_KV_CAPACITY=65536"
+            ];
+            EnvironmentFile = "-/var/lib/ninfer/shape-ninfer-inkling.env";
+            ExecStart = pkgs.writeShellScript "ninfer-inkling-start" ''
+              exec ${ninferRootAll}/ninfer-serve ${ninferInklingModel} \
+                --model-id inkling-2-mini \
+                --host 0.0.0.0 --port ${toString ninferPort} \
+                --max-context "''$NINFER_CONTEXT" \
+                --kv-capacity "''$NINFER_KV_CAPACITY" \
+                --max-concurrency "''$NINFER_CONCURRENCY" \
+                --vision \
+                --no-prefix-reuse
+            '';
+            # Device-resident weights (15 GiB VRAM); the host walls
+            # stay the sibling belt.
             MemoryHigh = "10G";
             MemoryMax = "12G";
             Restart = "on-failure";
