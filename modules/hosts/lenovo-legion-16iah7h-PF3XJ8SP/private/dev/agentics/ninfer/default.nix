@@ -1,6 +1,6 @@
 # ninfer (RTX 3090 release binaries) — Qwen3.8-27B on v0.15.0 +
 # Ternary Bonsai 2 27B on v0.17.2 + Inkling-2-Mini on ninfer-all
-# 2026-11-21.4 (three engine derivations; ternary support landed
+# 2026-11-22.5 (three engine derivations; ternary support landed
 # upstream in v0.16.1, the looped inkling2_loop architecture only in
 # the ninfer-all line, release 2026-11-21.3)
 # DFlash2 server, added 2026-10-09 from the engines-2026-10 benchmark:
@@ -165,7 +165,7 @@
       # Don-Chad -> ashalliants lineage 0.15.0/0.17.2 came from.
       # v0.17.2 refuses the looped inkling2_loop architecture; support
       # landed in ninfer-all release 2026-11-21.3, pinned here at
-      # 2026-11-21.4 (commit bd8195f42e87). Debian 13 (glibc 2.41)
+      # 2026-11-22.5 (commit 719119a271ed). Debian 13 (glibc 2.41)
       # build that SHIPS its CUDA runtime under backends/cuda13.4 —
       # the prism-llamacpp pin is NOT needed for this engine;
       # glibc, libstdc++, libz and libcurl stay dynamic (host 26.05
@@ -174,16 +174,19 @@
       # cannot consume split volumes, so fetchurl each part and
       # reassemble with cat|tar (hashes from the release's
       # SHA256SUMS-ninfer-linux-x64-cuda13.4-*.txt).
+      # 2026-11-22: re-pinned from 2026-11-21.4 (bd8195f42e87) — that
+      # release was DELETED upstream, breaking every rebuild with 404s
+      # on the split volumes.
       ninferAllVol1 = pkgs.fetchurl {
-        url = "https://github.com/iamwavecut/ninfer-all/releases/download/2026-11-21.4/ninfer-linux-x64-cuda13.4-sm75-80-86-89-120a-bd8195f42e87.tar.gz.001";
-        hash = "sha256-ST3dKSwg+bKDynY6cb26donkNBqaczAbjmxc9c+ByeA=";
+        url = "https://github.com/iamwavecut/ninfer-all/releases/download/2026-11-22.5/ninfer-linux-x64-cuda13.4-sm75-80-86-89-120a-719119a271ed.tar.gz.001";
+        hash = "sha256-ek0PwH8N9x1hCarrAT3LjNZpOTk6V9p54Q2mTKiWkTE=";
       };
       ninferAllVol2 = pkgs.fetchurl {
-        url = "https://github.com/iamwavecut/ninfer-all/releases/download/2026-11-21.4/ninfer-linux-x64-cuda13.4-sm75-80-86-89-120a-bd8195f42e87.tar.gz.002";
-        hash = "sha256-fxc2S+hZcyih37XWtjL9PFTh9ZuRtyoZmnSJdWTbmNM=";
+        url = "https://github.com/iamwavecut/ninfer-all/releases/download/2026-11-22.5/ninfer-linux-x64-cuda13.4-sm75-80-86-89-120a-719119a271ed.tar.gz.002";
+        hash = "sha256-44rMoL/meNm0uZsOlD8zC8ZgxDN2cFyE+7Rmylu1vf4=";
       };
 
-      ninferRootAll = pkgs.runCommand "ninfer-all-cuda13.4-bd8195f42e87" {} ''
+      ninferRootAll = pkgs.runCommand "ninfer-all-cuda13.4-719119a271ed" {} ''
         cat ${ninferAllVol1} ${ninferAllVol2} | tar -xz
         d=''$(ls -d ninfer-linux-x64-cuda13.4-* | head -1)
         cd "''$d"
@@ -392,7 +395,7 @@
       ninferCliVersion = "1.2.0";
       engineVersionV0150 = "0.15.0-rtx3090";
       engineVersionV0172 = "0.17.2-rtx3090";
-      engineVersionAll = "all-2026-11-21.4";
+      engineVersionAll = "all-2026-11-22.5";
       # 2026-10-18: Native shell CLI. Fast (<5ms), minimal UI,
       # canonical IDs only (no aliases), <nil> unloader, and full shell completions.
       # 2026-10-31: Renamed ashalliant CLI to ninfer (clean cutover).
