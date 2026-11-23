@@ -1,6 +1,6 @@
 # ninfer (RTX 3090 release binaries) — Qwen3.8-27B on v0.15.0 +
 # Ternary Bonsai 2 27B on v0.17.2 + Inkling-2-Mini on ninfer-all
-# 2026-11-22.5 (three engine derivations; ternary support landed
+# 2026-11-23.8 (three engine derivations; ternary support landed
 # upstream in v0.16.1, the looped inkling2_loop architecture only in
 # the ninfer-all line, release 2026-11-21.3)
 # DFlash2 server, added 2026-10-09 from the engines-2026-10 benchmark:
@@ -164,30 +164,30 @@
       # iamwavecut/ninfer-all, the consolidation of the Neroued ->
       # Don-Chad -> ashalliants lineage 0.15.0/0.17.2 came from.
       # v0.17.2 refuses the looped inkling2_loop architecture; support
-      # landed in ninfer-all release 2026-11-21.3, pinned here at
-      # 2026-11-22.5 (commit 719119a271ed). Debian 13 (glibc 2.41)
-      # build that SHIPS its CUDA runtime under backends/cuda13.4 —
-      # the prism-llamacpp pin is NOT needed for this engine;
-      # glibc, libstdc++, libz and libcurl stay dynamic (host 26.05
-      # glibc >= the build host's 2.41; the unit's LD pins carry the
-      # rest). Release ships SPLIT volumes + SHA256SUMS; fetchzip
-      # cannot consume split volumes, so fetchurl each part and
-      # reassemble with cat|tar (hashes from the release's
-      # SHA256SUMS-ninfer-linux-x64-cuda13.4-*.txt).
-      # 2026-11-22: re-pinned from 2026-11-21.4 (bd8195f42e87) — that
-      # release was DELETED upstream, breaking every rebuild with 404s
-      # on the split volumes.
-      ninferAllVol1 = pkgs.fetchurl {
-        url = "https://github.com/iamwavecut/ninfer-all/releases/download/2026-11-22.5/ninfer-linux-x64-cuda13.4-sm75-80-86-89-120a-719119a271ed.tar.gz.001";
-        hash = "sha256-ek0PwH8N9x1hCarrAT3LjNZpOTk6V9p54Q2mTKiWkTE=";
-      };
-      ninferAllVol2 = pkgs.fetchurl {
-        url = "https://github.com/iamwavecut/ninfer-all/releases/download/2026-11-22.5/ninfer-linux-x64-cuda13.4-sm75-80-86-89-120a-719119a271ed.tar.gz.002";
-        hash = "sha256-44rMoL/meNm0uZsOlD8zC8ZgxDN2cFyE+7Rmylu1vf4=";
+      # landed in ninfer-all release 2026-11-21.3.
+      # Debian 13 (glibc 2.41) build that SHIPS its CUDA runtime under
+      # backends/cuda13 — the prism-llamacpp pin is NOT needed for this
+      # engine; glibc, libstdc++, libz and libcurl stay dynamic (host
+      # 26.05 glibc >= the build host's 2.41; the unit's LD pins carry
+      # the rest).
+      # 2026-11-22: pinned 2026-11-21.4 (bd8195f42e87) was DELETED
+      # upstream, breaking every rebuild with 404s; re-pinned to
+      # 2026-11-22.5 (719119a271ed), split volumes, cat|tar reassembly.
+      # 2026-11-24: re-pinned to 2026-11-23.8 (982ad2afa080) — SINGLE
+      # volume now (fetchurl one part, plain tar -xz). Inkling2 decode
+      # + verification attention and prompt near/far fields moved to
+      # tensor cores; measured on this card against the same artifact
+      # (local sweep 2026-11-24, /tmp/inking-sweep2 + repo archive):
+      # C1 decode 93->120 @58k, 69->92 @115k, 51->72 @230k, 46.5->63
+      # @288k; C2 aggregate 110->137 @65k, 94->128 @131k; prefill
+      # +50% across the ladder. Text identical (explicit roundings).
+      ninferAllTarball = pkgs.fetchurl {
+        url = "https://github.com/iamwavecut/ninfer-all/releases/download/2026-11-23.8/ninfer-linux-x64-cuda13.4-sm75-80-86-89-120a-982ad2afa080.tar.gz.001";
+        hash = "sha256-/JOoUol4Ik5Jz/MmbacZhFW7YyW6svDVB1mu5HWKmMM=";
       };
 
-      ninferRootAll = pkgs.runCommand "ninfer-all-cuda13.4-719119a271ed" {} ''
-        cat ${ninferAllVol1} ${ninferAllVol2} | tar -xz
+      ninferRootAll = pkgs.runCommand "ninfer-all-cuda13.4-982ad2afa080" {} ''
+        tar -xzf ${ninferAllTarball}
         d=''$(ls -d ninfer-linux-x64-cuda13.4-* | head -1)
         cd "''$d"
         # Inner integrity sheet shipped inside the archive.
@@ -273,13 +273,18 @@
       # Unsloth UD-IQ4_XS GGUF blocks byte-exact + Q8_0 vision tower
       # + DSpark drafter bundled. 16,494,910,976 bytes; hash = HF LFS
       # oid. 0.15.0/0.17.2 CANNOT read this container — the Inkling 2
-      # family exists only in the ninfer-all line. Upstream 3090
-      # numbers (docs/inkling2.md): 14.6 GiB weights resident + 1.2
-      # GiB workspace, F16 KV 32 KiB/token on the 8 full-attention
-      # visits, one 12,288-token sequence plans 16.5-17.0 GiB, decode
-      # 111.4 plain / 126 tok/s with DSpark; NOT built for this
-      # family: quantized KV (fp16/bf16 only), MTP/DFlash, thinking
-      # budgets, video, DSpark drafting beyond one request.
+      # family exists only in the ninfer-all line.
+      # 2026-11-23 measured ladder (boot `capacity` line + 58-90%-ctx
+      # long-prompt decode, 2 waves): KV dtype is mxfp8 (engine default
+      # for Inkling 2, 20.7 KiB/token measured), NOT F16-only as
+      # previously claimed here; --max-context is a plain per-request
+      # ceiling (model trains at 1,048,576; 1M KV ≈ 20.7 GiB — beyond
+      # this card). C1x327680 boots (runtime 7.29 GiB, free 290 MiB);
+      # C2x65k aggregate 109.6 t/s vs 93 drafted single-lane, but
+      # DSpark drafts only at C1 ("for one decoding request") and the
+      # CLI's shape validation accepts one concurrency per context, so
+      # the table below keeps the C1 ladder. Decode falls ~26% per
+      # context doubling: 93 @58k → 69 @115k → 51 @230k.
       ninferInklingModel = pkgs.fetchurl {
         url = "https://huggingface.co/WaveCut/Inkling-2-Mini-UD-IQ4_XS-NInfer-v3/resolve/main/Inkling-2-Mini-UD-IQ4_XS-ninfer-v3.ninfer";
         hash = "sha256-pKG7+9wRUM7MnfK8Eq6HwHYzC/+BV54kPnh1EVMpu1Q=";
@@ -385,7 +390,7 @@
         "qwen3.8-27b-turbo|8x16k,8x32k,8x65k,8x131k,5x262k"
         "bonsai2-27b|8x16k,8x32k,8x65k,8x131k,8x262k"
         "bonsai2-27b-abliterated|8x16k,8x32k,8x65k,8x131k,8x262k"
-        "inkling-2-mini|1x65k"
+        "inkling-2-mini|1x65k,1x131k,1x262k,1x327k"
         "qwen3.8-27b-abliterated|8x16k,8x32k,8x65k,8x131k,8x262k"
         "qwen3.8-27b-coder390|8x16k,7x32k,6x65k,4x131k,1x262k"
       ];
@@ -395,7 +400,7 @@
       ninferCliVersion = "1.2.0";
       engineVersionV0150 = "0.15.0-rtx3090";
       engineVersionV0172 = "0.17.2-rtx3090";
-      engineVersionAll = "all-2026-11-22.5";
+      engineVersionAll = "all-2026-11-23.8";
       # 2026-10-18: Native shell CLI. Fast (<5ms), minimal UI,
       # canonical IDs only (no aliases), <nil> unloader, and full shell completions.
       # 2026-10-31: Renamed ashalliant CLI to ninfer (clean cutover).
@@ -506,15 +511,20 @@ SHAPES=(
   # 9.52 GB ternary container as Ternary-Bonsai-2-27B, C8 held at every ctx
   # (peaks identical to the sibling; tps ~1-11% lower).
   "bonsai2-27b-abliterated|16384:8:9706:195,32768:8:10004:161,65536:8:10598:136,131072:8:11788:106,262144:8:14168:78"
-  # Inkling-2-Mini: the ninfer-all reference recipe for a 24 GB card
-  # is C1 ONLY (docs/inkling2.md support matrix — DSpark drafts a
-  # single request). One champion cell at the recipe's 64K ceiling.
-  # Peak is DERIVED from upstream 2026-11-21 measurements (plan
-  # 16.5-17.0 GiB at a 12k sequence + 2 GiB F16 KV at 65k = ~19 GiB);
-  # tps = upstream decode with DSpark 3 drafts (126 at 128 ctx).
-  # Local nvidia-smi sweep pending — replace both with measured
-  # values after the first live run.
-  "inkling-2-mini|65536:1:19456:126"
+  # Inkling-2-Mini: MEASURED 2026-11-24 local sweep on engine
+  # all-2026-11-23.8 (boot peaks via nvidia-smi; tps = engine-reported
+  # decode tok/s at ~90%-ctx long prompts, greedy, DSpark auto with
+  # the plain-decode gate — drafts only at C1). C1 ladder up to 320k
+  # (boot free 290 MiB); 320k decode measured 63.1 tok/s at a 288k-
+  # token prompt (DSpark accepted 50% there). 512k needs ~10.4 GiB KV
+  # alone (~11 GiB runtime vs ~8.7 GiB free) — projected boot failure,
+  # not probed. The 65k row's tps is the 58k-filled value. Decode
+  # falls ~24% per context doubling (120 @58k -> 92 @115k ->
+  # 72 @230k -> 63 @288k). MEASURED 2026-11-24 on engine
+  # all-2026-11-23.8: tensor-core attention lifted every cell +25-41%
+  # over the 2026-11-22.5 engine (93/69/51/46.5); prefill +50-55%.
+  # Raw ladder data: benchmarks/engines-2026-10/results/inkling2-2026-11-24/.
+  "inkling-2-mini|65536:1:19364:120,131072:1:20676:92,262144:1:23300:72,327680:1:23854:63"
   # Qwen3.8-27B-Huihui-Abliterated: huihui bf16 -> tools/convert
   # recipe qwen3_8_27b, mtp-only artifact (no dflash2). MEASURED
   # 2026-11-13 sweep on engine v0.15.0 (fresh GPU re-conversion
@@ -555,8 +565,9 @@ default_shape_for() {
     # huihui: C8 holds at every ctx (2026-11-13 sweep); 65k is
     # the champion default (C8x65k 19248 MiB, 101 tok/s).
     qwen3.8-27b-abliterated) echo "8x65536" ;;
-    # inkling: upstream reference recipe C1 x 64K (DSpark drafts a
-    # single request; 24 GB card recipe "Needs 24 GB").
+    # inkling: upstream reference recipe C1 x 64K kept as default
+    # (fastest single-lane at 93 t/s with DSpark drafting; 2026-11-23
+    # measured ladder adds 131k/262k/320k for long-context switches).
     inkling-2-mini) echo "1x65536" ;;
     # coder390: measured champion C6x65k (dense 17.2 GiB
     # weights; 2026-11-14 rerun sweep: C7x65k dies on the
@@ -1830,11 +1841,11 @@ FISH
         # host RAM this 15 GiB box does not have — mandatory, "not
         # cosmetic"). DSpark 3 drafts self-select at C1 (cli.md --spec
         # default for Inkling 2 artifacts carrying their drafter);
-        # --vision loads the bundled tower for image input. Quantized
-        # KV is NOT built for this family: F16 only, --kv-capacity
-        # follows the shape override's NINFER_KV_CAPACITY (CLI writes
-        # it for every switch; the ashalliants-line HOST_STATE_SLOTS
-        # entry has no ninfer-all equivalent and is not translated).
+        # --vision loads the bundled tower for image input. KV dtype is
+        # mxfp8 (engine default for Inkling 2; measured 20.7 KiB/token
+        # 2026-11-23), --kv-capacity is a SHARED pool in tokens: for
+        # C>1 shapes it must cover conc×ctx or lanes lose admission
+        # (start script multiplies below).
         systemd.services.ninfer-inkling = {
           description = "ninfer-all Inkling-2-Mini (looped MoE, DSpark)";
           after = ["network-online.target"];
@@ -1891,7 +1902,7 @@ FISH
                 --model-id inkling-2-mini \
                 --host 0.0.0.0 --port ${toString ninferPort} \
                 --max-context "''$NINFER_CONTEXT" \
-                --kv-capacity "''$NINFER_KV_CAPACITY" \
+                --kv-capacity "''$((NINFER_CONCURRENCY * NINFER_KV_CAPACITY))" \
                 --max-concurrency "''$NINFER_CONCURRENCY" \
                 --vision \
                 --no-prefix-reuse

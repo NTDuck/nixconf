@@ -1,0 +1,32 @@
+ninfer-serve: CUDA 13 backend
+2026-11-24 00:59:37.862  INFO  build 2026-11-23.8+982ad2a (nvcc 13.4.92, 75 80 86 89 120a)
+2026-11-24 00:59:37.867  INFO  starting engine
+2026-11-24 00:59:38.044  INFO  engine | device profile nvidia-geforce-rtx-3090-sm86: 95 routed keys (built in: RTX 3090 at 390 W, 2026-09-25; unified routes and two-stage GDN at 420 W, 2026-09-27; cuBLAS prefill gate at 350 W, 2026-10-18; GGUF Q4_K/Q6_K vector loads at 350 W, 2026-10-24; GGUF MoE Q6_K loads at 350 W, 2026-10-25; Q6 head and Q4 residual projections at 350 W, 2026-10-30; Q4_K matrix and MoE async tiles at 350 W, 2026-11-04 and 2026-11-05; GGUF and NVFP4 W4A8-int routes at 350 W, 2026-11-19; NVFP4 matrix and MoE async tiles at 370 W, 2026-11-23)
+2026-11-24 00:59:38.493  INFO  loading weights | 15.0 GiB
+2026-11-24 00:59:44.181  INFO  weights ready | 15.0 GiB | 5.7s | 2.63 GiB/s
+2026-11-24 00:59:44.350  INFO  CUDA graphs ready | 157 ms
+2026-11-24 00:59:44.350  INFO  engine | Inkling 2: 2 sequence(s), prompt chunks of 2048 tokens, mxfp8 KV 2540 MiB, workspace 1278 MiB
+2026-11-24 00:59:44.350  INFO  engine | Inkling 2: vision tower on the device (56 MiB of device memory beside the weights, 580 MiB of workspace an image), up to 4096 prompt positions per image
+2026-11-24 00:59:44.352  INFO  engine ready | Inkling-2-Mini-UD-IQ4_XS | total 6.5s | weights 15.0 GiB | CUDA sync auto
+2026-11-24 00:59:44.352  INFO  capacity | KV 65,536 tokens, mxfp8, explicit | pages 0/0 | runtime 3.73 GiB | free 4.24 GiB
+2026-11-24 00:59:44.352  INFO  context cache | root only
+2026-11-24 00:59:44.352  INFO  media | 16 preprocess workers | cache 1.00 GiB | live 2.00 GiB
+2026-11-24 00:59:44.412  INFO  listening on http://127.0.0.1:8092 | model inkling-2-mini | auth disabled
+2026-11-24 00:59:44.412  INFO  webui http://127.0.0.1:8092/
+2026-11-24 00:59:44.412  INFO  api base http://127.0.0.1:8092/v1
+2026-11-24 00:59:46.453  INFO  req#1 started | openai-chat non-stream | 1 message | max output 512 | thinking template default
+2026-11-24 00:59:46.454  INFO  req#2 started | openai-chat non-stream | 1 message | max output 512 | thinking template default
+2026-11-24 00:59:49.413  INFO  throughput | 5.0s | prefill 2.05k tok/s (10,240 tok) | running 2 (prefill 2) | host 0.0% (0 us)
+2026-11-24 00:59:54.413  INFO  throughput | 5.0s | prefill 3.28k tok/s (16,384 tok) | running 2 (prefill 2) | host 0.0% (0 us)
+2026-11-24 00:59:59.413  INFO  throughput | 5.0s | prefill 2.87k tok/s (14,336 tok) | running 2 (prefill 2) | host 0.0% (0 us)
+2026-11-24 01:00:04.413  INFO  throughput | 5.0s | prefill 2.46k tok/s (12,288 tok) | running 2 (prefill 2) | host 0.0% (0 us)
+2026-11-24 01:00:09.413  INFO  throughput | 5.0s | prefill 2.10k tok/s (10,509 tok) | decode 25.8 tok/s (129 tok) | running 2 (prefill 1, decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-24 01:00:14.413  INFO  throughput | 5.0s | prefill 2.46k tok/s (12,288 tok) | decode 32.0 tok/s (160 tok) | running 2 (prefill 1, decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-24 01:00:19.413  INFO  throughput | 5.0s | prefill 2.05k tok/s (10,240 tok) | decode 33.4 tok/s (167 tok) | running 2 (prefill 1, decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-24 01:00:20.410  INFO  req#1 done | openai-chat | stop token | prompt 57,613 | output 486 | cache 0 (0.0%) | TTFT 19.9s | total 34.0s | prefill 2.90k tok/s | decode 34.5 tok/s
+2026-11-24 01:00:24.413  INFO  throughput | 5.0s | prefill 2.46k tok/s (12,288 tok) | decode 6.0 tok/s (30 tok) | running 1 (prefill 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-24 01:00:29.413  INFO  throughput | 5.0s | prefill 2.46k tok/s (12,288 tok) | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-24 01:00:34.413  INFO  throughput | 5.0s | prefill 873.0 tok/s (4,365 tok) | decode 70.2 tok/s (351 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.0% (0 us)
+2026-11-24 01:00:35.195  INFO  req#2 done | openai-chat | stop token | prompt 57,613 | output 432 | cache 0 (0.0%) | TTFT 44.5s | total 48.8s | prefill 1.31k tok/s | decode 102.3 tok/s
+2026-11-24 01:00:35.205  INFO  stopping | running and queued requests are cancelled
+2026-11-24 01:00:35.206  INFO  server stopped

@@ -1,0 +1,4 @@
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 45.1, "prompt_tokens": 57613, "completion_tokens": 372, "reasoning_tokens": 322, "decode_tps": 25.46702448175624, "prefill_tps": 1887.844579638803, "draft_n": null, "draft_accepted": null}
+{"wave": 0, "lane": 1, "ok": 1, "wall_s": 71.1, "prompt_tokens": 57613, "completion_tokens": 460, "reasoning_tokens": 405, "decode_tps": 84.17375932581665, "prefill_tps": 887.5799316612213, "draft_n": null, "draft_accepted": null}
+{"wave": 1, "lane": 0, "ok": 1, "wall_s": 45.4, "prompt_tokens": 57613, "completion_tokens": 372, "reasoning_tokens": 322, "decode_tps": 25.36021239997888, "prefill_tps": 1872.4768986839294, "draft_n": null, "draft_accepted": null}
+{"wave": 1, "lane": 1, "ok": 1, "wall_s": 71.4, "prompt_tokens": 57613, "completion_tokens": 460, "reasoning_tokens": 405, "decode_tps": 84.12551511459579, "prefill_tps": 879.059614241663, "draft_n": null, "draft_accepted": null}

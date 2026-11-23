@@ -1,0 +1,31 @@
+ninfer-serve: CUDA 13 backend
+2026-11-24 00:51:51.038  INFO  build 2026-11-23.8+982ad2a (nvcc 13.4.92, 75 80 86 89 120a)
+2026-11-24 00:51:51.043  INFO  starting engine
+2026-11-24 00:51:51.215  INFO  engine | device profile nvidia-geforce-rtx-3090-sm86: 95 routed keys (built in: RTX 3090 at 390 W, 2026-09-25; unified routes and two-stage GDN at 420 W, 2026-09-27; cuBLAS prefill gate at 350 W, 2026-10-18; GGUF Q4_K/Q6_K vector loads at 350 W, 2026-10-24; GGUF MoE Q6_K loads at 350 W, 2026-10-25; Q6 head and Q4 residual projections at 350 W, 2026-10-30; Q4_K matrix and MoE async tiles at 350 W, 2026-11-04 and 2026-11-05; GGUF and NVFP4 W4A8-int routes at 350 W, 2026-11-19; NVFP4 matrix and MoE async tiles at 370 W, 2026-11-23)
+2026-11-24 00:51:51.678  INFO  loading weights | 15.3 GiB
+2026-11-24 00:51:57.504  INFO  weights ready | 15.3 GiB | 5.8s | 2.63 GiB/s
+2026-11-24 00:51:57.707  INFO  CUDA graphs ready | 190 ms
+2026-11-24 00:51:57.707  INFO  engine | Inkling 2: 1 sequence(s), prompt chunks of 2048 tokens, mxfp8 KV 2853 MiB, workspace 1332 MiB
+2026-11-24 00:51:57.707  INFO  engine | Inkling 2: vision tower on the device (56 MiB of device memory beside the weights, 580 MiB of workspace an image), up to 4096 prompt positions per image
+2026-11-24 00:51:57.707  INFO  engine | Inkling 2: DSpark drafter, 3 layers over a block of 8, up to 3 drafts a round for one decoding request; its head table and contexts 99 MiB
+2026-11-24 00:51:57.709  INFO  engine ready | Inkling-2-Mini-UD-IQ4_XS | total 6.7s | weights 15.3 GiB | CUDA sync auto
+2026-11-24 00:51:57.709  INFO  capacity | KV 131,072 tokens, mxfp8, explicit | pages 0/0 | runtime 4.18 GiB | free 3.39 GiB
+2026-11-24 00:51:57.709  INFO  context cache | root only
+2026-11-24 00:51:57.709  INFO  media | 16 preprocess workers | cache 1.00 GiB | live 2.00 GiB
+2026-11-24 00:51:57.761  INFO  listening on http://127.0.0.1:8092 | model inkling-2-mini | auth disabled
+2026-11-24 00:51:57.761  INFO  webui http://127.0.0.1:8092/
+2026-11-24 00:51:57.761  INFO  api base http://127.0.0.1:8092/v1
+2026-11-24 00:51:59.629  INFO  req#1 started | openai-chat non-stream | 1 message | max output 512 | thinking template default
+2026-11-24 00:52:02.761  INFO  throughput | 5.0s | prefill 2.05k tok/s (10,240 tok) | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-24 00:52:07.761  INFO  throughput | 5.0s | prefill 3.28k tok/s (16,384 tok) | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-24 00:52:12.761  INFO  throughput | 5.0s | prefill 2.87k tok/s (14,336 tok) | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-24 00:52:17.761  INFO  throughput | 5.0s | prefill 2.46k tok/s (12,288 tok) | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-24 00:52:22.761  INFO  throughput | 5.0s | prefill 2.46k tok/s (12,288 tok) | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-24 00:52:27.761  INFO  throughput | 5.0s | prefill 2.05k tok/s (10,240 tok) | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-24 00:52:32.761  INFO  throughput | 5.0s | prefill 2.05k tok/s (10,240 tok) | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-24 00:52:37.761  INFO  throughput | 5.0s | prefill 2.05k tok/s (10,240 tok) | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-24 00:52:42.761  INFO  throughput | 5.0s | prefill 1.64k tok/s (8,192 tok) | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-24 00:52:47.761  INFO  throughput | 5.0s | prefill 2.05k tok/s (10,240 tok) | running 1 (prefill 1) | host 0.0% (0 us)
+2026-11-24 00:52:52.500  INFO  req#1 done | openai-chat | stop token | prompt 115,222 | output 333 | cache 0 (0.0%) | TTFT 49.3s | total 52.9s | prefill 2.34k tok/s | decode 91.6 tok/s | dspark accepted 172/341 (50.4%)
+2026-11-24 00:52:52.509  INFO  stopping | running and queued requests are cancelled
+2026-11-24 00:52:52.510  INFO  server stopped

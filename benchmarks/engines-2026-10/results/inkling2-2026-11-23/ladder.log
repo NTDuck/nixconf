@@ -1,0 +1,55 @@
+######## LADDER CELL C1x131072 2026-11-23T22:52:29+07:00
+== CELL C1x131072 begin 2026-11-23T22:52:29+07:00
+NINFER_CONCURRENCY=1
+NINFER_CONTEXT=131072
+NINFER_KV_CAPACITY=131072
+health ok after ~8s
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 80.3, "prompt_tokens": 115222, "completion_tokens": 327, "reasoning_tokens": 237, "decode_tps": 69.00527534534712, "prefill_tps": 1525.6509193172676, "draft_n": 338, "draft_accepted": 177}
+{"wave": 1, "lane": 0, "ok": 1, "wall_s": 80.7, "prompt_tokens": 115222, "completion_tokens": 327, "reasoning_tokens": 237, "decode_tps": 69.1364701589295, "prefill_tps": 1515.9201502647056, "draft_n": 338, "draft_accepted": 177}
+== CELL C1x131072 end rc=0 2026-11-23T22:56:01+07:00
+rc=0
+######## LADDER CELL C1x262144 2026-11-23T22:56:01+07:00
+== CELL C1x262144 begin 2026-11-23T22:56:01+07:00
+NINFER_CONCURRENCY=1
+NINFER_CONTEXT=262144
+NINFER_KV_CAPACITY=262144
+health ok after ~8s
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 215.9, "prompt_tokens": 230428, "completion_tokens": 376, "reasoning_tokens": 298, "decode_tps": 50.59407396374252, "prefill_tps": 1105.776688860701, "draft_n": 374, "draft_accepted": 212}
+{"wave": 1, "lane": 0, "ok": 1, "wall_s": 216.0, "prompt_tokens": 230428, "completion_tokens": 376, "reasoning_tokens": 298, "decode_tps": 50.70370565712594, "prefill_tps": 1104.8345902253966, "draft_n": 374, "draft_accepted": 212}
+== CELL C1x262144 end rc=0 2026-11-23T23:04:04+07:00
+rc=0
+######## LADDER CELL C2x65536 2026-11-23T23:04:04+07:00
+== CELL C2x65536 begin 2026-11-23T23:04:04+07:00
+NINFER_CONCURRENCY=2
+NINFER_CONTEXT=65536
+NINFER_KV_CAPACITY=131072
+health ok after ~8s
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 45.1, "prompt_tokens": 57613, "completion_tokens": 372, "reasoning_tokens": 322, "decode_tps": 25.46702448175624, "prefill_tps": 1887.844579638803, "draft_n": null, "draft_accepted": null}
+{"wave": 0, "lane": 1, "ok": 1, "wall_s": 71.1, "prompt_tokens": 57613, "completion_tokens": 460, "reasoning_tokens": 405, "decode_tps": 84.17375932581665, "prefill_tps": 887.5799316612213, "draft_n": null, "draft_accepted": null}
+{"wave": 1, "lane": 0, "ok": 1, "wall_s": 45.4, "prompt_tokens": 57613, "completion_tokens": 372, "reasoning_tokens": 322, "decode_tps": 25.36021239997888, "prefill_tps": 1872.4768986839294, "draft_n": null, "draft_accepted": null}
+{"wave": 1, "lane": 1, "ok": 1, "wall_s": 71.4, "prompt_tokens": 57613, "completion_tokens": 460, "reasoning_tokens": 405, "decode_tps": 84.12551511459579, "prefill_tps": 879.059614241663, "draft_n": null, "draft_accepted": null}
+== CELL C2x65536 end rc=0 2026-11-23T23:07:18+07:00
+rc=0
+######## LADDER CELL C2x131072 2026-11-23T23:07:18+07:00
+== CELL C2x131072 begin 2026-11-23T23:07:18+07:00
+NINFER_CONCURRENCY=2
+NINFER_CONTEXT=131072
+NINFER_KV_CAPACITY=262144
+health ok after ~8s
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 92.3, "prompt_tokens": 115237, "completion_tokens": 395, "reasoning_tokens": 342, "decode_tps": 23.377547850684035, "prefill_tps": 1528.66964394043, "draft_n": null, "draft_accepted": null}
+{"wave": 0, "lane": 1, "ok": 1, "wall_s": 162.4, "prompt_tokens": 115237, "completion_tokens": 392, "reasoning_tokens": 332, "decode_tps": 70.50044429713566, "prefill_tps": 738.1008277241685, "draft_n": null, "draft_accepted": null}
+{"wave": 1, "lane": 0, "ok": 1, "wall_s": 92.7, "prompt_tokens": 115237, "completion_tokens": 395, "reasoning_tokens": 342, "decode_tps": 23.383404259407264, "prefill_tps": 1518.9463544271905, "draft_n": null, "draft_accepted": null}
+{"wave": 1, "lane": 1, "ok": 1, "wall_s": 162.9, "prompt_tokens": 115237, "completion_tokens": 392, "reasoning_tokens": 332, "decode_tps": 70.30494548580958, "prefill_tps": 734.605281843488, "draft_n": null, "draft_accepted": null}
+== CELL C2x131072 end rc=0 2026-11-23T23:13:34+07:00
+rc=0
+######## LADDER CELL C1x327680 2026-11-23T23:13:34+07:00
+== CELL C1x327680 begin 2026-11-23T23:13:34+07:00
+NINFER_CONCURRENCY=1
+NINFER_CONTEXT=327680
+NINFER_KV_CAPACITY=327680
+health ok after ~8s
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 371.9, "prompt_tokens": 288052, "completion_tokens": 507, "reasoning_tokens": 417, "decode_tps": 46.46851278572391, "prefill_tps": 798.2010354663447, "draft_n": 481, "draft_accepted": 303}
+{"wave": 1, "lane": 0, "ok": 0, "err": "<HTTPError 503: 'Service Unavailable'>", "wall_s": 241.7}
+== CELL C1x327680 end rc=0 2026-11-23T23:24:39+07:00
+rc=0
+######## LADDER COMPLETE 2026-11-23T23:24:39+07:00

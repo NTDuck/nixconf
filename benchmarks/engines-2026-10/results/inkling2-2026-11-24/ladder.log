@@ -1,0 +1,28 @@
+######## CELL C1x131072 2026-11-24T00:51:50+07:00
+boot ok C1x131072
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 52.9, "prompt_tokens": 115222, "completion_tokens": 333, "decode_tps": 91.5991309906569, "prefill_tps": 2339.726880893145, "draft_n": 341, "draft_accepted": 172}
+cell C1x131072 rc=0
+rc=0
+######## CELL C1x262144 2026-11-24T00:52:52+07:00
+boot ok C1x262144
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 143.6, "prompt_tokens": 230428, "completion_tokens": 422, "decode_tps": 71.50859688861553, "prefill_tps": 1674.6241523606645, "draft_n": 322, "draft_accepted": 157}
+cell C1x262144 rc=0
+rc=0
+######## CELL C1x327680 2026-11-24T00:55:25+07:00
+boot ok C1x327680
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 243.5, "prompt_tokens": 288052, "completion_tokens": 252, "decode_tps": 63.11837202666697, "prefill_tps": 1203.2764359050489, "draft_n": 266, "draft_accepted": 133}
+cell C1x327680 rc=0
+rc=0
+######## CELL C2x65536 2026-11-24T00:59:37+07:00
+boot ok C2x65536
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 34.0, "prompt_tokens": 57613, "completion_tokens": 486, "decode_tps": 34.4659095742321, "prefill_tps": 2897.2876754905556, "draft_n": null, "draft_accepted": null}
+{"wave": 0, "lane": 1, "ok": 1, "wall_s": 48.8, "prompt_tokens": 57613, "completion_tokens": 432, "decode_tps": 102.30534195301937, "prefill_tps": 1308.5252659238438, "draft_n": null, "draft_accepted": null}
+cell C2x65536 rc=0
+rc=0
+######## CELL C2x131072 2026-11-24T01:00:35+07:00
+boot ok C2x131072
+{"wave": 0, "lane": 1, "ok": 1, "wall_s": 59.3, "prompt_tokens": 115237, "completion_tokens": 347, "decode_tps": 35.584467179568954, "prefill_tps": 2326.6955361778946, "draft_n": null, "draft_accepted": null}
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 106.8, "prompt_tokens": 115237, "completion_tokens": 351, "decode_tps": 91.90961310859754, "prefill_tps": 1124.8839601191914, "draft_n": null, "draft_accepted": null}
+cell C2x131072 rc=0
+rc=0
+######## LADDER COMPLETE 2026-11-24T01:02:31+07:00

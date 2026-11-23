@@ -1,0 +1,2 @@
+{"wave": 0, "lane": 0, "ok": 0, "err": "<HTTPError 503: 'Service Unavailable'>", "wall_s": 17.5}
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 22.2, "prompt_tokens": 57598, "completion_tokens": 269, "decode_tps": 120.11201526431536, "prefill_tps": 2884.717294124697, "draft_n": 259, "draft_accepted": 156}

@@ -1,0 +1,2 @@
+{"wave": 0, "lane": 1, "ok": 1, "wall_s": 59.3, "prompt_tokens": 115237, "completion_tokens": 347, "decode_tps": 35.584467179568954, "prefill_tps": 2326.6955361778946, "draft_n": null, "draft_accepted": null}
+{"wave": 0, "lane": 0, "ok": 1, "wall_s": 106.8, "prompt_tokens": 115237, "completion_tokens": 351, "decode_tps": 91.90961310859754, "prefill_tps": 1124.8839601191914, "draft_n": null, "draft_accepted": null}
