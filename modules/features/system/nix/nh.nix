@@ -3,7 +3,16 @@
     nixos = {pkgs, ...}: {
       programs.nh = {
         enable = true;
-        package = pkgs.unstable.nh;
+        # 2026-11-23: nh 4.5.0 passes systemd-run --output=cat, which requires
+        # systemd 261. NixOS currently runs systemd 260, which rejects this flag.
+        # Upstream fix probes systemd version; until that is packaged, patch nh
+        # to fall back to --pipe. Cargo.lock is untouched so cargoHash is unchanged.
+        package = pkgs.unstable.nh.overrideAttrs (old: {
+          postPatch = (old.postPatch or "") + ''
+            substituteInPlace crates/nh-remote/src/remote.rs \
+              --replace-fail '"--output=cat",' '"--pipe",'
+          '';
+        });
 
         clean = {
           enable = true;
