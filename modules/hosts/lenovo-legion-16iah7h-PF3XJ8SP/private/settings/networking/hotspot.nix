@@ -22,10 +22,7 @@
 # recovery path.
 {den, ...}: {
   den.aspects.lenovo-legion-16iah7h-PF3XJ8SP = {
-    nixos = {
-      pkgs,
-      ...
-    }: let
+    nixos = {pkgs, ...}: let
       name = "Hotto Doggo";
       password = "20041889";
 
