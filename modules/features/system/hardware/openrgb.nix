@@ -136,18 +136,63 @@
         fi
 
         # Card enumerated: ensure startup profile is applied
-        # (2026-10-15: replaced saved 'off' re-apply with static-rainbow profile load).
-        ${og} --profile lenovo-legion-16iah7h-PF3XJ8SP-static-rainbow >/dev/null 2>&1 || true
-        echo "egpu-rgb-rescan: applied lenovo-legion-16iah7h-PF3XJ8SP-static-rainbow profile after enumeration" >&2
+        # (2026-11-23: default switched to the -off profile, matching
+        # startupProfile below; static-rainbow stays available via
+        # /var/lib/OpenRGB/profiles for manual use).
+        ${og} --profile lenovo-legion-16iah7h-PF3XJ8SP-off >/dev/null 2>&1 || true
+        echo "egpu-rgb-rescan: applied lenovo-legion-16iah7h-PF3XJ8SP-off profile after enumeration" >&2
       '';
     in {
       services.hardware.openrgb = {
         enable = true;
         package = openrgb-wrapped;
-        # 2026-10-15: Automatically apply static rainbow profile at startup
-        # across Lenovo Legion keyboard, Keychron, and eGPU 3090.
-        startupProfile = "lenovo-legion-16iah7h-PF3XJ8SP-static-rainbow";
+        # 2026-11-23: default startup profile is the -off one (user request);
+        # the rescan script applies the same profile after eGPU enumeration.
+        startupProfile = "lenovo-legion-16iah7h-PF3XJ8SP-off";
       };
+
+      # Keychron (Sonix 05ac:024f, usb 3-1.3) firmware re-enumerates its
+      # control interface ~13s after boot and again ~27-91s later, every
+      # boot (journals 2026-11-22..23), plus occasional runtime flaps
+      # (boot -4: +5h). Autosuspend is ruled out: power/control=on and
+      # runtime_status=active through every flap. OpenRGB never
+      # hot-detects, so its Keychron controller binds to a device about
+      # to vanish and stays dead until a server restart re-scans.
+      # Fix: on every (re)add, sleep out the flap window, then restart
+      # the server - it re-launches with --profile (startupProfile), so
+      # lighting state re-applies automatically. systemd job coalescing
+      # merges repeat triggers while the oneshot is still running, so a
+      # whole flap burst ends in exactly one restart; a completed
+      # oneshot re-arms on the next re-add.
+      services.udev.extraRules = ''
+        ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", ATTR{idProduct}=="024f", TAG+="systemd", ENV{SYSTEMD_WANTS}+="openrgb-keyboard-settle.service"
+      '';
+
+      systemd.services.openrgb-keyboard-settle = {
+        description = "Restart OpenRGB after the Keychron USB settle window";
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = pkgs.writeShellScript "openrgb-keyboard-settle" ''
+            set -eu
+            sleep 120
+            ${config.systemd.package}/bin/systemctl restart openrgb.service
+            echo "openrgb-keyboard-settle: openrgb restarted after keyboard settle window" >&2
+          '';
+          TimeoutStartSec = "300";
+        };
+      };
+
+      # Forensic trail (2026-11-23): server logs rotate (10 files), so a
+      # "keyboard was missing at boot" report days later is unverifiable.
+      # Stamp detection state at every server start; the settle unit's
+      # restart gets its own line, making the fix observable per boot.
+      systemd.services.openrgb.serviceConfig.ExecStartPost =
+        pkgs.writeShellScript "openrgb-detect-marker" ''
+          set -u
+          f=/var/lib/OpenRGB/boot-detection.log
+          n=$(${og} --list-devices 2>/dev/null | ${grep} -c "Keyboard" || :)
+          echo "$(date '+%F %T') controllers-with-keyboard=$n" >> "$f"
+        '';
 
       specialisation.homelab.configuration = {
         # HOMELAB-ONLY (3090 specialisation pattern): the 3090's i2c RGB controller
