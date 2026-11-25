@@ -151,41 +151,25 @@
         startupProfile = "lenovo-legion-16iah7h-PF3XJ8SP-off";
       };
 
-      # Keychron (Sonix 05ac:024f, usb 3-1.3) firmware re-enumerates its
-      # control interface ~13s after boot and again ~27-91s later, every
-      # boot (journals 2026-11-22..23), plus occasional runtime flaps
-      # (boot -4: +5h). Autosuspend is ruled out: power/control=on and
-      # runtime_status=active through every flap. OpenRGB never
-      # hot-detects, so its Keychron controller binds to a device about
-      # to vanish and stays dead until a server restart re-scans.
-      # Fix: on every (re)add, sleep out the flap window, then restart
-      # the server - it re-launches with --profile (startupProfile), so
-      # lighting state re-applies automatically. systemd job coalescing
-      # merges repeat triggers while the oneshot is still running, so a
-      # whole flap burst ends in exactly one restart; a completed
-      # oneshot re-arms on the next re-add.
-      services.udev.extraRules = ''
-        ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="05ac", ATTR{idProduct}=="024f", TAG+="systemd", ENV{SYSTEMD_WANTS}+="openrgb-keyboard-settle.service"
-      '';
-
-      systemd.services.openrgb-keyboard-settle = {
-        description = "Restart OpenRGB after the Keychron USB settle window";
-        serviceConfig = {
-          Type = "oneshot";
-          ExecStart = pkgs.writeShellScript "openrgb-keyboard-settle" ''
-            set -eu
-            sleep 120
-            ${config.systemd.package}/bin/systemctl restart openrgb.service
-            echo "openrgb-keyboard-settle: openrgb restarted after keyboard settle window" >&2
-          '';
-          TimeoutStartSec = "300";
-        };
-      };
+      # Keyboard lighting (2026-11-25): the Keychron's own firmware owns it.
+      # 2026-11-23/24 a udev-triggered openrgb-keyboard-settle unit restarted
+      # the server on every Sonix control-interface re-add to survive boot-time
+      # re-enumeration flaps. But each restart re-applies the startupProfile,
+      # and the -off profile's Keychron block (Custom mode, all-zero colors)
+      # slammed the keyboard dark — and each restart was followed by another
+      # disconnect 1-12s later (9 restarts in 15min, journal 2026-11-25),
+      # re-triggering the unit: a self-sustaining dark-slam loop. The unit and
+      # its udev rule are gone; OpenRGB never writes to the keyboard now.
+      # CAVEAT: the -off profile lives in /var/lib/OpenRGB/profiles (mutable
+      # state, like the static-rainbow one below). The Keychron controller
+      # section was stripped from it by hand on 2026-11-25; re-saving the
+      # profile from the OpenRGB GUI re-adds a block for every connected
+      # device — keep the Keychron out or the next --profile load goes dark.
 
       # Forensic trail (2026-11-23): server logs rotate (10 files), so a
       # "keyboard was missing at boot" report days later is unverifiable.
-      # Stamp detection state at every server start; the settle unit's
-      # restart gets its own line, making the fix observable per boot.
+      # Stamp detection state at every server start, whatever triggered it
+      # (udev re-adds, manual restarts), making restarts observable per boot.
       systemd.services.openrgb.serviceConfig.ExecStartPost =
         pkgs.writeShellScript "openrgb-detect-marker" ''
           set -u
