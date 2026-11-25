@@ -26,6 +26,8 @@
       den.aspects.apps.file-managers.yazi
       # glow (2026-11-11 user request): markdown renderer (also yazi previewer).
       den.aspects.apps.glow
+      # terabox (2026-11-25 user request): official TeraBox desktop client.
+      den.aspects.apps.terabox
       den.aspects.apps.gaming.itch
       den.aspects.apps.gaming.mangohud
       # wlib umbrella: includes gaming.wine + rpgmakermlinux-cicpoffs
