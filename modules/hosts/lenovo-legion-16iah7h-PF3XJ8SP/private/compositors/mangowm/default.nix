@@ -17,6 +17,13 @@
         # window_rule/app_id/is_fullscreen).
         windowrule = [
           "isfullscreen:1,appid:steam_app_1172380,title:STAR WARS Jedi: Fallen Order"
+          # Vintage Story (wine, XWayland; WM_CLASS vintagestory.exe). Must
+          # float: a tiling resize during startup aborts the game's shader
+          # init (GuiScreenLoadingGame renders before ShaderRegistry.Load()
+          # fills uniform dicts → lightPosition KeyNotFoundException crash).
+          # Size matching (2541x1536) is handled by the game's launcher;
+          # floating just guarantees mango never resizes/re-tiles it.
+          "isfloating:1,appid:vintagestory.exe,title:Vintage Story"
         ];
 
         monitorrule = lib.mkForce [
