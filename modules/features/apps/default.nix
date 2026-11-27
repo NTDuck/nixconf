@@ -28,6 +28,9 @@
       den.aspects.apps.jq
       # glow (2026-11-11 user request): markdown renderer, also yazi's previewer.
       den.aspects.apps.glow
+      # herdr (2026-11-27 user request): agent-terminal multiplexer; HM
+      # option vendored here (upstream module is HM-master-only).
+      den.aspects.apps.herdr
     ];
   };
 }

@@ -26,6 +26,9 @@
       den.aspects.apps.file-managers.yazi
       # glow (2026-11-11 user request): markdown renderer (also yazi previewer).
       den.aspects.apps.glow
+      # herdr (2026-11-27 user request): terminal multiplexer for coding
+      # agents; legion is the agent workstation.
+      den.aspects.apps.herdr
       # terabox (2026-11-25 user request): official TeraBox desktop client.
       den.aspects.apps.terabox
       den.aspects.apps.gaming.itch
